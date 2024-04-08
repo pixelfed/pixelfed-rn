@@ -1,33 +1,53 @@
 import { Link, Tabs } from 'expo-router'
 import { Pressable } from 'react-native'
 import { Text } from 'tamagui'
+import { Feather } from '@expo/vector-icons'
 
 export default function TabLayout() {
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: 'red',
-      }}
-    >
+    <Tabs>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <Text>Hello!</Text>,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                <Text>Hello!</Text>
-              </Pressable>
-            </Link>
-          ),
+          tabBarShowLabel: false,
+          headerShown: false,
+          tabBarIcon: ({ color }) => <Feather name="home" size={26} />,
         }}
       />
+
       <Tabs.Screen
-        name="two"
+        name="search"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <Text>Hello!</Text>,
+          tabBarShowLabel: false,
+          headerShown: false,
+          tabBarIcon: ({ color }) => <Feather name="search" size={26} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="camera"
+        options={{
+          tabBarShowLabel: false,
+          headerShown: false,
+          tabBarIcon: ({ color }) => <Feather name="plus-square" size={26} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="discover"
+        options={{
+          tabBarShowLabel: false,
+          headerShown: false,
+          tabBarIcon: ({ color }) => <Feather name="compass" size={26} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="profile"
+        options={{
+          tabBarShowLabel: false,
+          headerShown: false,
+          tabBarIcon: ({ color }) => <Feather name="user" size={26} />,
         }}
       />
     </Tabs>
