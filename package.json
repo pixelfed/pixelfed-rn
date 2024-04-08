@@ -10,7 +10,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "lint": "npx @biomejs/biome check --apply ./app"
+    "lint": "npx @biomejs/biome check --apply ./src"
   },
   "jest": {
     "preset": "jest-expo"
@@ -20,11 +20,13 @@
     "@react-navigation/native": "^6.0.2",
     "@tamagui/config": "^1.94.4",
     "@tamagui/metro-plugin": "^1.94.4",
+    "babel-plugin-module-resolver": "^5.0.0",
     "babel-preset-expo": "^10.0.1",
-    "expo": "~50.0.6",
+    "expo": "^50.0.14",
     "expo-font": "~11.10.2",
     "expo-linking": "~6.2.1",
     "expo-router": "~3.4.7",
+    "expo-secure-store": "~12.8.1",
     "expo-splash-screen": "~0.26.4",
     "expo-status-bar": "~1.11.1",
     "expo-system-ui": "~2.9.3",

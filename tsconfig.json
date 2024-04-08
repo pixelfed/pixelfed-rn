@@ -8,5 +8,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+, "src/app/(app)/_layout.js", "src/state/ctx.jsx"  ]
 }
