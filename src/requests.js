@@ -1,4 +1,5 @@
 import { Alert } from 'react-native'
+import { Storage } from './state/cache'
 
 export function objectToForm(obj) {
   let form = new FormData()
@@ -159,4 +160,22 @@ export async function loginPreflightCheck(server) {
   }
 
   return true
+}
+
+export async function verifyCredentials(domain, token) {
+  const resp = await get(
+    `https://${domain}/api/v1/accounts/verify_credentials?_pe=1`,
+    token
+  )
+
+  return resp.json()
+}
+
+export async function queryApi(endpoint, params = null) {
+  let server = Storage.getString('app.instance')
+  let token = Storage.getString('app.token')
+
+  let url = `https://${server}/${endpoint}`
+
+  return await getJSON(url, token, params)
 }
