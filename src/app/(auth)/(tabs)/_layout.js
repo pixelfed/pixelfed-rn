@@ -5,7 +5,7 @@ import { Text } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 
 export default function AppLayout() {
-  const { user, logout } = useAuth();
+  const { user, logout } = useAuth()
 
   // Only require authentication within the (app) group's layout as users
   // need to be able to access the (auth) group and sign in again.
@@ -61,6 +61,3 @@ export default function AppLayout() {
     </Tabs>
   )
 }
-
-
-
