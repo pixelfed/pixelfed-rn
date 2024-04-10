@@ -36,3 +36,27 @@ export function formatTimestamp(iso8601String) {
 
   return `${month} ${day}, ${year}`
 }
+
+export function formatTimestampMonthYear(iso8601String) {
+  const now = new Date()
+  const timestamp = new Date(iso8601String)
+
+  const monthNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ]
+  const year = timestamp.getFullYear()
+  const month = monthNames[timestamp.getMonth()]
+
+  return `${month} ${year}`
+}
