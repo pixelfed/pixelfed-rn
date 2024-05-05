@@ -9,6 +9,7 @@ module.exports = (api) => {
           alias: {
             src: './src',
             '@state': './src/state',
+            '@hooks': './src/hooks',
             '@components': './src/components',
             '@requests': './src/requests.js',
           },
