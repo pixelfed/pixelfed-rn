@@ -61,7 +61,7 @@ export function formatTimestampMonthYear(iso8601String) {
   return `${month} ${year}`
 }
 
-export const _timeAgo = (ts) => {
+export function _timeAgo(ts) {
   let date = Date.parse(ts)
   let seconds = Math.floor((new Date() - date) / 1000)
   let interval = Math.floor(seconds / 63072000)
@@ -88,4 +88,34 @@ export const _timeAgo = (ts) => {
     return interval + 'm'
   }
   return Math.floor(seconds) + 's'
+}
+
+export function parseLinkHeader(header) {
+  if (!header || header.length === 0) {
+    return null
+  }
+
+  const parts = header.split(',')
+  const links = {}
+  parts.forEach((p) => {
+    const section = p.split(';')
+    const url = section[0].replace(/<(.*)>/, '$1').trim()
+    const name = section[1].replace(/rel="(.*)"/, '$1').trim()
+    links[name] = url
+  })
+
+  return links
+}
+
+export function prettyCount(number) {
+  if (number < 1000) return number.toString() // Return the same number if less than 1000
+  if (number < 1000000) {
+    // Less than a million
+    return (number / 1000).toFixed(number % 1000 === 0 ? 0 : 1) + 'K'
+  }
+  if (number < 1000000000) {
+    // Less than a billion
+    return (number / 1000000).toFixed(number % 1000000 === 0 ? 0 : 1) + 'M'
+  }
+  return (number / 1000000000).toFixed(number % 1000000000 === 0 ? 0 : 1) + 'B'
 }
