@@ -37,6 +37,53 @@ async function fetchPaginatedData(url: any) {
   return { data, nextPage: links?.next, prevPage: links?.prev }
 }
 
+async function fetchData(url: any) {
+  const instance = Storage.getString('app.instance')
+  const token = Storage.getString('app.token')
+
+  const response = await fetch(url, {
+    method: 'get',
+    headers: new Headers({
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
+  })
+  const data = await response.json()
+
+  return data
+}
+
+export async function searchQuery(query: any) {
+  if (!query || query.trim() === '') return []
+  const instance = Storage.getString('app.instance')
+  const token = Storage.getString('app.token')
+
+  const url = `https://${instance}/api/v2/search?q=${encodeURIComponent(
+    query
+  )}&_pe=1&resolve=1`
+  const response = await fetch(url, {
+    method: 'get',
+    headers: new Headers({
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
+  })
+  const data = await response.json()
+  let mapd = [
+    ...data.accounts.map((a) => {
+      a._type = 'account'
+      return a
+    }),
+    ...data.hashtags.map((a) => {
+      a._type = 'hashtag'
+      return a
+    }),
+  ]
+  return mapd
+}
+
 export async function fetchNotifications({ pageParam = false }) {
   let url
   if (!pageParam) {
@@ -49,14 +96,62 @@ export async function fetchNotifications({ pageParam = false }) {
   return await fetchPaginatedData(url)
 }
 
-export async function fetchNetworkFeed({ pageParam = false }) {
+export async function fetchHomeFeed({ pageParam = false }) {
   let url
   if (!pageParam) {
     const instance = Storage.getString('app.instance')
-    url = `https://${instance}/api/v1/timelines/public`
+    url = `https://${instance}/api/v1/timelines/home?_pe=1`
   } else {
     url = pageParam
   }
 
   return await fetchPaginatedData(url)
+}
+
+export async function fetchNetworkFeed({ pageParam = false }) {
+  let url
+  if (!pageParam) {
+    const instance = Storage.getString('app.instance')
+    url = `https://${instance}/api/v1/timelines/public?_pe=1`
+  } else {
+    url = pageParam
+  }
+
+  return await fetchPaginatedData(url)
+}
+
+export async function getStatusById({ queryKey }) {
+  const instance = Storage.getString('app.instance')
+  const url = `https://${instance}/api/v1/statuses/${queryKey[1]}?_pe=1`
+  return await fetchData(url)
+}
+
+export async function getAccountById({ queryKey }) {
+  const instance = Storage.getString('app.instance')
+  const url = `https://${instance}/api/v1/accounts/${queryKey[1]}?_pe=1`
+  return await fetchData(url)
+}
+
+export async function getAccountStatusesById(id, page) {
+  const instance = Storage.getString('app.instance')
+  const url = `https://${instance}/api/v1/accounts/${id}/statuses?_pe=1&max_id=${page}`
+  return await fetchData(url)
+}
+
+export async function getHashtagByName(id) {
+  const instance = Storage.getString('app.instance')
+  const url = `https://${instance}/api/v1/tags/${id}/?_pe=1`
+  return await fetchData(url)
+}
+
+export async function getHashtagByNameFeed(id, page) {
+  const instance = Storage.getString('app.instance')
+  let url = `https://${instance}/api/v1/timelines/tag/${id}?_pe=1&max_id=${page}`
+  return await fetchPaginatedData(url)
+}
+
+export async function getConversations(params) {
+  const instance = Storage.getString('app.instance')
+  let url = `https://${instance}/api/v1/conversations`
+  return await fetchData(url)
 }
