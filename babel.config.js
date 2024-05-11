@@ -14,6 +14,7 @@ module.exports = (api) => {
             '@requests': './src/requests.js',
           },
         },
+        'react-native-reanimated/plugin'
       ],
     ],
   }
