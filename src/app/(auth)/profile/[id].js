@@ -2,20 +2,20 @@ import { FlatList, Dimensions, ActivityIndicator } from 'react-native'
 import { Image, Text, View, YStack } from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
 import { Storage } from 'src/state/cache'
-import { getJSON } from 'src/requests'
+import { queryApi } from 'src/requests'
 import { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link } from 'expo-router'
+import { Stack, useLocalSearchParams } from 'expo-router'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { getAccountById, getAccountStatusesById } from 'src/lib/api'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileScreen() {
-  const userCache = JSON.parse(Storage.getString('user.profile'))
+  const { id } = useLocalSearchParams()
 
   const { data: user } = useQuery({
-    queryKey: ['profileById', userCache.id],
+    queryKey: ['profileById', id],
     queryFn: getAccountById,
   })
 
@@ -58,29 +58,28 @@ export default function ProfileScreen() {
   })
 
   const RenderItem = ({ item }) =>
-    item && item.media_attachments[0].url ? (
-      <Link href={`/post/${item.id}`}>
-        <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
-          <Image
-            source={{
-              uri: item.media_attachments[0].url,
-              width: SCREEN_WIDTH / 2 - 2,
-              height: 300,
-            }}
-            resizeMode="cover"
-          />
-        </View>
-      </Link>
+    item && item.media_attachments && item.media_attachments[0].url ? (
+      <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
+        <Image
+          source={{
+            uri: item.media_attachments[0].url,
+            width: SCREEN_WIDTH / 4 - 2,
+            height: 110,
+          }}
+          resizeMode="cover"
+        />
+      </View>
     ) : null
 
   return (
     <SafeAreaView edges={['top']}>
+      <Stack.Screen options={{ headerShown: false }} />
       <FlatList
         data={feed?.pages.flatMap((page) => page)}
         keyExtractor={(item, index) => item?.id.toString()}
-        ListHeaderComponent={<ProfileHeader profile={user} isSelf={true} />}
+        ListHeaderComponent={<ProfileHeader profile={user} />}
         renderItem={RenderItem}
-        numColumns={2}
+        numColumns={4}
         showsVerticalScrollIndicator={false}
         onEndReached={() => {
           if (!isFetching && hasNextPage) fetchNextPage()

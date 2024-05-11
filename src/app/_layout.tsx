@@ -6,19 +6,37 @@ import { useFonts } from 'expo-font'
 import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import React, { useEffect } from 'react'
-
 import AuthProvider from '../state/AuthProvider'
-import { useColorScheme } from 'react-native'
-
+import { useColorScheme, type AppStateStatus, Platform } from 'react-native'
 export { ErrorBoundary } from 'expo-router'
-
+import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-query'
+import { useAppState } from 'src/hooks/useAppState'
+import { useOnlineManager } from 'src/hooks/useOnlineManager'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 export const unstable_settings = {
   initialRouteName: '/login',
 }
 
 SplashScreen.preventAutoHideAsync()
 
+function onAppStateChange(status: AppStateStatus) {
+  // React Query already supports in web browser refetch on window focus by default
+  if (Platform.OS !== 'web') {
+    focusManager.setFocused(status === 'active')
+  }
+}
+
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: 2 } },
+})
+
 export default function RootLayout() {
+  useOnlineManager()
+
+  useAppState(onAppStateChange)
+
   const [loaded, error] = useFonts({
     ...Feather.font,
   })
@@ -42,15 +60,26 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme()
 
   return (
-    <AuthProvider>
-      <TamaguiProvider config={config} defaultTheme={colorScheme}>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="(auth)/(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="(public)/login" options={{ headerShown: false }} />
-          </Stack>
-        </ThemeProvider>
-      </TamaguiProvider>
-    </AuthProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <AuthProvider>
+          <QueryClientProvider client={queryClient}>
+            <TamaguiProvider config={config} defaultTheme={'light'}>
+              <ThemeProvider value={DefaultTheme}>
+                <SafeAreaProvider>
+                  <Stack>
+                    <Stack.Screen name="(auth)/(tabs)" options={{ headerShown: false }} />
+                    <Stack.Screen
+                      name="(public)/login"
+                      options={{ headerShown: false }}
+                    />
+                  </Stack>
+                </SafeAreaProvider>
+              </ThemeProvider>
+            </TamaguiProvider>
+          </QueryClientProvider>
+        </AuthProvider>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   )
 }

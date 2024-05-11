@@ -7,13 +7,13 @@ import { Feather } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, Stack } from 'expo-router'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { fetchHomeFeed } from 'src/lib/api'
+import { fetchNetworkFeed } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
-import { Storage } from 'src/state/cache'
 
+const RenderPost = ({ item }) => <FeedPost post={item} />
 const keyExtractor = (_, index) => `post-${_.id}-${index}`
 
-export default function HomeScreen() {
+export default function NetworkScreen() {
   const {
     data,
     fetchNextPage,
@@ -25,9 +25,9 @@ export default function HomeScreen() {
     isError,
     error,
   } = useInfiniteQuery({
-    queryKey: ['homeFeed'],
+    queryKey: ['networkFeed'],
     initialPageParam: null,
-    queryFn: fetchHomeFeed,
+    queryFn: fetchNetworkFeed,
     getNextPageParam: (lastPage) => lastPage.nextPage,
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
   })
@@ -35,7 +35,7 @@ export default function HomeScreen() {
   if (isFetching && !isFetchingNextPage) {
     return (
       <View flexGrow={1} mt="$5">
-        <ActivityIndicator color={'#000'} />
+        <ActivityIndicator />
       </View>
     )
   }
@@ -48,49 +48,17 @@ export default function HomeScreen() {
     )
   }
 
-  const user = JSON.parse(Storage.getString('user.profile'))
-
-  const HeaderComponent = () => (
-    <XStack
-      px="$3"
-      pb="$3"
-      bg="white"
-      justifyContent="space-between"
-      alignItems="center"
-      zIndex={100}
-    >
-      <XStack alignItems="center" gap="$1">
-        <Text fontSize={30} fontWeight="bold" letterSpacing={-1}>
-          Home
-        </Text>
-      </XStack>
-      <XStack gap="$5">
-        <Link href="/notifications" asChild>
-          <Pressable>
-            <Feather name="heart" size={26} />
-          </Pressable>
-        </Link>
-        <Link href="/chats" asChild>
-          <Pressable>
-            <Feather name="mail" size={26} />
-          </Pressable>
-        </Link>
-        <Feather name="plus-square" size={26} />
-      </XStack>
-    </XStack>
-  )
-
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="dark" />
       <Stack.Screen options={{ headerShown: false }} />
-      <FeedHeader title="Home" />
+      <FeedHeader title="Network" />
+
       <FlatList
         data={data?.pages.flatMap((page) => page.data)}
         keyExtractor={keyExtractor}
-        renderItem={({ item }) => <FeedPost post={item} user={user} />}
+        renderItem={RenderPost}
         maxToRenderPerBatch={3}
-        contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
         onEndReached={() => {
           if (hasNextPage) fetchNextPage()

@@ -1,6 +1,7 @@
 import { SafeAreaView } from 'react-native'
 import { Text, YStack, Button } from 'tamagui'
 import { Storage } from 'src/state/cache'
+import { useEffect } from 'react'
 
 export default function DiscoverScreen() {
   const cacheClear = () => {

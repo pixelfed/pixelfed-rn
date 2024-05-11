@@ -19,16 +19,16 @@ export default function AppLayout() {
         options={{
           tabBarShowLabel: false,
           headerShown: false,
-          tabBarIcon: ({ color }) => <Feather name="home" size={26} />,
+          tabBarIcon: ({ color }) => <Feather name="home" size={26} color={color} />,
         }}
       />
 
       <Tabs.Screen
-        name="search"
+        name="network"
         options={{
           tabBarShowLabel: false,
           headerShown: false,
-          tabBarIcon: ({ color }) => <Feather name="search" size={26} />,
+          tabBarIcon: ({ color }) => <Feather name="globe" size={23} color={color} />,
         }}
       />
 
@@ -37,7 +37,9 @@ export default function AppLayout() {
         options={{
           tabBarShowLabel: false,
           headerShown: false,
-          tabBarIcon: ({ color }) => <Feather name="plus-square" size={26} />,
+          tabBarIcon: ({ color }) => (
+            <Feather name="plus-square" size={26} color={color} />
+          ),
         }}
       />
 
@@ -46,7 +48,7 @@ export default function AppLayout() {
         options={{
           tabBarShowLabel: false,
           headerShown: false,
-          tabBarIcon: ({ color }) => <Feather name="compass" size={26} />,
+          tabBarIcon: ({ color }) => <Feather name="compass" size={26} color={color} />,
         }}
       />
 
@@ -55,7 +57,7 @@ export default function AppLayout() {
         options={{
           tabBarShowLabel: false,
           headerShown: false,
-          tabBarIcon: ({ color }) => <Feather name="user" size={26} />,
+          tabBarIcon: ({ color }) => <Feather name="user" size={26} color={color} />,
         }}
       />
     </Tabs>

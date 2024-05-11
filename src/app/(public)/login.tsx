@@ -17,6 +17,7 @@ export default function Login() {
 
   return (
     <SafeAreaView style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'center' }}>
+      <StatusBar style="dark" />
       <Text fontSize={30} mt="$6" letterSpacing={-1}>
         Pixelfed Sign in
       </Text>
