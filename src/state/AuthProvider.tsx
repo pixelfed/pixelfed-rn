@@ -173,7 +173,10 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const logout = () => {
+    setIsLoading(true)
+    Storage.clearAll()
     setUser(null)
+    setIsLoading(false)
   }
 
   useProtectedRoute(user, setUser, setIsLoading)
