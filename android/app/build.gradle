@@ -83,7 +83,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.pixelfed.android"
+    namespace 'com.pixelfed.android'
     
     defaultConfig {
         applicationId 'com.pixelfed.android'
