@@ -61,9 +61,9 @@ function RootLayoutNav() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <BottomSheetModalProvider>
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <BottomSheetModalProvider>
             <TamaguiProvider config={config} defaultTheme={'light'}>
               <ThemeProvider value={DefaultTheme}>
                 <SafeAreaProvider>
@@ -77,9 +77,9 @@ function RootLayoutNav() {
                 </SafeAreaProvider>
               </ThemeProvider>
             </TamaguiProvider>
-          </QueryClientProvider>
-        </AuthProvider>
-      </BottomSheetModalProvider>
+          </BottomSheetModalProvider>
+        </QueryClientProvider>
+      </AuthProvider>
     </GestureHandlerRootView>
   )
 }
