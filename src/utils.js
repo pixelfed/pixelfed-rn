@@ -1,3 +1,14 @@
+import * as WebBrowser from 'expo-web-browser'
+
+export const openBrowserAsync = async (url) => {
+  await WebBrowser.openBrowserAsync(url, {
+    toolbarColor: '#000000',
+    enableBarCollapsing: true,
+    dismissButtonStyle: 'close',
+    presentationStyle: 'popover',
+  })
+}
+
 export function formatTimestamp(iso8601String) {
   const now = new Date()
   const timestamp = new Date(iso8601String)

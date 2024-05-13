@@ -3,7 +3,7 @@ import { Button, Group, Separator, Text, View, XStack, YStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { Image } from 'expo-image'
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
-import { formatTimestamp } from '../../utils'
+import { formatTimestamp, openBrowserAsync } from '../../utils'
 import { Link, router } from 'expo-router'
 import {
   BottomSheetModal,
@@ -85,7 +85,28 @@ const PostMedia = React.memo(({ media, post }) => {
     : 430
 
   if (post.pf_type === 'video') {
-    return <View flex={1} borderBottomWidth={1} borderBottomColor="$gray5"></View>
+    return (
+      <View
+        flex={1}
+        alignItems="center"
+        justifyContent="center"
+        bg="#000"
+        borderBottomWidth={1}
+        borderBottomColor="$gray5"
+        p="$5"
+        minHeight={300}
+      >
+        {/* temp until video player implemented */}
+        <Button
+          fontWeight="bold"
+          bg="$blue9"
+          color="white"
+          onPress={() => openBrowserAsync(post.url)}
+        >
+          View video
+        </Button>
+      </View>
+    )
   }
   return (
     <View flex={1} borderBottomWidth={1} borderBottomColor="$gray5">
