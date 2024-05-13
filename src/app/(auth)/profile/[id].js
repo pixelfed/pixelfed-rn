@@ -68,7 +68,7 @@ export default function ProfileScreen() {
               height: 110,
             }}
             resizeMode="cover"
-            />
+          />
         </View>
       </Link>
     ) : null

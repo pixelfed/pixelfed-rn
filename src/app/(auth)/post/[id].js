@@ -20,11 +20,13 @@ export default function Page() {
   const { id } = useLocalSearchParams()
   const user = JSON.parse(Storage.getString('user.profile'))
 
-  const bottomSheetModalRef = useRef(null);
-  const snapPoints = useMemo(() => ['45%', '70%'], []);
-  const renderBackdrop = useCallback((props: any) => (
+  const bottomSheetModalRef = useRef(null)
+  const snapPoints = useMemo(() => ['45%', '70%'], [])
+  const renderBackdrop = useCallback(
+    (props) => (
       <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
-    ),[]
+    ),
+    []
   )
   const onOpenComments = useCallback((id) => {
     bottomSheetModalRef.current?.present()

@@ -17,7 +17,7 @@ export function parseLinkHeader(header) {
   return links
 }
 
-async function fetchPaginatedData(url: any) {
+async function fetchPaginatedData(url) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
 
@@ -37,7 +37,7 @@ async function fetchPaginatedData(url: any) {
   return { data, nextPage: links?.next, prevPage: links?.prev }
 }
 
-async function fetchData(url: any) {
+async function fetchData(url) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
 
@@ -54,7 +54,7 @@ async function fetchData(url: any) {
   return data
 }
 
-export async function searchQuery(query: any) {
+export async function searchQuery(query) {
   if (!query || query.trim() === '') return []
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
@@ -122,18 +122,18 @@ export async function fetchNetworkFeed({ pageParam = false }) {
 export async function getAccountFollowers(id, cursor) {
   let url
   const instance = Storage.getString('app.instance')
-  url = cursor ? 
-  `https://${instance}/api/v1/accounts/${id}/followers?_pe=1&limit=20&cursor=${cursor}` :
-  `https://${instance}/api/v1/accounts/${id}/followers?_pe=1&limit=20`
+  url = cursor
+    ? `https://${instance}/api/v1/accounts/${id}/followers?_pe=1&limit=20&cursor=${cursor}`
+    : `https://${instance}/api/v1/accounts/${id}/followers?_pe=1&limit=20`
   return await fetchPaginatedData(url)
 }
 
 export async function getAccountFollowing(id, cursor) {
   let url
   const instance = Storage.getString('app.instance')
-  url = cursor ? 
-  `https://${instance}/api/v1/accounts/${id}/following?_pe=1&limit=20&cursor=${cursor}` :
-  `https://${instance}/api/v1/accounts/${id}/following?_pe=1&limit=20`
+  url = cursor
+    ? `https://${instance}/api/v1/accounts/${id}/following?_pe=1&limit=20&cursor=${cursor}`
+    : `https://${instance}/api/v1/accounts/${id}/following?_pe=1&limit=20`
   return await fetchPaginatedData(url)
 }
 
@@ -179,26 +179,29 @@ export async function getStatusRepliesById(id, page) {
   let res = await fetchPaginatedData(url)
 
   res.data = res.data.descendants
-  return res;
+  return res
 }
 
 export async function getOpenServers() {
-  const response = await fetch('https://pixelfed.org/api/v1/mobile-app/servers/open.json', {
-    method: 'get',
-    headers: new Headers({
-      Accept: 'application/json',
-      'X-Pixelfed-App': 1,
-      "Content-Type": 'application/json',
-    }),
-  })
+  const response = await fetch(
+    'https://pixelfed.org/api/v1/mobile-app/servers/open.json',
+    {
+      method: 'get',
+      headers: new Headers({
+        Accept: 'application/json',
+        'X-Pixelfed-App': 1,
+        'Content-Type': 'application/json',
+      }),
+    }
+  )
   return await response.json()
 }
 
 export async function getStatusLikes(id, cursor) {
   let url
   const instance = Storage.getString('app.instance')
-  url = cursor ? 
-  `https://${instance}/api/v1/statuses/${id}/favourited_by?_pe=1&limit=20&cursor=${cursor}` :
-  `https://${instance}/api/v1/statuses/${id}/favourited_by?_pe=1&limit=20`
+  url = cursor
+    ? `https://${instance}/api/v1/statuses/${id}/favourited_by?_pe=1&limit=20&cursor=${cursor}`
+    : `https://${instance}/api/v1/statuses/${id}/favourited_by?_pe=1&limit=20`
   return await fetchPaginatedData(url)
 }

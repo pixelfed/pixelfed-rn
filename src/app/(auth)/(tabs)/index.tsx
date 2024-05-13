@@ -20,32 +20,36 @@ import CommentFeed from 'src/components/post/CommentFeed'
 const keyExtractor = (_, index) => `post-${_.id}-${index}`
 
 export default function HomeScreen() {
-  const [replyId, setReplyId] = useState(null);
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ['55%', '60%'], []);
+  const [replyId, setReplyId] = useState(null)
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null)
+  const snapPoints = useMemo(() => ['55%', '60%'], [])
 
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
   }, [])
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
-  }, []);
-  const renderBackdrop = useCallback((props: any) => (
+  const handleSheetChanges = useCallback((index: number) => {}, [])
+  const renderBackdrop = useCallback(
+    (props: any) => (
       <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
-    ),[]
+    ),
+    []
   )
 
-  const onOpenComments = useCallback((id) => {
-    setReplyId(id)
-    bottomSheetModalRef.current?.present()
-  }, [replyId])
+  const onOpenComments = useCallback(
+    (id) => {
+      setReplyId(id)
+      bottomSheetModalRef.current?.present()
+    },
+    [replyId]
+  )
 
   const userJson = Storage.getString('user.profile')
   const user = JSON.parse(userJson)
 
-  const renderItem = useCallback(({item}) => (
-    <FeedPost post={item} user={user} onOpenComments={onOpenComments} />
-  ), []);
+  const renderItem = useCallback(
+    ({ item }) => <FeedPost post={item} user={user} onOpenComments={onOpenComments} />,
+    []
+  )
 
   const {
     data,

@@ -10,11 +10,8 @@ import {
   BottomSheetView,
   BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet'
-import Carousel, {
-  ICarouselInstance,
-  Pagination,
-} from "react-native-reanimated-carousel";
-import { useSharedValue } from "react-native-reanimated";
+import Carousel, { ICarouselInstance, Pagination } from 'react-native-reanimated-carousel'
+import { useSharedValue } from 'react-native-reanimated'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 const AVATAR_WIDTH = 45
@@ -83,33 +80,23 @@ const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMe
 
 const PostMedia = React.memo(({ media, post }) => {
   const mediaUrl = media[0].url
-  const height = media[0].meta?.original?.width ? 
-    SCREEN_WIDTH * (media[0].meta?.original?.height / media[0].meta?.original.width) : 430
+  const height = media[0].meta?.original?.width
+    ? SCREEN_WIDTH * (media[0].meta?.original?.height / media[0].meta?.original.width)
+    : 430
 
-  if(post.pf_type === 'video') {
-    return (
-      <View
-        flex={1}
-        borderBottomWidth={1}
-        borderBottomColor="$gray5"
-      >
-        
-      </View>
-    )
+  if (post.pf_type === 'video') {
+    return <View flex={1} borderBottomWidth={1} borderBottomColor="$gray5"></View>
   }
   return (
-    <View
-      flex={1}
-      borderBottomWidth={1}
-      borderBottomColor="$gray5"
-    >
+    <View flex={1} borderBottomWidth={1} borderBottomColor="$gray5">
       <Image
         style={{ width: SCREEN_WIDTH, height: height, backgroundColor: '#000' }}
         source={mediaUrl}
         contentFit="contain"
       />
     </View>
-  )})
+  )
+})
 
 const PostActions = React.memo(
   ({ hasLiked, hasShared, likesCount, likedBy, sharesCount, onOpenComments, post }) => (
@@ -170,7 +157,13 @@ const PostCaption = React.memo(
       <BorderlessSection>
         <YStack gap="$3" pt="$1" pb="$3">
           <XStack flexWrap="wrap" pr="$3">
-            <Text fontSize="$5" selectable={true} multiline editable={false} suppressHighlighting={false}>
+            <Text
+              fontSize="$5"
+              selectable={true}
+              multiline
+              editable={false}
+              suppressHighlighting={false}
+            >
               <Text fontWeight="bold">{username}</Text> {caption?.replaceAll('\n\n', ' ')}
             </Text>
           </XStack>
@@ -208,8 +201,8 @@ const PostCaption = React.memo(
 
 export default function FeedPost({ post, user, onOpenComments }) {
   const bottomSheetModalRef = useRef(null)
-  const carouselRef = useRef(null);
-  const progress = useSharedValue(0);
+  const carouselRef = useRef(null)
+  const progress = useSharedValue(0)
   // variables
   const snapPoints = useMemo(() => ['45%', '46%'], [])
 
@@ -244,46 +237,52 @@ export default function FeedPost({ post, user, onOpenComments }) {
         userId={post.account.id}
         onOpenMenu={() => handlePresentModalPress()}
       />
-      {post.media_attachments.length > 1 ? 
-      <><Carousel
-        ref={carouselRef}
-        width={SCREEN_WIDTH}
-        onProgressChange={progress}
-        height={SCREEN_WIDTH / 2}
-        data={post.media_attachments}
-        renderItem={({ index }) => {
-          const media = post.media_attachments[0]
-          const height = media.meta?.original?.width ? 
-            SCREEN_WIDTH * (media.meta?.original?.height / media.meta?.original.width) : 430
-          return (
-            <View
-              style={{
-                flex: 1,
-                borderBottomWidth: 1,
-                borderColor: "#eee",
-                justifyContent: "center",
-              }}
-            >
-              <Image
-                style={{ width: SCREEN_WIDTH, height: height, backgroundColor: '#000' }}
-                source={post.media_attachments[index].url}
-                contentFit="contain"
-              />
-            </View>
-          )
-        }
-      }
-      /> 
-      <Pagination.Basic
-        progress={progress}
-        data={post.media_attachments}
-        dotStyle={{ backgroundColor: "rgba(0,0,0,0.16)", borderRadius: 50 }}
-        activeDotStyle={{ backgroundColor: "#408DF6", borderRadius: 50 }}
-        containerStyle={{ gap: 5, marginTop: 5, marginBottom: -20, zIndex: 3 }}
-        size={8}
-      />
-      </>:
-      post.media_attachments.length === 1 ? (
+      {post.media_attachments.length > 1 ? (
+        <>
+          <Carousel
+            ref={carouselRef}
+            width={SCREEN_WIDTH}
+            onProgressChange={progress}
+            height={SCREEN_WIDTH / 2}
+            data={post.media_attachments}
+            renderItem={({ index }) => {
+              const media = post.media_attachments[0]
+              const height = media.meta?.original?.width
+                ? SCREEN_WIDTH *
+                  (media.meta?.original?.height / media.meta?.original.width)
+                : 430
+              return (
+                <View
+                  style={{
+                    flex: 1,
+                    borderBottomWidth: 1,
+                    borderColor: '#eee',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Image
+                    style={{
+                      width: SCREEN_WIDTH,
+                      height: height,
+                      backgroundColor: '#000',
+                    }}
+                    source={post.media_attachments[index].url}
+                    contentFit="contain"
+                  />
+                </View>
+              )
+            }}
+          />
+          <Pagination.Basic
+            progress={progress}
+            data={post.media_attachments}
+            dotStyle={{ backgroundColor: 'rgba(0,0,0,0.16)', borderRadius: 50 }}
+            activeDotStyle={{ backgroundColor: '#408DF6', borderRadius: 50 }}
+            containerStyle={{ gap: 5, marginTop: 5, marginBottom: -20, zIndex: 3 }}
+            size={8}
+          />
+        </>
+      ) : post.media_attachments.length === 1 ? (
         <PostMedia media={post.media_attachments} post={post} />
       ) : null}
       <PostActions

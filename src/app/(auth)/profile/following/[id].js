@@ -14,16 +14,20 @@ const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function FollowingScreen() {
   const { id } = useLocalSearchParams()
-  
+
   const RenderItem = ({ item }) => {
     return (
       <View p="$3">
         <Link href={`/profile/${item.id}`}>
-          <XStack gap="$3" alignItems='center'>
+          <XStack gap="$3" alignItems="center">
             <UserAvatar url={item.avatar} width={40} height={40} />
             <YStack>
-              <Text fontSize="$3" color="$gray10">{item.display_name}</Text>
-              <Text fontSize="$5" fontWeight="bold">@{item.acct}</Text>
+              <Text fontSize="$3" color="$gray10">
+                {item.display_name}
+              </Text>
+              <Text fontSize="$5" fontWeight="bold">
+                @{item.acct}
+              </Text>
             </YStack>
           </XStack>
         </Link>
@@ -36,7 +40,7 @@ export default function FollowingScreen() {
     queryFn: getAccountById,
   })
 
-  const profileId = profile?.id;
+  const profileId = profile?.id
 
   const ItemSeparator = () => <View h={1} bg="$gray5"></View>
 
@@ -55,7 +59,7 @@ export default function FollowingScreen() {
     error,
   } = useInfiniteQuery({
     queryKey: ['getAccountFollowing', profileId],
-    queryFn:  async ({ pageParam }) => {
+    queryFn: async ({ pageParam }) => {
       return await getAccountFollowing(profileId, pageParam)
     },
     getNextPageParam: (lastPage) => lastPage.nextPage,
@@ -101,7 +105,9 @@ export default function FollowingScreen() {
           if (hasPreviousPage && !isFetchingPreviousPage) fetchPreviousPage()
         }}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={() => (isFetchingPreviousPage ? <ActivityIndicator /> : null)}
+        ListFooterComponent={() =>
+          isFetchingPreviousPage ? <ActivityIndicator /> : null
+        }
       />
     </SafeAreaView>
   )
