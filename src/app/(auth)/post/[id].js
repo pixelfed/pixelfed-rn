@@ -3,18 +3,35 @@ import { Image, ScrollView, Text, View, YStack } from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
 import { Storage } from 'src/state/cache'
 import { queryApi } from 'src/requests'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams } from 'expo-router'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { getStatusById, getAccountStatusesById } from 'src/lib/api'
 import FeedPost from 'src/components/post/FeedPost'
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetBackdrop,
+} from '@gorhom/bottom-sheet'
+import CommentFeed from 'src/components/post/CommentFeed'
 
 export default function Page() {
   const { id } = useLocalSearchParams()
+  const user = JSON.parse(Storage.getString('user.profile'))
 
-  const { isPending, isFetching, isError, data, error } = useQuery({
-    queryKey: ['todos', id],
+  const bottomSheetModalRef = useRef(null);
+  const snapPoints = useMemo(() => ['45%', '70%'], []);
+  const renderBackdrop = useCallback((props: any) => (
+      <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
+    ),[]
+  )
+  const onOpenComments = useCallback((id) => {
+    bottomSheetModalRef.current?.present()
+  }, [])
+
+  const { isPending, isError, data, error } = useQuery({
+    queryKey: ['getStatusById', id],
     queryFn: getStatusById,
   })
 
@@ -38,8 +55,16 @@ export default function Page() {
           headerBackTitle: 'Back',
         }}
       />
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={1}
+        snapPoints={snapPoints}
+        backdropComponent={renderBackdrop}
+      >
+        <CommentFeed id={id} />
+      </BottomSheetModal>
       <ScrollView flexShrink={1}>
-        <FeedPost post={data} />
+        <FeedPost post={data} user={user} onOpenComments={onOpenComments} />
       </ScrollView>
     </SafeAreaView>
   )

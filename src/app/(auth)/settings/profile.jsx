@@ -41,7 +41,7 @@ export default function Page() {
           overflow="hidden"
           flexWrap="wrap"
           pb="$3"
-          borderBottomWidth={border ? 1 : 0}
+          borderBottomWidth={border ? 1 : 'auto'}
           borderBottomColor="$gray4"
         >
           <Link href={path}>
@@ -57,7 +57,7 @@ export default function Page() {
           overflow="hidden"
           flexWrap="wrap"
           pb="$3"
-          borderBottomWidth={border ? 1 : 0}
+          borderBottomWidth={border ? 1 : 'auto'}
           borderBottomColor="$gray4"
         >
           <Text fontSize="$6" flexWrap="wrap">

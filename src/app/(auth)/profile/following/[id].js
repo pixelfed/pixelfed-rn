@@ -7,12 +7,12 @@ import { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, Stack, useLocalSearchParams } from 'expo-router'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
-import { getAccountById, getAccountFollowers } from 'src/lib/api'
+import { getAccountById, getAccountFollowing } from 'src/lib/api'
 import UserAvatar from 'src/components/common/UserAvatar'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
-export default function FollowersScreen() {
+export default function FollowingScreen() {
   const { id } = useLocalSearchParams()
   
   const RenderItem = ({ item }) => {
@@ -54,9 +54,9 @@ export default function FollowersScreen() {
     isError,
     error,
   } = useInfiniteQuery({
-    queryKey: ['getAccountFollowers', profileId],
+    queryKey: ['getAccountFollowing', profileId],
     queryFn:  async ({ pageParam }) => {
-      return await getAccountFollowers(profileId, pageParam)
+      return await getAccountFollowing(profileId, pageParam)
     },
     getNextPageParam: (lastPage) => lastPage.nextPage,
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
@@ -87,7 +87,7 @@ export default function FollowersScreen() {
     <SafeAreaView flex={1} edges={['bottom']}>
       <Stack.Screen
         options={{
-          title: 'Followers',
+          title: 'Following',
           headerBackTitle: 'Back',
         }}
       />

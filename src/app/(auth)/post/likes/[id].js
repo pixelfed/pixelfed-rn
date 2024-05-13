@@ -7,12 +7,12 @@ import { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, Stack, useLocalSearchParams } from 'expo-router'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
-import { getAccountById, getAccountFollowers } from 'src/lib/api'
+import { getStatusById, getStatusLikes } from 'src/lib/api'
 import UserAvatar from 'src/components/common/UserAvatar'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
-export default function FollowersScreen() {
+export default function Page() {
   const { id } = useLocalSearchParams()
   
   const RenderItem = ({ item }) => {
@@ -31,17 +31,16 @@ export default function FollowersScreen() {
     )
   }
 
-  const { data: profile } = useQuery({
-    queryKey: ['getAccountById', id],
-    queryFn: getAccountById,
+  const { data: status } = useQuery({
+    queryKey: ['getStatusById', id],
+    queryFn: getStatusById,
   })
 
-  const profileId = profile?.id;
+  const statusId = status?.id;
 
   const ItemSeparator = () => <View h={1} bg="$gray5"></View>
 
   const {
-    status,
     fetchStatus,
     data: feed,
     fetchNextPage,
@@ -54,9 +53,9 @@ export default function FollowersScreen() {
     isError,
     error,
   } = useInfiniteQuery({
-    queryKey: ['getAccountFollowers', profileId],
+    queryKey: ['getStatusLikes', statusId],
     queryFn:  async ({ pageParam }) => {
-      return await getAccountFollowers(profileId, pageParam)
+      return await getStatusLikes(statusId, pageParam)
     },
     getNextPageParam: (lastPage) => lastPage.nextPage,
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
@@ -64,7 +63,7 @@ export default function FollowersScreen() {
       pages: [...data.pages].reverse(),
       pageParams: [...data.pageParams].reverse(),
     }),
-    enabled: !!profile,
+    enabled: !!status,
   })
 
   if (isFetching && !isFetchingPreviousPage) {
@@ -87,7 +86,7 @@ export default function FollowersScreen() {
     <SafeAreaView flex={1} edges={['bottom']}>
       <Stack.Screen
         options={{
-          title: 'Followers',
+          title: status ? 'Likes (' + status.favourites_count + ')' : 'Likes',
           headerBackTitle: 'Back',
         }}
       />

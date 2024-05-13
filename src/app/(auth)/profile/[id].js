@@ -5,7 +5,7 @@ import { Storage } from 'src/state/cache'
 import { queryApi } from 'src/requests'
 import { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams } from 'expo-router'
+import { Stack, useLocalSearchParams, Link } from 'expo-router'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { getAccountById, getAccountStatusesById } from 'src/lib/api'
 
@@ -59,16 +59,18 @@ export default function ProfileScreen() {
 
   const RenderItem = ({ item }) =>
     item && item.media_attachments && item.media_attachments[0].url ? (
-      <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
-        <Image
-          source={{
-            uri: item.media_attachments[0].url,
-            width: SCREEN_WIDTH / 4 - 2,
-            height: 110,
-          }}
-          resizeMode="cover"
-        />
-      </View>
+      <Link href={`/post/${item.id}`} asChild>
+        <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
+          <Image
+            source={{
+              uri: item.media_attachments[0].url,
+              width: SCREEN_WIDTH / 4 - 2,
+              height: 110,
+            }}
+            resizeMode="cover"
+            />
+        </View>
+      </Link>
     ) : null
 
   return (

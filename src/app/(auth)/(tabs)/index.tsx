@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useRef, useMemo } from 'react'
 import { FlatList, StyleSheet, Pressable, ActivityIndicator } from 'react-native'
-import { Text, View, XStack, Select, Adapt, Sheet, SheetContents } from 'tamagui'
+import { Text, View, XStack, Select, Adapt, Sheet } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
 import { Feather } from '@expo/vector-icons'
@@ -10,10 +10,43 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import { fetchHomeFeed } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
 import { Storage } from 'src/state/cache'
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetBackdrop,
+} from '@gorhom/bottom-sheet'
+import CommentFeed from 'src/components/post/CommentFeed'
 
 const keyExtractor = (_, index) => `post-${_.id}-${index}`
 
 export default function HomeScreen() {
+  const [replyId, setReplyId] = useState(null);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const snapPoints = useMemo(() => ['55%', '60%'], []);
+
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present()
+  }, [])
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log('handleSheetChanges', index);
+  }, []);
+  const renderBackdrop = useCallback((props: any) => (
+      <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
+    ),[]
+  )
+
+  const onOpenComments = useCallback((id) => {
+    setReplyId(id)
+    bottomSheetModalRef.current?.present()
+  }, [replyId])
+
+  const userJson = Storage.getString('user.profile')
+  const user = JSON.parse(userJson)
+
+  const renderItem = useCallback(({item}) => (
+    <FeedPost post={item} user={user} onOpenComments={onOpenComments} />
+  ), []);
+
   const {
     data,
     fetchNextPage,
@@ -40,7 +73,7 @@ export default function HomeScreen() {
     )
   }
 
-  if (error) {
+  if (isError && error) {
     return (
       <View flexGrow={1}>
         <Text>Error</Text>
@@ -48,49 +81,26 @@ export default function HomeScreen() {
     )
   }
 
-  const user = JSON.parse(Storage.getString('user.profile'))
-
-  const HeaderComponent = () => (
-    <XStack
-      px="$3"
-      pb="$3"
-      bg="white"
-      justifyContent="space-between"
-      alignItems="center"
-      zIndex={100}
-    >
-      <XStack alignItems="center" gap="$1">
-        <Text fontSize={30} fontWeight="bold" letterSpacing={-1}>
-          Home
-        </Text>
-      </XStack>
-      <XStack gap="$5">
-        <Link href="/notifications" asChild>
-          <Pressable>
-            <Feather name="heart" size={26} />
-          </Pressable>
-        </Link>
-        <Link href="/chats" asChild>
-          <Pressable>
-            <Feather name="mail" size={26} />
-          </Pressable>
-        </Link>
-        <Feather name="plus-square" size={26} />
-      </XStack>
-    </XStack>
-  )
-
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="dark" />
       <Stack.Screen options={{ headerShown: false }} />
       <FeedHeader title="Home" />
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={1}
+        snapPoints={snapPoints}
+        onChange={handleSheetChanges}
+        backdropComponent={renderBackdrop}
+        keyboardBehavior={'extend'}
+      >
+        <CommentFeed id={replyId} />
+      </BottomSheetModal>
       <FlatList
         data={data?.pages.flatMap((page) => page.data)}
         keyExtractor={keyExtractor}
-        renderItem={({ item }) => <FeedPost post={item} user={user} />}
+        renderItem={renderItem}
         maxToRenderPerBatch={3}
-        contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
         onEndReached={() => {
           if (hasNextPage) fetchNextPage()
