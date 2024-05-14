@@ -205,3 +205,28 @@ export async function getStatusLikes(id, cursor) {
     : `https://${instance}/api/v1/statuses/${id}/favourited_by?_pe=1&limit=20`
   return await fetchPaginatedData(url)
 }
+
+export async function getTrendingHashtags() {
+  const instance = Storage.getString('app.instance')
+  let url = `https://${instance}/api/v1.1/discover/posts/hashtags`
+  return await fetchData(url)
+}
+
+export async function getTrendingPopularAccounts() {
+  const instance = Storage.getString('app.instance')
+  let url = `https://${instance}/api/v1.1/discover/accounts/popular`
+  return await fetchData(url)
+}
+
+export async function getTrendingPopularPosts() {
+  const instance = Storage.getString('app.instance')
+  let url = `https://${instance}/api/v1.1/discover/posts/trending?range=daily`
+  return await fetchData(url)
+}
+
+export async function getAccountRelationship({queryKey}) {
+  const instance = Storage.getString('app.instance')
+  let url = `https://${instance}/api/v1/accounts/relationships?id[]=${queryKey[1]}`
+  const res = await fetchData(url)
+  return res[0]
+}
