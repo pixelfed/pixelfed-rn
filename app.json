@@ -39,6 +39,18 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
           "recordAudioAndroid": true
         }
+      ],
+      [
+        "expo-share-intent",
+        {
+          "iosActivationRules": {
+            "NSExtensionActivationSupportsWebURLWithMaxCount": 0,
+            "NSExtensionActivationSupportsWebPageWithMaxCount": 0,
+            "NSExtensionActivationSupportsImageWithMaxCount": 1,
+            "NSExtensionActivationSupportsMovieWithMaxCount": 1,
+          },
+          "androidIntentFilters": ["image/*"]
+        }
       ]
     ],
     "experiments": {

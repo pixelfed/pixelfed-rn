@@ -84,7 +84,6 @@ android {
     compileSdk rootProject.ext.compileSdkVersion
 
     namespace 'com.pixelfed.android'
-    
     defaultConfig {
         applicationId 'com.pixelfed.android'
         minSdkVersion rootProject.ext.minSdkVersion
