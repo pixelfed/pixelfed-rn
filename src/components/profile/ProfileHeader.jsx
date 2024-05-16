@@ -1,10 +1,15 @@
 import { View, Text, XStack, Image, YStack, Button, Separator } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
-import { formatTimestampMonthYear } from '../../utils'
+import { formatTimestampMonthYear, prettyCount } from '../../utils'
 import { Link } from 'expo-router'
 import { Pressable } from 'react-native'
+import EditProfile from './actionButtons/EditProfile'
+import FollowingProfile from './actionButtons/FollowingProfile'
+import FollowProfile from './actionButtons/FollowProfile'
+import BlockingProfile from './actionButtons/BlockingProfile'
+import ReadMore from '../common/ReadMore'
 
-export default function ProfileHeader({ profile, isSelf = false }) {
+export default function ProfileHeader({ profile, isSelf = false, relationship = false }) {
   const _prettyCount = (num) => {
     if (!num) {
       return 0
@@ -13,6 +18,14 @@ export default function ProfileHeader({ profile, isSelf = false }) {
       num = Number(num)
     }
     return num.toLocaleString('en-CA', { compactDisplay: 'short', notation: 'compact' })
+  }
+
+  const ActionButton = () => {
+    if(isSelf) { return <EditProfile />}
+
+    if(relationship && relationship.blocking) { return <BlockingProfile />}
+    if(relationship && relationship.following) { return <FollowingProfile />}
+    if(relationship && !relationship.following) { return <FollowProfile />}
   }
 
   return (
@@ -27,7 +40,7 @@ export default function ProfileHeader({ profile, isSelf = false }) {
         </Link>
 
         <Text fontWeight="bold" fontSize={20}>
-          {profile?.username}
+          {profile?.acct}
         </Text>
 
         <XStack alignItems="center" gap="$5">
@@ -36,7 +49,7 @@ export default function ProfileHeader({ profile, isSelf = false }) {
               <Feather name="menu" size={26} />
             </Link>
           ) : (
-            <Feather name="more-horizontal" size={26} />
+            <Feather name="more-horizontal" size={20} />
           )}
         </XStack>
       </XStack>
@@ -56,7 +69,7 @@ export default function ProfileHeader({ profile, isSelf = false }) {
 
           <YStack alignItems="center" gap="$1">
             <Text fontWeight="bold" fontSize="$6">
-              {_prettyCount(profile?.statuses_count)}
+              {prettyCount(profile ? profile.statuses_count : 0)}
             </Text>
             <Text fontSize="$3">Posts</Text>
           </YStack>
@@ -64,7 +77,7 @@ export default function ProfileHeader({ profile, isSelf = false }) {
           <Link href={`/profile/following/${profile?.id}`}>
             <YStack alignItems="center" gap="$1">
               <Text fontWeight="bold" fontSize="$6">
-                {_prettyCount(profile?.following_count)}
+                {prettyCount(profile ? profile.following_count : 0)}
               </Text>
               <Text fontSize="$3">Following</Text>
             </YStack>
@@ -73,7 +86,7 @@ export default function ProfileHeader({ profile, isSelf = false }) {
           <Link href={`/profile/followers/${profile?.id}`}>
             <YStack alignItems="center" gap="$1">
               <Text fontWeight="bold" fontSize="$6">
-                {_prettyCount(profile?.followers_count)}
+                {prettyCount(profile ? profile.followers_count : 0)}
               </Text>
               <Text fontSize="$3">Followers</Text>
             </YStack>
@@ -85,76 +98,46 @@ export default function ProfileHeader({ profile, isSelf = false }) {
         <Text fontSize="$6" fontWeight={'bold'}>
           {profile?.display_name}
         </Text>
-        <Text fontSize="$6" fontWeight={'bold'} color="$gray9" letterSpacing={-0.4}>
+        {/* <Text fontSize="$6" fontWeight={'bold'} color="$gray9" letterSpacing={-0.4}>
           {profile?.local ? '@' + profile?.acct + '@pixelfed.social' : profile?.acct}
-        </Text>
-        <Text fontSize={14} fontWeight={400} letterSpacing={0.001}>
-          {profile?.note_text && profile?.note_text.replaceAll('\n', '')}
-        </Text>
+        </Text> */}
+        { profile?.note_text && profile?.note_text.trim().length ?
+        <ReadMore
+        numberOfLines={2}
+        renderRevealedFooter={() => (<></>)}
+        >
+          <Text fontSize={14} fontWeight={400} letterSpacing={0.001}>
+            {profile?.note_text && profile?.note.replaceAll("&amp;", "&").replaceAll(/(<([^>]+)>)/ig, "")}
+          </Text>
+        </ReadMore>
+        : null }
 
+        { profile?.website && profile?.website.trim().length ?
         <XStack alignItems="center" gap="$1">
           <Text fontSize="$5" fontWeight={'bold'} color="$blue9" letterSpacing={-0.34}>
             {profile?.website?.replaceAll('https://', '')}
           </Text>
         </XStack>
+        : null }
 
-        <Text fontSize="$3" fontWeight={600} color="$gray10" letterSpacing={-0.4}>
+        { profile?.local ?
+        <Text mt="$3" fontSize="$3" fontWeight={600} color="$gray10" letterSpacing={-0.4}>
           Joined {formatTimestampMonthYear(profile?.created_at)}
         </Text>
+        : null }
       </YStack>
 
-      {isSelf ? (
-        <Link href="/settings/profile" asChild>
-          <Button
-            theme="light"
-            my="$3"
-            bg="$gray7"
-            size="$4"
-            color="black"
-            fontWeight="bold"
-            fontSize="$6"
-            flexGrow={1}
-          >
-            Edit profile
-          </Button>
-        </Link>
-      ) : (
-        <XStack w="100%" my="$3" gap="$2">
-          <Button
-            theme="light"
-            bg="$blue9"
-            size="$4"
-            color="white"
-            fontWeight="bold"
-            fontSize="$6"
-            flexGrow={1}
-          >
-            Unfollow
-          </Button>
-
-          <Button
-            theme="light"
-            bg="transparent"
-            size="$4"
-            borderWidth={1}
-            borderColor="$blue7"
-            color="$blue9"
-            fontWeight="bold"
-            fontSize="$6"
-          >
-            Message
-          </Button>
-        </XStack>
-      )}
+      <ActionButton />
 
       <YStack>
-        <XStack my="$3" justifyContent="space-around">
+        <XStack mt="$1" mb="$3" justifyContent="space-around">
           <Feather name="grid" size={24} />
-          <Feather name="film" size={24} color="#ccc" />
-          <Feather name="layers" size={24} color="#ccc" />
-          <Feather name="message-circle" size={24} color="#ccc" />
-          <Feather name="tag" size={24} color="#ccc" />
-          <Feather name="map" size={24} color="#ccc" />
+          {/* <Feather name="film" size={24} color="#ccc" /> */}
+          <Feather name="list" size={24} color="#bbb" />
+          {/* <Feather name="layers" size={24} color="#ccc" /> */}
+          <Feather name="message-square" size={24} color="#bbb" />
+          {/* <Feather name="tag" size={24} color="#ccc" /> */}
+          {/* <Feather name="map" size={24} color="#ccc" /> */}
         </XStack>
       </YStack>
     </View>
