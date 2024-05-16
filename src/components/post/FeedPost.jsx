@@ -188,7 +188,7 @@ const PostCaption = React.memo(
               <Text fontWeight="bold">{username}</Text> {caption?.replaceAll('\n\n', ' ')}
             </Text>
           </XStack>
-          <XStack mt={-5} gap={5} flexWrap="wrap">
+          {/* <XStack mt={-5} gap={5} flexWrap="wrap">
             {tags.map((tag, idx) => (
               <Link key={tag.name} href={`/hashtag/${tag.name}`}>
                 <View key={tag.name} bg="$gray3" p={5} borderRadius={5}>
@@ -198,7 +198,7 @@ const PostCaption = React.memo(
                 </View>
               </Link>
             ))}
-          </XStack>
+          </XStack> */}
           {commentsCount ? (
             <Pressable onPress={() => onOpenComments()}>
               <Text color="$gray10" fontSize="$3">
@@ -247,6 +247,11 @@ export default function FeedPost({ post, user, onOpenComments }) {
   const goToProfile = () => {
     bottomSheetModalRef.current?.close()
     router.push(`/profile/${post.account.id}`)
+  }
+
+  const goToReport = () => {
+    bottomSheetModalRef.current?.close()
+    router.push(`/post/report/${post.id}`)
   }
 
   return (
@@ -387,7 +392,7 @@ export default function FeedPost({ post, user, onOpenComments }) {
               </Group.Item>
               {user && user?.id != post?.account.id ? (
                 <Group.Item>
-                  <Button size="$5" justifyContent="start">
+                  <Button size="$5" justifyContent="start" onPress={() => goToReport()}>
                     <XStack alignItems="center" gap="$3">
                       <Feather name="alert-circle" size={20} color="red" />
                       <Text fontSize="$5" color="$red9">

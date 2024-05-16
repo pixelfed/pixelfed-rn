@@ -37,7 +37,7 @@ export default function CommentFeed({ id }) {
         <YStack flexShrink={1}>
           <XStack flexShrink={1}>
             <XStack gap="$3" flexGrow={1}>
-              <UserAvatar url={item.account.avatar} width={40} height={40} />
+              <UserAvatar url={item.account.avatar} width={30} height={30} />
 
               <YStack flexGrow={1} maxWidth={SCREEN_WIDTH - 150} gap={4}>
                 <XStack gap="$2">
@@ -51,11 +51,11 @@ export default function CommentFeed({ id }) {
                 <Text flexWrap="wrap" fontSize="$4">
                   {item.content_text}
                 </Text>
-                <Pressable>
+                {/* <Pressable>
                   <Text mt="$2" fontWeight="bold" fontSize="$3" color="$gray9">
                     Reply
                   </Text>
-                </Pressable>
+                </Pressable> */}
               </YStack>
             </XStack>
             <YStack justifyContent="center" alignItems="center" gap="$1">
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   input: {
     flexShrink: 1,
     alignItems: 'center',
-    marginTop: 0,
+    marginTop: 5,
     marginHorizontal: 15,
     marginBottom: 30,
     borderRadius: 10,
