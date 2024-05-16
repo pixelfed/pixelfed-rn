@@ -18,6 +18,8 @@ export default (FeedHeader = ({ title = 'Home' }) => {
       justifyContent="space-between"
       alignItems="center"
       zIndex={100}
+      borderBottomWidth={0.5}
+      borderBottomColor="$gray5"
     >
       <XStack alignItems="center" gap="$1">
         <Text fontSize={30} fontWeight="bold" letterSpacing={-1}>
