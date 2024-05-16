@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useRef, useMemo } from 'react'
 import { FlatList, StyleSheet, Pressable, ActivityIndicator } from 'react-native'
-import { Text, View, XStack, Select, Adapt, Sheet, SheetContents } from 'tamagui'
+import { Text, View, XStack, Select, Adapt, Sheet } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
 import { Feather } from '@expo/vector-icons'
@@ -9,11 +9,48 @@ import { Link, Stack } from 'expo-router'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { fetchNetworkFeed } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
+import { Storage } from 'src/state/cache'
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetBackdrop,
+} from '@gorhom/bottom-sheet'
+import CommentFeed from 'src/components/post/CommentFeed'
 
-const RenderPost = ({ item }) => <FeedPost post={item} />
 const keyExtractor = (_, index) => `post-${_.id}-${index}`
 
 export default function NetworkScreen() {
+  const [replyId, setReplyId] = useState(null)
+  const bottomSheetModalRef = useRef(null)
+  const snapPoints = useMemo(() => ['55%', '80%'], [])
+
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present()
+  }, [])
+  const handleSheetChanges = useCallback((index: number) => {}, [])
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
+    ),
+    []
+  )
+
+  const onOpenComments = useCallback(
+    (id) => {
+      setReplyId(id)
+      bottomSheetModalRef.current?.present()
+    },
+    [replyId]
+  )
+
+  const userJson = Storage.getString('user.profile')
+  const user = JSON.parse(userJson)
+
+  const renderItem = useCallback(
+    ({ item }) => <FeedPost post={item} user={user} onOpenComments={onOpenComments} />,
+    []
+  )
+
   const {
     data,
     fetchNextPage,
@@ -25,7 +62,7 @@ export default function NetworkScreen() {
     isError,
     error,
   } = useInfiniteQuery({
-    queryKey: ['networkFeed'],
+    queryKey: ['fetchNetworkFeed'],
     initialPageParam: null,
     queryFn: fetchNetworkFeed,
     getNextPageParam: (lastPage) => lastPage.nextPage,
@@ -35,12 +72,12 @@ export default function NetworkScreen() {
   if (isFetching && !isFetchingNextPage) {
     return (
       <View flexGrow={1} mt="$5">
-        <ActivityIndicator />
+        <ActivityIndicator color={'#000'} />
       </View>
     )
   }
 
-  if (error) {
+  if (isError && error) {
     return (
       <View flexGrow={1}>
         <Text>Error</Text>
@@ -53,11 +90,10 @@ export default function NetworkScreen() {
       <StatusBar style="dark" />
       <Stack.Screen options={{ headerShown: false }} />
       <FeedHeader title="Network" />
-
       <FlatList
         data={data?.pages.flatMap((page) => page.data)}
         keyExtractor={keyExtractor}
-        renderItem={RenderPost}
+        renderItem={renderItem}
         maxToRenderPerBatch={3}
         showsVerticalScrollIndicator={false}
         onEndReached={() => {
@@ -66,6 +102,16 @@ export default function NetworkScreen() {
         onEndReachedThreshold={0.5}
         ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}
       />
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={1}
+        snapPoints={snapPoints}
+        onChange={handleSheetChanges}
+        backdropComponent={renderBackdrop}
+        keyboardBehavior={'extend'}
+      >
+        <CommentFeed id={replyId} />
+      </BottomSheetModal>
     </SafeAreaView>
   )
 }

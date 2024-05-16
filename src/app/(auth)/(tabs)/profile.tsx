@@ -42,7 +42,6 @@ export default function ProfileScreen() {
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
-      // console.log(lastPage)
       if (lastPage.length === 0) {
         return undefined
       }

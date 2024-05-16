@@ -22,7 +22,7 @@ const keyExtractor = (_, index) => `post-${_.id}-${index}`
 export default function HomeScreen() {
   const [replyId, setReplyId] = useState(null)
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
-  const snapPoints = useMemo(() => ['55%', '60%'], [])
+  const snapPoints = useMemo(() => ['55%', '80%'], [])
 
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
