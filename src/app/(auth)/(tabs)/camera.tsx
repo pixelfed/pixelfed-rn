@@ -1,14 +1,23 @@
 import { ActivityIndicator, SafeAreaView } from 'react-native'
-import { Button, Text, View, YStack, XStack, Tabs, Separator, SizableText, H5 } from 'tamagui'
+import {
+  Button,
+  Text,
+  View,
+  YStack,
+  XStack,
+  Tabs,
+  Separator,
+  SizableText,
+  H5,
+} from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { CameraView, useCameraPermissions } from 'expo-camera/next'
-import React, { useMemo, useState, useCallback, useRef} from 'react'
+import React, { useMemo, useState, useCallback, useRef } from 'react'
 import { StyleSheet, TouchableOpacity } from 'react-native'
 import { router } from 'expo-router'
 
-
 export default function App() {
-  const cameraRef = useRef(null);
+  const cameraRef = useRef(null)
   const [facing, setFacing] = useState('back')
   const [flash, setFlash] = useState('auto')
   const [permission, requestPermission] = useCameraPermissions()
@@ -40,7 +49,7 @@ export default function App() {
 
   const takePicture = async () => {
     const r = await cameraRef.current?.takePictureAsync()
-    router.push({ pathname: '/camera/preview', params: {id: JSON.stringify(r) }})
+    router.push({ pathname: '/camera/preview', params: { id: JSON.stringify(r) } })
   }
 
   const TabsContent = (props) => {
@@ -77,10 +86,15 @@ export default function App() {
 
         <TabsContent value="tab2">
           <View style={styles.container}>
-            <CameraView ref={cameraRef} style={styles.camera} facing={facing} flash={flash} enableTorch={flash}>
+            <CameraView
+              ref={cameraRef}
+              style={styles.camera}
+              facing={facing}
+              flash={flash}
+              enableTorch={flash}
+            >
               <View style={styles.buttonContainer}>
                 <XStack gap="$6">
-
                   <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
                     <Feather name="refresh-cw" color="white" size={30} />
                   </TouchableOpacity>
@@ -92,7 +106,11 @@ export default function App() {
                   </TouchableOpacity>
 
                   <TouchableOpacity style={styles.button} onPress={toggleFlash}>
-                    <Feather name={flash === 'off' ? 'zap-off' : 'zap'} color="white" size={30} />
+                    <Feather
+                      name={flash === 'off' ? 'zap-off' : 'zap'}
+                      color="white"
+                      size={30}
+                    />
                   </TouchableOpacity>
                 </XStack>
               </View>
@@ -104,9 +122,7 @@ export default function App() {
           <H5>New story</H5>
         </TabsContent>
         <Separator />
-        <Tabs.List
-          disablePassBorderRadius="top"
-        >
+        <Tabs.List disablePassBorderRadius="top">
           <Tabs.Tab flex={1} value="tab1">
             <SizableText size="$5">Camera Roll</SizableText>
           </Tabs.Tab>
@@ -117,8 +133,7 @@ export default function App() {
             <SizableText size="$5">Story</SizableText>
           </Tabs.Tab>
         </Tabs.List>
-
-    </Tabs>
+      </Tabs>
     </SafeAreaView>
   )
 }
@@ -146,7 +161,7 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   text: {
     fontSize: 24,
@@ -160,12 +175,12 @@ const styles = StyleSheet.create({
     borderWidth: 5,
     borderColor: '#fff',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   captureInner: {
     width: 25,
     height: 25,
     borderRadius: 25,
-    backgroundColor: '#fff'
-  }
+    backgroundColor: '#fff',
+  },
 })

@@ -21,11 +21,19 @@ export default function ProfileHeader({ profile, isSelf = false, relationship = 
   }
 
   const ActionButton = () => {
-    if(isSelf) { return <EditProfile />}
+    if (isSelf) {
+      return <EditProfile />
+    }
 
-    if(relationship && relationship.blocking) { return <BlockingProfile />}
-    if(relationship && relationship.following) { return <FollowingProfile />}
-    if(relationship && !relationship.following) { return <FollowProfile />}
+    if (relationship && relationship.blocking) {
+      return <BlockingProfile />
+    }
+    if (relationship && relationship.following) {
+      return <FollowingProfile />
+    }
+    if (relationship && !relationship.following) {
+      return <FollowProfile />
+    }
   }
 
   return (
@@ -101,30 +109,34 @@ export default function ProfileHeader({ profile, isSelf = false, relationship = 
         {/* <Text fontSize="$6" fontWeight={'bold'} color="$gray9" letterSpacing={-0.4}>
           {profile?.local ? '@' + profile?.acct + '@pixelfed.social' : profile?.acct}
         </Text> */}
-        { profile?.note_text && profile?.note_text.trim().length ?
-        <ReadMore
-        numberOfLines={2}
-        renderRevealedFooter={() => (<></>)}
-        >
-          <Text fontSize={14} fontWeight={400} letterSpacing={0.001}>
-            {profile?.note_text && profile?.note.replaceAll("&amp;", "&").replaceAll(/(<([^>]+)>)/ig, "")}
-          </Text>
-        </ReadMore>
-        : null }
+        {profile?.note_text && profile?.note_text.trim().length ? (
+          <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
+            <Text fontSize={14} fontWeight={400} letterSpacing={0.001}>
+              {profile?.note_text &&
+                profile?.note.replaceAll('&amp;', '&').replaceAll(/(<([^>]+)>)/gi, '')}
+            </Text>
+          </ReadMore>
+        ) : null}
 
-        { profile?.website && profile?.website.trim().length ?
-        <XStack alignItems="center" gap="$1">
-          <Text fontSize="$5" fontWeight={'bold'} color="$blue9" letterSpacing={-0.34}>
-            {profile?.website?.replaceAll('https://', '')}
-          </Text>
-        </XStack>
-        : null }
+        {profile?.website && profile?.website.trim().length ? (
+          <XStack alignItems="center" gap="$1">
+            <Text fontSize="$5" fontWeight={'bold'} color="$blue9" letterSpacing={-0.34}>
+              {profile?.website?.replaceAll('https://', '')}
+            </Text>
+          </XStack>
+        ) : null}
 
-        { profile?.local ?
-        <Text mt="$3" fontSize="$3" fontWeight={600} color="$gray10" letterSpacing={-0.4}>
-          Joined {formatTimestampMonthYear(profile?.created_at)}
-        </Text>
-        : null }
+        {profile?.local ? (
+          <Text
+            mt="$3"
+            fontSize="$3"
+            fontWeight={600}
+            color="$gray10"
+            letterSpacing={-0.4}
+          >
+            Joined {formatTimestampMonthYear(profile?.created_at)}
+          </Text>
+        ) : null}
       </YStack>
 
       <ActionButton />

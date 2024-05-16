@@ -7,28 +7,35 @@ import { useState, useEffect, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, Link } from 'expo-router'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
-import { getAccountById, getAccountStatusesById, getAccountRelationship } from 'src/lib/api'
+import {
+  getAccountById,
+  getAccountStatusesById,
+  getAccountRelationship,
+} from 'src/lib/api'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileScreen() {
   const { id } = useLocalSearchParams()
 
-  const RenderItem = useCallback(({ item }) =>
-    item && item.media_attachments && item.media_attachments[0].url ? (
-      <Link href={`/post/${item.id}`} asChild>
-        <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
-          <Image
-            source={{
-              uri: item.media_attachments[0].url,
-              width: SCREEN_WIDTH / 3 - 2,
-              height: 140,
-            }}
-            resizeMode="cover"
-          />
-        </View>
-      </Link>
-    ) : null, [])
+  const RenderItem = useCallback(
+    ({ item }) =>
+      item && item.media_attachments && item.media_attachments[0].url ? (
+        <Link href={`/post/${item.id}`} asChild>
+          <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
+            <Image
+              source={{
+                uri: item.media_attachments[0].url,
+                width: SCREEN_WIDTH / 3 - 2,
+                height: 140,
+              }}
+              resizeMode="cover"
+            />
+          </View>
+        </Link>
+      ) : null,
+    []
+  )
 
   const { data: user } = useQuery({
     queryKey: ['profileById', id],
@@ -40,11 +47,12 @@ export default function ProfileScreen() {
   const { data: relationship } = useQuery({
     queryKey: ['getAccountRelationship', id],
     queryFn: getAccountRelationship,
-    enabled: !!userId
+    enabled: !!userId,
   })
-  const RenderHeader = useCallback(() => 
-    <ProfileHeader profile={user} relationship={relationship} />
-  ,[user, relationship])
+  const RenderHeader = useCallback(
+    () => <ProfileHeader profile={user} relationship={relationship} />,
+    [user, relationship]
+  )
 
   const {
     status,

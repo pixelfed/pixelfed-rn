@@ -224,7 +224,7 @@ export async function getTrendingPopularPosts() {
   return await fetchData(url)
 }
 
-export async function getAccountRelationship({queryKey}) {
+export async function getAccountRelationship({ queryKey }) {
   const instance = Storage.getString('app.instance')
   let url = `https://${instance}/api/v1/accounts/relationships?id[]=${queryKey[1]}`
   const res = await fetchData(url)
