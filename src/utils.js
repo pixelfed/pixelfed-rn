@@ -130,3 +130,15 @@ export function prettyCount(number) {
   }
   return (number / 1000000000).toFixed(number % 1000000000 === 0 ? 0 : 1) + 'B'
 }
+
+export function likeCountLabel(number) {
+  if(!number) {
+    return ''
+  }
+
+  if(number == 1) {
+    return '1 Like'
+  }
+
+  return `${prettyCount(number)} Likes`
+}
