@@ -72,12 +72,12 @@ export async function searchQuery(query) {
   })
   const data = await response.json()
   let mapd = [
-    ...data.accounts.map((a) => {
-      a._type = 'account'
-      return a
-    }),
     ...data.hashtags.map((a) => {
       a._type = 'hashtag'
+      return a
+    }),
+    ...data.accounts.map((a) => {
+      a._type = 'account'
       return a
     }),
   ]
@@ -229,4 +229,93 @@ export async function getAccountRelationship({ queryKey }) {
   let url = `https://${instance}/api/v1/accounts/relationships?id[]=${queryKey[1]}`
   const res = await fetchData(url)
   return res[0]
+}
+
+export async function postComment({postId, commentText}) {
+  const instance = Storage.getString('app.instance')
+  const token = Storage.getString('app.token')
+
+  const params = new URLSearchParams({
+    in_reply_to_id: postId,
+    status: commentText
+  })
+  const url = `https://${instance}/api/v1/statuses?${params}`
+  const response = await fetch(url, {
+    method: 'post',
+    headers: new Headers({
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
+  })
+  return await response.json()
+}
+
+export async function likeStatus({id}) {
+  const instance = Storage.getString('app.instance')
+  const token = Storage.getString('app.token')
+
+  const url = `https://${instance}/api/v1/statuses/${id}/favourite`
+  const response = await fetch(url, {
+    method: 'post',
+    headers: new Headers({
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
+  })
+  return await response.json()
+}
+
+export async function unlikeStatus({id}) {
+  const instance = Storage.getString('app.instance')
+  const token = Storage.getString('app.token')
+
+  const url = `https://${instance}/api/v1/statuses/${id}/unfavourite`
+  const response = await fetch(url, {
+    method: 'post',
+    headers: new Headers({
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
+  })
+  return await response.json()
+}
+
+export async function reportStatus({id, type}) {
+  const instance = Storage.getString('app.instance')
+  const token = Storage.getString('app.token')
+
+  const params = new URLSearchParams({
+    report_type: type,
+    object_type: 'post',
+    object_id: id
+  })
+  const url = `https://${instance}/api/v1.1/report?${params}`
+  const response = await fetch(url, {
+    method: 'post',
+    headers: new Headers({
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
+  })
+  return await response.json()
+}
+
+export async function deleteStatus({id}) {
+  const instance = Storage.getString('app.instance')
+  const token = Storage.getString('app.token')
+
+  const url = `https://${instance}/api/v1/statuses/${id}`
+  const response = await fetch(url, {
+    method: 'delete',
+    headers: new Headers({
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
+  })
+  return await response.json()
 }
