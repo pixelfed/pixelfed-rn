@@ -155,9 +155,9 @@ export async function getAccountStatusesById(id, page) {
   return await fetchData(url)
 }
 
-export async function getHashtagByName(id) {
+export async function getHashtagByName({queryKey}) {
   const instance = Storage.getString('app.instance')
-  const url = `https://${instance}/api/v1/tags/${id}/?_pe=1`
+  const url = `https://${instance}/api/v1/tags/${queryKey[1]}/?_pe=1`
   return await fetchData(url)
 }
 
@@ -318,4 +318,16 @@ export async function deleteStatus({id}) {
     }),
   })
   return await response.json()
+}
+
+export async function getMutes() {
+  const instance = Storage.getString('app.instance')
+  let url = `https://${instance}/api/v1/mutes`
+  return await fetchData(url)
+}
+
+export async function getBlocks() {
+  const instance = Storage.getString('app.instance')
+  let url = `https://${instance}/api/v1/blocks`
+  return await fetchData(url)
 }
