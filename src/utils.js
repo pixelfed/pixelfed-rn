@@ -142,3 +142,15 @@ export function likeCountLabel(number) {
 
   return `${prettyCount(number)} Likes`
 }
+
+export function postCountLabel(number) {
+  if(!number) {
+    return '0 Posts'
+  }
+
+  if(number == 1) {
+    return '1 Post'
+  }
+
+  return `${prettyCount(number)} Posts`
+}
