@@ -13,6 +13,8 @@ PODS:
     - ZXingObjC/PDF417
   - ExpoFileSystem (16.0.9):
     - ExpoModulesCore
+  - ExpoHaptics (12.8.1):
+    - ExpoModulesCore
   - ExpoHead (3.4.10):
     - ExpoModulesCore
   - ExpoKeepAwake (12.8.2):
@@ -1152,6 +1154,7 @@ DEPENDENCIES:
   - Expo (from `../node_modules/expo`)
   - ExpoCamera (from `../node_modules/expo-camera/ios`)
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
+  - ExpoHaptics (from `../node_modules/expo-haptics/ios`)
   - ExpoHead (from `../node_modules/expo-router/ios`)
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
@@ -1244,6 +1247,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-camera/ios"
   ExpoFileSystem:
     :path: "../node_modules/expo-file-system/ios"
+  ExpoHaptics:
+    :path: "../node_modules/expo-haptics/ios"
   ExpoHead:
     :path: "../node_modules/expo-router/ios"
   ExpoKeepAwake:
@@ -1376,6 +1381,7 @@ SPEC CHECKSUMS:
   Expo: 2cdb5916749a1509cf88114f1f510bd458630eb4
   ExpoCamera: f3f157db67e5a491e1104a2c0018c240242936e7
   ExpoFileSystem: 74cc0fae916f9f044248433971dcfc8c3befd057
+  ExpoHaptics: 28a771b630353cd6e8dcf1b1e3e693e38ad7c3c3
   ExpoHead: 89ffd324e60520751c2c285233fe45e875c91874
   ExpoKeepAwake: 0f5cad99603a3268e50af9a6eb8b76d0d9ac956c
   ExpoModulesCore: 4a8928a228569301ac4fc4a1e846713e05754d05
