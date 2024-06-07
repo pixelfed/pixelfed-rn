@@ -1,7 +1,7 @@
 import { useAuth } from '@state/AuthProvider'
 import { Link, Tabs, Redirect } from 'expo-router'
 import { Pressable } from 'react-native'
-import { Text } from 'tamagui'
+import { Text, View } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 
 export default function AppLayout() {
@@ -28,7 +28,7 @@ export default function AppLayout() {
         options={{
           tabBarShowLabel: false,
           headerShown: false,
-          tabBarIcon: ({ color }) => <Feather name="globe" size={23} color={color} />,
+          tabBarIcon: ({ color }) => <Feather name="users" size={23} color={color} />,
         }}
       />
 
@@ -38,7 +38,9 @@ export default function AppLayout() {
           tabBarShowLabel: false,
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <Feather name="plus-square" size={26} color={color} />
+            <View bg="$gray4" px="$3" py={4} borderRadius={5}>
+              <Feather name="plus" size={26} color={color} />
+            </View>
           ),
         }}
       />
