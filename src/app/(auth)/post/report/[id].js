@@ -1,13 +1,16 @@
-import { Stack, useLocalSearchParams } from 'expo-router'
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ScrollView, Text, View, XStack, YStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
+import { useMutation } from '@tanstack/react-query'
+import { reportStatus } from 'src/lib/api'
+import { ActivityIndicator, Pressable } from 'react-native'
 
 export default function Page() {
   const { id } = useLocalSearchParams()
+  const router = useRouter()
 
   const reportTypes = [
-    { name: 'unlike', title: "I just don't like it" },
     { name: 'spam', title: "It's spam" },
     { name: 'sensitive', title: 'Nudity or sexual activity' },
     { name: 'abusive', title: 'Bullying or harassment' },
@@ -19,20 +22,37 @@ export default function Page() {
     { name: 'terrorism', title: 'Terrorism or terrorism-related content' },
   ]
 
-  const RenderOption = ({ title }) => (
-    <XStack
-      px="$5"
-      py="$3"
-      bg="white"
-      borderTopWidth={1}
-      borderColor="$gray7"
-      justifyContent="space-between"
-      alignItems="center"
-    >
-      <Text fontSize="$5">{title}</Text>
-      <Feather name="chevron-right" size={20} color="#ccc" />
-    </XStack>
+  const RenderOption = ({ title, name }) => (
+    <Pressable onPress={() => handleAction(name)}>
+      <XStack
+        px="$5"
+        py="$3"
+        bg="white"
+        borderTopWidth={1}
+        borderColor="$gray7"
+        justifyContent="space-between"
+        alignItems="center"
+        >
+        <Text fontSize="$5">{title}</Text>
+        <Feather name="chevron-right" size={20} color="#ccc" />
+      </XStack>
+    </Pressable>
   )
+
+  const handleAction = (type) => {
+    console.log('reporting ' + id)
+    console.log('report type ' + type)
+    mutation.mutate({id: id, type: type })
+  }
+
+  const mutation = useMutation({
+    mutationFn: (newReport) => {
+      return reportStatus(newReport)
+    },
+    onSuccess: (data, variables, context) => {
+      router.replace('/post/report/sent')
+    },
+  })
 
   return (
     <SafeAreaView flex={1} edges={['bottom']}>
@@ -42,7 +62,9 @@ export default function Page() {
           headerBackTitle: 'Back',
         }}
       />
+      { mutation.isPending ? <ActivityIndicator /> :
       <ScrollView flexGrow={1}>
+
         <YStack p="$5" bg="white" gap="$3">
           <Text fontSize="$7" fontWeight="bold">
             Why are you reporting this post?
@@ -54,17 +76,9 @@ export default function Page() {
           </Text>
         </YStack>
         {reportTypes.map((r) => (
-          <RenderOption key={r.name} title={r.title} />
+          <RenderOption key={r.name} title={r.title} name={r.name} />
         ))}
-        {/* <RenderOption title="I just don't like it" />
-                <RenderOption title="It's spam" />
-                <RenderOption title="Nudity or sexual activity" />
-                <RenderOption title="Hate speech or symbols" />
-                <RenderOption title="Violence or dangerous organizations" />
-                <RenderOption title="Bullying or harassment" />
-                <RenderOption title="I think this account is underage" />
-                <RenderOption title="Copyright infringement" /> */}
-      </ScrollView>
+      </ScrollView> }
     </SafeAreaView>
   )
 }
