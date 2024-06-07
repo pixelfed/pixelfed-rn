@@ -3,18 +3,21 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { TamaguiProvider } from 'tamagui'
 import { config } from '../../tamagui.config'
 import { useFonts } from 'expo-font'
-import { Stack } from 'expo-router'
+import { Stack, useRouter, ErrorBoundary } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import React, { useEffect } from 'react'
 import AuthProvider from '../state/AuthProvider'
 import { useColorScheme, type AppStateStatus, Platform } from 'react-native'
-export { ErrorBoundary } from 'expo-router'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-query'
 import { useAppState } from 'src/hooks/useAppState'
 import { useOnlineManager } from 'src/hooks/useOnlineManager'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
+import { ShareIntentProvider } from "expo-share-intent";
+
+import Constants from "expo-constants";
+
 export const unstable_settings = {
   initialRouteName: '/login',
 }
@@ -32,7 +35,7 @@ const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 2 } },
 })
 
-export default function RootLayout() {
+function RootLayout() {
   useOnlineManager()
 
   useAppState(onAppStateChange)
@@ -54,6 +57,25 @@ export default function RootLayout() {
   if (!loaded) return null
 
   return <RootLayoutNav />
+}
+
+export default function RootLayoutWithContext() {
+  const router = useRouter();
+  return (
+    <ShareIntentProvider
+      options={{
+        debug: true,
+        resetOnBackground: true,
+        onResetShareIntent: () =>
+          // used when app going in background and when the reset button is pressed
+          router.replace({
+            pathname: "/",
+          }),
+      }}
+    >
+      <RootLayout />
+    </ShareIntentProvider>
+  );
 }
 
 function RootLayoutNav() {
