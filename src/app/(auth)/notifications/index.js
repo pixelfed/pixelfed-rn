@@ -44,16 +44,16 @@ export default function NotificationsScreen() {
     switch (type) {
       case 'like':
       case 'favourite':
-        return 'liked a post.'
+        return 'liked a post'
 
       case 'follow':
-        return 'followed you.'
+        return 'followed you'
 
       case 'mention':
-        return 'mentioned you.'
+        return 'mentioned you'
 
       case 'reblog':
-        return 'shared your post.'
+        return 'shared your post'
 
       default:
         return ' unknown notification type'
@@ -72,7 +72,13 @@ export default function NotificationsScreen() {
 
           <XStack>
             <Text fontWeight={'bold'}>{item.account.username} </Text>
+            { item.status ?
+            <Link href={`/post/${item.status.in_reply_to_id ? item.status.in_reply_to_id : item.status.id}`} asChild>
+              <Text color="$blue10" fontWeight="bold">{_msgText(item.type)}</Text>
+            </Link>
+            :
             <Text>{_msgText(item.type)}</Text>
+            }
           </XStack>
         </XStack>
 
