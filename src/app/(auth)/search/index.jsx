@@ -11,10 +11,12 @@ import {
 } from '@tanstack/react-query'
 
 import { searchQuery } from 'src/lib/api'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { prettyCount } from 'src/utils'
 import Feather from '@expo/vector-icons/Feather'
+import ReadMore from '../../../components/common/ReadMore'
+import { formatTimestampMonthYear, postCountLabel } from '../../../utils'
 
 export default function SearchScreen() {
   const [query, setQuery] = useState('')
@@ -38,34 +40,47 @@ export default function SearchScreen() {
     return domain.hostname
   }
 
-  const RenderItem = ({ item }) => {
+  const RenderItem = useCallback(({ item }) => {
     if (item._type === 'account') {
       return (
         <View p="$3" bg="white">
           <XStack alignItems="center" gap="$3">
             <Link href={`/profile/${item.id}`} asChild>
               <Pressable>
-                <UserAvatar url={item.avatar} />
+                <UserAvatar url={item.avatar} width={43} height={43} />
               </Pressable>
             </Link>
-            <YStack gap={4}>
-              <XStack alignItems="center">
-                <Text fontSize="$6" fontWeight="bold">
-                  {item.username}
-                </Text>
+            <YStack flexGrow={1} gap={4}>
+              <Text fontSize="$3" color="$gray9">
+                {item.display_name}
+              </Text>
+              <XStack alignItems="center" flexWrap='wrap' whiteSpace='break-all' overflow='hidden'>
+                <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
+                    <Text fontSize="$6" fontWeight="bold">
+                      {item.username}
+                    </Text>
 
-                {/* { !item.local ? <View bg="$gray3" px={5} py={4} borderRadius={5}>
-                    <Text fontSize="$2" fontWeight="bold" color="#999">{getDomain(item.url)}</Text>
-                  </View> : null } */}
-                {!item.local ? (
-                  <Text fontSize="$6" color="$gray9">
-                    @{getDomain(item.url)}
-                  </Text>
-                ) : null}
+                    {/* { !item.local ? <View bg="$gray3" px={5} py={4} borderRadius={5}>
+                        <Text fontSize="$2" fontWeight="bold" color="#999">{getDomain(item.url)}</Text>
+                      </View> : null } */}
+                    {!item.local ? (
+                      <Text fontSize="$6" color="$gray9">
+                        @{getDomain(item.url)}
+                      </Text>
+                    ) : null}
+                </ReadMore>
               </XStack>
-              <XStack>
-                <Text color="$gray9" fontSize="$3">
+              <XStack gap="$2" alignItems='center'>
+                <Text color="$gray8" fontSize="$3">
                   {prettyCount(item.followers_count)} Followers
+                </Text>
+                <Text color="$gray8">·</Text>
+                <Text color="$gray8" fontSize="$3">
+                  {postCountLabel(item.statuses_count)}
+                </Text>
+                <Text color="$gray8">·</Text>
+                <Text color="$gray8" fontSize="$3">
+                {item.local ? 'Joined' : 'First seen'} {formatTimestampMonthYear(item.created_at)}
                 </Text>
               </XStack>
             </YStack>
@@ -76,33 +91,35 @@ export default function SearchScreen() {
 
     if (item._type === 'hashtag') {
       return (
-        <View p="$3" bg="white">
-          <XStack alignItems="center" gap="$3">
-            <View
-              w={50}
-              h={50}
-              borderRadius={50}
-              bg="$gray3"
-              justifyContent="center"
-              alignItems="center"
-            >
-              <Feather name="hash" size={30} color="#000" />
-            </View>
-            <YStack gap={4}>
-              <Text fontSize="$6" fontWeight="bold">
-                {item.name}
-              </Text>
-              <XStack>
-                <Text color="$gray9" fontSize="$3">
-                  {prettyCount(item.count)} posts
+        <Link href={`/hashtag/${item.name}`} asChild>
+          <View p="$3" bg="white">
+            <XStack alignItems="center" gap="$3">
+              <View
+                w={50}
+                h={50}
+                borderRadius={50}
+                bg="$gray3"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Feather name="hash" size={30} color="#000" />
+              </View>
+              <YStack gap={4}>
+                <Text fontSize="$6" fontWeight="bold">
+                  {item.name}
                 </Text>
-              </XStack>
-            </YStack>
-          </XStack>
-        </View>
+                <XStack>
+                  <Text color="$gray9" fontSize="$3">
+                    {prettyCount(item.count)} posts
+                  </Text>
+                </XStack>
+              </YStack>
+            </XStack>
+          </View>
+        </Link>
       )
     }
-  }
+  }, [])
 
   const RenderSeparator = () => <View h={1} bg="$gray4" />
 
