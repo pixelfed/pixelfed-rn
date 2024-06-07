@@ -5,7 +5,7 @@ import { Storage } from 'src/state/cache'
 import { queryApi } from 'src/requests'
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams } from 'expo-router'
+import { Stack, useLocalSearchParams, router } from 'expo-router'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { getStatusById, getAccountStatusesById } from 'src/lib/api'
 import FeedPost from 'src/components/post/FeedPost'
@@ -19,7 +19,6 @@ import CommentFeed from 'src/components/post/CommentFeed'
 export default function Page() {
   const { id } = useLocalSearchParams()
   const user = JSON.parse(Storage.getString('user.profile'))
-
   const bottomSheetModalRef = useRef(null)
   const snapPoints = useMemo(() => ['45%', '70%'], [])
   const renderBackdrop = useCallback(
@@ -28,6 +27,10 @@ export default function Page() {
     ),
     []
   )
+  const handleGotoProfile = (id) => {
+    bottomSheetModalRef.current?.close()
+    router.push(`/profile/${id}`)
+  }
   const onOpenComments = useCallback((id) => {
     bottomSheetModalRef.current?.present()
   }, [])
@@ -63,7 +66,11 @@ export default function Page() {
         snapPoints={snapPoints}
         backdropComponent={renderBackdrop}
       >
-        <CommentFeed id={id} />
+        <CommentFeed 
+          id={id}
+          user={user}
+          gotoProfile={handleGotoProfile}
+        />
       </BottomSheetModal>
       <ScrollView flexShrink={1}>
         <FeedPost post={data} user={user} onOpenComments={onOpenComments} />
