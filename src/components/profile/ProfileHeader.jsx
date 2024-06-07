@@ -144,11 +144,11 @@ export default function ProfileHeader({ profile, isSelf = false, relationship = 
       <YStack>
         <XStack mt="$1" mb="$3" justifyContent="space-around">
           <Feather name="grid" size={24} />
+          {/* <Feather name="list" size={24} color="#bbb" /> */}
           {/* <Feather name="film" size={24} color="#ccc" /> */}
-          <Feather name="list" size={24} color="#bbb" />
-          {/* <Feather name="layers" size={24} color="#ccc" /> */}
-          <Feather name="message-square" size={24} color="#bbb" />
-          {/* <Feather name="tag" size={24} color="#ccc" /> */}
+          {/* <Feather name="columns" size={24} color="#ccc" /> */}
+          {/* <Feather name="message-circle" size={24} color="#ccc" /> */}
+          {/* <Feather name="tag" si÷e={24} color="#ccc" /> */}
           {/* <Feather name="map" size={24} color="#ccc" /> */}
         </XStack>
       </YStack>
