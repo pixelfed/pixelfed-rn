@@ -1,4 +1,4 @@
-import { ActivityIndicator, SafeAreaView } from 'react-native'
+import { ActivityIndicator } from 'react-native'
 import {
   Button,
   Text,
@@ -15,6 +15,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera/next'
 import React, { useMemo, useState, useCallback, useRef } from 'react'
 import { StyleSheet, TouchableOpacity } from 'react-native'
 import { router } from 'expo-router'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function App() {
   const cameraRef = useRef(null)
@@ -30,11 +31,31 @@ export default function App() {
   if (!permission.granted) {
     // Camera permissions are not granted yet
     return (
-      <View style={styles.container}>
-        <Text style={{ textAlign: 'center' }}>
-          We need your permission to show the camera
-        </Text>
-        <Button onPress={requestPermission} title="grant permission" />
+      <View flexGrow={1} justifyContent='center' alignItems='center'>
+        <YStack flexGrow={1} gap="$5" justifyContent='center' alignItems='center'>
+          <YStack gap="$3" justifyContent='center' alignItems='center'>
+            <Text fontSize="$9" fontWeight="bold">
+              Enable Camera
+            </Text>
+            <Text fontSize="$6">
+              We need your permission to enable Pixelfed Camera
+            </Text>
+          </YStack>
+          <Button 
+            alignSelf="stretch" 
+            mx="$5" 
+            mb="$3" 
+            bg="$blue9" 
+            color="white" 
+            borderRadius={20} 
+            size="$6" 
+            onPress={requestPermission}>
+            Grant Permission
+          </Button>
+        </YStack>
+        <YStack alignSelf="stretch" gap="$3" justifyContent='center' alignItems='center'>
+          <Separator alignSelf="stretch" borderColor="$gray8" borderWidth={0.5} />
+        </YStack>
       </View>
     )
   }
@@ -49,6 +70,7 @@ export default function App() {
 
   const takePicture = async () => {
     const r = await cameraRef.current?.takePictureAsync()
+    console.log(r)
     router.push({ pathname: '/camera/preview', params: { id: JSON.stringify(r) } })
   }
 
@@ -74,13 +96,14 @@ export default function App() {
   return (
     <SafeAreaView flex={1} edges={['top']}>
       <Tabs
-        defaultValue="tab2"
+        defaultValue="tab1"
         orientation="horizontal"
         flexDirection="column"
         flexGrow={1}
         overflow="hidden"
       >
         <TabsContent value="tab1">
+          <H5>New story</H5>
           <ActivityIndicator />
         </TabsContent>
 
