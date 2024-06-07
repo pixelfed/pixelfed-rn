@@ -273,9 +273,7 @@ export default function FeedPost({ post, user, onOpenComments }) {
     await openBrowserAsync(post.url)
   }
 
-  const handleLike = async (id) => {
-    console.log('like ' + id)
-  }
+  const handleLike = async (id) => {}
 
   return (
     <View flex={1} style={{ width: SCREEN_WIDTH }}>

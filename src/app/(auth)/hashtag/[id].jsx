@@ -16,73 +16,6 @@ const SCREEN_WIDTH = Dimensions.get('screen').width
 export default function Page() {
   const { id } = useLocalSearchParams()
 
-  const Header = useCallback(
-    ({ hashtag, feed }) => {
-      return (
-        <View p="$4">
-          <XStack alignItems="center" gap="$4">
-            <View w={100} h={100}>
-              {feed?.pages ? (
-                <FastImage
-                  source={{ uri: feed.pages[0][0].media_attachments[0].url }}
-                  style={{
-                    width: 100,
-                    height: 100,
-                    borderRadius: 100,
-                    borderWidth: 1,
-                    borderColor: '#eee',
-                  }}
-                  resizeMode={FastImage.resizeMode.cover}
-                />
-              ) : (
-                <View w={100} h={100} borderRadius={100} bg="$gray6"></View>
-              )}
-            </View>
-            <YStack flexGrow={1} justifyContent="center" alignItems="center" gap="$2">
-              <Text fontSize="$6">
-                <Text fontWeight="bold">{prettyCount(hashtag?.count)}</Text>{' '}
-                <Text color="$gray9">posts</Text>
-              </Text>
-              {hashtag.following ? (
-                <Button
-                  borderColor="$blue9"
-                  h={35}
-                  size="$5"
-                  fontWeight="bold"
-                  color="$blue9"
-                  alignSelf="stretch"
-                >
-                  Unfollow
-                </Button>
-              ) : (
-                <Button
-                  bg="$blue9"
-                  h={35}
-                  size="$5"
-                  color="white"
-                  fontWeight="bold"
-                  alignSelf="stretch"
-                >
-                  Follow
-                </Button>
-              )}
-              {hashtag.following ? (
-                <Text fontSize="$4" color="$gray9" flexWrap="wrap">
-                  You are following this hashtag
-                </Text>
-              ) : (
-                <Text fontSize="$4" color="$gray9" flexWrap="wrap">
-                  Follow to see posts like these in your home feed
-                </Text>
-              )}
-            </YStack>
-          </XStack>
-        </View>
-      )
-    },
-    [hashtag, feed]
-  )
-
   const RenderItem = useCallback(
     ({ item }) =>
       item && item.media_attachments && item.media_attachments[0].url ? (
@@ -171,8 +104,75 @@ export default function Page() {
       }, lastPage[0].id)
       return lowestId
     },
-    enabled: !isPending && !!hashtag,
+    enabled: !isPending,
   })
+
+  const Header = useCallback(
+    ({ hashtag, feed }) => {
+      return (
+        <View p="$4">
+          <XStack alignItems="center" gap="$4">
+            <View w={100} h={100}>
+              {feed?.pages ? (
+                <FastImage
+                  source={{ uri: feed.pages[0][0].media_attachments[0].url }}
+                  style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: 100,
+                    borderWidth: 1,
+                    borderColor: '#eee',
+                  }}
+                  resizeMode={FastImage.resizeMode.cover}
+                />
+              ) : (
+                <View w={100} h={100} borderRadius={100} bg="$gray6"></View>
+              )}
+            </View>
+            <YStack flexGrow={1} justifyContent="center" alignItems="center" gap="$2">
+              <Text fontSize="$6">
+                <Text fontWeight="bold">{prettyCount(hashtag?.count)}</Text>{' '}
+                <Text color="$gray9">posts</Text>
+              </Text>
+              {hashtag.following ? (
+                <Button
+                  borderColor="$blue9"
+                  h={35}
+                  size="$5"
+                  fontWeight="bold"
+                  color="$blue9"
+                  alignSelf="stretch"
+                >
+                  Unfollow
+                </Button>
+              ) : (
+                <Button
+                  bg="$blue9"
+                  h={35}
+                  size="$5"
+                  color="white"
+                  fontWeight="bold"
+                  alignSelf="stretch"
+                >
+                  Follow
+                </Button>
+              )}
+              {hashtag.following ? (
+                <Text fontSize="$4" color="$gray9" flexWrap="wrap">
+                  You are following this hashtag
+                </Text>
+              ) : (
+                <Text fontSize="$4" color="$gray9" flexWrap="wrap">
+                  Follow to see posts like these in your home feed
+                </Text>
+              )}
+            </YStack>
+          </XStack>
+        </View>
+      )
+    },
+    [hashtag, feed]
+  )
 
   const {
     data: related,

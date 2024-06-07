@@ -11,6 +11,7 @@ import {
   YStack,
   getFontSize,
   Text,
+  View,
 } from 'tamagui'
 import { Animated } from 'react-native'
 
@@ -91,11 +92,10 @@ export function FormSelectItem(props: SelectProps) {
               () =>
                 props?.options?.map((item, i) => {
                   return (
-                    <>
+                    <View key={item.name}>
                       <Separator />
                       <Select.Item
                         index={i}
-                        key={item.name}
                         value={item.name}
                         py="$3"
                         alignItems="center"
@@ -115,7 +115,7 @@ export function FormSelectItem(props: SelectProps) {
                           </XStack>
                         </YStack>
                       </Select.Item>
-                    </>
+                    </View>
                   )
                 }),
               [props, val]
