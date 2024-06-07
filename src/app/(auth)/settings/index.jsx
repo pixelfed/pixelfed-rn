@@ -15,12 +15,14 @@ import { Storage } from 'src/state/cache'
 import { queryApi } from 'src/requests'
 import { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams } from 'expo-router'
+import { Stack, useLocalSearchParams, Link } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
 import { useAuth } from '@state/AuthProvider'
+import { openBrowserAsync } from '../../../utils'
 
 export default function Page() {
   const [user, setUser] = useState()
+  const instance = Storage.getString('app.instance')
 
   useEffect(() => {
     const userJson = JSON.parse(Storage.getString('user.profile'))
@@ -33,17 +35,23 @@ export default function Page() {
 
   const { logout, isLoading } = useAuth()
 
+  const onFeedback = async () => {
+    openBrowserAsync('https://github.com/pixelfed/pixelfed-rn/discussions')
+  }
+
   const GroupButton = ({ icon, title, path }) => (
     <Group.Item>
-      <Button bg="$gray1" justifyContent="start" size="$5">
-        <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
-          <XStack alignItems="center" gap="$3">
-            <Feather name={icon} size={17} />
-            <Text fontSize="$6">{title}</Text>
+      <Link href={path} asChild>
+        <Button bg="$gray1" justifyContent="start" size="$5" px="$3">
+          <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
+            <XStack alignItems="center" ml="$1" gap="$3">
+              <Feather name={icon} size={17} color="#666" />
+              <Text fontSize="$6">{title}</Text>
+            </XStack>
+            <Feather name="chevron-right" size={20} color="#ccc" />
           </XStack>
-          <Feather name="chevron-right" size={20} color="#ccc" />
-        </XStack>
-      </Button>
+        </Button>
+      </Link>
     </Group.Item>
   )
 
@@ -67,31 +75,47 @@ export default function Page() {
           headerBackTitle: 'Back',
         }}
       />
-      <ScrollView flexShrink={1}>
-        <View p="$5">
+      <ScrollView flexShrink={1} showsVerticalScrollIndicator={false}>
+        <YStack p="$5" gap="$5">
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
-            <Group.Item>
-              <Button bg="$gray1" justifyContent="start" size="$5">
-                <XStack alignItems="center" gap="$3">
-                  <Feather name="user" size={20} />
-                  <Text fontSize="$6">My Profile</Text>
-                </XStack>
-              </Button>
-            </Group.Item>
-            <GroupButton icon="aperture" title="Avatar" path="/settings/avatar" />
-            <GroupButton icon="edit-3" title="Account" path="/settings/security" />
-            {/* <GroupButton 
-                        icon='shield'
-                        title='Security'
-                        path='/settings/security'
-                    /> */}
-            <GroupButton icon="lock" title="Privacy" path="/settings/security" />
+            <GroupButton icon="user" title="Avatar, Bio and Display Name" path="/settings/profile" />
           </Group>
 
-          <Button bg="$red4" mt="$5" onPress={() => handleLogOut()}>
+          <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
+            {/* <GroupButton icon="archive" title="Archives" path="/settings/security" /> */}
+            <GroupButton icon="grid" title="Collections" path="/collections/" />
+            <GroupButton icon="tag" title="Followed Hashtags" path="/hashtag/followedTags" />
+            {/* <GroupButton icon='shield' title='Security' path='/settings/security' /> */}
+            <GroupButton icon="lock" title="Privacy & Relationships" path="/settings/privacy" />
+          </Group>
+
+          <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
+            <GroupButton icon="life-buoy" title="Accessibility" path="/settings/accessibility/" />
+            <GroupButton icon="droplet" title="Appearance" path="/settings/appearance/" />
+            <GroupButton icon="camera" title="Media" path="/settings/media" />
+            <GroupButton icon="shield" title="Security" path="/settings/security" />
+          </Group>
+
+          <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
+            <GroupButton icon="server" title={instance} path="/settings/instance/" />
+            <GroupButton icon="align-left" title="Legal" path="/settings/legal/" />
+            <Group.Item>
+              <Button onPress={() => onFeedback()} bg="$gray1" justifyContent="start" size="$5" px="$3">
+                <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
+                  <XStack alignItems="center" ml="$1" gap="$3">
+                    <Feather name="help-circle" size={17} color="#666" />
+                    <Text fontSize="$6">Report an issue, or feedback</Text>
+                  </XStack>
+                  <Feather name="chevron-right" size={20} color="#ccc" />
+                </XStack>
+              </Button>
+          </Group.Item>
+          </Group>
+
+          <Button bg="$red4" mt="$2" onPress={() => handleLogOut()}>
             <Text>Log out {'@' + user?.username}</Text>
           </Button>
-        </View>
+        </YStack>
       </ScrollView>
     </SafeAreaView>
   )
