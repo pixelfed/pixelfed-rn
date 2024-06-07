@@ -5,7 +5,7 @@ import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
 import { Feather } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link, Stack } from 'expo-router'
+import { Link, Stack, useRouter } from 'expo-router'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { fetchNetworkFeed } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
@@ -20,6 +20,7 @@ import CommentFeed from 'src/components/post/CommentFeed'
 const keyExtractor = (_, index) => `post-${_.id}-${index}`
 
 export default function NetworkScreen() {
+  const router = useRouter();
   const [replyId, setReplyId] = useState(null)
   const bottomSheetModalRef = useRef(null)
   const snapPoints = useMemo(() => ['55%', '80%'], [])
@@ -51,6 +52,16 @@ export default function NetworkScreen() {
     []
   )
 
+  const handleShowLikes = (id) => {
+    bottomSheetModalRef.current?.close()
+    router.push(`/post/likes/${id}`)
+  }
+
+  const handleCommentReport = (id) => {
+    bottomSheetModalRef.current?.close()
+    router.push(`/post/report/${id}`)
+  }
+
   const {
     data,
     fetchNextPage,
@@ -59,6 +70,8 @@ export default function NetworkScreen() {
     hasPreviousPage,
     isFetchingNextPage,
     isFetching,
+    isRefetching,
+    refetch,
     isError,
     error,
   } = useInfiniteQuery({
@@ -69,7 +82,7 @@ export default function NetworkScreen() {
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
   })
 
-  if (isFetching && !isFetchingNextPage) {
+  if (isFetching && !isFetchingNextPage && !isRefetching) {
     return (
       <View flexGrow={1} mt="$5">
         <ActivityIndicator color={'#000'} />
@@ -94,6 +107,8 @@ export default function NetworkScreen() {
         data={data?.pages.flatMap((page) => page.data)}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
+        refreshing={isRefetching}
+        onRefresh={refetch}
         maxToRenderPerBatch={3}
         showsVerticalScrollIndicator={false}
         onEndReached={() => {
@@ -110,7 +125,12 @@ export default function NetworkScreen() {
         backdropComponent={renderBackdrop}
         keyboardBehavior={'extend'}
       >
-        <CommentFeed id={replyId} />
+        <CommentFeed 
+          id={replyId} 
+          showLikes={handleShowLikes} 
+          user={user}
+          handleReport={handleCommentReport}
+        />
       </BottomSheetModal>
     </SafeAreaView>
   )
