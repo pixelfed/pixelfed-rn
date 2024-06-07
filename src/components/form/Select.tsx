@@ -8,7 +8,7 @@ export function FormSelect(props: any) {
   return (
     <YStack flexGrow={1} gap="$4">
       <XStack alignItems='center' justifyContent='space-between' gap="$4">
-        <Label miw={80} fontSize="$5">
+        <Label miw={80} fontSize="$5" color="$gray9">
           {props?.label}
         </Label>
         <FormSelectItem options={props?.options} defaultValue={props?.defaultValue} open={props.open} />
