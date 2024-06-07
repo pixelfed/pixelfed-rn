@@ -7,6 +7,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, Link } from 'expo-router'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
+import FastImage from 'react-native-fast-image'
 import {
   getAccountById,
   getAccountStatusesById,
@@ -17,20 +18,21 @@ const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileScreen() {
   const { id } = useLocalSearchParams()
+  const selfUser = JSON.parse(Storage.getString('user.profile'));
 
   const RenderItem = useCallback(
     ({ item }) =>
       item && item.media_attachments && item.media_attachments[0].url ? (
         <Link href={`/post/${item.id}`} asChild>
           <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
-            <Image
+          <FastImage
+              style={{ width: (SCREEN_WIDTH / 3 - 2), height: (SCREEN_WIDTH / 3 - 2), backgroundColor: "#ddd" }}
               source={{
-                uri: item.media_attachments[0].url,
-                width: SCREEN_WIDTH / 3 - 2,
-                height: 140,
+                  uri: item.media_attachments[0].url,
+                  priority: FastImage.priority.normal,
               }}
-              resizeMode="cover"
-            />
+              resizeMode={FastImage.resizeMode.cover}
+          />
           </View>
         </Link>
       ) : null,
@@ -47,7 +49,7 @@ export default function ProfileScreen() {
   const { data: relationship } = useQuery({
     queryKey: ['getAccountRelationship', id],
     queryFn: getAccountRelationship,
-    enabled: !!userId,
+    enabled: !!userId
   })
   const RenderHeader = useCallback(
     () => <ProfileHeader profile={user} relationship={relationship} />,
@@ -66,7 +68,7 @@ export default function ProfileScreen() {
     isError,
     error,
   } = useInfiniteQuery({
-    queryKey: ['statusesById', userId],
+    queryKey: ['statusesById', id],
     queryFn: async ({ pageParam }) => {
       const data = await getAccountStatusesById(userId, pageParam)
       return data.filter((p) => {
@@ -99,7 +101,7 @@ export default function ProfileScreen() {
   // }
 
   return (
-    <SafeAreaView edges={['top']}>
+    <SafeAreaView flex={1} edges={['top']} style={{backgroundColor: 'white'}}>
       <Stack.Screen options={{ headerShown: false }} />
       <FlatList
         data={feed?.pages.flatMap((page) => page)}
