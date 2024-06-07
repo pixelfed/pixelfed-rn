@@ -167,6 +167,12 @@ export async function getHashtagByNameFeed(id, page) {
   return await fetchPaginatedData(url)
 }
 
+export async function getHashtagRelated(id) {
+  const instance = Storage.getString('app.instance')
+  let url = `https://${instance}/api/v1/tags/${id}/related`
+  return await fetchPaginatedData(url)
+}
+
 export async function getConversations(params) {
   const instance = Storage.getString('app.instance')
   let url = `https://${instance}/api/v1/conversations`
@@ -330,4 +336,50 @@ export async function getBlocks() {
   const instance = Storage.getString('app.instance')
   let url = `https://${instance}/api/v1/blocks`
   return await fetchData(url)
+}
+
+export async function getSelfCollections() {
+  const instance = Storage.getString('app.instance')
+  let url = `https://${instance}/api/v1.1/collections/self`
+  return await fetchData(url)
+}
+
+export async function getFollowedTags() {
+  const instance = Storage.getString('app.instance')
+  let url = `https://${instance}/api/v1/followed_tags`
+  return await fetchData(url)
+}
+
+export async function getInstanceV1() {
+  const instance = Storage.getString('app.instance')
+  let url = `https://${instance}/api/v1/instance`
+  return await fetchData(url)
+}
+
+export async function getAppSettings() {
+  const instance = Storage.getString('app.instance')
+  let url = `https://${instance}/api/pixelfed/v1/app/settings`
+  return await fetchData(url)
+}
+
+export async function getSelfAccount() {
+  const instance = Storage.getString('app.instance')
+  let url = `https://${instance}/api/v1/accounts/verify_credentials?_pe=1`
+  return await fetchData(url)
+}
+
+export async function updateCredentials(data) {
+  const instance = Storage.getString('app.instance')
+  const token = Storage.getString('app.token')
+  const params = new URLSearchParams(data)
+  let url = `https://${instance}/api/v1/accounts/update_credentials?${params.toString()}`
+  const response = await fetch(url, {
+    method: 'patch',
+    headers: new Headers({
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
+  })
+  return await response.json();
 }
