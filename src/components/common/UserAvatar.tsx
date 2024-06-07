@@ -1,6 +1,6 @@
 import { Avatar } from 'tamagui'
 
-export default function UserAvatar({ url, width = 40, height = 40}) {
+export default function UserAvatar({ url, width = 40, height = 40 }) {
   return (
     <Avatar circular borderWidth={1} borderColor="$gray6">
       <Avatar.Image

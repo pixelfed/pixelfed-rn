@@ -18,21 +18,21 @@ import {
   BottomSheetTextInput,
 } from '@gorhom/bottom-sheet'
 import CommentFeed from 'src/components/post/CommentFeed'
-import { useShareIntentContext } from "expo-share-intent";
+import { useShareIntentContext } from 'expo-share-intent'
 import UserAvatar from 'src/components/common/UserAvatar'
 import Welcome from 'src/components/onboarding/Welcome'
 
 const keyExtractor = (_, index) => `post-${_.id}-${index}`
 
 export default function HomeScreen() {
-  const router = useRouter();
-  const { hasShareIntent } = useShareIntentContext();
+  const router = useRouter()
+  const { hasShareIntent } = useShareIntentContext()
 
   useEffect(() => {
     if (hasShareIntent) {
-      router.replace({pathname: "camera/shareintent"});
+      router.replace({ pathname: 'camera/shareintent' })
     }
-  }, [hasShareIntent]);
+  }, [hasShareIntent])
 
   const [replyId, setReplyId] = useState(null)
   const [sheetType, setSheetType] = useState('comments')
@@ -91,7 +91,7 @@ export default function HomeScreen() {
   }
 
   useEffect(() => {
-    if(!seenWelcome) {
+    if (!seenWelcome) {
       setTimeout(() => {
         setSheetType('welcome')
       }, 500)
@@ -157,18 +157,16 @@ export default function HomeScreen() {
         backdropComponent={renderBackdrop}
         keyboardBehavior={'extend'}
       >
-        { sheetType === 'comments' ?
-          <CommentFeed 
-            id={replyId} 
-            showLikes={handleShowLikes} 
+        {sheetType === 'comments' ? (
+          <CommentFeed
+            id={replyId}
+            showLikes={handleShowLikes}
             gotoProfile={handleGotoProfile}
             user={user}
             handleReport={handleCommentReport}
           />
-        : null}
-        { sheetType === 'welcome' ? 
-          <Welcome onContinue={handleOnContinue} />
-        : null}
+        ) : null}
+        {sheetType === 'welcome' ? <Welcome onContinue={handleOnContinue} /> : null}
       </BottomSheetModal>
       <FlatList
         data={data?.pages.flatMap((page) => page.data)}
@@ -208,7 +206,7 @@ const styles = StyleSheet.create({
   footerContainer: {
     padding: 12,
     borderTopWidth: 1,
-    borderTopColor: '#eee'
+    borderTopColor: '#eee',
   },
   footerText: {
     textAlign: 'center',

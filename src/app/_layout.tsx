@@ -14,9 +14,9 @@ import { useAppState } from 'src/hooks/useAppState'
 import { useOnlineManager } from 'src/hooks/useOnlineManager'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
-import { ShareIntentProvider } from "expo-share-intent";
+import { ShareIntentProvider } from 'expo-share-intent'
 
-import Constants from "expo-constants";
+import Constants from 'expo-constants'
 
 export const unstable_settings = {
   initialRouteName: '/login',
@@ -60,7 +60,7 @@ function RootLayout() {
 }
 
 export default function RootLayoutWithContext() {
-  const router = useRouter();
+  const router = useRouter()
   return (
     <ShareIntentProvider
       options={{
@@ -69,13 +69,13 @@ export default function RootLayoutWithContext() {
         onResetShareIntent: () =>
           // used when app going in background and when the reset button is pressed
           router.replace({
-            pathname: "/",
+            pathname: '/',
           }),
       }}
     >
       <RootLayout />
     </ShareIntentProvider>
-  );
+  )
 }
 
 function RootLayoutNav() {

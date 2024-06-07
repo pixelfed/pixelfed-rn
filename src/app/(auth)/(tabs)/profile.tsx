@@ -75,7 +75,7 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView edges={['top']}>
       <FlatList
-        data={feed?.pages.flatMap((page) => page)}
+        data={feed?.pages.flat()}
         keyExtractor={(item, index) => item?.id.toString()}
         ListHeaderComponent={<ProfileHeader profile={user} isSelf={true} />}
         renderItem={RenderItem}

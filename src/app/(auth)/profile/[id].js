@@ -18,21 +18,25 @@ const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileScreen() {
   const { id } = useLocalSearchParams()
-  const selfUser = JSON.parse(Storage.getString('user.profile'));
+  const selfUser = JSON.parse(Storage.getString('user.profile'))
 
   const RenderItem = useCallback(
     ({ item }) =>
       item && item.media_attachments && item.media_attachments[0].url ? (
         <Link href={`/post/${item.id}`} asChild>
           <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
-          <FastImage
-              style={{ width: (SCREEN_WIDTH / 3 - 2), height: (SCREEN_WIDTH / 3 - 2), backgroundColor: "#ddd" }}
+            <FastImage
+              style={{
+                width: SCREEN_WIDTH / 3 - 2,
+                height: SCREEN_WIDTH / 3 - 2,
+                backgroundColor: '#ddd',
+              }}
               source={{
-                  uri: item.media_attachments[0].url,
-                  priority: FastImage.priority.normal,
+                uri: item.media_attachments[0].url,
+                priority: FastImage.priority.normal,
               }}
               resizeMode={FastImage.resizeMode.cover}
-          />
+            />
           </View>
         </Link>
       ) : null,
@@ -49,7 +53,7 @@ export default function ProfileScreen() {
   const { data: relationship } = useQuery({
     queryKey: ['getAccountRelationship', id],
     queryFn: getAccountRelationship,
-    enabled: !!userId
+    enabled: !!userId,
   })
   const RenderHeader = useCallback(
     () => <ProfileHeader profile={user} relationship={relationship} />,
@@ -101,10 +105,10 @@ export default function ProfileScreen() {
   // }
 
   return (
-    <SafeAreaView flex={1} edges={['top']} style={{backgroundColor: 'white'}}>
+    <SafeAreaView flex={1} edges={['top']} style={{ backgroundColor: 'white' }}>
       <Stack.Screen options={{ headerShown: false }} />
       <FlatList
-        data={feed?.pages.flatMap((page) => page)}
+        data={feed?.pages.flat()}
         keyExtractor={(item, index) => item?.id.toString()}
         ListHeaderComponent={RenderHeader}
         renderItem={RenderItem}

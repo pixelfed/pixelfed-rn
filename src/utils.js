@@ -132,11 +132,11 @@ export function prettyCount(number) {
 }
 
 export function likeCountLabel(number) {
-  if(!number) {
+  if (!number) {
     return ''
   }
 
-  if(number == 1) {
+  if (number == 1) {
     return '1 Like'
   }
 
@@ -144,11 +144,11 @@ export function likeCountLabel(number) {
 }
 
 export function postCountLabel(number) {
-  if(!number) {
+  if (!number) {
     return '0 Posts'
   }
 
-  if(number == 1) {
+  if (number == 1) {
     return '1 Post'
   }
 

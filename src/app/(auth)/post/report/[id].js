@@ -32,7 +32,7 @@ export default function Page() {
         borderColor="$gray7"
         justifyContent="space-between"
         alignItems="center"
-        >
+      >
         <Text fontSize="$5">{title}</Text>
         <Feather name="chevron-right" size={20} color="#ccc" />
       </XStack>
@@ -40,9 +40,7 @@ export default function Page() {
   )
 
   const handleAction = (type) => {
-    console.log('reporting ' + id)
-    console.log('report type ' + type)
-    mutation.mutate({id: id, type: type })
+    mutation.mutate({ id: id, type: type })
   }
 
   const mutation = useMutation({
@@ -62,23 +60,25 @@ export default function Page() {
           headerBackTitle: 'Back',
         }}
       />
-      { mutation.isPending ? <ActivityIndicator /> :
-      <ScrollView flexGrow={1}>
-
-        <YStack p="$5" bg="white" gap="$3">
-          <Text fontSize="$7" fontWeight="bold">
-            Why are you reporting this post?
-          </Text>
-          <Text fontSize="$5" color="$gray9">
-            Your report is anonymous, except if you're reporting an intellectual property
-            infringement. If someone is in immediate danger, call the local emergency
-            services - don't wait.
-          </Text>
-        </YStack>
-        {reportTypes.map((r) => (
-          <RenderOption key={r.name} title={r.title} name={r.name} />
-        ))}
-      </ScrollView> }
+      {mutation.isPending ? (
+        <ActivityIndicator />
+      ) : (
+        <ScrollView flexGrow={1}>
+          <YStack p="$5" bg="white" gap="$3">
+            <Text fontSize="$7" fontWeight="bold">
+              Why are you reporting this post?
+            </Text>
+            <Text fontSize="$5" color="$gray9">
+              Your report is anonymous, except if you're reporting an intellectual
+              property infringement. If someone is in immediate danger, call the local
+              emergency services - don't wait.
+            </Text>
+          </YStack>
+          {reportTypes.map((r) => (
+            <RenderOption key={r.name} title={r.title} name={r.name} />
+          ))}
+        </ScrollView>
+      )}
     </SafeAreaView>
   )
 }

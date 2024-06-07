@@ -16,110 +16,123 @@ const SCREEN_WIDTH = Dimensions.get('screen').width
 export default function Page() {
   const { id } = useLocalSearchParams()
 
-  const Header = useCallback(({hashtag, feed}) => {
-    return (
-      <View p="$4">
-        <XStack alignItems="center" gap="$4">
-          <View w={100} h={100}>
-            {feed?.pages ? 
-              <FastImage
-              source={{uri: feed.pages[0][0].media_attachments[0].url}}
-              style={{width: 100, height: 100, borderRadius: 100, borderWidth: 1, borderColor: '#eee'}}
-              resizeMode={FastImage.resizeMode.cover}
-              />
-              :
-              <View w={100} h={100} borderRadius={100} bg="$gray6"></View>
-            }
-          </View>
-          <YStack flexGrow={1} justifyContent="center" alignItems="center" gap="$2">
-            <Text fontSize="$6">
-              <Text fontWeight="bold">{prettyCount(hashtag?.count)}</Text> <Text color="$gray9">posts</Text>
-            </Text>
-            {hashtag.following ?
-              <Button
-                borderColor="$blue9"
-                h={35}
-                size="$5"
-                fontWeight="bold"
-                color="$blue9"
-                alignSelf="stretch"
-              >
-                Unfollow
-              </Button> :
-              <Button
-                bg="$blue9"
-                h={35}
-                size="$5"
-                color="white"
-                fontWeight="bold"
-                alignSelf="stretch"
-              >
-                Follow
-              </Button>
-            }
-            { hashtag.following ?
-              <Text fontSize="$4" color="$gray9" flexWrap="wrap">
-                You are following this hashtag
-              </Text> :
-              <Text fontSize="$4" color="$gray9" flexWrap="wrap">
-                Follow to see posts like these in your home feed
-              </Text>
-            }
-          </YStack>
-        </XStack>
-      </View>
-    )
-  }, [hashtag, feed])
-
-  const RenderItem = useCallback(({ item }) =>
-    item && item.media_attachments && item.media_attachments[0].url ? (
-      <Link href={`/post/${item.id}`} asChild>
-        <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
-          <Image
-            source={{
-              uri: item.media_attachments[0].url,
-              width: SCREEN_WIDTH / 3 - 2,
-              height: SCREEN_WIDTH / 3 - 2,
-            }}
-            resizeMode="cover"
-          />
-        </View>
-      </Link>
-    ) : null, [])
-
-  const RelatedTags = useCallback(({relatedTags}) => (
-    relatedTags && relatedTags.length ?
-      <View px="$3" pb="$3">
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          { relatedTags.map(tag => (
-            <Link key={tag.name} href={`/hashtag/${tag.name}`} asChild>
-            <View 
-              bg="$gray6" 
-              px="$3"
-              py="$2"
-              mr="$2"
-              borderRadius={10}>
-                <Text>
-                { tag.name }
-                </Text>
+  const Header = useCallback(
+    ({ hashtag, feed }) => {
+      return (
+        <View p="$4">
+          <XStack alignItems="center" gap="$4">
+            <View w={100} h={100}>
+              {feed?.pages ? (
+                <FastImage
+                  source={{ uri: feed.pages[0][0].media_attachments[0].url }}
+                  style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: 100,
+                    borderWidth: 1,
+                    borderColor: '#eee',
+                  }}
+                  resizeMode={FastImage.resizeMode.cover}
+                />
+              ) : (
+                <View w={100} h={100} borderRadius={100} bg="$gray6"></View>
+              )}
             </View>
-            </Link>
-          ))}
-        </ScrollView>
-      </View>
-      : null
-  ), [])
+            <YStack flexGrow={1} justifyContent="center" alignItems="center" gap="$2">
+              <Text fontSize="$6">
+                <Text fontWeight="bold">{prettyCount(hashtag?.count)}</Text>{' '}
+                <Text color="$gray9">posts</Text>
+              </Text>
+              {hashtag.following ? (
+                <Button
+                  borderColor="$blue9"
+                  h={35}
+                  size="$5"
+                  fontWeight="bold"
+                  color="$blue9"
+                  alignSelf="stretch"
+                >
+                  Unfollow
+                </Button>
+              ) : (
+                <Button
+                  bg="$blue9"
+                  h={35}
+                  size="$5"
+                  color="white"
+                  fontWeight="bold"
+                  alignSelf="stretch"
+                >
+                  Follow
+                </Button>
+              )}
+              {hashtag.following ? (
+                <Text fontSize="$4" color="$gray9" flexWrap="wrap">
+                  You are following this hashtag
+                </Text>
+              ) : (
+                <Text fontSize="$4" color="$gray9" flexWrap="wrap">
+                  Follow to see posts like these in your home feed
+                </Text>
+              )}
+            </YStack>
+          </XStack>
+        </View>
+      )
+    },
+    [hashtag, feed]
+  )
 
-    const RenderRelatedItem = useCallback(({ item }) =>
-      item && item.name ? (
-      <View p="$3" borderWidth={1}>
-        <Link href={`/hashtag/${item.name}`}>
-          <View p="$3" borderWidth={1} >
-            <Text fontSize="$5">{ item.name }</Text>
+  const RenderItem = useCallback(
+    ({ item }) =>
+      item && item.media_attachments && item.media_attachments[0].url ? (
+        <Link href={`/post/${item.id}`} asChild>
+          <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
+            <Image
+              source={{
+                uri: item.media_attachments[0].url,
+                width: SCREEN_WIDTH / 3 - 2,
+                height: SCREEN_WIDTH / 3 - 2,
+              }}
+              resizeMode="cover"
+            />
           </View>
         </Link>
-      </View>
-      ) : null, [])
+      ) : null,
+    []
+  )
+
+  const RelatedTags = useCallback(
+    ({ relatedTags }) =>
+      relatedTags && relatedTags.length ? (
+        <View px="$3" pb="$3">
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {relatedTags.map((tag) => (
+              <Link key={tag.name} href={`/hashtag/${tag.name}`} asChild>
+                <View bg="$gray6" px="$3" py="$2" mr="$2" borderRadius={10}>
+                  <Text>{tag.name}</Text>
+                </View>
+              </Link>
+            ))}
+          </ScrollView>
+        </View>
+      ) : null,
+    []
+  )
+
+  const RenderRelatedItem = useCallback(
+    ({ item }) =>
+      item && item.name ? (
+        <View p="$3" borderWidth={1}>
+          <Link href={`/hashtag/${item.name}`}>
+            <View p="$3" borderWidth={1}>
+              <Text fontSize="$5">{item.name}</Text>
+            </View>
+          </Link>
+        </View>
+      ) : null,
+    []
+  )
 
   const { data: hashtag, isPending } = useQuery({
     queryKey: ['getHashtagByName', id],
@@ -170,30 +183,27 @@ export default function Page() {
     queryKey: ['getHashtagRelated', id],
     queryFn: async ({ pageParam }) => {
       const data = await getHashtagRelated(id)
-      console.log(data.data)
-      return data.data;
-    }
+      return data.data
+    },
   })
 
-  if (isPending || isFetching && !isFetchingNextPage) {
+  if (isPending || (isFetching && !isFetchingNextPage)) {
     return (
       <>
-      <Stack.Screen
-        options={{
-          title: `#${id}`,
-          headerBackTitle: 'Back',
-        }}
+        <Stack.Screen
+          options={{
+            title: `#${id}`,
+            headerBackTitle: 'Back',
+          }}
         />
-      <View flexGrow={1} mt="$5">
-        <ActivityIndicator color={'#000'} />
-      </View>
+        <View flexGrow={1} mt="$5">
+          <ActivityIndicator color={'#000'} />
+        </View>
       </>
     )
   }
 
   if (error || relatedError) {
-    console.log(error)
-    console.log(relatedError)
     return (
       <View flexGrow={1}>
         <Text>Error</Text>
@@ -212,7 +222,7 @@ export default function Page() {
       <Header hashtag={hashtag} feed={feed} />
       <RelatedTags relatedTags={related} />
       <FlatList
-        data={feed?.pages.flatMap((page) => page)}
+        data={feed?.pages.flat()}
         extraData={hashtag}
         keyExtractor={(item, index) => item?.id}
         renderItem={RenderItem}

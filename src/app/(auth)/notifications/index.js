@@ -72,13 +72,18 @@ export default function NotificationsScreen() {
 
           <XStack>
             <Text fontWeight={'bold'}>{item.account.username} </Text>
-            { item.status ?
-            <Link href={`/post/${item.status.in_reply_to_id ? item.status.in_reply_to_id : item.status.id}`} asChild>
-              <Text color="$blue10" fontWeight="bold">{_msgText(item.type)}</Text>
-            </Link>
-            :
-            <Text>{_msgText(item.type)}</Text>
-            }
+            {item.status ? (
+              <Link
+                href={`/post/${item.status.in_reply_to_id ? item.status.in_reply_to_id : item.status.id}`}
+                asChild
+              >
+                <Text color="$blue10" fontWeight="bold">
+                  {_msgText(item.type)}
+                </Text>
+              </Link>
+            ) : (
+              <Text>{_msgText(item.type)}</Text>
+            )}
           </XStack>
         </XStack>
 

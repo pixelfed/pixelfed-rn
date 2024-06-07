@@ -28,14 +28,14 @@ const Thumb = styled(Stack, {
   borderRadius: 20,
   borderColor: '#D1D4DA',
   borderWidth: 1,
-  
+
   variants: {
-      checked: {
-        true: {
-            opacity: 1,
-        },
-        false: {
-            opacity: 1,
+    checked: {
+      true: {
+        opacity: 1,
+      },
+      false: {
+        opacity: 1,
       },
     },
   } as const,

@@ -54,23 +54,28 @@ export default function SearchScreen() {
               <Text fontSize="$3" color="$gray9">
                 {item.display_name}
               </Text>
-              <XStack alignItems="center" flexWrap='wrap' whiteSpace='break-all' overflow='hidden'>
+              <XStack
+                alignItems="center"
+                flexWrap="wrap"
+                whiteSpace="break-all"
+                overflow="hidden"
+              >
                 <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
-                    <Text fontSize="$6" fontWeight="bold">
-                      {item.username}
-                    </Text>
+                  <Text fontSize="$6" fontWeight="bold">
+                    {item.username}
+                  </Text>
 
-                    {/* { !item.local ? <View bg="$gray3" px={5} py={4} borderRadius={5}>
+                  {/* { !item.local ? <View bg="$gray3" px={5} py={4} borderRadius={5}>
                         <Text fontSize="$2" fontWeight="bold" color="#999">{getDomain(item.url)}</Text>
                       </View> : null } */}
-                    {!item.local ? (
-                      <Text fontSize="$6" color="$gray9">
-                        @{getDomain(item.url)}
-                      </Text>
-                    ) : null}
+                  {!item.local ? (
+                    <Text fontSize="$6" color="$gray9">
+                      @{getDomain(item.url)}
+                    </Text>
+                  ) : null}
                 </ReadMore>
               </XStack>
-              <XStack gap="$2" alignItems='center'>
+              <XStack gap="$2" alignItems="center">
                 <Text color="$gray8" fontSize="$3">
                   {prettyCount(item.followers_count)} Followers
                 </Text>
@@ -80,7 +85,8 @@ export default function SearchScreen() {
                 </Text>
                 <Text color="$gray8">·</Text>
                 <Text color="$gray8" fontSize="$3">
-                {item.local ? 'Joined' : 'First seen'} {formatTimestampMonthYear(item.created_at)}
+                  {item.local ? 'Joined' : 'First seen'}{' '}
+                  {formatTimestampMonthYear(item.created_at)}
                 </Text>
               </XStack>
             </YStack>

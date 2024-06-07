@@ -66,11 +66,7 @@ export default function Page() {
         snapPoints={snapPoints}
         backdropComponent={renderBackdrop}
       >
-        <CommentFeed 
-          id={id}
-          user={user}
-          gotoProfile={handleGotoProfile}
-        />
+        <CommentFeed id={id} user={user} gotoProfile={handleGotoProfile} />
       </BottomSheetModal>
       <ScrollView flexShrink={1}>
         <FeedPost post={data} user={user} onOpenComments={onOpenComments} />

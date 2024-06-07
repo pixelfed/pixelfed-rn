@@ -50,7 +50,7 @@ const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMe
           <Pressable flexGrow={1}>
             <XStack gap="$3" alignItems="center" flexGrow={1}>
               <FastImage
-                source={{uri: avatar}}
+                source={{ uri: avatar }}
                 style={{
                   width: AVATAR_WIDTH,
                   height: AVATAR_WIDTH,
@@ -114,7 +114,7 @@ const PostMedia = React.memo(({ media, post }) => {
     <View flex={1} borderBottomWidth={1} borderBottomColor="$gray5">
       <FastImage
         style={{ width: SCREEN_WIDTH, height: height, backgroundColor: '#000' }}
-        source={{uri:mediaUrl}}
+        source={{ uri: mediaUrl }}
         resizeMode={FastImage.resizeMode.contain}
       />
     </View>
@@ -122,15 +122,21 @@ const PostMedia = React.memo(({ media, post }) => {
 })
 
 const PostActions = React.memo(
-  ({ hasLiked, hasShared, likesCount, likedBy, sharesCount, onOpenComments, post, handleLike }) => (
+  ({
+    hasLiked,
+    hasShared,
+    likesCount,
+    likedBy,
+    sharesCount,
+    onOpenComments,
+    post,
+    handleLike,
+  }) => (
     <BorderlessSection>
       <YStack pt="$3" pb="$2" px="$2" gap={10}>
         <XStack gap="$4" justifyContent="space-between">
           <XStack gap="$5">
-            <LikeButton
-              hasLiked={hasLiked}
-              handleLike={handleLike}
-            />
+            <LikeButton hasLiked={hasLiked} handleLike={handleLike} />
             <Pressable onPress={() => onOpenComments()}>
               <Feather name="message-circle" size={26} />
             </Pressable>
@@ -140,38 +146,39 @@ const PostActions = React.memo(
             <Feather name="bookmark" size={26} />
           </XStack>
         </XStack>
-        { likesCount || sharesCount ?
-        <XStack justifyContent="space-between">
-          {likesCount ? (
-            likedBy && likesCount > 1 ? (
-              <Link href={`/post/likes/${post.id}`}>
-                <XStack>
-                  <Text fontSize="$3">Liked by </Text>
+        {likesCount || sharesCount ? (
+          <XStack justifyContent="space-between">
+            {likesCount ? (
+              likedBy && likesCount > 1 ? (
+                <Link href={`/post/likes/${post.id}`}>
+                  <XStack>
+                    <Text fontSize="$3">Liked by </Text>
+                    <Text fontWeight="bold" fontSize="$3">
+                      {likedBy.username}
+                    </Text>
+                    <Text fontSize="$3"> and </Text>
+                    <Text fontWeight="bold" fontSize="$3">
+                      {likesCount - 1} {likesCount - 1 > 1 ? 'others' : 'other'}
+                    </Text>
+                  </XStack>
+                </Link>
+              ) : (
+                <Link href={`/post/likes/${post.id}`}>
                   <Text fontWeight="bold" fontSize="$3">
-                    {likedBy.username}
+                    {likesCount} {likesCount > 1 ? 'Likes' : 'Like'}
                   </Text>
-                  <Text fontSize="$3"> and </Text>
-                  <Text fontWeight="bold" fontSize="$3">
-                    {likesCount - 1} {likesCount - 1 > 1 ? 'others' : 'other'}
-                  </Text>
-                </XStack>
-              </Link>
+                </Link>
+              )
             ) : (
-              <Link href={`/post/likes/${post.id}`}>
-                <Text fontWeight="bold" fontSize="$3">
-                  {likesCount} {likesCount > 1 ? 'Likes' : 'Like'}
-                </Text>
-              </Link>
-            )
-          ) : (
-            <View flexGrow={1}></View>
-          )}
-          {likesCount && sharesCount ? (
-            <Text fontWeight="bold" fontSize="$3">
-              {sharesCount} {sharesCount > 1 ? 'Shares' : 'Share'}
-            </Text>
-          ) : null}
-        </XStack> : null }
+              <View flexGrow={1}></View>
+            )}
+            {likesCount && sharesCount ? (
+              <Text fontWeight="bold" fontSize="$3">
+                {sharesCount} {sharesCount > 1 ? 'Shares' : 'Share'}
+              </Text>
+            ) : null}
+          </XStack>
+        ) : null}
       </YStack>
     </BorderlessSection>
   )
@@ -184,26 +191,27 @@ const PostCaption = React.memo(
       <BorderlessSection>
         <YStack gap="$3" pt="$1" pb="$3" px="$2">
           <XStack flexWrap="wrap" pr="$3">
-              <Text
-                fontSize="$5"
-                selectable={true}
-                multiline
-                editable={false}
-                suppressHighlighting={false}
-                >
-                <Text fontWeight="bold">{username}</Text> {caption?.replaceAll('\n\n', ' ')}
-              </Text>
+            <Text
+              fontSize="$5"
+              selectable={true}
+              multiline
+              editable={false}
+              suppressHighlighting={false}
+            >
+              <Text fontWeight="bold">{username}</Text> {caption?.replaceAll('\n\n', ' ')}
+            </Text>
           </XStack>
           <XStack mt={-5} gap={5} flexWrap="wrap">
-            { tags && tags.map((tag, idx) => (
-              <Link key={tag.name} href={`/hashtag/${tag.name}`}>
-                <View key={tag.name} bg="$gray3" p={5} borderRadius={5}>
-                  <Text fontSize="$3" fontWeight="300">
-                    #{tag.name}
-                  </Text>
-                </View>
-              </Link>
-            ))}
+            {tags &&
+              tags.map((tag, idx) => (
+                <Link key={tag.name} href={`/hashtag/${tag.name}`}>
+                  <View key={tag.name} bg="$gray3" p={5} borderRadius={5}>
+                    <Text fontSize="$3" fontWeight="300">
+                      #{tag.name}
+                    </Text>
+                  </View>
+                </Link>
+              ))}
           </XStack>
           {commentsCount ? (
             <Pressable onPress={() => onOpenComments()}>
@@ -218,7 +226,6 @@ const PostCaption = React.memo(
               <Text color="$gray9" fontSize="$3">
                 {timeAgo}
               </Text>
-              
             </XStack>
           </Link>
         </YStack>
@@ -308,7 +315,7 @@ export default function FeedPost({ post, user, onOpenComments }) {
                       height: height,
                       backgroundColor: '#000',
                     }}
-                    source={{uri:post.media_attachments[index].url}}
+                    source={{ uri: post.media_attachments[index].url }}
                     resizeMode={FastImage.resizeMode.contain}
                   />
                 </View>
@@ -397,7 +404,7 @@ export default function FeedPost({ post, user, onOpenComments }) {
                 <Text fontSize="$5">Photo and location details</Text>
               </XStack>
             </Button> */}
-            
+
             {/* <XStack gap="$2">
 
               <Button flexGrow={1} size="$5" justifyContent="start">

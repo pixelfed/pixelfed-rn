@@ -13,8 +13,19 @@ import { StatusBar } from 'expo-status-bar'
 import { Feather, Ionicons } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, Stack } from 'expo-router'
-import { useInfiniteQuery, useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getStatusRepliesById, postComment, likeStatus, unlikeStatus, deleteStatus } from 'src/lib/api'
+import {
+  useInfiniteQuery,
+  useQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
+import {
+  getStatusRepliesById,
+  postComment,
+  likeStatus,
+  unlikeStatus,
+  deleteStatus,
+} from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
 import { Storage } from 'src/state/cache'
 import {
@@ -38,7 +49,7 @@ export default function CommentFeed({ id, showLikes, user, handleReport, gotoPro
 
   const handlePost = (nativeEvent) => {
     setComment()
-    commentMutation.mutate({postId: id, commentText: commentText})
+    commentMutation.mutate({ postId: id, commentText: commentText })
   }
 
   const handleShowLikes = (id) => {
@@ -46,11 +57,11 @@ export default function CommentFeed({ id, showLikes, user, handleReport, gotoPro
   }
 
   const handleCommentLike = (item) => {
-    if(item.favourited) {
-      likeMutation.mutate({id: item.id, type: 'unlike'})
+    if (item.favourited) {
+      likeMutation.mutate({ id: item.id, type: 'unlike' })
       return
     }
-    likeMutation.mutate({id: item.id, type: 'like'})
+    likeMutation.mutate({ id: item.id, type: 'like' })
   }
 
   const handleCommentReport = (id) => {
@@ -58,20 +69,16 @@ export default function CommentFeed({ id, showLikes, user, handleReport, gotoPro
   }
 
   const handleCommentDelete = (id) => {
-    Alert.alert(
-      'Confirm Delete',
-      'Are you sure you want to delete your comment?',
-      [
-        {
-          text: 'Cancel'
-        },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => commentDeleteMutation({id: id})
-        }
-      ]
-    )
+    Alert.alert('Confirm Delete', 'Are you sure you want to delete your comment?', [
+      {
+        text: 'Cancel',
+      },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => commentDeleteMutation({ id: id }),
+      },
+    ])
   }
 
   const renderItem = useCallback(
@@ -106,30 +113,36 @@ export default function CommentFeed({ id, showLikes, user, handleReport, gotoPro
                       Reply
                     </Text>
                   </Pressable>
-                  { item.favourites_count ? 
-                  <Pressable onPress={() => handleShowLikes(item.id)}>
-                  <Text fontSize="$3" color="$gray9">
-                    { likeCountLabel(item?.favourites_count) }
-                  </Text>
-                </Pressable> : null }
-                { item.account.id != user?.id ? 
-                <Pressable onPress={() => handleCommentReport(item?.id)}>
-                  <Text fontSize="$3" color="$gray9">Report</Text>
-                </Pressable>
-                : 
-                <Pressable onPress={() => handleCommentDelete(item.id)}>
-                  <Text fontSize="$3" color="$gray9">Delete</Text>
-                </Pressable>
-                }
+                  {item.favourites_count ? (
+                    <Pressable onPress={() => handleShowLikes(item.id)}>
+                      <Text fontSize="$3" color="$gray9">
+                        {likeCountLabel(item?.favourites_count)}
+                      </Text>
+                    </Pressable>
+                  ) : null}
+                  {item.account.id != user?.id ? (
+                    <Pressable onPress={() => handleCommentReport(item?.id)}>
+                      <Text fontSize="$3" color="$gray9">
+                        Report
+                      </Text>
+                    </Pressable>
+                  ) : (
+                    <Pressable onPress={() => handleCommentDelete(item.id)}>
+                      <Text fontSize="$3" color="$gray9">
+                        Delete
+                      </Text>
+                    </Pressable>
+                  )}
                 </XStack>
               </YStack>
             </XStack>
             <Pressable onPress={() => handleCommentLike(item)}>
               <YStack justifyContent="center" alignItems="center" gap="$1">
-                { item.favourited ?
-                  <Ionicons name="heart" color="red" size={20} /> :
+                {item.favourited ? (
+                  <Ionicons name="heart" color="red" size={20} />
+                ) : (
                   <Ionicons name="heart-outline" color="black" size={20} />
-                }
+                )}
                 {item.favourites_count ? (
                   <Text fontSize="$3">{prettyCount(item.favourites_count)}</Text>
                 ) : null}
@@ -165,10 +178,14 @@ export default function CommentFeed({ id, showLikes, user, handleReport, gotoPro
 
   const RenderEmpty = useCallback(() => {
     return (
-      <View flexGrow={1} justifyContent='center' alignItems='center'>
-        <YStack justifyContent='center' alignItems='center' gap="$3">
-          <Text fontSize="$9" fontWeight="bold">No comments yet</Text>
-          <Text fontSize="$6" color="$gray9">Start the conversation</Text>
+      <View flexGrow={1} justifyContent="center" alignItems="center">
+        <YStack justifyContent="center" alignItems="center" gap="$3">
+          <Text fontSize="$9" fontWeight="bold">
+            No comments yet
+          </Text>
+          <Text fontSize="$6" color="$gray9">
+            Start the conversation
+          </Text>
         </YStack>
       </View>
     )
@@ -180,18 +197,20 @@ export default function CommentFeed({ id, showLikes, user, handleReport, gotoPro
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getStatusRepliesById'] })
-    }
+    },
   })
 
   const likeMutation = useMutation({
     mutationFn: (handleLike) => {
-      return handleLike.type === 'like' ? likeStatus(handleLike) : unlikeStatus(handleLike)
+      return handleLike.type === 'like'
+        ? likeStatus(handleLike)
+        : unlikeStatus(handleLike)
     },
     onSuccess: () => {
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ['getStatusRepliesById'] })
       }, 500)
-    }
+    },
   })
 
   const { isPending, mutate: commentDeleteMutation } = useMutation({
@@ -202,7 +221,7 @@ export default function CommentFeed({ id, showLikes, user, handleReport, gotoPro
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ['getStatusRepliesById'] })
       }, 1500)
-    }
+    },
   })
 
   const {
@@ -258,8 +277,8 @@ export default function CommentFeed({ id, showLikes, user, handleReport, gotoPro
         style={styles.input}
         value={commentText}
         onChangeText={setComment}
-        returnKeyType='send'
-        returnKeyLabel='Post'
+        returnKeyType="send"
+        returnKeyLabel="Post"
         onSubmitEditing={handlePost}
         placeholder="Add a comment..."
       />

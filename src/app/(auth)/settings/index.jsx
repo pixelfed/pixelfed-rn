@@ -78,19 +78,35 @@ export default function Page() {
       <ScrollView flexShrink={1} showsVerticalScrollIndicator={false}>
         <YStack p="$5" gap="$5">
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
-            <GroupButton icon="user" title="Avatar, Bio and Display Name" path="/settings/profile" />
+            <GroupButton
+              icon="user"
+              title="Avatar, Bio and Display Name"
+              path="/settings/profile"
+            />
           </Group>
 
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
             {/* <GroupButton icon="archive" title="Archives" path="/settings/security" /> */}
             <GroupButton icon="grid" title="Collections" path="/collections/" />
-            <GroupButton icon="tag" title="Followed Hashtags" path="/hashtag/followedTags" />
+            <GroupButton
+              icon="tag"
+              title="Followed Hashtags"
+              path="/hashtag/followedTags"
+            />
             {/* <GroupButton icon='shield' title='Security' path='/settings/security' /> */}
-            <GroupButton icon="lock" title="Privacy & Relationships" path="/settings/privacy" />
+            <GroupButton
+              icon="lock"
+              title="Privacy & Relationships"
+              path="/settings/privacy"
+            />
           </Group>
 
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
-            <GroupButton icon="life-buoy" title="Accessibility" path="/settings/accessibility/" />
+            <GroupButton
+              icon="life-buoy"
+              title="Accessibility"
+              path="/settings/accessibility/"
+            />
             <GroupButton icon="droplet" title="Appearance" path="/settings/appearance/" />
             <GroupButton icon="camera" title="Media" path="/settings/media" />
             <GroupButton icon="shield" title="Security" path="/settings/security" />
@@ -100,7 +116,13 @@ export default function Page() {
             <GroupButton icon="server" title={instance} path="/settings/instance/" />
             <GroupButton icon="align-left" title="Legal" path="/settings/legal/" />
             <Group.Item>
-              <Button onPress={() => onFeedback()} bg="$gray1" justifyContent="start" size="$5" px="$3">
+              <Button
+                onPress={() => onFeedback()}
+                bg="$gray1"
+                justifyContent="start"
+                size="$5"
+                px="$3"
+              >
                 <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
                   <XStack alignItems="center" ml="$1" gap="$3">
                     <Feather name="help-circle" size={17} color="#666" />
@@ -109,7 +131,7 @@ export default function Page() {
                   <Feather name="chevron-right" size={20} color="#ccc" />
                 </XStack>
               </Button>
-          </Group.Item>
+            </Group.Item>
           </Group>
 
           <Button bg="$red4" mt="$2" onPress={() => handleLogOut()}>

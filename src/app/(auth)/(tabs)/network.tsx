@@ -20,7 +20,7 @@ import CommentFeed from 'src/components/post/CommentFeed'
 const keyExtractor = (_, index) => `post-${_.id}-${index}`
 
 export default function NetworkScreen() {
-  const router = useRouter();
+  const router = useRouter()
   const [replyId, setReplyId] = useState(null)
   const bottomSheetModalRef = useRef(null)
   const snapPoints = useMemo(() => ['55%', '80%'], [])
@@ -125,9 +125,9 @@ export default function NetworkScreen() {
         backdropComponent={renderBackdrop}
         keyboardBehavior={'extend'}
       >
-        <CommentFeed 
-          id={replyId} 
-          showLikes={handleShowLikes} 
+        <CommentFeed
+          id={replyId}
+          showLikes={handleShowLikes}
           user={user}
           handleReport={handleCommentReport}
         />

@@ -31,29 +31,28 @@ export default function App() {
   if (!permission.granted) {
     // Camera permissions are not granted yet
     return (
-      <View flexGrow={1} justifyContent='center' alignItems='center'>
-        <YStack flexGrow={1} gap="$5" justifyContent='center' alignItems='center'>
-          <YStack gap="$3" justifyContent='center' alignItems='center'>
+      <View flexGrow={1} justifyContent="center" alignItems="center">
+        <YStack flexGrow={1} gap="$5" justifyContent="center" alignItems="center">
+          <YStack gap="$3" justifyContent="center" alignItems="center">
             <Text fontSize="$9" fontWeight="bold">
               Enable Camera
             </Text>
-            <Text fontSize="$6">
-              We need your permission to enable Pixelfed Camera
-            </Text>
+            <Text fontSize="$6">We need your permission to enable Pixelfed Camera</Text>
           </YStack>
-          <Button 
-            alignSelf="stretch" 
-            mx="$5" 
-            mb="$3" 
-            bg="$blue9" 
-            color="white" 
-            borderRadius={20} 
-            size="$6" 
-            onPress={requestPermission}>
+          <Button
+            alignSelf="stretch"
+            mx="$5"
+            mb="$3"
+            bg="$blue9"
+            color="white"
+            borderRadius={20}
+            size="$6"
+            onPress={requestPermission}
+          >
             Grant Permission
           </Button>
         </YStack>
-        <YStack alignSelf="stretch" gap="$3" justifyContent='center' alignItems='center'>
+        <YStack alignSelf="stretch" gap="$3" justifyContent="center" alignItems="center">
           <Separator alignSelf="stretch" borderColor="$gray8" borderWidth={0.5} />
         </YStack>
       </View>
@@ -70,7 +69,6 @@ export default function App() {
 
   const takePicture = async () => {
     const r = await cameraRef.current?.takePictureAsync()
-    console.log(r)
     router.push({ pathname: '/camera/preview', params: { id: JSON.stringify(r) } })
   }
 

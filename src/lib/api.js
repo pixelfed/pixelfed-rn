@@ -155,7 +155,7 @@ export async function getAccountStatusesById(id, page) {
   return await fetchData(url)
 }
 
-export async function getHashtagByName({queryKey}) {
+export async function getHashtagByName({ queryKey }) {
   const instance = Storage.getString('app.instance')
   const url = `https://${instance}/api/v1/tags/${queryKey[1]}/?_pe=1`
   return await fetchData(url)
@@ -237,13 +237,13 @@ export async function getAccountRelationship({ queryKey }) {
   return res[0]
 }
 
-export async function postComment({postId, commentText}) {
+export async function postComment({ postId, commentText }) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
 
   const params = new URLSearchParams({
     in_reply_to_id: postId,
-    status: commentText
+    status: commentText,
   })
   const url = `https://${instance}/api/v1/statuses?${params}`
   const response = await fetch(url, {
@@ -257,7 +257,7 @@ export async function postComment({postId, commentText}) {
   return await response.json()
 }
 
-export async function likeStatus({id}) {
+export async function likeStatus({ id }) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
 
@@ -273,7 +273,7 @@ export async function likeStatus({id}) {
   return await response.json()
 }
 
-export async function unlikeStatus({id}) {
+export async function unlikeStatus({ id }) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
 
@@ -289,14 +289,14 @@ export async function unlikeStatus({id}) {
   return await response.json()
 }
 
-export async function reportStatus({id, type}) {
+export async function reportStatus({ id, type }) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
 
   const params = new URLSearchParams({
     report_type: type,
     object_type: 'post',
-    object_id: id
+    object_id: id,
   })
   const url = `https://${instance}/api/v1.1/report?${params}`
   const response = await fetch(url, {
@@ -310,7 +310,7 @@ export async function reportStatus({id, type}) {
   return await response.json()
 }
 
-export async function deleteStatus({id}) {
+export async function deleteStatus({ id }) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
 
@@ -381,5 +381,5 @@ export async function updateCredentials(data) {
       'Content-Type': 'application/json',
     }),
   })
-  return await response.json();
+  return await response.json()
 }
