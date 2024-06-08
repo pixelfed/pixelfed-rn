@@ -149,6 +149,12 @@ export async function getAccountById({ queryKey }) {
   return await fetchData(url)
 }
 
+export async function getAccountByUsername({ queryKey }) {
+  const instance = Storage.getString('app.instance')
+  const url = `https://${instance}/api/v1.1/accounts/username/${queryKey[1]}?_pe=1`
+  return await fetchData(url)
+}
+
 export async function getAccountStatusesById(id, page) {
   const instance = Storage.getString('app.instance')
   const url = `https://${instance}/api/v1/accounts/${id}/statuses?_pe=1&max_id=${page}`
@@ -209,6 +215,15 @@ export async function getStatusLikes(id, cursor) {
   url = cursor
     ? `https://${instance}/api/v1/statuses/${id}/favourited_by?_pe=1&limit=20&cursor=${cursor}`
     : `https://${instance}/api/v1/statuses/${id}/favourited_by?_pe=1&limit=20`
+  return await fetchPaginatedData(url)
+}
+
+export async function getStatusReblogs(id, cursor) {
+  let url
+  const instance = Storage.getString('app.instance')
+  url = cursor
+    ? `https://${instance}/api/v1/statuses/${id}/reblogged_by?_pe=1&limit=20&cursor=${cursor}`
+    : `https://${instance}/api/v1/statuses/${id}/reblogged_by?_pe=1&limit=20`
   return await fetchPaginatedData(url)
 }
 
