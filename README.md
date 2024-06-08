@@ -1,7 +1,7 @@
 # Pixelfed (React Native)
 
 <p align="center">
-<img src="https://pixelfed.nyc3.cdn.digitaloceanspaces.com/media/pixelfed-app-screenshot.jpg" width="400">
+<img src="https://pixelfed.nyc3.cdn.digitaloceanspaces.com/media/pixelfed-app-screenshot-2.jpg" width="400">
 </p>
 
 (WIP) The official Pixelfed mobile app source code.
