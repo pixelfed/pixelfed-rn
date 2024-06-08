@@ -154,3 +154,28 @@ export function postCountLabel(number) {
 
   return `${prettyCount(number)} Posts`
 }
+
+export function enforceLen(
+  str,
+  len,
+  ellipsis = false,
+  mode = 'end',
+) {
+  str = str || ''
+  if (str.length > len) {
+    if (ellipsis) {
+      if (mode === 'end') {
+        return str.slice(0, len) + '…'
+      } else if (mode === 'middle') {
+        const half = Math.floor(len / 2)
+        return str.slice(0, half) + '…' + str.slice(-half)
+      } else {
+        // fallback
+        return str.slice(0, len)
+      }
+    } else {
+      return str.slice(0, len)
+    }
+  }
+  return str
+}
