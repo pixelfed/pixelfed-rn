@@ -276,7 +276,7 @@ export async function likeStatus({ id }) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
 
-  const url = `https://${instance}/api/v1/statuses/${id}/favourite`
+  const url = `https://${instance}/api/v1/statuses/${id}/favourite?_pe=1`
   const response = await fetch(url, {
     method: 'post',
     headers: new Headers({
@@ -292,7 +292,7 @@ export async function unlikeStatus({ id }) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
 
-  const url = `https://${instance}/api/v1/statuses/${id}/unfavourite`
+  const url = `https://${instance}/api/v1/statuses/${id}/unfavourite?_pe=1`
   const response = await fetch(url, {
     method: 'post',
     headers: new Headers({
