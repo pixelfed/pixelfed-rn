@@ -19,8 +19,9 @@ import { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, Link } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
-import { getAccountById, getAccountStatusesById } from 'src/lib/api'
+import { useQuery, useInfiniteQuery, useMutation } from '@tanstack/react-query'
+import { getAccountById, getAccountStatusesById, getConfig, updateCredentials } from 'src/lib/api'
+import { router } from 'expo-router';
 
 export default function Page() {
   const userCache = JSON.parse(Storage.getString('user.profile'))
@@ -30,6 +31,21 @@ export default function Page() {
     queryFn: getAccountById,
   })
   const [name, setName] = useState(user.display_name)
+  const [isSubmitting, setSubmitting] = useState(false)
+
+  const mutation = useMutation({
+    mutationFn: async (data) => {
+      setSubmitting(true);
+      return await updateCredentials(data)
+    },
+    onSuccess: () => {
+      router.replace('/settings/profile')
+    },
+  })
+
+  const onSubmit = () => {
+    mutation.mutate({ display_name: name })
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['bottom']}>
@@ -37,6 +53,7 @@ export default function Page() {
         options={{
           title: 'Name',
           headerBackTitle: 'Back',
+          headerRight: () => isSubmitting ? <ActivityIndicator /> : <Button fontSize="$7" p="0" fontWeight={'600'} color="$blue9" chromeless onPress={() => onSubmit()}>Save</Button>
         }}
       />
       <ScrollView flexGrow={1}>
