@@ -2,6 +2,7 @@ import Feather from '@expo/vector-icons/Feather'
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
 import { TamaguiProvider } from 'tamagui'
 import { config } from '../../tamagui.config'
+import { ToastProvider, ToastViewport } from '@tamagui/toast';
 import { useFonts } from 'expo-font'
 import { Stack, useRouter, ErrorBoundary } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
@@ -15,6 +16,7 @@ import { useOnlineManager } from 'src/hooks/useOnlineManager'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { ShareIntentProvider } from 'expo-share-intent'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import Constants from 'expo-constants'
 
@@ -79,29 +81,29 @@ export default function RootLayoutWithContext() {
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme()
-
+  const colorScheme = useColorScheme();
+  const { left, top, right } = useSafeAreaInsets()
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthProvider>
         <QueryClientProvider client={queryClient}>
           <BottomSheetModalProvider>
             <TamaguiProvider config={config} defaultTheme={'light'}>
-              <ThemeProvider value={DefaultTheme}>
-                <SafeAreaProvider>
-                  <Stack>
-                    <Stack.Screen name="(auth)/(tabs)" options={{ headerShown: false }} />
-                    <Stack.Screen
-                      name="(public)/login"
-                      options={{ headerShown: false }}
-                    />
-                  </Stack>
-                </SafeAreaProvider>
-              </ThemeProvider>
+              <ToastProvider native={true} burntOptions={{ from: 'bottom' }}>
+                <ThemeProvider value={DefaultTheme}>
+                  <SafeAreaProvider>
+                    <Stack>
+                      <Stack.Screen name="(auth)/(tabs)" options={{ headerShown: false }} />
+                      <Stack.Screen name="(public)/login" options={{ headerShown: false }} />
+                    </Stack>
+                    <ToastViewport />
+                  </SafeAreaProvider>
+                </ThemeProvider>
+              </ToastProvider>
             </TamaguiProvider>
           </BottomSheetModalProvider>
         </QueryClientProvider>
       </AuthProvider>
     </GestureHandlerRootView>
-  )
+  );
 }
