@@ -39,10 +39,11 @@ import {
 import UserAvatar from '../common/UserAvatar'
 import { _timeAgo, likeCountLabel, prettyCount } from 'src/utils'
 import ReadMore from '../common/ReadMore'
+import AutolinkText from '../common/AutolinkText'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
-export default function CommentFeed({ id, showLikes, user, handleReport, gotoProfile }) {
+export default function CommentFeed({ id, showLikes, user, handleReport, gotoProfile, gotoUsernameProfile, gotoHashtag }) {
   const [commentText, setComment] = useState()
   const queryClient = useQueryClient()
   const commentRef = useRef()
@@ -103,9 +104,11 @@ export default function CommentFeed({ id, showLikes, user, handleReport, gotoPro
                   </Text>
                 </XStack>
                 <ReadMore numberOfLines={3}>
-                  <Text mt={3} flexWrap="wrap" fontSize="$4">
-                    {item.content_text}
-                  </Text>
+                  <AutolinkText
+                    text={item.content_text}
+                    onMentionPress={gotoUsernameProfile}
+                    onHashtagPress={gotoHashtag}
+                  />
                 </ReadMore>
                 <XStack mt="$2" gap="$4">
                   <Pressable onPress={() => commentRef?.current.focus()}>
