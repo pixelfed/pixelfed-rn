@@ -119,13 +119,11 @@ export function parseLinkHeader(header) {
 }
 
 export function prettyCount(number) {
-  if (number < 1000) return number.toString() // Return the same number if less than 1000
+  if (number < 1000) return number.toString()
   if (number < 1000000) {
-    // Less than a million
     return (number / 1000).toFixed(number % 1000 === 0 ? 0 : 1) + 'K'
   }
   if (number < 1000000000) {
-    // Less than a billion
     return (number / 1000000).toFixed(number % 1000000 === 0 ? 0 : 1) + 'M'
   }
   return (number / 1000000000).toFixed(number % 1000000000 === 0 ? 0 : 1) + 'B'
@@ -158,19 +156,14 @@ export function postCountLabel(number) {
 export function enforceLen(str, len, ellipsis = false, mode = 'end') {
   str = str || ''
   if (str.length > len) {
-    if (ellipsis) {
-      if (mode === 'end') {
-        return str.slice(0, len) + '…'
-      } else if (mode === 'middle') {
-        const half = Math.floor(len / 2)
-        return str.slice(0, half) + '…' + str.slice(-half)
-      } else {
-        // fallback
-        return str.slice(0, len)
-      }
-    } else {
-      return str.slice(0, len)
+    if (ellipsis && mode === 'end') {
+      return str.slice(0, len) + '…'
     }
+    if (ellipsis && mode === 'middle') {
+      const half = Math.floor(len / 2)
+      return str.slice(0, half) + '…' + str.slice(-half)
+    }
+    return str.slice(0, len)
   }
   return str
 }
