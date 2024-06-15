@@ -1,24 +1,59 @@
-import { FlatList, Dimensions, ActivityIndicator } from 'react-native'
-import { Image, Text, View, YStack } from 'tamagui'
+import { FlatList, Dimensions, ActivityIndicator, Alert, Share } from 'react-native'
+import { Button, Image, Separator, Text, View, YStack } from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
+import { Feather } from '@expo/vector-icons'
 import { Storage } from 'src/state/cache'
 import { queryApi } from 'src/requests'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, Link } from 'expo-router'
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
+import { Stack, useLocalSearchParams, Link, router } from 'expo-router'
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import FastImage from 'react-native-fast-image'
 import {
   getAccountById,
   getAccountStatusesById,
   getAccountRelationship,
+  getAccountByUsername,
+  blockProfileById,
+  unblockProfileById,
+  muteProfileById,
+  unmuteProfileById,
+  followAccountById,
+  unfollowAccountById,
 } from 'src/lib/api'
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetBackdrop,
+  BottomSheetFooter,
+  BottomSheetTextInput,
+  BottomSheetScrollView,
+  BottomSheetFlatList,
+} from '@gorhom/bottom-sheet'
+import Clipboard from '@react-native-clipboard/clipboard'
+import { useToast, useToastController } from '@tamagui/toast'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileScreen() {
-  const { id } = useLocalSearchParams()
+  const { id, byUsername } = useLocalSearchParams()
   const selfUser = JSON.parse(Storage.getString('user.profile'))
+  const queryClient = useQueryClient()
+  const bottomSheetModalRef = useRef(null)
+  const snapPoints = useMemo(() => ['50%', '55%'], [])
+  // const toast = useToastController();
+  const toastController = useToastController();
+
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present()
+  }, [])
+  const handleSheetChanges = useCallback((index) => {}, [])
+  const renderBackdrop = useCallback(
+    (props) => (
+      <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
+    ),
+    []
+  )
 
   const RenderItem = useCallback(
     ({ item }) =>
@@ -43,20 +78,243 @@ export default function ProfileScreen() {
     []
   )
 
-  const { data: user } = useQuery({
-    queryKey: ['profileById', id],
-    queryFn: getAccountById,
+  const EmptyFeed = () => (
+    <View h="70%" flexGrow={1}>
+      { !isFetched ? 
+        <YStack flex={1} justifyContent='center' alignItems='center' gap="$5">
+          <ActivityIndicator />
+        </YStack> :
+        <YStack flexGrow={1} justifyContent='center' alignItems='center' gap="$5">
+          <View p="$6" borderWidth={2} borderColor="black" borderRadius={100}>
+            <Feather name="camera" size={40} />
+          </View>
+          <Text fontSize="$9">No Posts Yet</Text>
+        </YStack>
+      }
+    </View>
+  )
+
+  const { data: user, error: userError } = useQuery({
+    queryKey: byUsername !== undefined && id == 0 ? ['getAccountByUsername', byUsername] : ['getAccountById', id],
+    queryFn: byUsername !== undefined && id == 0 ? getAccountByUsername : getAccountById
   })
 
+  if(userError) {
+    return (<View><Text>{userError}</Text></View>)
+  }
   const userId = user?.id
 
   const { data: relationship } = useQuery({
-    queryKey: ['getAccountRelationship', id],
+    queryKey: ['getAccountRelationship', userId],
     queryFn: getAccountRelationship,
-    enabled: !!userId,
+    enabled: !!userId
   })
-  const RenderHeader = useCallback(
-    () => <ProfileHeader profile={user} relationship={relationship} />,
+
+  const blockMutation = useMutation({
+    mutationFn: () => {
+      return blockProfileById(userId)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
+    }
+  })
+
+  const unblockMutation = useMutation({
+    mutationFn: () => {
+      return unblockProfileById(userId)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
+    }
+  })
+
+  const muteMutation = useMutation({
+    mutationFn: () => {
+      return muteProfileById(userId)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
+    }
+  })
+
+  const unmuteMutation = useMutation({
+    mutationFn: () => {
+      return unmuteProfileById(userId)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
+    }
+  })
+
+  const followMutation = useMutation({
+    mutationFn: () => {
+      return followAccountById(userId)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ['getAccountById'] })
+        queryClient.invalidateQueries({ queryKey: ['getAccountByUsername'] })
+      }, 1000)
+    }
+  })
+
+  const unfollowMutation = useMutation({
+    mutationFn: () => {
+      return unfollowAccountById(userId)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ['getAccountById'] })
+        queryClient.invalidateQueries({ queryKey: ['getAccountByUsername'] })
+      }, 1000)
+    }
+  })
+
+  const onOpenMenu = () => {
+    bottomSheetModalRef.current?.present()
+  }
+    
+  const menuGotoLink = async (action) => {
+    bottomSheetModalRef.current?.close()
+
+    if(action === 'report') {
+      router.push('/profile/report/' + id);
+    }
+
+    if(action === 'block') {
+      Alert.alert(
+        'Confirm Block', 
+        "Are you sure you want to block this account?\n\nThey won\'t be notified you blocked them. You can unblock them later.", 
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Block', 
+            style: 'destructive',
+            onPress: () => _handleBlock(),
+          }
+        ]
+      );
+    }
+
+    if(action === 'unblock') {
+      Alert.alert(
+        'Confirm Unblock', 
+        "Are you sure you want to unblock this account?", 
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Unblock', 
+            style: 'destructive',
+            onPress: () => _handleUnblock(),
+          }
+        ]
+      );
+    }
+
+    if(action === 'mute') {
+      Alert.alert(
+        'Confirm Mute', 
+        "Are you sure you want to mute this account?\n\nThey won\'t be notified you muted them. You can unmute them later.", 
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Mute', 
+            style: 'destructive',
+            onPress: () => _handleMute(),
+          }
+        ]
+      );
+    }
+
+    if(action === 'unmute') {
+      Alert.alert(
+        'Confirm Unmute', 
+        "Are you sure you want to unmute this account?", 
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Block', 
+            style: 'destructive',
+            onPress: () => _handleUnmute(),
+          }
+        ]
+      );
+    }
+
+    if(action === 'copyurl') {
+      Clipboard.setString(user.url);
+      toastController.show(
+        'Profile copied to clipboard',
+        {
+          from: 'bottom',
+          preset: 'none',
+          duration: 2500,
+          haptic: 'success'
+        }
+      );
+    }
+
+    if(action === 'share') {
+      try {
+        const result = await Share.share({
+          message: user.url,
+        });
+      } catch (error) {
+        Alert.alert(error.message);
+      }
+    };
+
+    if(action === 'about') {
+      router.push(`/profile/about/${userId}`)
+    };
+  }
+
+  const _handleBlock = () => {
+    blockMutation.mutate();
+  }
+
+  const _handleUnblock = () => {
+    unblockMutation.mutate();
+  }
+
+  const _handleMute = () => {
+    muteMutation.mutate();
+  }
+
+  const _handleUnmute = () => {
+    unmuteMutation.mutate();
+  }
+
+  const _handleFollow = () => {
+    followMutation.mutate();
+  }
+
+  const _handleUnfollow = () => {
+    unfollowMutation.mutate();
+  }
+
+  const RenderHeader = useCallback(() => 
+    <ProfileHeader 
+      profile={user} 
+      relationship={relationship} 
+      openMenu={onOpenMenu} 
+      onFollow={() => _handleFollow()}
+      onUnfollow={() => _handleUnfollow()}
+    />,
     [user, relationship]
   )
 
@@ -68,16 +326,18 @@ export default function ProfileScreen() {
     hasNextPage,
     hasPreviousPage,
     isFetchingNextPage,
+    isFetched,
     isFetching,
     isError,
     error,
   } = useInfiniteQuery({
-    queryKey: ['statusesById', id],
+    queryKey: ['statusesById', userId],
     queryFn: async ({ pageParam }) => {
       const data = await getAccountStatusesById(userId, pageParam)
-      return data.filter((p) => {
+      const res = data.filter((p) => {
         return p.pf_type == 'photo' && p.media_attachments.length
       })
+      return res
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
@@ -92,7 +352,7 @@ export default function ProfileScreen() {
       }, lastPage[0].id)
       return lowestId
     },
-    enabled: !!userId,
+    enabled: !!userId
   })
 
   // if (isFetching && !isFetchingNextPage) {
@@ -107,6 +367,30 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView flex={1} edges={['top']} style={{ backgroundColor: 'white' }}>
       <Stack.Screen options={{ headerShown: false }} />
+        <BottomSheetModal
+          ref={bottomSheetModalRef}
+          index={1}
+          snapPoints={snapPoints}
+          onChange={handleSheetChanges}
+          backdropComponent={renderBackdrop}
+          keyboardBehavior={'extend'}
+        >
+          <BottomSheetScrollView>
+            <Button size="$6" chromeless color="red" onPress={() => menuGotoLink(relationship?.muting ? 'unmute' : 'mute')}>{ relationship?.muting ? 'Unmute' : 'Mute' }</Button>
+            <Separator />
+            <Button size="$6" chromeless color="red" onPress={() => menuGotoLink(relationship?.blocking ? 'unblock' : 'block')}>{ relationship?.blocking ? 'Unblock' : 'Block' }</Button>
+            <Separator />
+            <Button size="$6" chromeless color="red" onPress={() => menuGotoLink('report')}>Report</Button>
+            <Separator />
+            <Button size="$6" chromeless onPress={() => menuGotoLink('about')}>About this account</Button>
+            <Separator />
+            <Button size="$6" chromeless onPress={() => menuGotoLink('copyurl')}>Copy profile URL</Button>
+            <Separator />
+            <Button size="$6" chromeless onPress={() => menuGotoLink('share')}>Share this profile</Button>
+            <Separator />
+            <Button size="$6" chromeless color="$gray8" onPress={() => bottomSheetModalRef.current?.close()}>Cancel</Button>
+          </BottomSheetScrollView>
+        </BottomSheetModal>
       <FlatList
         data={feed?.pages.flat()}
         keyExtractor={(item, index) => item?.id.toString()}
@@ -118,8 +402,9 @@ export default function ProfileScreen() {
           if (!isFetching && hasNextPage) fetchNextPage()
         }}
         onEndReachedThreshold={0.5}
+        ListEmptyComponent={EmptyFeed}
         ListFooterComponent={() =>
-          isFetchingNextPage ? (
+          isFetched && isFetchingNextPage ? (
             <View p="$5">
               <ActivityIndicator />
             </View>
