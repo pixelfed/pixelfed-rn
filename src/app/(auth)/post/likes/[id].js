@@ -17,15 +17,15 @@ export default function Page() {
 
   const RenderItem = ({ item }) => {
     return (
-      <View p="$3">
+      <View p="$3" bg="white">
         <Link href={`/profile/${item.id}`}>
           <XStack gap="$3" alignItems="center">
-            <UserAvatar url={item.avatar} width={40} height={40} />
-            <YStack>
-              <Text fontSize="$3" color="$gray10">
+            <UserAvatar url={item.avatar} />
+            <YStack flexShrink={1} gap="$1">
+              <Text fontSize="$3" color="$gray9" flexWrap='wrap'>
                 {item.display_name}
               </Text>
-              <Text fontSize="$5" fontWeight="bold">
+              <Text fontSize={item.acct.length > 40 ? '$4' : '$5'} fontWeight="bold" flexWrap='wrap'>
                 @{item.acct}
               </Text>
             </YStack>
@@ -87,7 +87,7 @@ export default function Page() {
   }
 
   return (
-    <SafeAreaView flex={1} edges={['bottom']}>
+    <SafeAreaView flex={1} edges={['left']}>
       <Stack.Screen
         options={{
           title: status ? 'Likes (' + status.favourites_count + ')' : 'Likes',
