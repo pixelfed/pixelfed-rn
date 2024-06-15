@@ -40,57 +40,75 @@ export default function SearchScreen() {
     return domain.hostname
   }
 
+  const EmptyResults = () => (
+    query && query.length && !isFetching ?
+      <RenderEmptyResults /> : null
+  )
+
+  const RenderEmptyResults = () => (
+    <View 
+      flexGrow={1} 
+      justifyContent='center' 
+      alignItems='center'
+      py="$5">
+      <YStack justifyContent='center' alignItems='center' gap="$5">
+        <Feather name="alert-circle" size={60} />
+        <Text fontSize="$9">No results found</Text>
+      </YStack>
+    </View>
+  )
+
   const RenderItem = useCallback(({ item }) => {
     if (item._type === 'account') {
       return (
         <View p="$3" bg="white">
-          <XStack alignItems="center" gap="$3">
-            <Link href={`/profile/${item.id}`} asChild>
-              <Pressable>
-                <UserAvatar url={item.avatar} width={43} height={43} />
-              </Pressable>
-            </Link>
-            <YStack flexGrow={1} gap={4}>
-              <Text fontSize="$3" color="$gray9">
-                {item.display_name}
-              </Text>
-              <XStack
-                alignItems="center"
-                flexWrap="wrap"
-                whiteSpace="break-all"
-                overflow="hidden"
-              >
-                <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
-                  <Text fontSize="$6" fontWeight="bold">
-                    {item.username}
-                  </Text>
+          <Link href={`/profile/${item.id}`} asChild>
+            <Pressable>
+              <XStack alignItems="center" gap="$3">
+                <UserAvatar url={item.avatar} width={40} height={40} />
+                <YStack flexGrow={1} gap={4}>
+                  {/* <Text fontSize="$3" color="$gray9">
+                    {item.display_name}
+                  </Text> */}
+                  <XStack
+                    alignItems="center"
+                    flexWrap="wrap"
+                    whiteSpace="break-all"
+                    overflow="hidden"
+                  >
+                    <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
+                      <Text fontSize="$6" fontWeight="bold">
+                        {item.username}
+                      </Text>
 
-                  {/* { !item.local ? <View bg="$gray3" px={5} py={4} borderRadius={5}>
-                        <Text fontSize="$2" fontWeight="bold" color="#999">{getDomain(item.url)}</Text>
-                      </View> : null } */}
-                  {!item.local ? (
-                    <Text fontSize="$6" color="$gray9">
-                      @{getDomain(item.url)}
+                      {/* { !item.local ? <View bg="$gray3" px={5} py={4} borderRadius={5}>
+                            <Text fontSize="$2" fontWeight="bold" color="#999">{getDomain(item.url)}</Text>
+                          </View> : null } */}
+                      {!item.local ? (
+                        <Text fontSize="$6" color="$gray9">
+                          @{getDomain(item.url)}
+                        </Text>
+                      ) : null}
+                    </ReadMore>
+                  </XStack>
+                  <XStack gap="$2" alignItems="center">
+                    <Text color="$gray9" fontSize="$2">
+                      {prettyCount(item.followers_count)} Followers
                     </Text>
-                  ) : null}
-                </ReadMore>
+                    <Text color="$gray8">·</Text>
+                    <Text color="$gray9" fontSize="$2">
+                      {postCountLabel(item.statuses_count)}
+                    </Text>
+                    <Text color="$gray8">·</Text>
+                    <Text color="$gray9" fontSize="$2">
+                      {item.local ? 'Joined' : 'First seen'}{' '}
+                      {formatTimestampMonthYear(item.created_at)}
+                    </Text>
+                  </XStack>
+                </YStack>
               </XStack>
-              <XStack gap="$2" alignItems="center">
-                <Text color="$gray8" fontSize="$3">
-                  {prettyCount(item.followers_count)} Followers
-                </Text>
-                <Text color="$gray8">·</Text>
-                <Text color="$gray8" fontSize="$3">
-                  {postCountLabel(item.statuses_count)}
-                </Text>
-                <Text color="$gray8">·</Text>
-                <Text color="$gray8" fontSize="$3">
-                  {item.local ? 'Joined' : 'First seen'}{' '}
-                  {formatTimestampMonthYear(item.created_at)}
-                </Text>
-              </XStack>
-            </YStack>
-          </XStack>
+            </Pressable>
+          </Link>
         </View>
       )
     }
@@ -125,6 +143,57 @@ export default function SearchScreen() {
         </Link>
       )
     }
+
+    if (item._type === 'status') {
+      return (
+        <View p="$3" bg="white">
+          <Link href={`/post/${item.id}`} asChild>
+            <Pressable>
+              <XStack alignItems="center" gap="$3">
+                <UserAvatar url={item.account.avatar} width={40} height={40} />
+                <YStack flexGrow={1} gap={4}>
+                  <XStack
+                    alignItems="center"
+                    flexWrap="wrap"
+                    whiteSpace="break-all"
+                    overflow="hidden"
+                  >
+                    <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
+                      <Text fontSize="$6" fontWeight="bold">
+                        {item.account.username}
+                      </Text>
+
+                      {!item.account.local ? (
+                        <Text fontSize="$6" color="$gray9">
+                          @{getDomain(item.account.url)}
+                        </Text>
+                      ) : null}
+                    </ReadMore>
+                  </XStack>
+                  <XStack gap="$2" alignItems="center">
+                    <Text color="black" fontSize="$2">
+                      Post
+                    </Text>
+                    <Text color="$gray8">·</Text>
+                    <Text color="$gray9" fontSize="$2">
+                      {prettyCount(item.favourites_count)} likes
+                    </Text>
+                    <Text color="$gray8">·</Text>
+                    <Text color="$gray9" fontSize="$2">
+                      {prettyCount(item.reply_count)} comments
+                    </Text>
+                    <Text color="$gray8">·</Text>
+                    <Text color="$gray9" fontSize="$2">
+                      Created {formatTimestampMonthYear(item.created_at)}
+                    </Text>
+                  </XStack>
+                </YStack>
+              </XStack>
+            </Pressable>
+          </Link>
+        </View>
+      )
+    }
   }, [])
 
   const RenderSeparator = () => <View h={1} bg="$gray4" />
@@ -152,6 +221,7 @@ export default function SearchScreen() {
           renderItem={RenderItem}
           ItemSeparatorComponent={RenderSeparator}
           onScrollBeginDrag={() => Keyboard.dismiss()}
+          ListEmptyComponent={EmptyResults}
           ListFooterComponent={() =>
             isFetching ? <ActivityIndicator /> : <View h={200} />
           }
