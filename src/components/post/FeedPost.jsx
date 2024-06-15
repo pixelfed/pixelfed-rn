@@ -1,9 +1,9 @@
-import { Dimensions, Pressable } from 'react-native'
+import { Dimensions, Pressable, Share } from 'react-native'
 import { Button, Group, Separator, Text, View, XStack, YStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import FastImage from 'react-native-fast-image'
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
-import { formatTimestamp, openBrowserAsync } from '../../utils'
+import { enforceLen, formatTimestamp, openBrowserAsync } from '../../utils'
 import { Link, router } from 'expo-router'
 import {
   BottomSheetModal,
@@ -14,6 +14,7 @@ import Carousel, { ICarouselInstance, Pagination } from 'react-native-reanimated
 import { useSharedValue } from 'react-native-reanimated'
 import ReadMore from '../common/ReadMore'
 import LikeButton from 'src/components/common/LikeButton'
+import AutolinkText from 'src/components/common/AutolinkText'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 const AVATAR_WIDTH = 45
@@ -138,29 +139,27 @@ const PostActions = React.memo(
           <XStack gap="$5">
             <LikeButton hasLiked={hasLiked} handleLike={handleLike} />
             <Pressable onPress={() => onOpenComments()}>
-              <Feather name="message-circle" size={26} />
+              <Feather name="message-circle" size={30} />
             </Pressable>
-            <Feather name="refresh-cw" size={26} />
+            {/* <Feather name="refresh-cw" size={26} /> */}
           </XStack>
           <XStack gap="$4">
-            <Feather name="bookmark" size={26} />
+            <Feather name="bookmark" size={30} />
           </XStack>
         </XStack>
         {likesCount || sharesCount ? (
-          <XStack justifyContent="space-between">
+          <XStack justifyContent="space-between" alignItems="flex-end">
             {likesCount ? (
               likedBy && likesCount > 1 ? (
                 <Link href={`/post/likes/${post.id}`}>
-                  <XStack>
                     <Text fontSize="$3">Liked by </Text>
                     <Text fontWeight="bold" fontSize="$3">
-                      {likedBy.username}
+                      { enforceLen(likedBy.username, 12, true) }
                     </Text>
                     <Text fontSize="$3"> and </Text>
                     <Text fontWeight="bold" fontSize="$3">
                       {likesCount - 1} {likesCount - 1 > 1 ? 'others' : 'other'}
                     </Text>
-                  </XStack>
                 </Link>
               ) : (
                 <Link href={`/post/likes/${post.id}`}>
@@ -173,9 +172,12 @@ const PostActions = React.memo(
               <View flexGrow={1}></View>
             )}
             {likesCount && sharesCount ? (
+              <Link href={`/post/shares/${post.id}`}>
+
               <Text fontWeight="bold" fontSize="$3">
                 {sharesCount} {sharesCount > 1 ? 'Shares' : 'Share'}
               </Text>
+              </Link>
             ) : null}
           </XStack>
         ) : null}
@@ -185,33 +187,20 @@ const PostActions = React.memo(
 )
 
 const PostCaption = React.memo(
-  ({ postId, username, caption, commentsCount, createdAt, tags, onOpenComments }) => {
+  ({ postId, username, caption, commentsCount, createdAt, tags, onOpenComments, onHashtagPress, onMentionPress }) => {
     const timeAgo = formatTimestamp(createdAt)
     return (
       <BorderlessSection>
         <YStack gap="$3" pt="$1" pb="$3" px="$2">
           <XStack flexWrap="wrap" pr="$3">
-            <Text
-              fontSize="$5"
-              selectable={true}
-              multiline
-              editable={false}
-              suppressHighlighting={false}
-            >
-              <Text fontWeight="bold">{username}</Text> {caption?.replaceAll('\n\n', ' ')}
-            </Text>
-          </XStack>
-          <XStack mt={-5} gap={5} flexWrap="wrap">
-            {tags &&
-              tags.map((tag, idx) => (
-                <Link key={tag.name} href={`/hashtag/${tag.name}`}>
-                  <View key={tag.name} bg="$gray3" p={5} borderRadius={5}>
-                    <Text fontSize="$3" fontWeight="300">
-                      #{tag.name}
-                    </Text>
-                  </View>
-                </Link>
-              ))}
+            <ReadMore numberOfLines={3} renderRevealedFooter={() => <></>}>
+              <AutolinkText
+                text={caption?.replaceAll('\n\n', ' ')}
+                username={username}
+                onHashtagPress={onHashtagPress}
+                onMentionPress={onMentionPress}
+                />
+            </ReadMore>
           </XStack>
           {commentsCount ? (
             <Pressable onPress={() => onOpenComments()}>
@@ -234,14 +223,12 @@ const PostCaption = React.memo(
   }
 )
 
-export default function FeedPost({ post, user, onOpenComments }) {
+export default function FeedPost({ post, user, onOpenComments, onLike }) {
   const bottomSheetModalRef = useRef(null)
   const carouselRef = useRef(null)
   const progress = useSharedValue(0)
-  // variables
   const snapPoints = useMemo(() => ['45%', '50%'], [])
 
-  // callbacks
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
   }, [])
@@ -273,7 +260,29 @@ export default function FeedPost({ post, user, onOpenComments }) {
     await openBrowserAsync(post.url)
   }
 
-  const handleLike = async (id) => {}
+  const onGotoHashtag = (tag) => {
+    bottomSheetModalRef.current?.close()
+    router.push(`/hashtag/${tag}`)
+  }
+
+  const onGotoMention = (tag) => {
+    bottomSheetModalRef.current?.close()
+    router.push(`/profile/0?byUsername=${tag}`)
+  }
+
+  const onGotoAbout = () => {
+    bottomSheetModalRef.current?.close()
+    router.push(`/profile/about/${post.account.id}`)
+  }
+
+  const onGotoShare = async () => {
+    try {
+      const result = await Share.share({
+        message: post.url,
+      });
+    } catch (error) {
+    }
+  }
 
   return (
     <View flex={1} style={{ width: SCREEN_WIDTH }}>
@@ -325,7 +334,7 @@ export default function FeedPost({ post, user, onOpenComments }) {
             data={post.media_attachments}
             dotStyle={{ backgroundColor: 'rgba(0,0,0,0.16)', borderRadius: 50 }}
             activeDotStyle={{ backgroundColor: '#408DF6', borderRadius: 50 }}
-            containerStyle={{ gap: 5, marginTop: 10, marginBottom: 0, zIndex: 3 }}
+            containerStyle={{ gap: 5, marginTop: 10, marginBottom: -10, zIndex: 3 }}
             size={8}
           />
         </>
@@ -333,13 +342,13 @@ export default function FeedPost({ post, user, onOpenComments }) {
         <PostMedia media={post.media_attachments} post={post} />
       ) : null}
       <PostActions
-        hasLiked={false}
+        hasLiked={post.favourited}
         hasShared={false}
         post={post}
         likesCount={post.favourites_count}
         likedBy={post.liked_by}
         sharesCount={post.reblogs_count}
-        handleLike={() => handleLike(post.id)}
+        handleLike={() => onLike(post.id, post.favourited)}
         onOpenComments={() => onOpenComments(post.id)}
       />
       <PostCaption
@@ -350,6 +359,8 @@ export default function FeedPost({ post, user, onOpenComments }) {
         createdAt={post.created_at}
         tags={post.tags}
         onOpenComments={() => onOpenComments(post.id)}
+        onHashtagPress={(tag) => onGotoHashtag(tag)}
+        onMentionPress={(tag) => onGotoMention(tag)}
       />
       <BottomSheetModal
         ref={bottomSheetModalRef}
@@ -361,64 +372,20 @@ export default function FeedPost({ post, user, onOpenComments }) {
         <BottomSheetScrollView>
           <YStack p="$5" gap="$3">
             <XStack justifyContent="space-between" gap="$2">
-              <Button py="$3" w={100} h={70}>
+              <Button py="$3" flexGrow={1} h={70} onPress={() => onGotoShare()}>
                 <YStack justifyContent="center" alignItems="center" gap="$2">
                   <Feather name="share" size={20} />
                   <Text>Share</Text>
                 </YStack>
               </Button>
-              <Button py="$3" h={70} flexGrow={1}>
-                <YStack justifyContent="center" alignItems="center" gap="$2">
-                  <Feather name="plus" size={20} />
-                  <Text>Add</Text>
-                </YStack>
-              </Button>
-              {/* { user && user?.id != post?.account.id ? <Button py="$3" h={70} flexGrow={1}>
-                <YStack justifyContent='center' alignItems='center' gap="$2">
-                  <Feather name="link" size={20} />
-                  <Text>Report</Text>
-                </YStack>
-              </Button> : null } */}
-              {user?.is_admin ? (
-                <Button py="$3" w={100} h={70}>
-                  <YStack justifyContent="center" alignItems="center" gap="$2">
-                    <Feather name="shield" size={20} />
-                    <Text>Moderate</Text>
-                  </YStack>
-                </Button>
-              ) : null}
             </XStack>
 
-            <Button onPress={() => openInBrowser()} size="$5" justifyContent="start">
+            <Button size="$5" justifyContent="start" onPress={() => onGotoAbout()}>
               <XStack alignItems="center" gap="$3">
-                <Feather name="link-2" size={20} color="#999" />
-                <Text fontSize="$5">Open in browser</Text>
+                <Feather name="info" size={20} color="#999" />
+                <Text fontSize="$5">About this account</Text>
               </XStack>
             </Button>
-
-            {/* <Button size="$5" justifyContent="start">
-              <XStack alignItems="center" gap="$3">
-                <Feather name="file-text" size={20} color="#999" />
-                <Text fontSize="$5">Photo and location details</Text>
-              </XStack>
-            </Button> */}
-
-            {/* <XStack gap="$2">
-
-              <Button flexGrow={1} size="$5" justifyContent="start">
-                <XStack alignItems="center" gap="$3">
-                  <Feather name="thumbs-down" size={20} color="#999" />
-                  <Text fontSize="$5">Not interested</Text>
-                </XStack>
-              </Button>
-
-              <Button size="$5" justifyContent="start">
-                <XStack alignItems="center" gap="$3">
-                  <Feather name="info" size={20} color="#999" />
-                  <Text fontSize="$5">About this account</Text>
-                </XStack>
-              </Button>
-            </XStack> */}
 
             <Group separator={<Separator />}>
               <Group.Item>
@@ -432,8 +399,16 @@ export default function FeedPost({ post, user, onOpenComments }) {
               <Group.Item>
                 <Button size="$5" justifyContent="start" onPress={() => goToProfile()}>
                   <XStack alignItems="center" gap="$3">
-                    <Feather name="arrow-right-circle" size={20} color="#999" />
+                    <Feather name="user" size={20} color="#999" />
                     <Text fontSize="$5">View Profile</Text>
+                  </XStack>
+                </Button>
+              </Group.Item>
+              <Group.Item>
+                <Button size="$5" justifyContent="start" onPress={() => openInBrowser()}>
+                  <XStack alignItems="center" gap="$3">
+                    <Feather name="book" size={20} color="#999" />
+                    <Text fontSize="$5">Open in browser</Text>
                   </XStack>
                 </Button>
               </Group.Item>
