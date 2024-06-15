@@ -17,7 +17,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.pixelfed"
+      "bundleIdentifier": "com.pixelfed",
+      "deploymentTarget": "13.4"
     },
     "android": {
       "adaptiveIcon": {
