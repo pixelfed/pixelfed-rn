@@ -1,7 +1,7 @@
 import { Link } from 'expo-router'
 import { Button, XStack } from 'tamagui'
 
-export default function FollowingProfile() {
+export default function FollowingProfile({ onPress }) {
   return (
     <XStack w="100%" my="$3" gap="$2">
       <Button
@@ -14,6 +14,7 @@ export default function FollowingProfile() {
         fontWeight="bold"
         fontSize="$4"
         flexGrow={1}
+        onPress={() => onPress()}
       >
         Unfollow
       </Button>
