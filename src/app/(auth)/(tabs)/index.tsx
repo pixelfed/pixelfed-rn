@@ -6,9 +6,10 @@ import { StatusBar } from 'expo-status-bar'
 import { Feather } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, Stack, useRouter } from 'expo-router'
-import { useInfiniteQuery } from '@tanstack/react-query'
-import { fetchHomeFeed } from 'src/lib/api'
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { fetchHomeFeed, likeStatus, unlikeStatus } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
+import EmptyFeed from 'src/components/common/EmptyFeed'
 import { Storage } from 'src/state/cache'
 import {
   BottomSheetModal,
@@ -26,6 +27,7 @@ const keyExtractor = (_, index) => `post-${_.id}-${index}`
 
 export default function HomeScreen() {
   const router = useRouter()
+  const queryClient = useQueryClient()
   const { hasShareIntent } = useShareIntentContext()
 
   useEffect(() => {
@@ -60,19 +62,25 @@ export default function HomeScreen() {
 
   const userJson = Storage.getString('user.profile')
   const user = JSON.parse(userJson)
-  const seenWelcome = Storage.contains('user.welcome')
 
   const renderItem = useCallback(
-    ({ item }) => <FeedPost post={item} user={user} onOpenComments={onOpenComments} />,
-    []
+    ({ item }) => <FeedPost post={item} user={user} onOpenComments={onOpenComments} onLike={handleLike} />,
+    [data]
   )
 
-  const EmptyFeed = () => {
-    return (
-      <View>
-        <Text>No posts found</Text>
-      </View>
-    )
+  const likeMutation = useMutation({
+    mutationFn: async (handleLike) => {
+      return handleLike.type === 'like'
+        ? await likeStatus(handleLike)
+        : await unlikeStatus(handleLike)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['homeFeed'] })
+    },
+  })
+
+  const handleLike = async(id, state) => {
+    likeMutation.mutate({ type: state ? 'unlike' : 'like', id: id})
   }
 
   const handleShowLikes = (id) => {
@@ -85,26 +93,19 @@ export default function HomeScreen() {
     router.push(`/profile/${id}`)
   }
 
+  const handleGotoUsernameProfile = (id) => {
+    bottomSheetModalRef.current?.close()
+    router.push(`/profile/0?byUsername=${id}`)
+  }
+
+  const gotoHashtag = (id) => {
+    bottomSheetModalRef.current?.close()
+    router.push(`/hashtag/${id}`)
+  }
+
   const handleCommentReport = (id) => {
     bottomSheetModalRef.current?.close()
     router.push(`/post/report/${id}`)
-  }
-
-  useEffect(() => {
-    if (!seenWelcome) {
-      setTimeout(() => {
-        setSheetType('welcome')
-      }, 500)
-      setTimeout(() => {
-        bottomSheetModalRef.current?.present()
-      }, 1500)
-    }
-  }, [seenWelcome])
-
-  const handleOnContinue = () => {
-    setSheetType('comments')
-    Storage.set('user.welcome', true)
-    bottomSheetModalRef.current?.close()
   }
 
   const {
@@ -162,6 +163,8 @@ export default function HomeScreen() {
             id={replyId}
             showLikes={handleShowLikes}
             gotoProfile={handleGotoProfile}
+            gotoUsernameProfile={handleGotoUsernameProfile}
+            gotoHashtag={gotoHashtag}
             user={user}
             handleReport={handleCommentReport}
           />
