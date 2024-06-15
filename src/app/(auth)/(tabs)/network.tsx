@@ -1,28 +1,36 @@
 import { useCallback, useEffect, useState, useRef, useMemo } from 'react'
 import { FlatList, StyleSheet, Pressable, ActivityIndicator } from 'react-native'
-import { Text, View, XStack, Select, Adapt, Sheet } from 'tamagui'
+import { Text, View, XStack, Select, Adapt, Sheet, Button, YStack } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
 import { Feather } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, Stack, useRouter } from 'expo-router'
-import { useInfiniteQuery } from '@tanstack/react-query'
-import { fetchNetworkFeed } from 'src/lib/api'
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { fetchNetworkFeed, likeStatus, unlikeStatus } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
+import EmptyFeed from 'src/components/common/EmptyFeed'
 import { Storage } from 'src/state/cache'
 import {
   BottomSheetModal,
   BottomSheetView,
   BottomSheetBackdrop,
+  BottomSheetFooter,
+  BottomSheetTextInput,
 } from '@gorhom/bottom-sheet'
 import CommentFeed from 'src/components/post/CommentFeed'
+import UserAvatar from 'src/components/common/UserAvatar'
 
 const keyExtractor = (_, index) => `post-${_.id}-${index}`
 
-export default function NetworkScreen() {
+export default function HomeScreen() {
   const router = useRouter()
+  const queryClient = useQueryClient()
+
+
   const [replyId, setReplyId] = useState(null)
-  const bottomSheetModalRef = useRef(null)
+  const [sheetType, setSheetType] = useState('comments')
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const snapPoints = useMemo(() => ['55%', '80%'], [])
 
   const handlePresentModalPress = useCallback(() => {
@@ -48,13 +56,43 @@ export default function NetworkScreen() {
   const user = JSON.parse(userJson)
 
   const renderItem = useCallback(
-    ({ item }) => <FeedPost post={item} user={user} onOpenComments={onOpenComments} />,
-    []
+    ({ item }) => <FeedPost post={item} user={user} onOpenComments={onOpenComments} onLike={handleLike} />,
+    [data]
   )
+
+  const likeMutation = useMutation({
+    mutationFn: async (handleLike) => {
+      return handleLike.type === 'like'
+        ? await likeStatus(handleLike)
+        : await unlikeStatus(handleLike)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['fetchNetworkFeed'] })
+    },
+  })
+
+  const handleLike = async(id, state) => {
+    likeMutation.mutate({ type: state ? 'unlike' : 'like', id: id})
+  }
 
   const handleShowLikes = (id) => {
     bottomSheetModalRef.current?.close()
     router.push(`/post/likes/${id}`)
+  }
+
+  const handleGotoProfile = (id) => {
+    bottomSheetModalRef.current?.close()
+    router.push(`/profile/${id}`)
+  }
+
+  const handleGotoUsernameProfile = (id) => {
+    bottomSheetModalRef.current?.close()
+    router.push(`/profile/0?byUsername=${id}`)
+  }
+
+  const gotoHashtag = (id) => {
+    bottomSheetModalRef.current?.close()
+    router.push(`/hashtag/${id}`)
   }
 
   const handleCommentReport = (id) => {
@@ -69,15 +107,16 @@ export default function NetworkScreen() {
     hasNextPage,
     hasPreviousPage,
     isFetchingNextPage,
-    isFetching,
     isRefetching,
     refetch,
+    isFetching,
     isError,
     error,
   } = useInfiniteQuery({
     queryKey: ['fetchNetworkFeed'],
     initialPageParam: null,
     queryFn: fetchNetworkFeed,
+    refetchOnWindowFocus: false,
     getNextPageParam: (lastPage) => lastPage.nextPage,
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
   })
@@ -103,20 +142,6 @@ export default function NetworkScreen() {
       <StatusBar style="dark" />
       <Stack.Screen options={{ headerShown: false }} />
       <FeedHeader title="Network" />
-      <FlatList
-        data={data?.pages.flatMap((page) => page.data)}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-        refreshing={isRefetching}
-        onRefresh={refetch}
-        maxToRenderPerBatch={3}
-        showsVerticalScrollIndicator={false}
-        onEndReached={() => {
-          if (hasNextPage) fetchNextPage()
-        }}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}
-      />
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={1}
@@ -125,13 +150,33 @@ export default function NetworkScreen() {
         backdropComponent={renderBackdrop}
         keyboardBehavior={'extend'}
       >
-        <CommentFeed
-          id={replyId}
-          showLikes={handleShowLikes}
-          user={user}
-          handleReport={handleCommentReport}
-        />
+        {sheetType === 'comments' ? (
+          <CommentFeed
+            id={replyId}
+            showLikes={handleShowLikes}
+            gotoProfile={handleGotoProfile}
+            gotoUsernameProfile={handleGotoUsernameProfile}
+            gotoHashtag={gotoHashtag}
+            user={user}
+            handleReport={handleCommentReport}
+          />
+        ) : null}
       </BottomSheetModal>
+      <FlatList
+        data={data?.pages.flatMap((page) => page.data)}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+        maxToRenderPerBatch={3}
+        refreshing={isRefetching}
+        onRefresh={refetch}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={<EmptyFeed />}
+        onEndReached={() => {
+          if (hasNextPage) fetchNextPage()
+        }}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}
+      />
     </SafeAreaView>
   )
 }
@@ -140,5 +185,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+  },
+  input: {
+    flexShrink: 1,
+    margin: 10,
+    alignItems: 'center',
+    borderRadius: 10,
+    fontSize: 20,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(151, 151, 151, 0.25)',
+    backgroundColor: 'rgba(151, 151, 151, 0.05)',
+  },
+  footerContainer: {
+    padding: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+  },
+  footerText: {
+    textAlign: 'center',
+    color: 'white',
+    fontWeight: '800',
   },
 })
