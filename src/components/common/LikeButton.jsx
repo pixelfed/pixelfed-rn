@@ -43,11 +43,11 @@ export default function LikeButton(props) {
   return (
     <Pressable onPress={() => handleLike()}>
       <Animated.View style={[StyleSheet.absoluteFillObject, outlineStyle]}>
-        <MaterialCommunityIcons name={'heart-outline'} size={29} color={'black'} />
+        <MaterialCommunityIcons name={'heart-outline'} size={32} color={'black'} />
       </Animated.View>
 
       <Animated.View style={fillStyle}>
-        <MaterialCommunityIcons name={'heart'} size={29} color={'red'} />
+        <MaterialCommunityIcons name={'heart'} size={32} color={'red'} />
       </Animated.View>
     </Pressable>
   )
