@@ -63,8 +63,8 @@ export default function ProfileScreen() {
           <Image
             source={{
               uri: item.media_attachments[0].url,
-              width: SCREEN_WIDTH / 2 - 2,
-              height: 300,
+              width: SCREEN_WIDTH / 3 - 2,
+              height: SCREEN_WIDTH / 3 - 2,
             }}
             resizeMode="cover"
           />
@@ -79,7 +79,7 @@ export default function ProfileScreen() {
         keyExtractor={(item, index) => item?.id.toString()}
         ListHeaderComponent={<ProfileHeader profile={user} isSelf={true} />}
         renderItem={RenderItem}
-        numColumns={2}
+        numColumns={3}
         showsVerticalScrollIndicator={false}
         onEndReached={() => {
           if (!isFetching && hasNextPage) fetchNextPage()
