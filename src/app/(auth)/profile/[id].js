@@ -7,7 +7,12 @@ import { queryApi } from 'src/requests'
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, Link, router } from 'expo-router'
-import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  useQuery,
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
 import FastImage from 'react-native-fast-image'
 import {
   getAccountById,
@@ -42,7 +47,7 @@ export default function ProfileScreen() {
   const bottomSheetModalRef = useRef(null)
   const snapPoints = useMemo(() => ['50%', '55%'], [])
   // const toast = useToastController();
-  const toastController = useToastController();
+  const toastController = useToastController()
 
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
@@ -80,34 +85,42 @@ export default function ProfileScreen() {
 
   const EmptyFeed = () => (
     <View h="70%" flexGrow={1}>
-      { !isFetched ? 
-        <YStack flex={1} justifyContent='center' alignItems='center' gap="$5">
+      {!isFetched ? (
+        <YStack flex={1} justifyContent="center" alignItems="center" gap="$5">
           <ActivityIndicator />
-        </YStack> :
-        <YStack flexGrow={1} justifyContent='center' alignItems='center' gap="$5">
+        </YStack>
+      ) : (
+        <YStack flexGrow={1} justifyContent="center" alignItems="center" gap="$5">
           <View p="$6" borderWidth={2} borderColor="black" borderRadius={100}>
             <Feather name="camera" size={40} />
           </View>
           <Text fontSize="$9">No Posts Yet</Text>
         </YStack>
-      }
+      )}
     </View>
   )
 
   const { data: user, error: userError } = useQuery({
-    queryKey: byUsername !== undefined && id == 0 ? ['getAccountByUsername', byUsername] : ['getAccountById', id],
-    queryFn: byUsername !== undefined && id == 0 ? getAccountByUsername : getAccountById
+    queryKey:
+      byUsername !== undefined && id == 0
+        ? ['getAccountByUsername', byUsername]
+        : ['getAccountById', id],
+    queryFn: byUsername !== undefined && id == 0 ? getAccountByUsername : getAccountById,
   })
 
-  if(userError) {
-    return (<View><Text>{userError}</Text></View>)
+  if (userError) {
+    return (
+      <View>
+        <Text>{userError}</Text>
+      </View>
+    )
   }
   const userId = user?.id
 
   const { data: relationship } = useQuery({
     queryKey: ['getAccountRelationship', userId],
     queryFn: getAccountRelationship,
-    enabled: !!userId
+    enabled: !!userId,
   })
 
   const blockMutation = useMutation({
@@ -116,7 +129,7 @@ export default function ProfileScreen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
-    }
+    },
   })
 
   const unblockMutation = useMutation({
@@ -125,7 +138,7 @@ export default function ProfileScreen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
-    }
+    },
   })
 
   const muteMutation = useMutation({
@@ -134,7 +147,7 @@ export default function ProfileScreen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
-    }
+    },
   })
 
   const unmuteMutation = useMutation({
@@ -143,7 +156,7 @@ export default function ProfileScreen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
-    }
+    },
   })
 
   const followMutation = useMutation({
@@ -156,7 +169,7 @@ export default function ProfileScreen() {
         queryClient.invalidateQueries({ queryKey: ['getAccountById'] })
         queryClient.invalidateQueries({ queryKey: ['getAccountByUsername'] })
       }, 1000)
-    }
+    },
   })
 
   const unfollowMutation = useMutation({
@@ -169,152 +182,143 @@ export default function ProfileScreen() {
         queryClient.invalidateQueries({ queryKey: ['getAccountById'] })
         queryClient.invalidateQueries({ queryKey: ['getAccountByUsername'] })
       }, 1000)
-    }
+    },
   })
 
   const onOpenMenu = () => {
     bottomSheetModalRef.current?.present()
   }
-    
+
   const menuGotoLink = async (action) => {
     bottomSheetModalRef.current?.close()
 
-    if(action === 'report') {
-      router.push('/profile/report/' + id);
+    if (action === 'report') {
+      router.push('/profile/report/' + id)
     }
 
-    if(action === 'block') {
+    if (action === 'block') {
       Alert.alert(
-        'Confirm Block', 
-        "Are you sure you want to block this account?\n\nThey won\'t be notified you blocked them. You can unblock them later.", 
+        'Confirm Block',
+        "Are you sure you want to block this account?\n\nThey won't be notified you blocked them. You can unblock them later.",
         [
           {
             text: 'Cancel',
             style: 'cancel',
           },
           {
-            text: 'Block', 
+            text: 'Block',
             style: 'destructive',
             onPress: () => _handleBlock(),
-          }
+          },
         ]
-      );
+      )
     }
 
-    if(action === 'unblock') {
+    if (action === 'unblock') {
+      Alert.alert('Confirm Unblock', 'Are you sure you want to unblock this account?', [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Unblock',
+          style: 'destructive',
+          onPress: () => _handleUnblock(),
+        },
+      ])
+    }
+
+    if (action === 'mute') {
       Alert.alert(
-        'Confirm Unblock', 
-        "Are you sure you want to unblock this account?", 
+        'Confirm Mute',
+        "Are you sure you want to mute this account?\n\nThey won't be notified you muted them. You can unmute them later.",
         [
           {
             text: 'Cancel',
             style: 'cancel',
           },
           {
-            text: 'Unblock', 
-            style: 'destructive',
-            onPress: () => _handleUnblock(),
-          }
-        ]
-      );
-    }
-
-    if(action === 'mute') {
-      Alert.alert(
-        'Confirm Mute', 
-        "Are you sure you want to mute this account?\n\nThey won\'t be notified you muted them. You can unmute them later.", 
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'Mute', 
+            text: 'Mute',
             style: 'destructive',
             onPress: () => _handleMute(),
-          }
-        ]
-      );
-    }
-
-    if(action === 'unmute') {
-      Alert.alert(
-        'Confirm Unmute', 
-        "Are you sure you want to unmute this account?", 
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
           },
-          {
-            text: 'Block', 
-            style: 'destructive',
-            onPress: () => _handleUnmute(),
-          }
         ]
-      );
+      )
     }
 
-    if(action === 'copyurl') {
-      Clipboard.setString(user.url);
-      toastController.show(
-        'Profile copied to clipboard',
+    if (action === 'unmute') {
+      Alert.alert('Confirm Unmute', 'Are you sure you want to unmute this account?', [
         {
-          from: 'bottom',
-          preset: 'none',
-          duration: 2500,
-          haptic: 'success'
-        }
-      );
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Block',
+          style: 'destructive',
+          onPress: () => _handleUnmute(),
+        },
+      ])
     }
 
-    if(action === 'share') {
+    if (action === 'copyurl') {
+      Clipboard.setString(user.url)
+      toastController.show('Profile copied to clipboard', {
+        from: 'bottom',
+        preset: 'none',
+        duration: 2500,
+        haptic: 'success',
+      })
+    }
+
+    if (action === 'share') {
       try {
         const result = await Share.share({
           message: user.url,
-        });
+        })
       } catch (error) {
-        Alert.alert(error.message);
+        Alert.alert(error.message)
       }
-    };
+    }
 
-    if(action === 'about') {
+    if (action === 'about') {
       router.push(`/profile/about/${userId}`)
-    };
+    }
   }
 
   const _handleBlock = () => {
-    blockMutation.mutate();
+    blockMutation.mutate()
   }
 
   const _handleUnblock = () => {
-    unblockMutation.mutate();
+    unblockMutation.mutate()
   }
 
   const _handleMute = () => {
-    muteMutation.mutate();
+    muteMutation.mutate()
   }
 
   const _handleUnmute = () => {
-    unmuteMutation.mutate();
+    unmuteMutation.mutate()
   }
 
   const _handleFollow = () => {
-    followMutation.mutate();
+    followMutation.mutate()
   }
 
   const _handleUnfollow = () => {
-    unfollowMutation.mutate();
+    unfollowMutation.mutate()
   }
 
-  const RenderHeader = useCallback(() => 
-    <ProfileHeader 
-      profile={user} 
-      relationship={relationship} 
-      openMenu={onOpenMenu} 
-      onFollow={() => _handleFollow()}
-      onUnfollow={() => _handleUnfollow()}
-    />,
+  const RenderHeader = useCallback(
+    () => (
+      <ProfileHeader
+        profile={user}
+        relationship={relationship}
+        openMenu={onOpenMenu}
+        onFollow={() => _handleFollow()}
+        onUnfollow={() => _handleUnfollow()}
+      />
+    ),
     [user, relationship]
   )
 
@@ -352,7 +356,7 @@ export default function ProfileScreen() {
       }, lastPage[0].id)
       return lowestId
     },
-    enabled: !!userId
+    enabled: !!userId,
   })
 
   // if (isFetching && !isFetchingNextPage) {
@@ -367,30 +371,59 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView flex={1} edges={['top']} style={{ backgroundColor: 'white' }}>
       <Stack.Screen options={{ headerShown: false }} />
-        <BottomSheetModal
-          ref={bottomSheetModalRef}
-          index={1}
-          snapPoints={snapPoints}
-          onChange={handleSheetChanges}
-          backdropComponent={renderBackdrop}
-          keyboardBehavior={'extend'}
-        >
-          <BottomSheetScrollView>
-            <Button size="$6" chromeless color="red" onPress={() => menuGotoLink(relationship?.muting ? 'unmute' : 'mute')}>{ relationship?.muting ? 'Unmute' : 'Mute' }</Button>
-            <Separator />
-            <Button size="$6" chromeless color="red" onPress={() => menuGotoLink(relationship?.blocking ? 'unblock' : 'block')}>{ relationship?.blocking ? 'Unblock' : 'Block' }</Button>
-            <Separator />
-            <Button size="$6" chromeless color="red" onPress={() => menuGotoLink('report')}>Report</Button>
-            <Separator />
-            <Button size="$6" chromeless onPress={() => menuGotoLink('about')}>About this account</Button>
-            <Separator />
-            <Button size="$6" chromeless onPress={() => menuGotoLink('copyurl')}>Copy profile URL</Button>
-            <Separator />
-            <Button size="$6" chromeless onPress={() => menuGotoLink('share')}>Share this profile</Button>
-            <Separator />
-            <Button size="$6" chromeless color="$gray8" onPress={() => bottomSheetModalRef.current?.close()}>Cancel</Button>
-          </BottomSheetScrollView>
-        </BottomSheetModal>
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={1}
+        snapPoints={snapPoints}
+        onChange={handleSheetChanges}
+        backdropComponent={renderBackdrop}
+        keyboardBehavior={'extend'}
+      >
+        <BottomSheetScrollView>
+          <Button
+            size="$6"
+            chromeless
+            color="red"
+            onPress={() => menuGotoLink(relationship?.muting ? 'unmute' : 'mute')}
+          >
+            {relationship?.muting ? 'Unmute' : 'Mute'}
+          </Button>
+          <Separator />
+          <Button
+            size="$6"
+            chromeless
+            color="red"
+            onPress={() => menuGotoLink(relationship?.blocking ? 'unblock' : 'block')}
+          >
+            {relationship?.blocking ? 'Unblock' : 'Block'}
+          </Button>
+          <Separator />
+          <Button size="$6" chromeless color="red" onPress={() => menuGotoLink('report')}>
+            Report
+          </Button>
+          <Separator />
+          <Button size="$6" chromeless onPress={() => menuGotoLink('about')}>
+            About this account
+          </Button>
+          <Separator />
+          <Button size="$6" chromeless onPress={() => menuGotoLink('copyurl')}>
+            Copy profile URL
+          </Button>
+          <Separator />
+          <Button size="$6" chromeless onPress={() => menuGotoLink('share')}>
+            Share this profile
+          </Button>
+          <Separator />
+          <Button
+            size="$6"
+            chromeless
+            color="$gray8"
+            onPress={() => bottomSheetModalRef.current?.close()}
+          >
+            Cancel
+          </Button>
+        </BottomSheetScrollView>
+      </BottomSheetModal>
       <FlatList
         data={feed?.pages.flat()}
         keyExtractor={(item, index) => item?.id.toString()}

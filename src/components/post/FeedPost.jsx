@@ -152,14 +152,14 @@ const PostActions = React.memo(
             {likesCount ? (
               likedBy && likesCount > 1 ? (
                 <Link href={`/post/likes/${post.id}`}>
-                    <Text fontSize="$3">Liked by </Text>
-                    <Text fontWeight="bold" fontSize="$3">
-                      { enforceLen(likedBy.username, 12, true) }
-                    </Text>
-                    <Text fontSize="$3"> and </Text>
-                    <Text fontWeight="bold" fontSize="$3">
-                      {likesCount - 1} {likesCount - 1 > 1 ? 'others' : 'other'}
-                    </Text>
+                  <Text fontSize="$3">Liked by </Text>
+                  <Text fontWeight="bold" fontSize="$3">
+                    {enforceLen(likedBy.username, 12, true)}
+                  </Text>
+                  <Text fontSize="$3"> and </Text>
+                  <Text fontWeight="bold" fontSize="$3">
+                    {likesCount - 1} {likesCount - 1 > 1 ? 'others' : 'other'}
+                  </Text>
                 </Link>
               ) : (
                 <Link href={`/post/likes/${post.id}`}>
@@ -173,10 +173,9 @@ const PostActions = React.memo(
             )}
             {likesCount && sharesCount ? (
               <Link href={`/post/shares/${post.id}`}>
-
-              <Text fontWeight="bold" fontSize="$3">
-                {sharesCount} {sharesCount > 1 ? 'Shares' : 'Share'}
-              </Text>
+                <Text fontWeight="bold" fontSize="$3">
+                  {sharesCount} {sharesCount > 1 ? 'Shares' : 'Share'}
+                </Text>
               </Link>
             ) : null}
           </XStack>
@@ -187,7 +186,17 @@ const PostActions = React.memo(
 )
 
 const PostCaption = React.memo(
-  ({ postId, username, caption, commentsCount, createdAt, tags, onOpenComments, onHashtagPress, onMentionPress }) => {
+  ({
+    postId,
+    username,
+    caption,
+    commentsCount,
+    createdAt,
+    tags,
+    onOpenComments,
+    onHashtagPress,
+    onMentionPress,
+  }) => {
     const timeAgo = formatTimestamp(createdAt)
     return (
       <BorderlessSection>
@@ -199,7 +208,7 @@ const PostCaption = React.memo(
                 username={username}
                 onHashtagPress={onHashtagPress}
                 onMentionPress={onMentionPress}
-                />
+              />
             </ReadMore>
           </XStack>
           {commentsCount ? (
@@ -279,9 +288,8 @@ export default function FeedPost({ post, user, onOpenComments, onLike }) {
     try {
       const result = await Share.share({
         message: post.url,
-      });
-    } catch (error) {
-    }
+      })
+    } catch (error) {}
   }
 
   return (

@@ -22,10 +22,14 @@ export default function Page() {
           <XStack gap="$3" alignItems="center">
             <UserAvatar url={item.avatar} />
             <YStack flexShrink={1} gap="$1">
-              <Text fontSize="$3" color="$gray9" flexWrap='wrap'>
+              <Text fontSize="$3" color="$gray9" flexWrap="wrap">
                 {item.display_name}
               </Text>
-              <Text fontSize={item.acct.length > 40 ? '$4' : '$5'} fontWeight="bold" flexWrap='wrap'>
+              <Text
+                fontSize={item.acct.length > 40 ? '$4' : '$5'}
+                fontWeight="bold"
+                flexWrap="wrap"
+              >
                 @{item.acct}
               </Text>
             </YStack>

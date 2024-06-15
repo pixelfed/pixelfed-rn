@@ -20,8 +20,13 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, Link } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
 import { useQuery, useInfiniteQuery, useMutation } from '@tanstack/react-query'
-import { getAccountById, getAccountStatusesById, getConfig, updateCredentials } from 'src/lib/api'
-import { router } from 'expo-router';
+import {
+  getAccountById,
+  getAccountStatusesById,
+  getConfig,
+  updateCredentials,
+} from 'src/lib/api'
+import { router } from 'expo-router'
 
 export default function Page() {
   const userCache = JSON.parse(Storage.getString('user.profile'))
@@ -35,7 +40,7 @@ export default function Page() {
 
   const mutation = useMutation({
     mutationFn: async (data) => {
-      setSubmitting(true);
+      setSubmitting(true)
       return await updateCredentials(data)
     },
     onSuccess: () => {
@@ -53,7 +58,21 @@ export default function Page() {
         options={{
           title: 'Name',
           headerBackTitle: 'Back',
-          headerRight: () => isSubmitting ? <ActivityIndicator /> : <Button fontSize="$7" p="0" fontWeight={'600'} color="$blue9" chromeless onPress={() => onSubmit()}>Save</Button>
+          headerRight: () =>
+            isSubmitting ? (
+              <ActivityIndicator />
+            ) : (
+              <Button
+                fontSize="$7"
+                p="0"
+                fontWeight={'600'}
+                color="$blue9"
+                chromeless
+                onPress={() => onSubmit()}
+              >
+                Save
+              </Button>
+            ),
         }}
       />
       <ScrollView flexGrow={1}>

@@ -10,8 +10,15 @@ import BlockingProfile from './actionButtons/BlockingProfile'
 import ReadMore from '../common/ReadMore'
 import { useState } from 'react'
 
-export default function ProfileHeader({ profile, isSelf = false, relationship = false, openMenu, onFollow, onUnfollow }) {
-  const [usernameTruncated, setUsernameTruncated] = useState(profile?.acct?.length > 40);
+export default function ProfileHeader({
+  profile,
+  isSelf = false,
+  relationship = false,
+  openMenu,
+  onFollow,
+  onUnfollow,
+}) {
+  const [usernameTruncated, setUsernameTruncated] = useState(profile?.acct?.length > 40)
 
   const _prettyCount = (num) => {
     if (!num) {
@@ -32,10 +39,10 @@ export default function ProfileHeader({ profile, isSelf = false, relationship = 
       return <BlockingProfile />
     }
     if (relationship && relationship.following) {
-      return <FollowingProfile onPress={() => onUnfollow() } />
+      return <FollowingProfile onPress={() => onUnfollow()} />
     }
     if (relationship && !relationship.following) {
-      return <FollowProfile onPress={() => onFollow() } />
+      return <FollowProfile onPress={() => onFollow()} />
     }
   }
 
@@ -51,17 +58,22 @@ export default function ProfileHeader({ profile, isSelf = false, relationship = 
             </Pressable>
           </Link>
 
-          { usernameTruncated ?
+          {usernameTruncated ? (
             <Pressable onPress={() => setUsernameTruncated(false)}>
-              <Text flexShrink={1} fontWeight="bold" fontSize={profile?.acct.length > 40 ? 15 : 20} flexWrap="wrap">
+              <Text
+                flexShrink={1}
+                fontWeight="bold"
+                fontSize={profile?.acct.length > 40 ? 15 : 20}
+                flexWrap="wrap"
+              >
                 {enforceLen(profile?.acct, 35, true, 'middle')}
               </Text>
             </Pressable>
-            :
+          ) : (
             <Text flexShrink={1} fontWeight="bold" fontSize={20} flexWrap="wrap">
               {profile?.acct ?? 'User'}
             </Text>
-          }
+          )}
 
           <XStack alignItems="center" gap="$5">
             {isSelf ? (
@@ -79,7 +91,7 @@ export default function ProfileHeader({ profile, isSelf = false, relationship = 
         <XStack w="100%" justifyContent="space-between" alignItems="center" mt="$3">
           <View style={{ borderRadius: 100, overflow: 'hidden' }}>
             <Avatar circular size="$10" borderWidth={1} borderColor="$gray5">
-              <Avatar.Image src={profile?.avatar}/>
+              <Avatar.Image src={profile?.avatar} />
               <Avatar.Fallback backgroundColor="$gray4" />
             </Avatar>
           </View>
@@ -113,30 +125,37 @@ export default function ProfileHeader({ profile, isSelf = false, relationship = 
         </XStack>
 
         <YStack w="100%" mt="$3" gap={5}>
-          <XStack gap="$2" alignItems='center'>
+          <XStack gap="$2" alignItems="center">
             <Text fontSize="$6" fontWeight={'bold'}>
               {profile?.display_name}
             </Text>
-            { relationship && relationship?.muting ?
+            {relationship && relationship?.muting ? (
               <View borderWidth={1} borderColor="$red7" borderRadius={5} px={10} py={3}>
-                <Text color="$red10" fontWeight="bold" fontSize="$2">Muted</Text>
+                <Text color="$red10" fontWeight="bold" fontSize="$2">
+                  Muted
+                </Text>
               </View>
-            : null}
+            ) : null}
           </XStack>
           {/* <Text fontSize="$6" fontWeight={'bold'} color="$gray9" letterSpacing={-0.4}>
             {profile?.local ? '@' + profile?.acct + '@pixelfed.social' : profile?.acct}
           </Text> */}
-          
-            <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
-              <Text fontSize={14} fontWeight={400} letterSpacing={0.001}>
-                {profile?.note_text &&
-                  profile?.note.replaceAll('&amp;', '&').replaceAll(/(<([^>]+)>)/gi, '')}
-              </Text>
-            </ReadMore>
+
+          <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
+            <Text fontSize={14} fontWeight={400} letterSpacing={0.001}>
+              {profile?.note_text &&
+                profile?.note.replaceAll('&amp;', '&').replaceAll(/(<([^>]+)>)/gi, '')}
+            </Text>
+          </ReadMore>
 
           {profile?.website && profile?.website.trim().length ? (
             <XStack alignItems="center" gap="$1">
-              <Text fontSize="$5" fontWeight={'bold'} color="$blue9" letterSpacing={-0.34}>
+              <Text
+                fontSize="$5"
+                fontWeight={'bold'}
+                color="$blue9"
+                letterSpacing={-0.34}
+              >
                 {profile?.website?.replaceAll('https://', '')}
               </Text>
             </XStack>
@@ -144,7 +163,6 @@ export default function ProfileHeader({ profile, isSelf = false, relationship = 
         </YStack>
 
         <ActionButton />
-
       </View>
     </View>
   )

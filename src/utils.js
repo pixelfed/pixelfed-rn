@@ -155,12 +155,7 @@ export function postCountLabel(number) {
   return `${prettyCount(number)} Posts`
 }
 
-export function enforceLen(
-  str,
-  len,
-  ellipsis = false,
-  mode = 'end',
-) {
+export function enforceLen(str, len, ellipsis = false, mode = 'end') {
   str = str || ''
   if (str.length > len) {
     if (ellipsis) {

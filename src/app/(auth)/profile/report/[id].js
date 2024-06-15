@@ -62,7 +62,7 @@ export default function Page() {
       />
       {mutation.isPending ? (
         <View p="$5">
-            <ActivityIndicator />
+          <ActivityIndicator />
         </View>
       ) : (
         <ScrollView flexGrow={1}>

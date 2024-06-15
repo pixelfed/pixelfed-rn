@@ -40,18 +40,12 @@ export default function SearchScreen() {
     return domain.hostname
   }
 
-  const EmptyResults = () => (
-    query && query.length && !isFetching ?
-      <RenderEmptyResults /> : null
-  )
+  const EmptyResults = () =>
+    query && query.length && !isFetching ? <RenderEmptyResults /> : null
 
   const RenderEmptyResults = () => (
-    <View 
-      flexGrow={1} 
-      justifyContent='center' 
-      alignItems='center'
-      py="$5">
-      <YStack justifyContent='center' alignItems='center' gap="$5">
+    <View flexGrow={1} justifyContent="center" alignItems="center" py="$5">
+      <YStack justifyContent="center" alignItems="center" gap="$5">
         <Feather name="alert-circle" size={60} />
         <Text fontSize="$9">No results found</Text>
       </YStack>

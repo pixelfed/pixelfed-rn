@@ -43,7 +43,15 @@ import AutolinkText from '../common/AutolinkText'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
-export default function CommentFeed({ id, showLikes, user, handleReport, gotoProfile, gotoUsernameProfile, gotoHashtag }) {
+export default function CommentFeed({
+  id,
+  showLikes,
+  user,
+  handleReport,
+  gotoProfile,
+  gotoUsernameProfile,
+  gotoHashtag,
+}) {
   const [commentText, setComment] = useState()
   const queryClient = useQueryClient()
   const commentRef = useRef()

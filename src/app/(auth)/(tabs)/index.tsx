@@ -64,7 +64,14 @@ export default function HomeScreen() {
   const user = JSON.parse(userJson)
 
   const renderItem = useCallback(
-    ({ item }) => <FeedPost post={item} user={user} onOpenComments={onOpenComments} onLike={handleLike} />,
+    ({ item }) => (
+      <FeedPost
+        post={item}
+        user={user}
+        onOpenComments={onOpenComments}
+        onLike={handleLike}
+      />
+    ),
     [data]
   )
 
@@ -79,8 +86,8 @@ export default function HomeScreen() {
     },
   })
 
-  const handleLike = async(id, state) => {
-    likeMutation.mutate({ type: state ? 'unlike' : 'like', id: id})
+  const handleLike = async (id, state) => {
+    likeMutation.mutate({ type: state ? 'unlike' : 'like', id: id })
   }
 
   const handleShowLikes = (id) => {

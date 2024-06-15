@@ -18,58 +18,65 @@ import { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, Link } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
-import { useQuery, useQueryClient} from '@tanstack/react-query'
-import { getAccountById, getAccountStatusesById, updateAvatar, deleteAvatar } from 'src/lib/api'
-import * as ImagePicker from 'expo-image-picker';
-import mime from "mime";
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  getAccountById,
+  getAccountStatusesById,
+  updateAvatar,
+  deleteAvatar,
+} from 'src/lib/api'
+import * as ImagePicker from 'expo-image-picker'
+import mime from 'mime'
 
 export default function Page() {
   const userCache = JSON.parse(Storage.getString('user.profile'))
   const queryClient = useQueryClient()
 
-  const [newProfilePhoto, setProfilePhoto] = useState();
+  const [newProfilePhoto, setProfilePhoto] = useState()
   const { data: user } = useQuery({
     queryKey: ['profileById', userCache.id],
     queryFn: getAccountById,
   })
 
   const updateProfilePhoto = () => {
-    const isDefault = user?.avatar.includes('default.');
-    const opts = isDefault ? 
-      [
+    const isDefault = user?.avatar.includes('default.')
+    const opts = isDefault
+      ? [
           {
-              text: 'Add',
-              onPress: () => pickImage()
+            text: 'Add',
+            onPress: () => pickImage(),
           },
           {
-              text: 'Cancel',
-              style: 'cancel',
+            text: 'Cancel',
+            style: 'cancel',
           },
-      ] : [
+        ]
+      : [
           {
-              text: 'Change Photo',
-              onPress: () => pickImage()
-          },
-          {
-              text: 'Delete',
-              style: 'destructive',
-              onPress: () => _deleteProfilePhoto()
+            text: 'Change Photo',
+            onPress: () => pickImage(),
           },
           {
-              text: 'Cancel',
-              style: 'cancel',
+            text: 'Delete',
+            style: 'destructive',
+            onPress: () => _deleteProfilePhoto(),
           },
-      ]
-      Alert.alert(
-          isDefault ? 'Add Profile Photo' : 'Change Profile Photo',
-          isDefault ? 'Select a photo from your camera roll for your profile photo.' : 'Upload a new photo or delete your existing photo.\n\nIt may take a few minutes to update.',
-          opts
-      )
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+        ]
+    Alert.alert(
+      isDefault ? 'Add Profile Photo' : 'Change Profile Photo',
+      isDefault
+        ? 'Select a photo from your camera roll for your profile photo.'
+        : 'Upload a new photo or delete your existing photo.\n\nIt may take a few minutes to update.',
+      opts
+    )
   }
 
   const _deleteProfilePhoto = async () => {
-    await deleteAvatar()
-    .then(res => {
+    await deleteAvatar().then((res) => {
       queryClient.invalidateQueries({ queryKey: ['profileById'] })
     })
   }
@@ -82,23 +89,23 @@ export default function Page() {
       exif: false,
       selectionLimit: 1,
       quality: 0.5,
-    });
+    })
 
     if (!result.canceled) {
       let image = result.assets[0]
-      const name = image.uri.split("/").slice(-1)[0];
+      const name = image.uri.split('/').slice(-1)[0]
       const payload = {
-          uri: Platform.OS === 'ios' ? image.uri.replace('file://', '') : image.uri,
-          type: mime.getType(image.uri),
-          name: name
+        uri: Platform.OS === 'ios' ? image.uri.replace('file://', '') : image.uri,
+        type: mime.getType(image.uri),
+        name: name,
       }
       await updateAvatar({
-        avatar: payload
-      }).then(res => {
-          queryClient.invalidateQueries({ queryKey: ['profileById'] })
+        avatar: payload,
+      }).then((res) => {
+        queryClient.invalidateQueries({ queryKey: ['profileById'] })
       })
     }
-};
+  }
 
   const LinkField = ({ label, value, placeholder, path, border }) => (
     <XStack px="$3" py="$3" alignItems="start" justifyContent="center">
@@ -154,8 +161,16 @@ export default function Page() {
             <Avatar.Fallback backgroundColor="$gray6" />
           </Avatar>
 
-          <Button p="0" chromeless color="$blue9" fontWeight="bold" onPress={() => updateProfilePhoto()}>
-            { user?.avatar.endsWith('default.jpg') ? 'Upload profile photo' : 'Update or delete profile photo' }
+          <Button
+            p="0"
+            chromeless
+            color="$blue9"
+            fontWeight="bold"
+            onPress={() => updateProfilePhoto()}
+          >
+            {user?.avatar.endsWith('default.jpg')
+              ? 'Upload profile photo'
+              : 'Update or delete profile photo'}
           </Button>
         </YStack>
 
