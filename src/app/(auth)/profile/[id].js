@@ -1,5 +1,5 @@
 import { FlatList, Dimensions, ActivityIndicator, Alert, Share } from 'react-native'
-import { Button, Image, Separator, Text, View, YStack } from 'tamagui'
+import { Button, Image, Separator, Text, View, YStack, ZStack } from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
 import { Feather } from '@expo/vector-icons'
 import { Storage } from 'src/state/cache'
@@ -37,6 +37,7 @@ import {
 } from '@gorhom/bottom-sheet'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { useToast, useToastController } from '@tamagui/toast'
+import { Blurhash } from 'react-native-blurhash';
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
@@ -65,6 +66,21 @@ export default function ProfileScreen() {
       item && item.media_attachments && item.media_attachments[0].url ? (
         <Link href={`/post/${item.id}`} asChild>
           <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
+            { item.sensitive ?
+            <ZStack w={SCREEN_WIDTH / 3 - 2} h={SCREEN_WIDTH / 3 - 2}>
+                <Blurhash
+                  blurhash={item.media_attachments[0]?.blurhash}
+                  style={{
+                    flex: 1, 
+                    width: SCREEN_WIDTH / 3 - 2,
+                    height: SCREEN_WIDTH / 3 - 2,
+                  }}
+                />
+              <View p="$2" justifyContent='flex-end' alignItems='flex-end'>
+                <Feather name="eye-off" size={20} color="white"/>
+              </View>
+            </ZStack>
+            :
             <FastImage
               style={{
                 width: SCREEN_WIDTH / 3 - 2,
@@ -76,7 +92,7 @@ export default function ProfileScreen() {
                 priority: FastImage.priority.normal,
               }}
               resizeMode={FastImage.resizeMode.cover}
-            />
+            /> }
           </View>
         </Link>
       ) : null,
