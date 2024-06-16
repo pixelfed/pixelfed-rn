@@ -1,12 +1,16 @@
-import { ActivityIndicator, FlatList, SafeAreaView, Pressable } from 'react-native'
+import { ActivityIndicator, FlatList, Pressable } from 'react-native'
 import { Text, View, YStack, XStack, Input } from 'tamagui'
 import { Stack, Link } from 'expo-router'
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { fetchNotifications } from 'src/lib/api'
 import UserAvatar from 'src/components/common/UserAvatar'
-import { _timeAgo } from 'src/utils'
+import RenderNotificationItem from 'src/components/notifications/RenderNotificationItem'
+import { _timeAgo, enforceLen } from 'src/utils'
 
 export default function NotificationsScreen() {
+  const queryClient = useQueryClient()
+
   const {
     data,
     fetchNextPage,
@@ -26,7 +30,7 @@ export default function NotificationsScreen() {
 
   if (isFetching && !isFetchingNextPage) {
     return (
-      <View flexGrow={1} mt="$5">
+      <View flexGrow={1} mt="$5" p="$3">
         <ActivityIndicator color={'#000'} />
       </View>
     )
@@ -40,64 +44,10 @@ export default function NotificationsScreen() {
     )
   }
 
-  const _msgText = (type) => {
-    switch (type) {
-      case 'like':
-      case 'favourite':
-        return 'liked a post'
-
-      case 'follow':
-        return 'followed you'
-
-      case 'mention':
-        return 'mentioned you'
-
-      case 'reblog':
-        return 'shared your post'
-
-      default:
-        return ' unknown notification type'
-    }
-  }
-
-  const RenderItem = ({ item }) => (
-    <View px="$4" py="$2">
-      <XStack justifyContent="space-between" alignItems="center">
-        <XStack gap="$3" alignItems="center">
-          <Link href={`/profile/${item.account.id}`} asChild>
-            <Pressable>
-              <UserAvatar url={item.account.avatar} />
-            </Pressable>
-          </Link>
-
-          <XStack>
-            <Text fontWeight={'bold'}>{item.account.username} </Text>
-            {item.status ? (
-              <Link
-                href={`/post/${item.status.in_reply_to_id ? item.status.in_reply_to_id : item.status.id}`}
-                asChild
-              >
-                <Text color="$blue10" fontWeight="bold">
-                  {_msgText(item.type)}
-                </Text>
-              </Link>
-            ) : (
-              <Text>{_msgText(item.type)}</Text>
-            )}
-          </XStack>
-        </XStack>
-
-        <Text color="$gray9" fontWeight={'bold'} fontSize="$3">
-          {_timeAgo(item.created_at)}
-        </Text>
-      </XStack>
-    </View>
-  )
-
   const ItemSeparator = () => <View h={1} bg="$gray5"></View>
 
   return (
-    <SafeAreaView flex={1}>
+    <SafeAreaView edges={['left']}>
       <Stack.Screen
         options={{
           title: 'Notifications',
@@ -107,14 +57,15 @@ export default function NotificationsScreen() {
 
       <FlatList
         data={data?.pages.flatMap((page) => page.data)}
-        keyExtractor={(item, index) => item.id.toString()}
         ItemSeparatorComponent={ItemSeparator}
-        renderItem={RenderItem}
+        renderItem={({item}) => <RenderNotificationItem item={item} />}
         onEndReached={() => {
           if (hasNextPage) fetchNextPage()
         }}
+        refreshing={isFetching}
+        onRefresh={() => queryClient.invalidateQueries({ queryKey: ['notifications'] })}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}
+        ListFooterComponent={() => (isFetchingNextPage ? <View py="$10"><ActivityIndicator /></View>: null)}
       />
     </SafeAreaView>
   )
