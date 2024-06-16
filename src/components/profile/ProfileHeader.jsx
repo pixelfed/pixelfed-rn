@@ -14,9 +14,11 @@ import { useState } from 'react'
 export default function ProfileHeader({
   profile,
   isSelf = false,
+  selfUser,
   relationship = false,
   openMenu,
   onFollow,
+  onShare,
   onUnfollow,
   onCancelFollowRequest,
 }) {
@@ -33,7 +35,7 @@ export default function ProfileHeader({
   }
 
   const ActionButton = () => {
-    if (isSelf) {
+    if (isSelf || selfUser?.id == profile?.id) {
       return <EditProfile />
     }
 
@@ -51,47 +53,67 @@ export default function ProfileHeader({
     }
   }
 
+  const RenderGuestHeader = () => (
+    <XStack w="100%" justifyContent="space-between" alignItems="center" gap="$10">
+      <Link href={{ screen: '', action: 'goBack' }} asChild>
+        <Pressable>
+          <XStack alignItems="center" gap="$5">
+            <Feather name="chevron-left" size={26} />
+          </XStack>
+        </Pressable>
+      </Link>
+
+      {usernameTruncated ? (
+        <Pressable onPress={() => setUsernameTruncated(false)}>
+          <Text
+            flexShrink={1}
+            fontWeight="bold"
+            fontSize={profile?.acct.length > 40 ? 15 : 20}
+            flexWrap="wrap"
+          >
+            {enforceLen(profile?.acct, 35, true, 'middle')}
+          </Text>
+        </Pressable>
+      ) : (
+        <Text flexShrink={1} fontWeight="bold" fontSize={20} flexWrap="wrap">
+          {profile?.acct ?? 'User'}
+        </Text>
+      )}
+
+      <XStack alignItems="center" gap="$5">
+        { selfUser?.id == profile?.id ? 
+          <Button chromeless p="$0" size="$2" onPress={() => onShare()}>
+            <Feather name="share" size={23} />
+          </Button> :
+          <Button chromeless p="$0" onPress={() => openMenu()}>
+            <Feather name="more-horizontal" size={26} />
+          </Button>
+          }
+      </XStack>
+    </XStack>
+  )
+
+  const RenderSelfHeader = () => (
+    <XStack w="100%" justifyContent="space-between" alignItems="center" gap="$10">
+      <Text flexShrink={1} fontWeight="bold" fontSize={30} flexWrap="wrap">
+        {profile?.acct ?? 'User'}
+      </Text>
+
+      <XStack alignItems="center" gap="$5">
+          <Button chromeless p="$0" size="$2" onPress={() => onShare()}>
+            <Feather name="share" size={23} />
+          </Button>
+          <Link href="/settings">
+            <Feather name="menu" size={30} />
+          </Link>
+      </XStack>
+    </XStack>
+  )
+
   return (
     <View flex={1}>
       <View mx="$4" mt="$3">
-        <XStack w="100%" justifyContent="space-between" alignItems="center" gap="$10">
-          <Link href={{ screen: '', action: 'goBack' }} asChild>
-            <Pressable>
-              <XStack alignItems="center" gap="$5">
-                <Feather name="chevron-left" size={26} />
-              </XStack>
-            </Pressable>
-          </Link>
-
-          {usernameTruncated ? (
-            <Pressable onPress={() => setUsernameTruncated(false)}>
-              <Text
-                flexShrink={1}
-                fontWeight="bold"
-                fontSize={profile?.acct.length > 40 ? 15 : 20}
-                flexWrap="wrap"
-              >
-                {enforceLen(profile?.acct, 35, true, 'middle')}
-              </Text>
-            </Pressable>
-          ) : (
-            <Text flexShrink={1} fontWeight="bold" fontSize={20} flexWrap="wrap">
-              {profile?.acct ?? 'User'}
-            </Text>
-          )}
-
-          <XStack alignItems="center" gap="$5">
-            {isSelf ? (
-              <Link href="/settings">
-                <Feather name="menu" size={26} />
-              </Link>
-            ) : (
-              <Button chromeless p="$0" onPress={() => openMenu()}>
-                <Feather name="more-horizontal" size={26} />
-              </Button>
-            )}
-          </XStack>
-        </XStack>
+        { isSelf ? <RenderSelfHeader /> : <RenderGuestHeader />}
 
         <XStack w="100%" justifyContent="space-between" alignItems="center" mt="$3">
           <View style={{ borderRadius: 100, overflow: 'hidden' }}>

@@ -338,15 +338,27 @@ export default function ProfileScreen() {
     unfollowMutation.mutate()
   }
 
+  const _handleOnShare = async () => {
+    try {
+      const result = await Share.share({
+        message: user.url,
+      })
+    } catch (error) {
+      Alert.alert(error.message)
+    }
+  }
+
   const RenderHeader = useCallback(
     () => (
       <ProfileHeader
         profile={user}
+        selfUser={selfUser}
         relationship={relationship}
         openMenu={onOpenMenu}
         onFollow={() => _handleFollow()}
         onUnfollow={() => _handleUnfollow()}
         onCancelFollowRequest={() => _handleCancelFollowRequest()}
+        onShare={() => _handleOnShare()}
       />
     ),
     [user, relationship]
