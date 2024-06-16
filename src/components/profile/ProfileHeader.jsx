@@ -40,7 +40,7 @@ export default function ProfileHeader({
     }
 
     if (relationship && relationship.requested) {
-      return <FollowRequested onPress={() => onCancelFollowRequest()}/>
+      return <FollowRequested onPress={() => onCancelFollowRequest()} />
     }
     if (relationship && relationship.blocking) {
       return <BlockingProfile />
@@ -81,14 +81,15 @@ export default function ProfileHeader({
       )}
 
       <XStack alignItems="center" gap="$5">
-        { selfUser?.id == profile?.id ? 
+        {selfUser?.id == profile?.id ? (
           <Button chromeless p="$0" size="$2" onPress={() => onShare()}>
             <Feather name="share" size={23} />
-          </Button> :
+          </Button>
+        ) : (
           <Button chromeless p="$0" onPress={() => openMenu()}>
             <Feather name="more-horizontal" size={26} />
           </Button>
-          }
+        )}
       </XStack>
     </XStack>
   )
@@ -100,12 +101,12 @@ export default function ProfileHeader({
       </Text>
 
       <XStack alignItems="center" gap="$5">
-          <Button chromeless p="$0" size="$2" onPress={() => onShare()}>
-            <Feather name="share" size={23} />
-          </Button>
-          <Link href="/settings">
-            <Feather name="menu" size={30} />
-          </Link>
+        <Button chromeless p="$0" size="$2" onPress={() => onShare()}>
+          <Feather name="share" size={23} />
+        </Button>
+        <Link href="/settings">
+          <Feather name="menu" size={30} />
+        </Link>
       </XStack>
     </XStack>
   )
@@ -113,7 +114,7 @@ export default function ProfileHeader({
   return (
     <View flex={1}>
       <View mx="$4" mt="$3">
-        { isSelf ? <RenderSelfHeader /> : <RenderGuestHeader />}
+        {isSelf ? <RenderSelfHeader /> : <RenderGuestHeader />}
 
         <XStack w="100%" justifyContent="space-between" alignItems="center" mt="$3">
           <View style={{ borderRadius: 100, overflow: 'hidden' }}>
@@ -190,7 +191,6 @@ export default function ProfileHeader({
         </YStack>
 
         <ActionButton />
-
       </View>
       <Separator />
     </View>

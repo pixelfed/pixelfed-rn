@@ -108,18 +108,21 @@ export default function ProfileScreen() {
         </YStack>
       ) : (
         <YStack flexGrow={1} justifyContent="center" alignItems="center" gap="$5">
-          { user?.locked && !relationship?.following ? <>
-          <View p="$6" borderWidth={2} borderColor="black" borderRadius={100}>
-            <Feather name="lock" size={40} />
-          </View>
-          <Text fontSize="$8">This account is private</Text>
-          </> : <>
-          <View p="$6" borderWidth={2} borderColor="black" borderRadius={100}>
-            <Feather name="camera" size={40} />
-          </View>
-          <Text fontSize="$8">No Posts Yet</Text>
-          </>
-          }
+          {user?.locked && !relationship?.following ? (
+            <>
+              <View p="$6" borderWidth={2} borderColor="black" borderRadius={100}>
+                <Feather name="lock" size={40} />
+              </View>
+              <Text fontSize="$8">This account is private</Text>
+            </>
+          ) : (
+            <>
+              <View p="$6" borderWidth={2} borderColor="black" borderRadius={100}>
+                <Feather name="camera" size={40} />
+              </View>
+              <Text fontSize="$8">No Posts Yet</Text>
+            </>
+          )}
         </YStack>
       )}
     </View>

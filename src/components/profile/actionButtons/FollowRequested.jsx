@@ -5,8 +5,8 @@ export default function FollowProfile({ onPress }) {
   return (
     <XStack w="100%" my="$3" gap="$2">
       <Button
-        variant='outlined'
-        borderColor='black'
+        variant="outlined"
+        borderColor="black"
         size="$4"
         color="black"
         fontWeight="bold"

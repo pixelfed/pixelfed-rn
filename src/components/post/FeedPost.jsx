@@ -84,11 +84,11 @@ const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMe
 
 const PostMedia = React.memo(({ media, post }) => {
   const mediaUrl = media[0].url
-  const [showSensitive, setSensitive] = useState(false);
+  const [showSensitive, setSensitive] = useState(false)
   const height = media[0].meta?.original?.width
     ? SCREEN_WIDTH * (media[0].meta?.original?.height / media[0].meta?.original.width)
     : 430
-  
+
   if (post.sensitive && !showSensitive) {
     return (
       <ZStack w={SCREEN_WIDTH} h={height}>
@@ -96,24 +96,28 @@ const PostMedia = React.memo(({ media, post }) => {
           blurhash={media[0]?.blurhash}
           style={{
             flex: 1,
-            width: SCREEN_WIDTH, 
+            width: SCREEN_WIDTH,
             height: height,
           }}
         />
-        <YStack justifyContent='center' alignItems='center' flexGrow={1}>
-          <YStack justifyContent='center' alignItems='center' flexGrow={1} gap="$3">
+        <YStack justifyContent="center" alignItems="center" flexGrow={1}>
+          <YStack justifyContent="center" alignItems="center" flexGrow={1} gap="$3">
             <Feather name="eye-off" size={55} color="white" />
-            <Text fontSize="$7" color="white">This post contains sensitive or mature content</Text>
+            <Text fontSize="$7" color="white">
+              This post contains sensitive or mature content
+            </Text>
           </YStack>
           <YStack w={SCREEN_WIDTH} flexShrink={1}>
             <Separator />
             <Button
-              alignSelf="stretch" 
-              size="$5" 
+              alignSelf="stretch"
+              size="$5"
               color="white"
               onPress={() => setSensitive(true)}
-              chromeless 
-            >Tap to view</Button>
+              chromeless
+            >
+              Tap to view
+            </Button>
           </YStack>
         </YStack>
       </ZStack>

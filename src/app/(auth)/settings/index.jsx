@@ -86,7 +86,13 @@ export default function Page() {
           </Group>
 
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
-            { user?.locked ? <GroupButton icon="user-plus" title="Follow Requests" path="/profile/follow-requests/" /> : null }
+            {user?.locked ? (
+              <GroupButton
+                icon="user-plus"
+                title="Follow Requests"
+                path="/profile/follow-requests/"
+              />
+            ) : null}
             {/* <GroupButton icon="archive" title="Archives" path="/settings/security" /> */}
             <GroupButton icon="grid" title="Collections" path="/collections/" />
             <GroupButton
