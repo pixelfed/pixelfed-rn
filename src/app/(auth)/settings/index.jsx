@@ -86,6 +86,7 @@ export default function Page() {
           </Group>
 
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
+            { user?.locked ? <GroupButton icon="user-plus" title="Follow Requests" path="/profile/follow-requests/" /> : null }
             {/* <GroupButton icon="archive" title="Archives" path="/settings/security" /> */}
             <GroupButton icon="grid" title="Collections" path="/collections/" />
             <GroupButton
@@ -107,9 +108,9 @@ export default function Page() {
               title="Accessibility"
               path="/settings/accessibility/"
             />
-            <GroupButton icon="droplet" title="Appearance" path="/settings/appearance/" />
-            <GroupButton icon="camera" title="Media" path="/settings/media" />
-            <GroupButton icon="shield" title="Security" path="/settings/security" />
+            {/* <GroupButton icon="droplet" title="Appearance" path="/settings/appearance/" /> */}
+            {/* <GroupButton icon="camera" title="Media" path="/settings/media" /> */}
+            {/* <GroupButton icon="shield" title="Security" path="/settings/security" /> */}
           </Group>
 
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
