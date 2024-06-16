@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { getOpenServers } from 'src/lib/api'
-import { prettyCount } from 'src/utils'
+import { enforceLen, prettyCount } from 'src/utils'
 
 export default function Register() {
   const { data } = useQuery({
@@ -23,10 +23,11 @@ export default function Register() {
   const RenderItem = ({ item }) => (
     <Button
       onPress={() => handleLogin(item.domain)}
-      px="$3"
+      px="$2"
       mb="$3"
       size="$5"
       borderWidth={1}
+      borderRadius={40}
       borderColor="$gray6"
     >
       <XStack
@@ -35,15 +36,28 @@ export default function Register() {
         alignItems="center"
         overflow="hidden"
       >
-        <Image
-          source={{ uri: item.header_thumbnail }}
-          width={100}
-          height={40}
-          borderRadius={20}
-        />
+        {item.user_count > 100 ? (
+          <Image
+            source={{ uri: item.header_thumbnail }}
+            width={100}
+            height={40}
+            borderRadius={20}
+          />
+        ) : (
+          <Image
+            source={require('../../../assets/icon.png')}
+            width={40}
+            height={40}
+            borderRadius={20}
+          />
+        )}
         <YStack gap="$1" flexGrow={1}>
-          <Text fontSize="$7" fontWeight="bold">
-            {item.domain}
+          <Text
+            fontSize={item.domain.length > 20 ? '$5' : '$6'}
+            fontWeight="bold"
+            flexWrap="wrap"
+          >
+            {enforceLen(item.domain, 30, true, 'middle')}
           </Text>
           <Text fontSize="$3" color="$gray12">
             {prettyCount(item.user_count)} users
@@ -69,7 +83,8 @@ export default function Register() {
       <FlatList
         data={data}
         renderItem={RenderItem}
-        contentContainerStyle={{ flexGrow: 1, marginHorizontal: 30 }}
+        ListFooterComponent={<View h={100} />}
+        contentContainerStyle={{ flexGrow: 1, marginHorizontal: 10 }}
       />
     </SafeAreaView>
   )
