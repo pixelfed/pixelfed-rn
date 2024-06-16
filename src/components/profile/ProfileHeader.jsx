@@ -7,6 +7,7 @@ import EditProfile from './actionButtons/EditProfile'
 import FollowingProfile from './actionButtons/FollowingProfile'
 import FollowProfile from './actionButtons/FollowProfile'
 import BlockingProfile from './actionButtons/BlockingProfile'
+import FollowRequested from './actionButtons/FollowRequested'
 import ReadMore from '../common/ReadMore'
 import { useState } from 'react'
 
@@ -17,6 +18,7 @@ export default function ProfileHeader({
   openMenu,
   onFollow,
   onUnfollow,
+  onCancelFollowRequest,
 }) {
   const [usernameTruncated, setUsernameTruncated] = useState(profile?.acct?.length > 40)
 
@@ -35,6 +37,9 @@ export default function ProfileHeader({
       return <EditProfile />
     }
 
+    if (relationship && relationship.requested) {
+      return <FollowRequested onPress={() => onCancelFollowRequest()}/>
+    }
     if (relationship && relationship.blocking) {
       return <BlockingProfile />
     }
@@ -163,7 +168,9 @@ export default function ProfileHeader({
         </YStack>
 
         <ActionButton />
+
       </View>
+      <Separator />
     </View>
   )
 }

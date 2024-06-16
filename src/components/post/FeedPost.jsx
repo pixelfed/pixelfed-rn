@@ -1,8 +1,8 @@
 import { Dimensions, Pressable, Share } from 'react-native'
-import { Button, Group, Separator, Text, View, XStack, YStack } from 'tamagui'
+import { Button, Group, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import FastImage from 'react-native-fast-image'
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { enforceLen, formatTimestamp, openBrowserAsync } from '../../utils'
 import { Link, router } from 'expo-router'
 import {
@@ -15,6 +15,7 @@ import { useSharedValue } from 'react-native-reanimated'
 import ReadMore from '../common/ReadMore'
 import LikeButton from 'src/components/common/LikeButton'
 import AutolinkText from 'src/components/common/AutolinkText'
+import { Blurhash } from 'react-native-blurhash'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 const AVATAR_WIDTH = 45
@@ -83,9 +84,41 @@ const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMe
 
 const PostMedia = React.memo(({ media, post }) => {
   const mediaUrl = media[0].url
+  const [showSensitive, setSensitive] = useState(false);
   const height = media[0].meta?.original?.width
     ? SCREEN_WIDTH * (media[0].meta?.original?.height / media[0].meta?.original.width)
     : 430
+  
+  if (post.sensitive && !showSensitive) {
+    return (
+      <ZStack w={SCREEN_WIDTH} h={height}>
+        <Blurhash
+          blurhash={media[0]?.blurhash}
+          style={{
+            flex: 1,
+            width: SCREEN_WIDTH, 
+            height: height,
+          }}
+        />
+        <YStack justifyContent='center' alignItems='center' flexGrow={1}>
+          <YStack justifyContent='center' alignItems='center' flexGrow={1} gap="$3">
+            <Feather name="eye-off" size={55} color="white" />
+            <Text fontSize="$7" color="white">This post contains sensitive or mature content</Text>
+          </YStack>
+          <YStack w={SCREEN_WIDTH} flexShrink={1}>
+            <Separator />
+            <Button
+              alignSelf="stretch" 
+              size="$5" 
+              color="white"
+              onPress={() => setSensitive(true)}
+              chromeless 
+            >Tap to view</Button>
+          </YStack>
+        </YStack>
+      </ZStack>
+    )
+  }
 
   if (post.pf_type === 'video') {
     return (

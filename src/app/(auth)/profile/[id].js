@@ -101,17 +101,25 @@ export default function ProfileScreen() {
   )
 
   const EmptyFeed = () => (
-    <View h="70%" flexGrow={1}>
+    <View h="100%" flexGrow={1}>
       {!isFetched ? (
         <YStack flex={1} justifyContent="center" alignItems="center" gap="$5">
           <ActivityIndicator />
         </YStack>
       ) : (
         <YStack flexGrow={1} justifyContent="center" alignItems="center" gap="$5">
+          { user?.locked && !relationship?.following ? <>
+          <View p="$6" borderWidth={2} borderColor="black" borderRadius={100}>
+            <Feather name="lock" size={40} />
+          </View>
+          <Text fontSize="$8">This account is private</Text>
+          </> : <>
           <View p="$6" borderWidth={2} borderColor="black" borderRadius={100}>
             <Feather name="camera" size={40} />
           </View>
-          <Text fontSize="$9">No Posts Yet</Text>
+          <Text fontSize="$8">No Posts Yet</Text>
+          </>
+          }
         </YStack>
       )}
     </View>
@@ -326,6 +334,10 @@ export default function ProfileScreen() {
     unfollowMutation.mutate()
   }
 
+  const _handleCancelFollowRequest = () => {
+    unfollowMutation.mutate()
+  }
+
   const RenderHeader = useCallback(
     () => (
       <ProfileHeader
@@ -334,6 +346,7 @@ export default function ProfileScreen() {
         openMenu={onOpenMenu}
         onFollow={() => _handleFollow()}
         onUnfollow={() => _handleUnfollow()}
+        onCancelFollowRequest={() => _handleCancelFollowRequest()}
       />
     ),
     [user, relationship]
