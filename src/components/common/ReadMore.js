@@ -114,6 +114,6 @@ function nextFrameAsync() {
 const styles = StyleSheet.create({
   button: {
     color: '#888',
-    marginBottom: 5,
+    marginVertical: 5,
   },
 })
