@@ -15,6 +15,7 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "platforms": ["ios", "android"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.pixelfed",
