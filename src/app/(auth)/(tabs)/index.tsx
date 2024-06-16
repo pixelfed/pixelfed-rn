@@ -138,7 +138,7 @@ export default function HomeScreen() {
 
   if (isFetching && !isFetchingNextPage && !isRefetching) {
     return (
-      <View flexGrow={1} mt="$5">
+      <View flexGrow={1} mt="$5" py="$5" justifyContent="center" alignItems="center">
         <ActivityIndicator color={'#000'} />
       </View>
     )
