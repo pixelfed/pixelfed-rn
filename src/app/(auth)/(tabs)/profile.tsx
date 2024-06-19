@@ -1,4 +1,4 @@
-import { FlatList, Dimensions, ActivityIndicator } from 'react-native'
+import { FlatList, Dimensions, ActivityIndicator, Share, Alert } from 'react-native'
 import { Image, Text, View, YStack } from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
 import { Storage } from 'src/state/cache'
@@ -20,6 +20,16 @@ export default function ProfileScreen() {
   })
 
   const userId = user?.id
+
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message: user.url,
+      })
+    } catch (error) {
+      Alert.alert(error.message)
+    }
+  }
 
   const {
     status,
@@ -77,7 +87,7 @@ export default function ProfileScreen() {
       <FlatList
         data={feed?.pages.flat()}
         keyExtractor={(item, index) => item?.id.toString()}
-        ListHeaderComponent={<ProfileHeader profile={user} isSelf={true} />}
+        ListHeaderComponent={<ProfileHeader profile={user} isSelf={true} onShare={() => onShare()} />}
         renderItem={RenderItem}
         numColumns={3}
         showsVerticalScrollIndicator={false}
