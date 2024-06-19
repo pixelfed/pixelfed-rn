@@ -39,7 +39,7 @@ export default function HomeScreen() {
   const [replyId, setReplyId] = useState(null)
   const [sheetType, setSheetType] = useState('comments')
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
-  const snapPoints = useMemo(() => ['55%', '80%'], [])
+  const snapPoints = useMemo(() => ['50%', '70%'], [])
 
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
