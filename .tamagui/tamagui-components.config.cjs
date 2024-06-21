@@ -3206,10 +3206,9 @@ var require_es5 = __commonJS({
   }
 });
 
-// node_modules/tslib/tslib.es6.mjs
+// node_modules/tslib/tslib.es6.js
 var tslib_es6_exports = {};
 __export(tslib_es6_exports, {
-  __addDisposableResource: () => __addDisposableResource,
   __assign: () => __assign,
   __asyncDelegator: () => __asyncDelegator,
   __asyncGenerator: () => __asyncGenerator,
@@ -3221,8 +3220,6 @@ __export(tslib_es6_exports, {
   __classPrivateFieldSet: () => __classPrivateFieldSet,
   __createBinding: () => __createBinding,
   __decorate: () => __decorate,
-  __disposeResources: () => __disposeResources,
-  __esDecorate: () => __esDecorate,
   __exportStar: () => __exportStar,
   __extends: () => __extends,
   __generator: () => __generator,
@@ -3231,16 +3228,12 @@ __export(tslib_es6_exports, {
   __makeTemplateObject: () => __makeTemplateObject,
   __metadata: () => __metadata,
   __param: () => __param,
-  __propKey: () => __propKey,
   __read: () => __read,
   __rest: () => __rest,
-  __runInitializers: () => __runInitializers,
-  __setFunctionName: () => __setFunctionName,
   __spread: () => __spread,
   __spreadArray: () => __spreadArray,
   __spreadArrays: () => __spreadArrays,
-  __values: () => __values,
-  default: () => tslib_es6_default
+  __values: () => __values
 });
 function __extends(d, b) {
   if (typeof b !== "function" && b !== null)
@@ -3273,53 +3266,6 @@ function __param(paramIndex, decorator) {
   return function(target, key) {
     decorator(target, key, paramIndex);
   };
-}
-function __esDecorate(ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-  function accept(f) {
-    if (f !== void 0 && typeof f !== "function") throw new TypeError("Function expected");
-    return f;
-  }
-  __name(accept, "accept");
-  var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
-  var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
-  var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
-  var _, done = false;
-  for (var i = decorators.length - 1; i >= 0; i--) {
-    var context = {};
-    for (var p in contextIn) context[p] = p === "access" ? {} : contextIn[p];
-    for (var p in contextIn.access) context.access[p] = contextIn.access[p];
-    context.addInitializer = function(f) {
-      if (done) throw new TypeError("Cannot add initializers after decoration has completed");
-      extraInitializers.push(accept(f || null));
-    };
-    var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
-    if (kind === "accessor") {
-      if (result === void 0) continue;
-      if (result === null || typeof result !== "object") throw new TypeError("Object expected");
-      if (_ = accept(result.get)) descriptor.get = _;
-      if (_ = accept(result.set)) descriptor.set = _;
-      if (_ = accept(result.init)) initializers.unshift(_);
-    } else if (_ = accept(result)) {
-      if (kind === "field") initializers.unshift(_);
-      else descriptor[key] = _;
-    }
-  }
-  if (target) Object.defineProperty(target, contextIn.name, descriptor);
-  done = true;
-}
-function __runInitializers(thisArg, initializers, value) {
-  var useValue = arguments.length > 2;
-  for (var i = 0; i < initializers.length; i++) {
-    value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
-  }
-  return useValue ? value : void 0;
-}
-function __propKey(x) {
-  return typeof x === "symbol" ? x : "".concat(x);
-}
-function __setFunctionName(f, name, prefix) {
-  if (typeof name === "symbol") name = name.description ? "[".concat(name.description, "]") : "";
-  return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
 }
 function __metadata(metadataKey, metadataValue) {
   if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(metadataKey, metadataValue);
@@ -3371,7 +3317,7 @@ function __generator(thisArg, body) {
   __name(verb, "verb");
   function step(op) {
     if (f) throw new TypeError("Generator is already executing.");
-    while (g && (g = 0, op[0] && (_ = 0)), _) try {
+    while (_) try {
       if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
       if (y = 0, t) op = [op[0] & 2, t.value];
       switch (op[0]) {
@@ -3484,24 +3430,15 @@ function __await(v) {
 function __asyncGenerator(thisArg, _arguments, generator) {
   if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
   var g = generator.apply(thisArg, _arguments || []), i, q = [];
-  return i = {}, verb("next"), verb("throw"), verb("return", awaitReturn), i[Symbol.asyncIterator] = function() {
+  return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function() {
     return this;
   }, i;
-  function awaitReturn(f) {
-    return function(v) {
-      return Promise.resolve(v).then(f, reject);
+  function verb(n) {
+    if (g[n]) i[n] = function(v) {
+      return new Promise(function(a, b) {
+        q.push([n, v, a, b]) > 1 || resume(n, v);
+      });
     };
-  }
-  __name(awaitReturn, "awaitReturn");
-  function verb(n, f) {
-    if (g[n]) {
-      i[n] = function(v) {
-        return new Promise(function(a, b) {
-          q.push([n, v, a, b]) > 1 || resume(n, v);
-        });
-      };
-      if (f) i[n] = f(i[n]);
-    }
   }
   __name(verb, "verb");
   function resume(n, v) {
@@ -3538,7 +3475,7 @@ function __asyncDelegator(o) {
   }, i;
   function verb(n, f) {
     i[n] = o[n] ? function(v) {
-      return (p = !p) ? { value: __await(o[n](v)), done: false } : f ? f(v) : v;
+      return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v;
     } : f;
   }
   __name(verb, "verb");
@@ -3599,60 +3536,9 @@ function __classPrivateFieldIn(state, receiver) {
   if (receiver === null || typeof receiver !== "object" && typeof receiver !== "function") throw new TypeError("Cannot use 'in' operator on non-object");
   return typeof state === "function" ? receiver === state : state.has(receiver);
 }
-function __addDisposableResource(env, value, async) {
-  if (value !== null && value !== void 0) {
-    if (typeof value !== "object" && typeof value !== "function") throw new TypeError("Object expected.");
-    var dispose, inner2;
-    if (async) {
-      if (!Symbol.asyncDispose) throw new TypeError("Symbol.asyncDispose is not defined.");
-      dispose = value[Symbol.asyncDispose];
-    }
-    if (dispose === void 0) {
-      if (!Symbol.dispose) throw new TypeError("Symbol.dispose is not defined.");
-      dispose = value[Symbol.dispose];
-      if (async) inner2 = dispose;
-    }
-    if (typeof dispose !== "function") throw new TypeError("Object not disposable.");
-    if (inner2) dispose = /* @__PURE__ */ __name(function() {
-      try {
-        inner2.call(this);
-      } catch (e) {
-        return Promise.reject(e);
-      }
-    }, "dispose");
-    env.stack.push({ value, dispose, async });
-  } else if (async) {
-    env.stack.push({ async: true });
-  }
-  return value;
-}
-function __disposeResources(env) {
-  function fail(e) {
-    env.error = env.hasError ? new _SuppressedError(e, env.error, "An error was suppressed during disposal.") : e;
-    env.hasError = true;
-  }
-  __name(fail, "fail");
-  function next() {
-    while (env.stack.length) {
-      var rec = env.stack.pop();
-      try {
-        var result = rec.dispose && rec.dispose.call(rec.value);
-        if (rec.async) return Promise.resolve(result).then(next, function(e) {
-          fail(e);
-          return next();
-        });
-      } catch (e) {
-        fail(e);
-      }
-    }
-    if (env.hasError) throw env.error;
-  }
-  __name(next, "next");
-  return next();
-}
-var extendStatics, __assign, __createBinding, __setModuleDefault, _SuppressedError, tslib_es6_default;
+var extendStatics, __assign, __createBinding, __setModuleDefault;
 var init_tslib_es6 = __esm({
-  "node_modules/tslib/tslib.es6.mjs"() {
+  "node_modules/tslib/tslib.es6.js"() {
     extendStatics = /* @__PURE__ */ __name(function(d, b) {
       extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
         d2.__proto__ = b2;
@@ -3675,10 +3561,6 @@ var init_tslib_es6 = __esm({
     __name(__rest, "__rest");
     __name(__decorate, "__decorate");
     __name(__param, "__param");
-    __name(__esDecorate, "__esDecorate");
-    __name(__runInitializers, "__runInitializers");
-    __name(__propKey, "__propKey");
-    __name(__setFunctionName, "__setFunctionName");
     __name(__metadata, "__metadata");
     __name(__awaiter, "__awaiter");
     __name(__generator, "__generator");
@@ -3716,41 +3598,6 @@ var init_tslib_es6 = __esm({
     __name(__classPrivateFieldGet, "__classPrivateFieldGet");
     __name(__classPrivateFieldSet, "__classPrivateFieldSet");
     __name(__classPrivateFieldIn, "__classPrivateFieldIn");
-    __name(__addDisposableResource, "__addDisposableResource");
-    _SuppressedError = typeof SuppressedError === "function" ? SuppressedError : function(error2, suppressed, message) {
-      var e = new Error(message);
-      return e.name = "SuppressedError", e.error = error2, e.suppressed = suppressed, e;
-    };
-    __name(__disposeResources, "__disposeResources");
-    tslib_es6_default = {
-      __extends,
-      __assign,
-      __rest,
-      __decorate,
-      __param,
-      __metadata,
-      __awaiter,
-      __generator,
-      __createBinding,
-      __exportStar,
-      __values,
-      __read,
-      __spread,
-      __spreadArrays,
-      __spreadArray,
-      __await,
-      __asyncGenerator,
-      __asyncDelegator,
-      __asyncValues,
-      __makeTemplateObject,
-      __importStar,
-      __importDefault,
-      __classPrivateFieldGet,
-      __classPrivateFieldSet,
-      __classPrivateFieldIn,
-      __addDisposableResource,
-      __disposeResources
-    };
   }
 });
 
@@ -10368,7 +10215,7 @@ var require_mergeRefs = __commonJS({
       for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
         args[_key] = arguments[_key];
       }
-      return /* @__PURE__ */ __name(function forwardRef25(node) {
+      return /* @__PURE__ */ __name(function forwardRef26(node) {
         args.forEach((ref) => {
           if (ref == null) {
             return;
@@ -32495,7 +32342,7 @@ function createGroup(verticalDefault) {
   });
 }
 __name(createGroup, "createGroup");
-var GroupItem = import_react35.default.forwardRef((props, ref) => {
+var GroupItem = (0, import_react35.forwardRef)((props, _ref) => {
   var _a;
   const {
     __scopeGroup,
@@ -32504,16 +32351,12 @@ var GroupItem = import_react35.default.forwardRef((props, ref) => {
   } = props, groupItemProps = useGroupItem({
     disabled: (0, import_react35.isValidElement)(children) ? children.props.disabled : void 0
   }, forcePlacement, __scopeGroup);
-  return (0, import_react35.isValidElement)(children) ? (0, import_core23.isTamaguiElement)(children) ? import_react35.default.cloneElement(children, {
-    ...groupItemProps,
-    ref
-  }) : import_react35.default.cloneElement(children, {
+  return (0, import_react35.isValidElement)(children) ? (0, import_core23.isTamaguiElement)(children) ? import_react35.default.cloneElement(children, groupItemProps) : import_react35.default.cloneElement(children, {
     style: {
       // @ts-ignore
       ...(_a = children.props) == null ? void 0 : _a.style,
       ...groupItemProps
-    },
-    ref
+    }
   }) : children;
 });
 var useGroupItem = /* @__PURE__ */ __name((childrenProps, forcePlacement, __scopeGroup) => {
@@ -34638,7 +34481,7 @@ function Popper(props) {
     open
   } = floating;
   if (isWeb) useIsomorphicLayoutEffect(() => {
-    if (open && refs.reference.current && refs.floating.current) return autoUpdate(refs.reference.current, refs.floating.current, floating.update);
+    if (open && refs.reference.current && refs.floating.current) return floating.update(), autoUpdate(refs.reference.current, refs.floating.current, floating.update);
   }, [open, floating.update, refs.floating, refs.reference]);
   else {
     const dimensions = (0, import_react_native_web8.useWindowDimensions)(), [keyboardOpen, setKeyboardOpen] = React20.useState(false);
