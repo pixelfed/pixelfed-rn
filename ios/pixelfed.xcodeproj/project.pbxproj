@@ -19,6 +19,10 @@
 		D9E2F39049C14C38B4A9416C /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30CC65DA46EF435DADAD1E86 /* noop-file.swift */; };
 		E4ECB26B724A4B29AB3757C0 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = BE5029D7920F44898B6FDA05 /* PrivacyInfo.xcprivacy */; };
 		E5094C28F11C4800A9F09E3A /* ShareExtension.appex in Copy Files */ = {isa = PBXBuildFile; fileRef = E3E36CD9E25F47AF841EF3F0 /* ShareExtension.appex */; };
+		36AE29F55EBF491A9219682D /* ShareExtension.appex in Copy Files */ = {isa = PBXBuildFile; fileRef = 831F36882FE24651832D1788 /* ShareExtension.appex */; };
+		A43BBCA4469F469C81798D82 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159CEF85708D4025AA634D09 /* ShareViewController.swift */; };
+		8972686FBB6043EEAA98F608 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DC7ADF7A5265447292C6AE4D /* MainInterface.storyboard */; };
+		072A731DD5A74043BE86C747 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B167E4883FDA4E1DBF5929E6 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,9 +33,20 @@
 			dstSubfolderSpec = 13;
 			files = (
 				E5094C28F11C4800A9F09E3A /* ShareExtension.appex in Copy Files */,
+				36AE29F55EBF491A9219682D /* ShareExtension.appex in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0F8D91CD063414F8A8A1B5A /* Copy Files */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			name = "Copy Files";
+			dstPath = "";
+			dstSubfolderSpec = 13;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -55,6 +70,11 @@
 		E3E36CD9E25F47AF841EF3F0 /* ShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = 9; includeInIndex = 0; path = ShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-pixelfed/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		831F36882FE24651832D1788 /* ShareExtension.appex */ = {isa = PBXFileReference; name = "ShareExtension.appex"; path = "ShareExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; fileEncoding = undefined; lastKnownFileType = undefined; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; };
+		9C6C2380ED3B4BA28BD0DFB4 /* ShareExtension-Info.plist */ = {isa = PBXFileReference; name = "ShareExtension-Info.plist"; path = "/Users/dansup/Github/pixelfed-rn/ios/ShareExtension/ShareExtension-Info.plist"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = text.plist.xml; explicitFileType = undefined; includeInIndex = 0; };
+		159CEF85708D4025AA634D09 /* ShareViewController.swift */ = {isa = PBXFileReference; name = "ShareViewController.swift"; path = "/Users/dansup/Github/pixelfed-rn/ios/ShareExtension/ShareViewController.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		DC7ADF7A5265447292C6AE4D /* MainInterface.storyboard */ = {isa = PBXFileReference; name = "MainInterface.storyboard"; path = "/Users/dansup/Github/pixelfed-rn/ios/ShareExtension/MainInterface.storyboard"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		B167E4883FDA4E1DBF5929E6 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; name = "PrivacyInfo.xcprivacy"; path = "/Users/dansup/Github/pixelfed-rn/ios/ShareExtension/PrivacyInfo.xcprivacy"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +152,7 @@
 			children = (
 				13B07F961A680F5B00A75B9A /* pixelfed.app */,
 				E3E36CD9E25F47AF841EF3F0 /* ShareExtension.appex */,
+				831F36882FE24651832D1788 /* ShareExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -170,6 +191,18 @@
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
+		10040CDBC79A45BA884D03C8 /* ShareExtension */ = {
+			isa = "PBXGroup";
+			children = (
+				9C6C2380ED3B4BA28BD0DFB4 /* ShareExtension-Info.plist */,
+				159CEF85708D4025AA634D09 /* ShareViewController.swift */,
+				DC7ADF7A5265447292C6AE4D /* MainInterface.storyboard */,
+				B167E4883FDA4E1DBF5929E6 /* PrivacyInfo.xcprivacy */,
+			);
+			name = ShareExtension;
+			sourceTree = "<group>";
+			path = ShareExtension;
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -186,6 +219,7 @@
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
 				EF98BAEE69E141D5B7881F31 /* Copy Files */,
 				C5396BD97D7083FD07BA7215 /* [CP] Embed Pods Frameworks */,
+				C0F8D91CD063414F8A8A1B5A /* Copy Files */,
 			);
 			buildRules = (
 			);
@@ -211,6 +245,22 @@
 			productName = ShareExtension;
 			productReference = E3E36CD9E25F47AF841EF3F0 /* ShareExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
+		};
+		EFE3A121242846E581FF7C5A /* "ShareExtension" */ = {
+			isa = PBXNativeTarget;
+			name = "ShareExtension";
+			productName = "ShareExtension";
+			productReference = 831F36882FE24651832D1788;
+			productType = "com.apple.product-type.app-extension";
+			buildConfigurationList = 5EDDB60328234162B336B560;
+			buildPhases = (
+				ACD2BE2A47894AB38026CE21 /* Sources */,
+				960A06C64E414953B6F7EA37 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
 		};
 /* End PBXNativeTarget section */
 
@@ -240,6 +290,7 @@
 			targets = (
 				13B07F861A680F5B00A75B9A /* pixelfed */,
 				FB9F2387A49A48E28A48AEEA /* ShareExtension */,
+				EFE3A121242846E581FF7C5A /* "ShareExtension" */,
 			);
 		};
 /* End PBXProject section */
@@ -261,6 +312,15 @@
 			files = (
 				23D1EA7653D24DB893A52987 /* MainInterface.storyboard in Resources */,
 				E4ECB26B724A4B29AB3757C0 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		960A06C64E414953B6F7EA37 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8972686FBB6043EEAA98F608 /* MainInterface.storyboard in Resources */,
+				072A731DD5A74043BE86C747 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -389,6 +449,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ACD2BE2A47894AB38026CE21 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A43BBCA4469F469C81798D82 /* ShareViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -421,7 +489,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pixelfed;
-				PRODUCT_NAME = pixelfed;
+				PRODUCT_NAME = "pixelfed";
 				SWIFT_OBJC_BRIDGING_HEADER = "pixelfed/pixelfed-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -454,7 +522,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pixelfed;
-				PRODUCT_NAME = pixelfed;
+				PRODUCT_NAME = "pixelfed";
 				SWIFT_OBJC_BRIDGING_HEADER = "pixelfed/pixelfed-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -647,6 +715,50 @@
 			};
 			name = Debug;
 		};
+		72506BD0D3274F10A30D0065 /* Debug */ = {
+			name = Debug;
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "/Users/dansup/Github/pixelfed-rn/ios/ShareExtension/ShareExtension-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_NAME = "ShareExtension";
+				SKIP_INSTALL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "/Users/dansup/Github/pixelfed-rn/ios/ShareExtension/ShareExtension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "1";
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = "1.0.0";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pixelfed.share-extension";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+		};
+		12F657CD4FCF4B2A8FD19CD4 /* Release */ = {
+			name = Release;
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = "/Users/dansup/Github/pixelfed-rn/ios/ShareExtension/ShareExtension-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_NAME = "ShareExtension";
+				SKIP_INSTALL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "/Users/dansup/Github/pixelfed-rn/ios/ShareExtension/ShareExtension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "1";
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = "1.0.0";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pixelfed.share-extension";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -673,6 +785,15 @@
 			buildConfigurations = (
 				A5882A0EC92546538E204082 /* Debug */,
 				85298FA4637742B8ACBF2473 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5EDDB60328234162B336B560 /* Build configuration list for PBXNativeTarget "ShareExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				72506BD0D3274F10A30D0065 /* Debug */,
+				12F657CD4FCF4B2A8FD19CD4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
