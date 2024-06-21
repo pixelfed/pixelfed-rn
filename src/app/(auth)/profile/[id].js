@@ -479,7 +479,7 @@ export default function ProfileScreen() {
         onEndReached={() => {
           if (!isFetching && hasNextPage) fetchNextPage()
         }}
-        onEndReachedThreshold={0.5}
+        onEndReachedThreshold={0.1}
         ListEmptyComponent={EmptyFeed}
         ListFooterComponent={() =>
           isFetched && isFetchingNextPage ? (
