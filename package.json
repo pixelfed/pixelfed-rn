@@ -22,6 +22,7 @@
     "@react-native-clipboard/clipboard": "^1.14.1",
     "@react-native-community/netinfo": "11.1.0",
     "@react-navigation/native": "^6.0.2",
+    "@shopify/flash-list": "^1.6.4",
     "@tamagui/config": "^1.94.4",
     "@tamagui/metro-plugin": "^1.94.4",
     "@tamagui/toast": "^1.94.4",
