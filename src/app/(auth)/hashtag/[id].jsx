@@ -129,8 +129,8 @@ export default function Page() {
                 <View w={100} h={100} borderRadius={100} bg="$gray6"></View>
               )}
             </View>
-            <YStack flexGrow={1} justifyContent="center" alignItems="center" gap="$2">
-              <Text fontSize="$6">
+            <YStack flexShrink={1} justifyContent="center" alignItems="center" gap="$2">
+              <Text fontSize="$6" allowFontScaling={false}>
                 <Text fontWeight="bold">{prettyCount(hashtag?.count)}</Text>{' '}
                 <Text color="$gray9">posts</Text>
               </Text>
@@ -158,11 +158,11 @@ export default function Page() {
                 </Button>
               )}
               {hashtag.following ? (
-                <Text fontSize="$4" color="$gray9" flexWrap="wrap">
+                <Text fontSize="$4" color="$gray9" flexWrap="wrap" allowFontScaling={false}> 
                   You are following this hashtag
                 </Text>
               ) : (
-                <Text fontSize="$4" color="$gray9" flexWrap="wrap">
+                <Text fontSize="$4" color="$gray9" flexWrap="wrap" allowFontScaling={false}>
                   Follow to see posts like these in your home feed
                 </Text>
               )}
@@ -174,18 +174,18 @@ export default function Page() {
     [hashtag, feed]
   )
 
-  const {
-    data: related,
-    isFetching: relatedIsFetching,
-    isError: relatedIsError,
-    error: relatedError,
-  } = useQuery({
-    queryKey: ['getHashtagRelated', id],
-    queryFn: async ({ pageParam }) => {
-      const data = await getHashtagRelated(id)
-      return data.data
-    },
-  })
+  // const {
+  //   data: related,
+  //   isFetching: relatedIsFetching,
+  //   isError: relatedIsError,
+  //   error: relatedError,
+  // } = useQuery({
+  //   queryKey: ['getHashtagRelated', id],
+  //   queryFn: async ({ pageParam }) => {
+  //     const data = await getHashtagRelated(id)
+  //     return data.data
+  //   },
+  // })
 
   if (isPending || (isFetching && !isFetchingNextPage)) {
     return (
@@ -203,7 +203,7 @@ export default function Page() {
     )
   }
 
-  if (error || relatedError) {
+  if (error) {
     return (
       <View flexGrow={1}>
         <Text>Error</Text>
@@ -220,7 +220,7 @@ export default function Page() {
         }}
       />
       <Header hashtag={hashtag} feed={feed} />
-      <RelatedTags relatedTags={related} />
+      {/* <RelatedTags relatedTags={related} /> */}
       <FlatList
         data={feed?.pages.flat()}
         extraData={hashtag}
