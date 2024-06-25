@@ -1,9 +1,9 @@
-import { Dimensions, Pressable, Share } from 'react-native'
+import { Dimensions, Pressable, Share, StyleSheet } from 'react-native'
 import { Button, Group, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import FastImage from 'react-native-fast-image'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { enforceLen, formatTimestamp, openBrowserAsync } from '../../utils'
+import { enforceLen, formatTimestamp, htmlToTextWithLineBreaks, openBrowserAsync } from 'src/utils'
 import { Link, router } from 'expo-router'
 import {
   BottomSheetModal,
@@ -16,6 +16,10 @@ import ReadMore from '../common/ReadMore'
 import LikeButton from 'src/components/common/LikeButton'
 import AutolinkText from 'src/components/common/AutolinkText'
 import { Blurhash } from 'react-native-blurhash'
+import Video, {VideoRef} from 'react-native-video';
+import { PressableOpacity } from 'react-native-pressable-opacity'
+import { BlurView } from "@react-native-community/blur";
+import VideoPlayer from './VideoPlayer'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 const AVATAR_WIDTH = 45
@@ -88,7 +92,17 @@ const PostMedia = React.memo(({ media, post }) => {
   const height = media[0].meta?.original?.width
     ? SCREEN_WIDTH * (media[0].meta?.original?.height / media[0].meta?.original.width)
     : 430
+  const videoRef = useRef(null);
+  const [paused, setPaused] = useState(true);
 
+  const onBuffer = (msg) => {
+    console.log(msg)
+  }
+
+  const onError = (msg) => {
+    console.log(msg)
+  }
+    
   if (post.sensitive && !showSensitive) {
     return (
       <ZStack w={SCREEN_WIDTH} h={height}>
@@ -126,26 +140,11 @@ const PostMedia = React.memo(({ media, post }) => {
 
   if (post.pf_type === 'video') {
     return (
-      <View
-        flex={1}
-        alignItems="center"
-        justifyContent="center"
-        bg="#000"
-        borderBottomWidth={1}
-        borderBottomColor="$gray5"
-        p="$5"
-        minHeight={300}
-      >
-        {/* temp until video player implemented */}
-        <Button
-          fontWeight="bold"
-          bg="$blue9"
-          color="white"
-          onPress={() => openBrowserAsync(post.url)}
-        >
-          View video
-        </Button>
-      </View>
+      <VideoPlayer
+        source={mediaUrl}
+        height={height}
+        videoId={post.id}
+      />
     )
   }
   return (
@@ -158,6 +157,94 @@ const PostMedia = React.memo(({ media, post }) => {
     </View>
   )
 })
+
+const PostAlbumMedia = ({ media, post, carouselRef, progress }) => {
+  const mediaUrl = media[0].url
+  const [showSensitive, setSensitive] = useState(false)
+  const height = media[0].meta?.original?.width
+    ? SCREEN_WIDTH * (media[0].meta?.original?.height / media[0].meta?.original.width)
+    : 430
+
+  if (post.sensitive && !showSensitive) {
+    return (
+      <ZStack w={SCREEN_WIDTH} h={height}>
+        <Blurhash
+          blurhash={media[0]?.blurhash}
+          style={{
+            flex: 1,
+            width: SCREEN_WIDTH,
+            height: height,
+          }}
+        />
+        <YStack justifyContent="center" alignItems="center" flexGrow={1}>
+          <YStack justifyContent="center" alignItems="center" flexGrow={1} gap="$3">
+            <Feather name="eye-off" size={55} color="white" />
+            <Text fontSize="$7" color="white">
+              This post contains sensitive or mature content
+            </Text>
+          </YStack>
+          <YStack w={SCREEN_WIDTH} flexShrink={1}>
+            <Separator />
+            <Button
+              alignSelf="stretch"
+              size="$5"
+              color="white"
+              onPress={() => setSensitive(true)}
+              chromeless
+            >
+              Tap to view
+            </Button>
+          </YStack>
+        </YStack>
+      </ZStack>
+    )
+  }
+
+  return (
+    <View flex={1} borderBottomWidth={1} borderBottomColor="$gray5">
+    <Carousel
+      ref={carouselRef}
+      panGestureHandlerProps={{
+        activeOffsetX: [-20, 20],
+        failOffsetY: [-20, 20],
+      }}
+      width={SCREEN_WIDTH}
+      onProgressChange={progress}
+      height={height}
+      vertical={false}
+      data={post.media_attachments}
+      overscrollEnabled={false}
+      renderItem={({ index }) => {
+        const media = post.media_attachments[0]
+        const height = media.meta?.original?.width
+          ? SCREEN_WIDTH *
+            (media.meta?.original?.height / media.meta?.original.width)
+          : 430
+        return (
+          <FastImage
+            style={{
+              width: SCREEN_WIDTH,
+              height: height,
+              backgroundColor: '#000',
+              zIndex: -2
+            }}
+            source={{ uri: post.media_attachments[index].url }}
+            resizeMode={FastImage.resizeMode.contain}
+          />
+        )
+      }}
+    />
+    <Pagination.Basic
+      progress={progress}
+      data={post.media_attachments}
+      dotStyle={{ backgroundColor: 'rgba(0,0,0,0.16)', borderRadius: 50 }}
+      activeDotStyle={{ backgroundColor: '#408DF6', borderRadius: 50 }}
+      containerStyle={{ gap: 5, marginTop: 10, marginBottom: -10, zIndex: 3 }}
+      size={8}
+    />
+    </View>
+  )
+}
 
 const PostActions = React.memo(
   ({
@@ -235,13 +322,14 @@ const PostCaption = React.memo(
     onMentionPress,
   }) => {
     const timeAgo = formatTimestamp(createdAt)
+    const captionText = htmlToTextWithLineBreaks(caption)
     return (
       <BorderlessSection>
         <YStack gap="$3" pt="$1" pb="$3" px="$2">
           <XStack flexWrap="wrap" pr="$3">
             <ReadMore numberOfLines={3} renderRevealedFooter={() => <></>}>
               <AutolinkText
-                text={caption?.replaceAll('\n\n', ' ')}
+                text={captionText}
                 username={username}
                 onHashtagPress={onHashtagPress}
                 onMentionPress={onMentionPress}
@@ -339,50 +427,7 @@ export default function FeedPost({ post, user, onOpenComments, onLike }) {
         onOpenMenu={() => handlePresentModalPress()}
       />
       {post.media_attachments?.length > 1 ? (
-        <>
-          <Carousel
-            ref={carouselRef}
-            width={SCREEN_WIDTH}
-            onProgressChange={progress}
-            height={SCREEN_WIDTH / 2}
-            data={post.media_attachments}
-            renderItem={({ index }) => {
-              const media = post.media_attachments[0]
-              const height = media.meta?.original?.width
-                ? SCREEN_WIDTH *
-                  (media.meta?.original?.height / media.meta?.original.width)
-                : 430
-              return (
-                <View
-                  style={{
-                    flex: 1,
-                    borderBottomWidth: 1,
-                    borderColor: '#eee',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <FastImage
-                    style={{
-                      width: SCREEN_WIDTH,
-                      height: height,
-                      backgroundColor: '#000',
-                    }}
-                    source={{ uri: post.media_attachments[index].url }}
-                    resizeMode={FastImage.resizeMode.contain}
-                  />
-                </View>
-              )
-            }}
-          />
-          <Pagination.Basic
-            progress={progress}
-            data={post.media_attachments}
-            dotStyle={{ backgroundColor: 'rgba(0,0,0,0.16)', borderRadius: 50 }}
-            activeDotStyle={{ backgroundColor: '#408DF6', borderRadius: 50 }}
-            containerStyle={{ gap: 5, marginTop: 10, marginBottom: -10, zIndex: 3 }}
-            size={8}
-          />
-        </>
+        <PostAlbumMedia media={post.media_attachments} post={post} carouselRef={carouselRef} progress={progress} />
       ) : post.media_attachments?.length === 1 ? (
         <PostMedia media={post.media_attachments} post={post} />
       ) : null}
@@ -399,7 +444,7 @@ export default function FeedPost({ post, user, onOpenComments, onLike }) {
       <PostCaption
         postId={post.id}
         username={post.account?.username}
-        caption={post.content_text}
+        caption={post.content}
         commentsCount={post.reply_count}
         createdAt={post.created_at}
         tags={post.tags}
