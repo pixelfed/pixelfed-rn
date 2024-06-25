@@ -1,14 +1,15 @@
 import { View, Text, XStack, Image, YStack, Button, Separator, Avatar } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { enforceLen, formatTimestampMonthYear, prettyCount } from '../../utils'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
 import { Pressable } from 'react-native'
 import EditProfile from './actionButtons/EditProfile'
 import FollowingProfile from './actionButtons/FollowingProfile'
 import FollowProfile from './actionButtons/FollowProfile'
 import BlockingProfile from './actionButtons/BlockingProfile'
 import FollowRequested from './actionButtons/FollowRequested'
-import ReadMore from '../common/ReadMore'
+import ReadMore from 'src/components/common/ReadMore'
+import AutolinkText from 'src/components/common/AutolinkText'
 import { useState } from 'react'
 
 export default function ProfileHeader({
@@ -33,6 +34,18 @@ export default function ProfileHeader({
     }
     return num.toLocaleString('en-CA', { compactDisplay: 'short', notation: 'compact' })
   }
+  
+  const onHashtagPress = (tag) => {
+    router.push(`/hashtag/${tag}`)
+  }
+
+  const onMentionPress = (tag) => {
+    router.push(`/profile/0?byUsername=${tag.slice(1)}`)
+  }
+
+  const onSendMessage = () => {
+    router.push(`/chats/conversation/${profile?.id}}`)
+  }
 
   const ActionButton = () => {
     if (isSelf || selfUser?.id == profile?.id) {
@@ -46,7 +59,7 @@ export default function ProfileHeader({
       return <BlockingProfile />
     }
     if (relationship && relationship.following) {
-      return <FollowingProfile onPress={() => onUnfollow()} />
+      return <FollowingProfile onPress={() => onUnfollow() } onSendMessage={() => onSendMessage()} />
     }
     if (relationship && !relationship.following) {
       return <FollowProfile onPress={() => onFollow()} />
@@ -124,29 +137,29 @@ export default function ProfileHeader({
             </Avatar>
           </View>
 
-          <XStack gap="$7" mx="$5">
+          <XStack gap="$7" mx="$5" alignItems='flex-start'>
             <YStack alignItems="center" gap="$1">
-              <Text fontWeight="bold" fontSize="$6">
+              <Text fontWeight="bold" fontSize="$6" allowFontScaling={false}>
                 {prettyCount(profile?.statuses_count ? profile.statuses_count : 0)}
               </Text>
-              <Text fontSize="$3">Posts</Text>
+              <Text fontSize="$3" allowFontScaling={false}>Posts</Text>
             </YStack>
 
-            <Link href={`/profile/following/${profile?.id}`}>
+            <Link href={`/profile/following/${profile?.id}`} asChild>
               <YStack alignItems="center" gap="$1">
-                <Text fontWeight="bold" fontSize="$6">
+                <Text fontWeight="bold" fontSize="$6" allowFontScaling={false}>
                   {prettyCount(profile?.following_count ? profile.following_count : 0)}
                 </Text>
-                <Text fontSize="$3">Following</Text>
+                <Text fontSize="$3" allowFontScaling={false}>Following</Text>
               </YStack>
             </Link>
 
-            <Link href={`/profile/followers/${profile?.id}`}>
+            <Link href={`/profile/followers/${profile?.id}`} asChild>
               <YStack alignItems="center" gap="$1">
-                <Text fontWeight="bold" fontSize="$6">
+                <Text fontWeight="bold" fontSize="$6" allowFontScaling={false}>
                   {prettyCount(profile?.followers_count ? profile.followers_count : 0)}
                 </Text>
-                <Text fontSize="$3">Followers</Text>
+                <Text fontSize="$3" allowFontScaling={false}>Followers</Text>
               </YStack>
             </Link>
           </XStack>
@@ -165,15 +178,14 @@ export default function ProfileHeader({
               </View>
             ) : null}
           </XStack>
-          {/* <Text fontSize="$6" fontWeight={'bold'} color="$gray9" letterSpacing={-0.4}>
-            {profile?.local ? '@' + profile?.acct + '@pixelfed.social' : profile?.acct}
-          </Text> */}
-
+      
           <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
-            <Text fontSize={14} fontWeight={400} letterSpacing={0.001}>
-              {profile?.note_text &&
-                profile?.note.replaceAll('&amp;', '&').replaceAll(/(<([^>]+)>)/gi, '')}
-            </Text>
+            <AutolinkText
+                text={profile?.note?.replaceAll('&amp;', '&').replaceAll("\n\n", "\n").replaceAll(/(<([^>]+)>)/gi, '')}
+                username={false}
+                onHashtagPress={onHashtagPress}
+                onMentionPress={onMentionPress}
+              />
           </ReadMore>
 
           {profile?.website && profile?.website.trim().length ? (
