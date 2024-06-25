@@ -1,5 +1,5 @@
-import { FlatList, Dimensions, ActivityIndicator, ScrollViewBase } from 'react-native'
-import { Image, ScrollView, Text, View, XStack, YStack, Button } from 'tamagui'
+import { FlatList, Dimensions, ActivityIndicator } from 'react-native'
+import { Image, ScrollView, Text, View, XStack, YStack, Button, Separator } from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
 import { Storage } from 'src/state/cache'
 import { queryApi } from 'src/requests'
@@ -10,6 +10,7 @@ import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { getHashtagByName, getHashtagByNameFeed, getHashtagRelated } from 'src/lib/api'
 import { prettyCount } from '../../../utils'
 import FastImage from 'react-native-fast-image'
+import { Feather } from '@expo/vector-icons'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
@@ -67,6 +68,16 @@ export default function Page() {
     []
   )
 
+  const RenderEmpty = () => (
+    <View flex={1}>
+      <Separator borderColor="#ccc" />
+      <YStack flexGrow={1} justifyContent="center" alignItems="center" gap="$3">
+        <Feather name="alert-circle" size={40} color="#aaa" />
+        <Text fontSize="$8">No posts with this tag.</Text>
+      </YStack>
+    </View>
+  )
+
   const { data: hashtag, isPending } = useQuery({
     queryKey: ['getHashtagByName', id],
     queryFn: getHashtagByName,
@@ -110,10 +121,10 @@ export default function Page() {
   const Header = useCallback(
     ({ hashtag, feed }) => {
       return (
-        <View p="$4">
+        <View p="$4" flexShrink={1}>
           <XStack alignItems="center" gap="$4">
             <View w={100} h={100}>
-              {feed?.pages ? (
+              {feed?.pages[0].length ? (
                 <FastImage
                   source={{ uri: feed.pages[0][0].media_attachments[0].url }}
                   style={{
@@ -129,11 +140,13 @@ export default function Page() {
                 <View w={100} h={100} borderRadius={100} bg="$gray6"></View>
               )}
             </View>
-            <YStack flexShrink={1} justifyContent="center" alignItems="center" gap="$2">
+            <YStack flex={1} justifyContent="center" alignItems="center" gap="$2">
               <Text fontSize="$6" allowFontScaling={false}>
-                <Text fontWeight="bold">{prettyCount(hashtag?.count)}</Text>{' '}
+                <Text fontWeight="bold">{prettyCount(hashtag?.count ?? 0)}</Text>{' '}
                 <Text color="$gray9">posts</Text>
               </Text>
+              { hashtag?.count > 0 ? <>
+              
               {hashtag.following ? (
                 <Button
                   borderColor="$blue9"
@@ -166,6 +179,7 @@ export default function Page() {
                   Follow to see posts like these in your home feed
                 </Text>
               )}
+              </> : null}
             </YStack>
           </XStack>
         </View>
@@ -212,14 +226,14 @@ export default function Page() {
   }
 
   return (
-    <SafeAreaView edges={['bottom']}>
+    <SafeAreaView flexGrow={1} edges={['bottom']}>
       <Stack.Screen
         options={{
           title: `#${id}`,
           headerBackTitle: 'Back',
         }}
       />
-      <Header hashtag={hashtag} feed={feed} />
+      {/* <Header hashtag={hashtag} feed={feed} /> */}
       {/* <RelatedTags relatedTags={related} /> */}
       <FlatList
         data={feed?.pages.flat()}
@@ -237,6 +251,9 @@ export default function Page() {
           }
         }}
         onEndReachedThreshold={0.9}
+        contentContainerStyle={{flexGrow: 1}}
+        ListEmptyComponent={RenderEmpty}
+        ListHeaderComponent={<Header hashtag={hashtag} feed={feed} />}
         ListFooterComponent={() =>
           isFetching || isFetchingNextPage ? (
             <View p="$5">
