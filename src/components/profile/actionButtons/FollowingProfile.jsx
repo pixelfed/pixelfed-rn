@@ -1,7 +1,7 @@
 import { Link } from 'expo-router'
 import { Button, XStack } from 'tamagui'
 
-export default function FollowingProfile({ onPress }) {
+export default function FollowingProfile({ onPress, onSendMessage }) {
   return (
     <XStack w="100%" my="$3" gap="$2">
       <Button
@@ -28,6 +28,7 @@ export default function FollowingProfile({ onPress }) {
         color="black"
         fontWeight="bold"
         fontSize="$4"
+        onPress={() => onSendMessage()}
       >
         Send Message
       </Button>
