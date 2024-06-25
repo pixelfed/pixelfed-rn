@@ -102,7 +102,15 @@ export default function ProfileScreen() {
 
   const EmptyFeed = () => (
     <View h="100%" flexGrow={1}>
-      {!isFetched ? (
+      { !isFetching && !user.id ?
+      <YStack flexGrow={1} justifyContent="center" alignItems="center" gap="$5">
+        <View p="$6" borderWidth={2} borderColor="$gray5" borderRadius={100}>
+          <Feather name="alert-triangle" size={40} color="#aaa" />
+        </View>
+        <Text fontSize="$8">Account not found</Text>
+      </YStack>
+      : 
+      !isFetched || isFetching ? (
         <YStack flex={1} justifyContent="center" alignItems="center" gap="$5">
           <ActivityIndicator />
         </YStack>
@@ -145,12 +153,12 @@ export default function ProfileScreen() {
   }
   const userId = user?.id
 
-  const { data: relationship } = useQuery({
+  const { data: relationship, isError: relationshipError } = useQuery({
     queryKey: ['getAccountRelationship', userId],
     queryFn: getAccountRelationship,
-    enabled: !!userId,
+    enabled: !!userId && !userError,
   })
-
+  
   const blockMutation = useMutation({
     mutationFn: () => {
       return blockProfileById(userId)
@@ -214,6 +222,10 @@ export default function ProfileScreen() {
   })
 
   const onOpenMenu = () => {
+    if(!user?.id) {
+      console.log('menu')
+      return;
+    }
     bottomSheetModalRef.current?.present()
   }
 
@@ -401,7 +413,7 @@ export default function ProfileScreen() {
       }, lastPage[0].id)
       return lowestId
     },
-    enabled: !!userId,
+    enabled: !!userId || !userError || !relationshipError,
   })
 
   // if (isFetching && !isFetchingNextPage) {
@@ -477,12 +489,12 @@ export default function ProfileScreen() {
         numColumns={3}
         showsVerticalScrollIndicator={false}
         onEndReached={() => {
-          if (!isFetching && hasNextPage) fetchNextPage()
+          if (!userError && !isFetching && hasNextPage) fetchNextPage()
         }}
         onEndReachedThreshold={0.1}
         ListEmptyComponent={EmptyFeed}
         ListFooterComponent={() =>
-          isFetched && isFetchingNextPage ? (
+          !userError && isFetched && isFetchingNextPage ? (
             <View p="$5">
               <ActivityIndicator />
             </View>
