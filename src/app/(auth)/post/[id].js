@@ -6,8 +6,8 @@ import { queryApi } from 'src/requests'
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, router } from 'expo-router'
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
-import { getStatusById, getAccountStatusesById } from 'src/lib/api'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { getStatusById, getAccountStatusesById, likeStatus, unlikeStatus} from 'src/lib/api'
 import FeedPost from 'src/components/post/FeedPost'
 import {
   BottomSheetModal,
@@ -19,6 +19,7 @@ import CommentFeed from 'src/components/post/CommentFeed'
 export default function Page() {
   const { id } = useLocalSearchParams()
   const user = JSON.parse(Storage.getString('user.profile'))
+  const queryClient = useQueryClient()
   const bottomSheetModalRef = useRef(null)
   const snapPoints = useMemo(() => ['45%', '70%'], [])
   const renderBackdrop = useCallback(
@@ -34,6 +35,29 @@ export default function Page() {
   const onOpenComments = useCallback((id) => {
     bottomSheetModalRef.current?.present()
   }, [])
+
+
+  const likeMutation = useMutation({
+    mutationFn: async (handleLike) => {
+      return handleLike.type === 'like'
+        ? await likeStatus(handleLike)
+        : await unlikeStatus(handleLike)
+    },
+    onSuccess: () => {
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ['getStatusById'] })
+      }, 1000)
+    },
+  })
+
+  const handleLike = async (id, state) => {
+    likeMutation.mutate({ type: state ? 'unlike' : 'like', id: id })
+  }
+
+  const handleGotoUsernameProfile = (id) => {
+    bottomSheetModalRef.current?.close()
+    router.push(`/profile/0?byUsername=${id.slice(1)}`)
+  }
 
   const { isPending, isError, data, error } = useQuery({
     queryKey: ['getStatusById', id],
@@ -66,10 +90,20 @@ export default function Page() {
         snapPoints={snapPoints}
         backdropComponent={renderBackdrop}
       >
-        <CommentFeed id={id} user={user} gotoProfile={handleGotoProfile} />
+        <CommentFeed 
+          id={id} 
+          user={user} 
+          gotoProfile={handleGotoProfile}
+          gotoUsernameProfile={handleGotoUsernameProfile}
+        />
       </BottomSheetModal>
       <ScrollView flexShrink={1}>
-        <FeedPost post={data} user={user} onOpenComments={onOpenComments} />
+        <FeedPost 
+          post={data} 
+          user={user} 
+          onOpenComments={onOpenComments}
+          onLike={handleLike}
+        />
       </ScrollView>
     </SafeAreaView>
   )
