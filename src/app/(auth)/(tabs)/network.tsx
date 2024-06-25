@@ -20,6 +20,7 @@ import {
 } from '@gorhom/bottom-sheet'
 import CommentFeed from 'src/components/post/CommentFeed'
 import UserAvatar from 'src/components/common/UserAvatar'
+import { useVideo } from 'src/hooks/useVideoProvider'
 
 const keyExtractor = (_, index) => `post-${_.id}-${index}`
 
@@ -53,6 +54,20 @@ export default function HomeScreen() {
 
   const userJson = Storage.getString('user.profile')
   const user = JSON.parse(userJson)
+  const { playVideo, currentVideoId } = useVideo();
+
+  const onViewRef = useCallback(({ viewableItems }) => {
+    const visibleVideoId = viewableItems.find(item => item.isViewable)?.item.id;
+    if (visibleVideoId && visibleVideoId !== currentVideoId) {
+      // enable for autoplay
+      // playVideo(visibleVideoId);
+      playVideo(null);
+    } else if (!visibleVideoId) {
+      playVideo(null);
+    }
+  }, [currentVideoId, playVideo]);
+
+  const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 });
 
   const renderItem = useCallback(
     ({ item }) => (
@@ -177,6 +192,8 @@ export default function HomeScreen() {
         onRefresh={refetch}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={<EmptyFeed />}
+        onViewableItemsChanged={onViewRef}
+        viewabilityConfig={viewConfigRef.current}
         onEndReached={() => {
           if (hasNextPage) fetchNextPage()
         }}
