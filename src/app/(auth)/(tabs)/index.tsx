@@ -5,7 +5,7 @@ import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
 import { Feather } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link, Stack, useRouter } from 'expo-router'
+import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { fetchHomeFeed, likeStatus, unlikeStatus } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
@@ -22,6 +22,7 @@ import CommentFeed from 'src/components/post/CommentFeed'
 import { useShareIntentContext } from 'expo-share-intent'
 import UserAvatar from 'src/components/common/UserAvatar'
 import Welcome from 'src/components/onboarding/Welcome'
+import { useVideo } from 'src/hooks/useVideoProvider'
 
 const keyExtractor = (_, index) => `post-${_.id}-${index}`
 
@@ -29,12 +30,24 @@ export default function HomeScreen() {
   const router = useRouter()
   const queryClient = useQueryClient()
   const { hasShareIntent } = useShareIntentContext()
+  const params = useLocalSearchParams()
 
   useEffect(() => {
     if (hasShareIntent) {
       router.replace({ pathname: 'camera/shareintent' })
     }
   }, [hasShareIntent])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if(params.ref30 === "1") {
+          queryClient.invalidateQueries({ queryKey: ['homeFeed'] })
+          router.setParams()
+      }
+    }, 10000);
+
+    return () => clearTimeout(timer);
+  }, [params.ref30]);
 
   const [replyId, setReplyId] = useState(null)
   const [sheetType, setSheetType] = useState('comments')
@@ -62,6 +75,20 @@ export default function HomeScreen() {
 
   const userJson = Storage.getString('user.profile')
   const user = JSON.parse(userJson)
+  const { playVideo, currentVideoId } = useVideo();
+
+  const onViewRef = useCallback(({ viewableItems }) => {
+    const visibleVideoId = viewableItems.find(item => item.isViewable)?.item.id;
+    if (visibleVideoId && visibleVideoId !== currentVideoId) {
+      // enable for autoplay
+      // playVideo(visibleVideoId);
+      playVideo(null);
+    } else if (!visibleVideoId) {
+      playVideo(null);
+    }
+  }, [currentVideoId, playVideo]);
+
+  const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 });
 
   const renderItem = useCallback(
     ({ item }) => (
@@ -187,6 +214,8 @@ export default function HomeScreen() {
         onRefresh={refetch}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={<EmptyFeed />}
+        onViewableItemsChanged={onViewRef}
+        viewabilityConfig={viewConfigRef.current}
         onEndReached={() => {
           if (hasNextPage) fetchNextPage()
         }}
