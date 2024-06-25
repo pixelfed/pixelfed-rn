@@ -20,6 +20,7 @@ export default function Page() {
     const queryClient = useQueryClient();
     const [messages, setMessages] = useState([])
     const [isReloading, setReloading] = useState(false);
+    const [isTyping, setTyping] = useState(false)
     const selfUser = JSON.parse(Storage.getString('user.profile'))
 
     const onSend = (messages) => {
@@ -194,6 +195,16 @@ export default function Page() {
       )
     }
 
+    useEffect(() => {
+      setTimeout(() => {
+        setTyping(true)
+      }, 2000)
+
+      setTimeout(() => {
+        setTyping(false)
+      }, 10000)
+    }, [])
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }} edges={['bottom']}>
           <Stack.Screen
@@ -221,6 +232,7 @@ export default function Page() {
             }}
             onSend={messages => onSend(messages)}
             maxInputLength={500}
+            isTyping={isTyping}
             onLongPress={(ctx, message) => onLongPress(ctx, message)}
             renderSend={(props) => {
               return (
