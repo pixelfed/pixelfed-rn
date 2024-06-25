@@ -36,7 +36,7 @@ export default function AppLayout() {
         name="camera"
         options={{
           tabBarShowLabel: false,
-          headerShown: false,
+          headerShown: true,
           tabBarIcon: ({ color }) => (
             <View bg="$gray4" px="$3" py={4} borderRadius={5}>
               <Feather name="plus" size={26} color={color} />
