@@ -37,7 +37,7 @@ import {
   BottomSheetTextInput,
 } from '@gorhom/bottom-sheet'
 import UserAvatar from '../common/UserAvatar'
-import { _timeAgo, likeCountLabel, prettyCount } from 'src/utils'
+import { _timeAgo, htmlToTextWithLineBreaks, likeCountLabel, prettyCount } from 'src/utils'
 import ReadMore from '../common/ReadMore'
 import AutolinkText from '../common/AutolinkText'
 
@@ -91,87 +91,89 @@ export default function CommentFeed({
   }
 
   const renderItem = useCallback(
-    ({ item }) => (
-      <View style={styles.itemContainer}>
-        <YStack flexShrink={1}>
-          <XStack flexShrink={1}>
-            <XStack gap="$3" flexGrow={1}>
-              <Pressable onPress={() => gotoProfile(item.account.id)}>
-                <UserAvatar url={item.account.avatar} width={30} height={30} />
-              </Pressable>
+    ({ item }) => {
+      const captionText = htmlToTextWithLineBreaks(item.content)
+      return (
+        <View style={styles.itemContainer}>
+          <YStack flexShrink={1}>
+            <XStack flexShrink={1}>
+              <XStack gap="$3" flexGrow={1}>
+                <Pressable onPress={() => gotoProfile(item.account.id)}>
+                  <UserAvatar url={item.account.avatar} width={30} height={30} />
+                </Pressable>
 
-              <YStack flexGrow={1} maxWidth={SCREEN_WIDTH - 150} gap={4}>
-                <XStack gap="$2">
-                  <Pressable onPress={() => gotoProfile(item?.account.id)}>
-                    <Text fontSize="$3" fontWeight="bold">
-                      {item.account.acct}
+                <YStack flexGrow={1} maxWidth={SCREEN_WIDTH - 150} gap={4}>
+                  <XStack gap="$2">
+                    <Pressable onPress={() => gotoProfile(item?.account.id)}>
+                      <Text fontSize="$3" fontWeight="bold">
+                        {item.account.acct}
+                      </Text>
+                    </Pressable>
+                    <Text fontSize="$3" color="$gray9">
+                      {_timeAgo(item.created_at)}
                     </Text>
-                  </Pressable>
-                  <Text fontSize="$3" color="$gray9">
-                    {_timeAgo(item.created_at)}
-                  </Text>
-                </XStack>
-                <ReadMore numberOfLines={3}>
-                  <AutolinkText
-                    text={item.content_text}
-                    onMentionPress={gotoUsernameProfile}
-                    onHashtagPress={gotoHashtag}
-                  />
-                </ReadMore>
-                <XStack mt="$2" gap="$4">
-                  <Pressable onPress={() => commentRef?.current.focus()}>
-                    <Text fontWeight="bold" fontSize="$3" color="$gray9">
-                      Reply
-                    </Text>
-                  </Pressable>
-                  {item.favourites_count ? (
-                    <Pressable onPress={() => handleShowLikes(item.id)}>
-                      <Text fontSize="$3" color="$gray9">
-                        {likeCountLabel(item?.favourites_count)}
+                  </XStack>
+                  <ReadMore numberOfLines={3}>
+                    <AutolinkText
+                      text={captionText}
+                      onMentionPress={gotoUsernameProfile}
+                      onHashtagPress={gotoHashtag}
+                    />
+                  </ReadMore>
+                  <XStack mt="$2" gap="$4">
+                    <Pressable onPress={() => commentRef?.current.focus()}>
+                      <Text fontWeight="bold" fontSize="$3" color="$gray9">
+                        Reply
                       </Text>
                     </Pressable>
-                  ) : null}
-                  {item.account.id != user?.id ? (
-                    <Pressable onPress={() => handleCommentReport(item?.id)}>
-                      <Text fontSize="$3" color="$gray9">
-                        Report
-                      </Text>
-                    </Pressable>
-                  ) : (
-                    <Pressable onPress={() => handleCommentDelete(item.id)}>
-                      <Text fontSize="$3" color="$gray9">
-                        Delete
-                      </Text>
-                    </Pressable>
-                  )}
-                </XStack>
-              </YStack>
-            </XStack>
-            <Pressable onPress={() => handleCommentLike(item)}>
-              <YStack justifyContent="center" alignItems="center" gap="$1">
-                {item.favourited ? (
-                  <Ionicons name="heart" color="red" size={20} />
-                ) : (
-                  <Ionicons name="heart-outline" color="black" size={20} />
-                )}
-                {item.favourites_count ? (
-                  <Text fontSize="$3">{prettyCount(item.favourites_count)}</Text>
-                ) : null}
-              </YStack>
-            </Pressable>
-          </XStack>
-          {item.replies_count ? (
-            <Pressable>
-              <XStack>
-                <Text>———</Text>
-                <Text>View {item.replies_count} more replies</Text>
+                    {item.favourites_count ? (
+                      <Pressable onPress={() => handleShowLikes(item.id)}>
+                        <Text fontSize="$3" color="$gray9">
+                          {likeCountLabel(item?.favourites_count)}
+                        </Text>
+                      </Pressable>
+                    ) : null}
+                    {item.account.id != user?.id ? (
+                      <Pressable onPress={() => handleCommentReport(item?.id)}>
+                        <Text fontSize="$3" color="$gray9">
+                          Report
+                        </Text>
+                      </Pressable>
+                    ) : (
+                      <Pressable onPress={() => handleCommentDelete(item.id)}>
+                        <Text fontSize="$3" color="$gray9">
+                          Delete
+                        </Text>
+                      </Pressable>
+                    )}
+                  </XStack>
+                </YStack>
               </XStack>
-            </Pressable>
-          ) : null}
-        </YStack>
-      </View>
-    ),
-    []
+              <Pressable onPress={() => handleCommentLike(item)}>
+                <YStack justifyContent="center" alignItems="center" gap="$1">
+                  {item.favourited ? (
+                    <Ionicons name="heart" color="red" size={20} />
+                  ) : (
+                    <Ionicons name="heart-outline" color="black" size={20} />
+                  )}
+                  {item.favourites_count ? (
+                    <Text fontSize="$3">{prettyCount(item.favourites_count)}</Text>
+                  ) : null}
+                </YStack>
+              </Pressable>
+            </XStack>
+            {item.replies_count ? (
+              <Pressable>
+                <XStack>
+                  <Text>———</Text>
+                  <Text>View {item.replies_count} more replies</Text>
+                </XStack>
+              </Pressable>
+            ) : null}
+          </YStack>
+        </View>
+      )
+    }, [gotoUsernameProfile, gotoHashtag]
   )
 
   const RenderHeader = useCallback(() => {
