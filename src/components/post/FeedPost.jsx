@@ -1,4 +1,4 @@
-import { Dimensions, Pressable, Share, StyleSheet } from 'react-native'
+import { Alert, Dimensions, Pressable, Share, StyleSheet } from 'react-native'
 import { Button, Group, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import FastImage from 'react-native-fast-image'
@@ -356,7 +356,7 @@ const PostCaption = React.memo(
             </XStack>
             : null}
             { visibility == 'private' ?
-            <XStack alignItems="center" gap="$1">
+            <XStack alignItems="center" gap="$2">
               <Feather name="lock" color="#ccc" />
               <Text color="$gray9" fontSize="$3">Followers only</Text>
             </XStack>
@@ -376,7 +376,7 @@ const PostCaption = React.memo(
   }
 )
 
-export default function FeedPost({ post, user, onOpenComments, onLike }) {
+export default function FeedPost({ post, user, onOpenComments, onLike, onDeletePost }) {
   const bottomSheetModalRef = useRef(null)
   const carouselRef = useRef(null)
   const progress = useSharedValue(0)
@@ -392,6 +392,25 @@ export default function FeedPost({ post, user, onOpenComments, onLike }) {
     ),
     []
   )
+
+  const _onDeletePost = (id) => {
+    bottomSheetModalRef.current?.close()
+    Alert.alert(
+      'Delete Post',
+      'Are you sure you want to delete this post?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => onDeletePost(id)
+        }
+      ]
+    )
+  }
 
   const goToPost = () => {
     bottomSheetModalRef.current?.close()
@@ -542,7 +561,7 @@ export default function FeedPost({ post, user, onOpenComments, onLike }) {
                 </Group.Item>
               ) : null}
               { user && user?.id === post?.account?.id ? <Group.Item>
-              <Button size="$5" justifyContent="start" onPress={() => onGotoAbout()}>
+              <Button size="$5" justifyContent="start" onPress={() => _onDeletePost(post.id)}>
                 <XStack alignItems="center" gap="$3">
                   <Feather name="trash" size={20} color="red" />
                   <Text fontSize="$5" color="$red9" allowFontScaling={false}>Delete Post</Text>
