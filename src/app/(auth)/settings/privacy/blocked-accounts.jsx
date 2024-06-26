@@ -28,6 +28,15 @@ export default function Page() {
 
   const RenderSeparator = () => <Separator />
 
+  const RenderEmpty = () => (
+    <View flexGrow={1} justifyContent="center" alignItems="center" py="$5">
+      <YStack flexShrink={1} justifyContent="center" alignItems="center" gap="$5">
+        <Feather name="alert-circle" size={70} />
+        <Text fontSize="$7" allowFontScaling={false}>You are not blocking any accounts</Text>
+      </YStack>
+    </View>
+  )
+
   const { isPending, isError, data, error } = useQuery({
     queryKey: ['blockedAccounts'],
     queryFn: getBlocks,
@@ -45,6 +54,8 @@ export default function Page() {
         data={data}
         renderItem={RenderItem}
         ItemSeparatorComponent={RenderSeparator}
+        ListEmptyComponent={RenderEmpty}
+        contentContainerStyle={{flexGrow: 1}}
       />
     </SafeAreaView>
   )
