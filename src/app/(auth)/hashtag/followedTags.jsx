@@ -4,6 +4,7 @@ import { getFollowedTags } from 'src/lib/api'
 import { Image, ScrollView, Text, View, XStack, YStack, Button } from 'tamagui'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { FlatList, Dimensions, ActivityIndicator } from 'react-native'
+import Feather from '@expo/vector-icons/Feather'
 
 export default function Screen() {
   const RenderItem = ({ item }) => (
@@ -15,6 +16,16 @@ export default function Screen() {
   )
 
   const Separator = () => <View h={1} borderBottomWidth={0.1} borderColor="$gray3" />
+
+  const RenderEmpty = () => (
+    <View flexGrow={1} justifyContent="center" alignItems="center" py="$5">
+      <YStack flexShrink={1} justifyContent="center" alignItems="center" gap="$5">
+        <Feather name="alert-circle" size={70} />
+        <Text fontSize="$7" allowFontScaling={false}>You are not following any hashtags</Text>
+      </YStack>
+    </View>
+  )
+
   const {
     data: feed,
     isPending,
@@ -57,7 +68,13 @@ export default function Screen() {
         }}
       />
 
-      <FlatList data={feed} renderItem={RenderItem} ItemSeparatorComponent={Separator} />
+      <FlatList 
+        data={feed} 
+        renderItem={RenderItem} 
+        ItemSeparatorComponent={Separator}
+        ListEmptyComponent={RenderEmpty}
+        contentContainerStyle={{flexGrow: 1}} 
+      />
     </SafeAreaView>
   )
 }
