@@ -183,7 +183,7 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="dark" />
       <Stack.Screen options={{ headerShown: false }} />
-      <FeedHeader title="Home" />
+      <FeedHeader title="Home" user={user} />
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={1}
