@@ -1,13 +1,7 @@
-import { useCallback, useEffect, useState } from 'react'
-import { FlatList, StyleSheet, Pressable, ActivityIndicator } from 'react-native'
-import { Text, View, XStack, Select, Adapt, Sheet, SheetContents } from 'tamagui'
-import FeedPost from 'src/components/post/FeedPost'
-import { StatusBar } from 'expo-status-bar'
+import { Pressable } from 'react-native'
+import { Text, XStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link, Stack } from 'expo-router'
-import { useInfiniteQuery } from '@tanstack/react-query'
-import { fetchHomeFeed } from 'src/lib/api'
+import { Link } from 'expo-router'
 
 export default (FeedHeader = ({ title = 'Home', user }) => {
   return (

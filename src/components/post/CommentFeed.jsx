@@ -8,7 +8,6 @@ import {
   Alert,
 } from 'react-native'
 import { Text, View, XStack, Select, Adapt, Sheet, YStack, Separator } from 'tamagui'
-import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
 import { Feather, Ionicons } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'

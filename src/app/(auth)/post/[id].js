@@ -7,7 +7,13 @@ import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, router } from 'expo-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getStatusById, getAccountStatusesById, likeStatus, unlikeStatus} from 'src/lib/api'
+import { 
+  getStatusById, 
+  getAccountStatusesById, 
+  likeStatus, 
+  unlikeStatus,
+  deleteStatusV1
+} from 'src/lib/api'
 import FeedPost from 'src/components/post/FeedPost'
 import {
   BottomSheetModal,
@@ -59,6 +65,19 @@ export default function Page() {
     router.push(`/profile/0?byUsername=${id.slice(1)}`)
   }
 
+  const onDeletePost = (id) => {
+    deletePostMutation.mutate(id)
+  }
+
+  const deletePostMutation = useMutation({
+    mutationFn: async (id) => {
+      return await deleteStatusV1(id)
+    },
+    onSuccess: (data, variables) => {
+      router.replace('/')
+    },
+  })
+
   const { isPending, isError, data, error } = useQuery({
     queryKey: ['getStatusById', id],
     queryFn: getStatusById,
@@ -103,6 +122,7 @@ export default function Page() {
           user={user} 
           onOpenComments={onOpenComments}
           onLike={handleLike}
+          onDeletePost={onDeletePost}
         />
       </ScrollView>
     </SafeAreaView>
