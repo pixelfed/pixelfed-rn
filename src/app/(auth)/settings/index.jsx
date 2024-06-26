@@ -18,11 +18,13 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, Link } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
 import { useAuth } from '@state/AuthProvider'
-import { openBrowserAsync } from '../../../utils'
+import { openBrowserAsync } from 'src/utils'
+import * as Application from 'expo-application';
 
 export default function Page() {
   const [user, setUser] = useState()
   const instance = Storage.getString('app.instance')
+  const version = Application.nativeApplicationVersion
 
   useEffect(() => {
     const userJson = JSON.parse(Storage.getString('user.profile'))
@@ -140,6 +142,15 @@ export default function Page() {
               </Button>
             </Group.Item>
           </Group>
+
+          <Button bg="$gray1" justifyContent="start" size="$5" px="$3">
+            <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
+              <XStack alignItems="center" ml="$1" gap="$3">
+                <Text fontSize="$6">Version</Text>
+              </XStack>
+              <Text fontSize="$6" color="$gray9">{version}</Text>
+            </XStack>
+          </Button>
 
           <Button bg="$red4" mt="$2" onPress={() => handleLogOut()}>
             <Text>Log out {'@' + user?.username}</Text>
