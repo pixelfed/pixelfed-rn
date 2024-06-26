@@ -1,6 +1,6 @@
 import { View, Text, XStack, Image, YStack, Button, Separator, Avatar } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
-import { enforceLen, formatTimestampMonthYear, prettyCount } from '../../utils'
+import { enforceLen, formatTimestampMonthYear, openBrowserAsync, prettyCount } from 'src/utils'
 import { Link, router } from 'expo-router'
 import { Pressable } from 'react-native'
 import EditProfile from './actionButtons/EditProfile'
@@ -11,6 +11,7 @@ import FollowRequested from './actionButtons/FollowRequested'
 import ReadMore from 'src/components/common/ReadMore'
 import AutolinkText from 'src/components/common/AutolinkText'
 import { useState } from 'react'
+import { PressableOpacity } from 'react-native-pressable-opacity'
 
 export default function ProfileHeader({
   profile,
@@ -64,6 +65,10 @@ export default function ProfileHeader({
     if (relationship && !relationship.following) {
       return <FollowProfile onPress={() => onFollow()} />
     }
+  }
+
+  const _openWebsite = async () => {
+    await openBrowserAsync(profile?.website)
   }
 
   const RenderGuestHeader = () => (
@@ -204,16 +209,18 @@ export default function ProfileHeader({
           </ReadMore>
 
           {profile?.website && profile?.website.trim().length ? (
-            <XStack alignItems="center" gap="$1">
-              <Text
-                fontSize="$5"
-                fontWeight={'bold'}
-                color="$blue9"
-                letterSpacing={-0.34}
-              >
-                {profile?.website?.replaceAll('https://', '')}
-              </Text>
-            </XStack>
+            <PressableOpacity onPress={() => _openWebsite()}>
+              <XStack alignItems="center" gap="$1">
+                <Text
+                  fontSize="$5"
+                  fontWeight={'bold'}
+                  color="$blue9"
+                  letterSpacing={-0.34}
+                  >
+                  {profile?.website?.replaceAll('https://', '')}
+                </Text>
+              </XStack>
+            </PressableOpacity>
           ) : null}
         </YStack>
 

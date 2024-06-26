@@ -15,7 +15,7 @@ const SCREEN_WIDTH = Dimensions.get('screen').width
 export default function ProfileScreen() {
   const userCache = JSON.parse(Storage.getString('user.profile'))
 
-  const { data: user } = useQuery({
+  const { data: user, isFetching } = useQuery({
     queryKey: ['profileById', userCache.id],
     queryFn: getAccountById,
   })
@@ -40,7 +40,7 @@ export default function ProfileScreen() {
     hasNextPage,
     hasPreviousPage,
     isFetchingNextPage,
-    isFetching,
+    isFetching: isFeedFetching,
     isError,
     error,
   } = useInfiniteQuery({
@@ -81,11 +81,18 @@ export default function ProfileScreen() {
           />
           { item.pf_type === 'photo:album' ?
           <View position='absolute' right={5} top={5}><Feather name="columns" color="white" size={20} /></View>
-          : null}
+          : null }
         </View>
       </Link>
     ) : null
 
+  if (isFetching) {
+    return (
+      <View flexGrow={1} mt="$5">
+        <ActivityIndicator color={'#000'} />
+      </View>
+    )
+  }
   return (
     <SafeAreaView edges={['top']}>
       <FlatList
