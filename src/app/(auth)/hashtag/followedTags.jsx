@@ -21,7 +21,9 @@ export default function Screen() {
     <View flexGrow={1} justifyContent="center" alignItems="center" py="$5">
       <YStack flexShrink={1} justifyContent="center" alignItems="center" gap="$5">
         <Feather name="alert-circle" size={70} />
-        <Text fontSize="$7" allowFontScaling={false}>You are not following any hashtags</Text>
+        <Text fontSize="$7" allowFontScaling={false}>
+          You are not following any hashtags
+        </Text>
       </YStack>
     </View>
   )
@@ -68,12 +70,12 @@ export default function Screen() {
         }}
       />
 
-      <FlatList 
-        data={feed} 
-        renderItem={RenderItem} 
+      <FlatList
+        data={feed}
+        renderItem={RenderItem}
         ItemSeparatorComponent={Separator}
         ListEmptyComponent={RenderEmpty}
-        contentContainerStyle={{flexGrow: 1}} 
+        contentContainerStyle={{ flexGrow: 1 }}
       />
     </SafeAreaView>
   )

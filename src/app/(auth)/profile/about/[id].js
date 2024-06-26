@@ -151,38 +151,46 @@ export default function ProfileScreen() {
               </Text>
             </YStack>
           </XStack>
-          { relationship?.following ?
-          <XStack justifyContent="flex-start" alignItems="flex-start" gap="$4">
-            <Feather name="user-plus" size={36} color="#aaa" />
-            <YStack gap={3}>
-              <Text fontSize="$6" fontWeight={600} fontFamily="System">
-                Relationship Status
-              </Text>
-              { relationship?.following_since ?
-              <Text fontSize="$5" color="$gray10">
-                You've followed this account since <Text color="$gray10" fontSize="$5" fontWeight={600} fontFamily="System">{ formatTimestampMonthYear(relationship.following_since)}</Text>
-              </Text>
-              :
-              <Text fontSize="$5" color="$gray10">
-                You're following this account
-              </Text>
-              }
-            </YStack>
-          </XStack>
-          : null }
-          { relationship?.followed_by ?
-          <XStack justifyContent="flex-start" alignItems="flex-start" gap="$4">
-            <Feather name="users" size={36} color="#aaa" />
-            <YStack gap={3}>
-              <Text fontSize="$6" fontWeight={600} fontFamily="System">
-                Follower Status
-              </Text>
-              <Text fontSize="$5" color="$gray10">
-                This account is following you
-              </Text>
-            </YStack>
-          </XStack>
-          : null }
+          {relationship?.following ? (
+            <XStack justifyContent="flex-start" alignItems="flex-start" gap="$4">
+              <Feather name="user-plus" size={36} color="#aaa" />
+              <YStack gap={3}>
+                <Text fontSize="$6" fontWeight={600} fontFamily="System">
+                  Relationship Status
+                </Text>
+                {relationship?.following_since ? (
+                  <Text fontSize="$5" color="$gray10">
+                    You've followed this account since{' '}
+                    <Text
+                      color="$gray10"
+                      fontSize="$5"
+                      fontWeight={600}
+                      fontFamily="System"
+                    >
+                      {formatTimestampMonthYear(relationship.following_since)}
+                    </Text>
+                  </Text>
+                ) : (
+                  <Text fontSize="$5" color="$gray10">
+                    You're following this account
+                  </Text>
+                )}
+              </YStack>
+            </XStack>
+          ) : null}
+          {relationship?.followed_by ? (
+            <XStack justifyContent="flex-start" alignItems="flex-start" gap="$4">
+              <Feather name="users" size={36} color="#aaa" />
+              <YStack gap={3}>
+                <Text fontSize="$6" fontWeight={600} fontFamily="System">
+                  Follower Status
+                </Text>
+                <Text fontSize="$5" color="$gray10">
+                  This account is following you
+                </Text>
+              </YStack>
+            </XStack>
+          ) : null}
           <XStack justifyContent="flex-start" alignItems="flex-start" gap="$4">
             <Feather name="server" size={36} color="#aaa" />
             <YStack gap={3}>
@@ -220,7 +228,7 @@ export default function ProfileScreen() {
               </YStack>
             </XStack>
           ) : null}
-          { user?.local == false && user?.last_fetched_at ? (
+          {user?.local == false && user?.last_fetched_at ? (
             <XStack justifyContent="flex-start" alignItems="flex-start" gap="$4">
               <Feather name="clock" size={36} color="#aaa" />
               <YStack gap={3}>
@@ -228,7 +236,7 @@ export default function ProfileScreen() {
                   Last fetched at
                 </Text>
                 <Text fontSize="$5" color="$gray10">
-                  Account was last updated { formatTimestamp(user?.last_fetched_at) }
+                  Account was last updated {formatTimestamp(user?.last_fetched_at)}
                 </Text>
               </YStack>
             </XStack>

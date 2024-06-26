@@ -7,12 +7,7 @@ import { Feather } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { 
-  fetchHomeFeed, 
-  likeStatus, 
-  unlikeStatus, 
-  deleteStatusV1
-} from 'src/lib/api'
+import { fetchHomeFeed, likeStatus, unlikeStatus, deleteStatusV1 } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
 import EmptyFeed from 'src/components/common/EmptyFeed'
 import { Storage } from 'src/state/cache'
@@ -45,19 +40,19 @@ export default function HomeScreen() {
   }, [hasShareIntent])
 
   useEffect(() => {
-    if(params.ref30 === "1") {
+    if (params.ref30 === '1') {
       setIsPosting(true)
     }
     const timer = setTimeout(() => {
-      if(params.ref30 === "1") {
-          queryClient.invalidateQueries({ queryKey: ['homeFeed'] })
-          router.setParams()
-          setIsPosting(false)
+      if (params.ref30 === '1') {
+        queryClient.invalidateQueries({ queryKey: ['homeFeed'] })
+        router.setParams()
+        setIsPosting(false)
       }
-    }, 10000);
+    }, 10000)
 
-    return () => clearTimeout(timer);
-  }, [params.ref30]);
+    return () => clearTimeout(timer)
+  }, [params.ref30])
 
   const [replyId, setReplyId] = useState(null)
   const [sheetType, setSheetType] = useState('comments')
@@ -85,20 +80,23 @@ export default function HomeScreen() {
 
   const userJson = Storage.getString('user.profile')
   const user = JSON.parse(userJson)
-  const { playVideo, currentVideoId } = useVideo();
+  const { playVideo, currentVideoId } = useVideo()
 
-  const onViewRef = useCallback(({ viewableItems }) => {
-    const visibleVideoId = viewableItems.find(item => item.isViewable)?.item.id;
-    if (visibleVideoId && visibleVideoId !== currentVideoId) {
-      // enable for autoplay
-      // playVideo(visibleVideoId);
-      playVideo(null);
-    } else if (!visibleVideoId) {
-      playVideo(null);
-    }
-  }, [currentVideoId, playVideo]);
+  const onViewRef = useCallback(
+    ({ viewableItems }) => {
+      const visibleVideoId = viewableItems.find((item) => item.isViewable)?.item.id
+      if (visibleVideoId && visibleVideoId !== currentVideoId) {
+        // enable for autoplay
+        // playVideo(visibleVideoId);
+        playVideo(null)
+      } else if (!visibleVideoId) {
+        playVideo(null)
+      }
+    },
+    [currentVideoId, playVideo]
+  )
 
-  const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 });
+  const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 })
 
   const renderItem = useCallback(
     ({ item }) => (
@@ -123,15 +121,15 @@ export default function HomeScreen() {
     },
     onSuccess: (data, variables) => {
       queryClient.setQueryData(['homeFeed'], (oldData) => {
-        if (!oldData) return oldData;
-    
-        const updatedPages = oldData.pages.map(page => ({
+        if (!oldData) return oldData
+
+        const updatedPages = oldData.pages.map((page) => ({
           ...page,
-          data: page.data.filter(post => post.id != variables)
-        }));
-    
-        return { ...oldData, pages: updatedPages };
-      });
+          data: page.data.filter((post) => post.id != variables),
+        }))
+
+        return { ...oldData, pages: updatedPages }
+      })
     },
   })
 
@@ -217,14 +215,16 @@ export default function HomeScreen() {
       <StatusBar style="dark" />
       <Stack.Screen options={{ headerShown: false }} />
       <FeedHeader title="Home" user={user} />
-      { isPosting ?
-      <View p="$5">
-        <XStack gap="$3">
-          <Spinner />
-          <Text fontSize="$5" allowFontScaling={false}>Uploading new post, please wait...</Text>
-        </XStack>
-      </View>
-      : null }
+      {isPosting ? (
+        <View p="$5">
+          <XStack gap="$3">
+            <Spinner />
+            <Text fontSize="$5" allowFontScaling={false}>
+              Uploading new post, please wait...
+            </Text>
+          </XStack>
+        </View>
+      ) : null}
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={1}

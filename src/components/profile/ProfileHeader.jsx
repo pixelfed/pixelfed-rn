@@ -1,6 +1,11 @@
 import { View, Text, XStack, Image, YStack, Button, Separator, Avatar } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
-import { enforceLen, formatTimestampMonthYear, openBrowserAsync, prettyCount } from 'src/utils'
+import {
+  enforceLen,
+  formatTimestampMonthYear,
+  openBrowserAsync,
+  prettyCount,
+} from 'src/utils'
 import { Link, router } from 'expo-router'
 import { Pressable } from 'react-native'
 import EditProfile from './actionButtons/EditProfile'
@@ -35,7 +40,7 @@ export default function ProfileHeader({
     }
     return num.toLocaleString('en-CA', { compactDisplay: 'short', notation: 'compact' })
   }
-  
+
   const onHashtagPress = (tag) => {
     router.push(`/hashtag/${tag}`)
   }
@@ -60,7 +65,12 @@ export default function ProfileHeader({
       return <BlockingProfile />
     }
     if (relationship && relationship.following) {
-      return <FollowingProfile onPress={() => onUnfollow() } onSendMessage={() => onSendMessage()} />
+      return (
+        <FollowingProfile
+          onPress={() => onUnfollow()}
+          onSendMessage={() => onSendMessage()}
+        />
+      )
     }
     if (relationship && !relationship.following) {
       return <FollowProfile onPress={() => onFollow()} />
@@ -142,39 +152,59 @@ export default function ProfileHeader({
             </Avatar>
           </View>
 
-          <XStack gap="$7" mx="$5" alignItems='flex-start'>
+          <XStack gap="$7" mx="$5" alignItems="flex-start">
             <YStack alignItems="center" gap="$1">
               <Text fontWeight="bold" fontSize="$6" allowFontScaling={false}>
                 {prettyCount(profile?.statuses_count ? profile.statuses_count : 0)}
               </Text>
-              <Text fontSize="$3" allowFontScaling={false}>Posts</Text>
+              <Text fontSize="$3" allowFontScaling={false}>
+                Posts
+              </Text>
             </YStack>
 
-            { profile && profile.id ?
-            <Link href={`/profile/following/${profile?.id}`} asChild>
+            {profile && profile.id ? (
+              <Link href={`/profile/following/${profile?.id}`} asChild>
+                <YStack alignItems="center" gap="$1">
+                  <Text fontWeight="bold" fontSize="$6" allowFontScaling={false}>
+                    {prettyCount(profile?.following_count ? profile.following_count : 0)}
+                  </Text>
+                  <Text fontSize="$3" allowFontScaling={false}>
+                    Following
+                  </Text>
+                </YStack>
+              </Link>
+            ) : (
               <YStack alignItems="center" gap="$1">
                 <Text fontWeight="bold" fontSize="$6" allowFontScaling={false}>
-                  {prettyCount(profile?.following_count ? profile.following_count : 0)}
+                  0
                 </Text>
-                <Text fontSize="$3" allowFontScaling={false}>Following</Text>
+                <Text fontSize="$3" allowFontScaling={false}>
+                  Following
+                </Text>
               </YStack>
-            </Link> : <YStack alignItems="center" gap="$1">
-                <Text fontWeight="bold" fontSize="$6" allowFontScaling={false}>0</Text>
-                <Text fontSize="$3" allowFontScaling={false}>Following</Text>
-              </YStack> }
+            )}
 
-              { profile && profile.id ? 
+            {profile && profile.id ? (
               <Link href={`/profile/followers/${profile?.id}`} asChild>
+                <YStack alignItems="center" gap="$1">
+                  <Text fontWeight="bold" fontSize="$6" allowFontScaling={false}>
+                    {prettyCount(profile?.followers_count ? profile.followers_count : 0)}
+                  </Text>
+                  <Text fontSize="$3" allowFontScaling={false}>
+                    Followers
+                  </Text>
+                </YStack>
+              </Link>
+            ) : (
               <YStack alignItems="center" gap="$1">
                 <Text fontWeight="bold" fontSize="$6" allowFontScaling={false}>
-                  {prettyCount(profile?.followers_count ? profile.followers_count : 0)}
+                  0
                 </Text>
-                <Text fontSize="$3" allowFontScaling={false}>Followers</Text>
+                <Text fontSize="$3" allowFontScaling={false}>
+                  Followers
+                </Text>
               </YStack>
-            </Link> : <YStack alignItems="center" gap="$1">
-                <Text fontWeight="bold" fontSize="$6" allowFontScaling={false}>0</Text>
-                <Text fontSize="$3" allowFontScaling={false}>Followers</Text>
-              </YStack> }
+            )}
           </XStack>
         </XStack>
 
@@ -198,14 +228,17 @@ export default function ProfileHeader({
               </View>
             ) : null}
           </XStack>
-      
+
           <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
             <AutolinkText
-                text={profile?.note?.replaceAll('&amp;', '&').replaceAll("\n\n", "\n").replaceAll(/(<([^>]+)>)/gi, '')}
-                username={false}
-                onHashtagPress={onHashtagPress}
-                onMentionPress={onMentionPress}
-              />
+              text={profile?.note
+                ?.replaceAll('&amp;', '&')
+                .replaceAll('\n\n', '\n')
+                .replaceAll(/(<([^>]+)>)/gi, '')}
+              username={false}
+              onHashtagPress={onHashtagPress}
+              onMentionPress={onMentionPress}
+            />
           </ReadMore>
 
           {profile?.website && profile?.website.trim().length ? (
@@ -216,7 +249,7 @@ export default function ProfileHeader({
                   fontWeight={'bold'}
                   color="$blue9"
                   letterSpacing={-0.34}
-                  >
+                >
                   {profile?.website?.replaceAll('https://', '')}
                 </Text>
               </XStack>

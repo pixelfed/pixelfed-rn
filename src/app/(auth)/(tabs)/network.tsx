@@ -7,12 +7,7 @@ import { Feather } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, Stack, useRouter } from 'expo-router'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { 
-    fetchNetworkFeed, 
-    likeStatus, 
-    unlikeStatus,
-    deleteStatusV1
-} from 'src/lib/api'
+import { fetchNetworkFeed, likeStatus, unlikeStatus, deleteStatusV1 } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
 import EmptyFeed from 'src/components/common/EmptyFeed'
 import { Storage } from 'src/state/cache'
@@ -59,20 +54,23 @@ export default function HomeScreen() {
 
   const userJson = Storage.getString('user.profile')
   const user = JSON.parse(userJson)
-  const { playVideo, currentVideoId } = useVideo();
+  const { playVideo, currentVideoId } = useVideo()
 
-  const onViewRef = useCallback(({ viewableItems }) => {
-    const visibleVideoId = viewableItems.find(item => item.isViewable)?.item.id;
-    if (visibleVideoId && visibleVideoId !== currentVideoId) {
-      // enable for autoplay
-      // playVideo(visibleVideoId);
-      playVideo(null);
-    } else if (!visibleVideoId) {
-      playVideo(null);
-    }
-  }, [currentVideoId, playVideo]);
+  const onViewRef = useCallback(
+    ({ viewableItems }) => {
+      const visibleVideoId = viewableItems.find((item) => item.isViewable)?.item.id
+      if (visibleVideoId && visibleVideoId !== currentVideoId) {
+        // enable for autoplay
+        // playVideo(visibleVideoId);
+        playVideo(null)
+      } else if (!visibleVideoId) {
+        playVideo(null)
+      }
+    },
+    [currentVideoId, playVideo]
+  )
 
-  const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 });
+  const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 })
 
   const renderItem = useCallback(
     ({ item }) => (
@@ -97,15 +95,15 @@ export default function HomeScreen() {
     },
     onSuccess: (data, variables) => {
       queryClient.setQueryData(['fetchNetworkFeed'], (oldData) => {
-        if (!oldData) return oldData;
-    
-        const updatedPages = oldData.pages.map(page => ({
+        if (!oldData) return oldData
+
+        const updatedPages = oldData.pages.map((page) => ({
           ...page,
-          data: page.data.filter(post => post.id != variables)
-        }));
-    
-        return { ...oldData, pages: updatedPages };
-      });
+          data: page.data.filter((post) => post.id != variables),
+        }))
+
+        return { ...oldData, pages: updatedPages }
+      })
     },
   })
 

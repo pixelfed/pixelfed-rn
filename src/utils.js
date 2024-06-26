@@ -169,9 +169,9 @@ export function enforceLen(str, len, ellipsis = false, mode = 'end') {
 }
 
 export function htmlToTextWithLineBreaks(html) {
-  html = html.replaceAll('&#39;', "'");
-  html = html.replaceAll(/<\/p>/gi, '\n');
-  html = html.replaceAll(/<p[^>]*>/gi, '');
-  html = html.replaceAll(/<[^>]+>/gi, '');
-  return html.trim();
+  html = html.replaceAll('&#39;', "'")
+  html = html.replaceAll(/<\/p>/gi, '\n')
+  html = html.replaceAll(/<p[^>]*>/gi, '')
+  html = html.replaceAll(/<[^>]+>/gi, '')
+  return html.trim()
 }

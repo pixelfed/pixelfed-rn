@@ -48,7 +48,10 @@ export default function ProfileScreen() {
     queryFn: async ({ pageParam }) => {
       const data = await getAccountStatusesById(userId, pageParam)
       return data.filter((p) => {
-        return ['photo', 'photo:album', 'video'].includes(p.pf_type) && p.media_attachments.length
+        return (
+          ['photo', 'photo:album', 'video'].includes(p.pf_type) &&
+          p.media_attachments.length
+        )
       })
     },
     initialPageParam: 0,
@@ -79,9 +82,11 @@ export default function ProfileScreen() {
             }}
             resizeMode="cover"
           />
-          { item.pf_type === 'photo:album' ?
-          <View position='absolute' right={5} top={5}><Feather name="columns" color="white" size={20} /></View>
-          : null }
+          {item.pf_type === 'photo:album' ? (
+            <View position="absolute" right={5} top={5}>
+              <Feather name="columns" color="white" size={20} />
+            </View>
+          ) : null}
         </View>
       </Link>
     ) : null
@@ -98,7 +103,9 @@ export default function ProfileScreen() {
       <FlatList
         data={feed?.pages.flat()}
         keyExtractor={(item, index) => item?.id.toString()}
-        ListHeaderComponent={<ProfileHeader profile={user} isSelf={true} onShare={() => onShare()} />}
+        ListHeaderComponent={
+          <ProfileHeader profile={user} isSelf={true} onShare={() => onShare()} />
+        }
         renderItem={RenderItem}
         numColumns={3}
         showsVerticalScrollIndicator={false}

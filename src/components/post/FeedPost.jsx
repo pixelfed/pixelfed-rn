@@ -3,7 +3,12 @@ import { Button, Group, Separator, Text, View, XStack, YStack, ZStack } from 'ta
 import { Feather } from '@expo/vector-icons'
 import FastImage from 'react-native-fast-image'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { enforceLen, formatTimestamp, htmlToTextWithLineBreaks, openBrowserAsync } from 'src/utils'
+import {
+  enforceLen,
+  formatTimestamp,
+  htmlToTextWithLineBreaks,
+  openBrowserAsync,
+} from 'src/utils'
 import { Link, router } from 'expo-router'
 import {
   BottomSheetModal,
@@ -16,9 +21,9 @@ import ReadMore from '../common/ReadMore'
 import LikeButton from 'src/components/common/LikeButton'
 import AutolinkText from 'src/components/common/AutolinkText'
 import { Blurhash } from 'react-native-blurhash'
-import Video, {VideoRef} from 'react-native-video';
+import Video, { VideoRef } from 'react-native-video'
 import { PressableOpacity } from 'react-native-pressable-opacity'
-import { BlurView } from "@react-native-community/blur";
+import { BlurView } from '@react-native-community/blur'
 import VideoPlayer from './VideoPlayer'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
@@ -92,8 +97,8 @@ const PostMedia = React.memo(({ media, post }) => {
   const height = media[0].meta?.original?.width
     ? SCREEN_WIDTH * (media[0].meta?.original?.height / media[0].meta?.original.width)
     : 430
-  const videoRef = useRef(null);
-  const [paused, setPaused] = useState(true);
+  const videoRef = useRef(null)
+  const [paused, setPaused] = useState(true)
 
   const onBuffer = (msg) => {
     console.log(msg)
@@ -102,7 +107,7 @@ const PostMedia = React.memo(({ media, post }) => {
   const onError = (msg) => {
     console.log(msg)
   }
-    
+
   if (post.sensitive && !showSensitive) {
     return (
       <ZStack w={SCREEN_WIDTH} h={height}>
@@ -139,13 +144,7 @@ const PostMedia = React.memo(({ media, post }) => {
   }
 
   if (post.pf_type === 'video') {
-    return (
-      <VideoPlayer
-        source={mediaUrl}
-        height={height}
-        videoId={post.id}
-      />
-    )
+    return <VideoPlayer source={mediaUrl} height={height} videoId={post.id} />
   }
   return (
     <View flex={1} borderBottomWidth={1} borderBottomColor="$gray5">
@@ -202,45 +201,44 @@ const PostAlbumMedia = ({ media, post, carouselRef, progress }) => {
 
   return (
     <>
-    <Carousel
-      ref={carouselRef}
-      panGestureHandlerProps={{
-        activeOffsetX: [-20, 20],
-        failOffsetY: [-20, 20],
-      }}
-      width={SCREEN_WIDTH}
-      onProgressChange={progress}
-      height={height}
-      vertical={false}
-      data={post.media_attachments}
-      renderItem={({ index }) => {
-        const media = post.media_attachments[0]
-        const height = media.meta?.original?.width
-          ? SCREEN_WIDTH *
-            (media.meta?.original?.height / media.meta?.original.width)
-          : 430
-        return (
-          <FastImage
-            style={{
-              width: SCREEN_WIDTH,
-              height: height,
-              backgroundColor: '#000',
-              zIndex: -2
-            }}
-            source={{ uri: post.media_attachments[index].url }}
-            resizeMode={FastImage.resizeMode.contain}
-          />
-        )
-      }}
-    />
-    <Pagination.Basic
-      progress={progress}
-      data={post.media_attachments}
-      dotStyle={{ backgroundColor: 'rgba(0,0,0,0.16)', borderRadius: 50 }}
-      activeDotStyle={{ backgroundColor: '#408DF6', borderRadius: 50 }}
-      containerStyle={{ gap: 5, marginTop: 10, marginBottom: -10, zIndex: 5 }}
-      size={8}
-    />
+      <Carousel
+        ref={carouselRef}
+        panGestureHandlerProps={{
+          activeOffsetX: [-20, 20],
+          failOffsetY: [-20, 20],
+        }}
+        width={SCREEN_WIDTH}
+        onProgressChange={progress}
+        height={height}
+        vertical={false}
+        data={post.media_attachments}
+        renderItem={({ index }) => {
+          const media = post.media_attachments[0]
+          const height = media.meta?.original?.width
+            ? SCREEN_WIDTH * (media.meta?.original?.height / media.meta?.original.width)
+            : 430
+          return (
+            <FastImage
+              style={{
+                width: SCREEN_WIDTH,
+                height: height,
+                backgroundColor: '#000',
+                zIndex: -2,
+              }}
+              source={{ uri: post.media_attachments[index].url }}
+              resizeMode={FastImage.resizeMode.contain}
+            />
+          )
+        }}
+      />
+      <Pagination.Basic
+        progress={progress}
+        data={post.media_attachments}
+        dotStyle={{ backgroundColor: 'rgba(0,0,0,0.16)', borderRadius: 50 }}
+        activeDotStyle={{ backgroundColor: '#408DF6', borderRadius: 50 }}
+        containerStyle={{ gap: 5, marginTop: 10, marginBottom: -10, zIndex: 5 }}
+        size={8}
+      />
     </>
   )
 }
@@ -344,23 +342,29 @@ const PostCaption = React.memo(
             </Pressable>
           ) : null}
 
-          <XStack justifyContent='flex-start' alignItems='center' gap="$3">
-            { visibility == 'public' ?
-            <XStack alignItems="center" gap="$2">
-              <Text color="$gray9" fontSize="$3">Public</Text>
-            </XStack>
-            : null}
-            { visibility == 'unlisted' ?
-            <XStack alignItems="center" gap="$2">
-              <Text color="$gray9" fontSize="$3">Unlisted</Text>
-            </XStack>
-            : null}
-            { visibility == 'private' ?
-            <XStack alignItems="center" gap="$2">
-              <Feather name="lock" color="#ccc" />
-              <Text color="$gray9" fontSize="$3">Followers only</Text>
-            </XStack>
-            : null}
+          <XStack justifyContent="flex-start" alignItems="center" gap="$3">
+            {visibility == 'public' ? (
+              <XStack alignItems="center" gap="$2">
+                <Text color="$gray9" fontSize="$3">
+                  Public
+                </Text>
+              </XStack>
+            ) : null}
+            {visibility == 'unlisted' ? (
+              <XStack alignItems="center" gap="$2">
+                <Text color="$gray9" fontSize="$3">
+                  Unlisted
+                </Text>
+              </XStack>
+            ) : null}
+            {visibility == 'private' ? (
+              <XStack alignItems="center" gap="$2">
+                <Feather name="lock" color="#ccc" />
+                <Text color="$gray9" fontSize="$3">
+                  Followers only
+                </Text>
+              </XStack>
+            ) : null}
             <Link href={`/post/${postId}`} asChild>
               <XStack alignItems="center" gap="$2">
                 <Feather name="clock" color="#ccc" />
@@ -395,21 +399,17 @@ export default function FeedPost({ post, user, onOpenComments, onLike, onDeleteP
 
   const _onDeletePost = (id) => {
     bottomSheetModalRef.current?.close()
-    Alert.alert(
-      'Delete Post',
-      'Are you sure you want to delete this post?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel'
-        },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => onDeletePost(id)
-        }
-      ]
-    )
+    Alert.alert('Delete Post', 'Are you sure you want to delete this post?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => onDeletePost(id),
+      },
+    ])
   }
 
   const goToPost = () => {
@@ -465,7 +465,12 @@ export default function FeedPost({ post, user, onOpenComments, onLike, onDeleteP
         onOpenMenu={() => handlePresentModalPress()}
       />
       {post.media_attachments?.length > 1 ? (
-        <PostAlbumMedia media={post.media_attachments} post={post} carouselRef={carouselRef} progress={progress} />
+        <PostAlbumMedia
+          media={post.media_attachments}
+          post={post}
+          carouselRef={carouselRef}
+          progress={progress}
+        />
       ) : post.media_attachments?.length === 1 ? (
         <PostMedia media={post.media_attachments} post={post} />
       ) : null}
@@ -500,16 +505,16 @@ export default function FeedPost({ post, user, onOpenComments, onLike, onDeleteP
       >
         <BottomSheetScrollView>
           <YStack p="$5" gap="$3">
-            <XStack justifyContent="space-between" gap="$2">
-            </XStack>
-
+            <XStack justifyContent="space-between" gap="$2"></XStack>
 
             <Group separator={<Separator />}>
               <Group.Item>
                 <Button size="$5" justifyContent="start" onPress={() => onGotoShare()}>
                   <XStack alignItems="center" gap="$3">
-                    <Feather name="share" size={20} color="#aaa"  />
-                    <Text fontSize="$5" allowFontScaling={false}>Share</Text>
+                    <Feather name="share" size={20} color="#aaa" />
+                    <Text fontSize="$5" allowFontScaling={false}>
+                      Share
+                    </Text>
                   </XStack>
                 </Button>
               </Group.Item>
@@ -517,7 +522,9 @@ export default function FeedPost({ post, user, onOpenComments, onLike, onDeleteP
                 <Button size="$5" justifyContent="start" onPress={() => openInBrowser()}>
                   <XStack alignItems="center" gap="$3">
                     <Feather name="globe" size={20} color="#aaa" />
-                    <Text fontSize="$5" allowFontScaling={false}>Open in browser</Text>
+                    <Text fontSize="$5" allowFontScaling={false}>
+                      Open in browser
+                    </Text>
                   </XStack>
                 </Button>
               </Group.Item>
@@ -525,7 +532,9 @@ export default function FeedPost({ post, user, onOpenComments, onLike, onDeleteP
                 <Button size="$5" justifyContent="start" onPress={() => onGotoAbout()}>
                   <XStack alignItems="center" gap="$3">
                     <Feather name="info" size={20} color="#aaa" />
-                    <Text fontSize="$5" allowFontScaling={false}>About this account</Text>
+                    <Text fontSize="$5" allowFontScaling={false}>
+                      About this account
+                    </Text>
                   </XStack>
                 </Button>
               </Group.Item>
@@ -535,7 +544,9 @@ export default function FeedPost({ post, user, onOpenComments, onLike, onDeleteP
                 <Button size="$5" justifyContent="start" onPress={() => goToPost()}>
                   <XStack alignItems="center" gap="$3">
                     <Feather name="arrow-right-circle" size={20} color="#aaa" />
-                    <Text fontSize="$5" allowFontScaling={false}>View Post</Text>
+                    <Text fontSize="$5" allowFontScaling={false}>
+                      View Post
+                    </Text>
                   </XStack>
                 </Button>
               </Group.Item>
@@ -543,11 +554,13 @@ export default function FeedPost({ post, user, onOpenComments, onLike, onDeleteP
                 <Button size="$5" justifyContent="start" onPress={() => goToProfile()}>
                   <XStack alignItems="center" gap="$3">
                     <Feather name="user" size={20} color="#aaa" />
-                    <Text fontSize="$5" allowFontScaling={false}>View Profile</Text>
+                    <Text fontSize="$5" allowFontScaling={false}>
+                      View Profile
+                    </Text>
                   </XStack>
                 </Button>
               </Group.Item>
-              
+
               {user && user?.id != post?.account?.id ? (
                 <Group.Item>
                   <Button size="$5" justifyContent="start" onPress={() => goToReport()}>
@@ -560,16 +573,23 @@ export default function FeedPost({ post, user, onOpenComments, onLike, onDeleteP
                   </Button>
                 </Group.Item>
               ) : null}
-              { user && user?.id === post?.account?.id ? <Group.Item>
-              <Button size="$5" justifyContent="start" onPress={() => _onDeletePost(post.id)}>
-                <XStack alignItems="center" gap="$3">
-                  <Feather name="trash" size={20} color="red" />
-                  <Text fontSize="$5" color="$red9" allowFontScaling={false}>Delete Post</Text>
-                </XStack>
-              </Button>
-              </Group.Item> : null }
+              {user && user?.id === post?.account?.id ? (
+                <Group.Item>
+                  <Button
+                    size="$5"
+                    justifyContent="start"
+                    onPress={() => _onDeletePost(post.id)}
+                  >
+                    <XStack alignItems="center" gap="$3">
+                      <Feather name="trash" size={20} color="red" />
+                      <Text fontSize="$5" color="$red9" allowFontScaling={false}>
+                        Delete Post
+                      </Text>
+                    </XStack>
+                  </Button>
+                </Group.Item>
+              ) : null}
             </Group>
-
           </YStack>
         </BottomSheetScrollView>
       </BottomSheetModal>

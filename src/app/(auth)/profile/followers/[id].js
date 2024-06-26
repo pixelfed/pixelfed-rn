@@ -49,7 +49,9 @@ export default function FollowersScreen() {
     <View flexGrow={1} justifyContent="center" alignItems="center" py="$5">
       <YStack flexShrink={1} justifyContent="center" alignItems="center" gap="$5">
         <Feather name="alert-circle" size={70} />
-        <Text fontSize="$7" allowFontScaling={false}>No results found</Text>
+        <Text fontSize="$7" allowFontScaling={false}>
+          No results found
+        </Text>
       </YStack>
     </View>
   )
@@ -116,7 +118,7 @@ export default function FollowersScreen() {
         }}
         onEndReachedThreshold={0.5}
         ListEmptyComponent={RenderEmpty}
-        contentContainerStyle={{flexGrow: 1}}
+        contentContainerStyle={{ flexGrow: 1 }}
         ListFooterComponent={() =>
           isFetchingPreviousPage ? <ActivityIndicator /> : null
         }

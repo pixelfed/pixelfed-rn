@@ -7,12 +7,12 @@ import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, router } from 'expo-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { 
-  getStatusById, 
-  getAccountStatusesById, 
-  likeStatus, 
+import {
+  getStatusById,
+  getAccountStatusesById,
+  likeStatus,
   unlikeStatus,
-  deleteStatusV1
+  deleteStatusV1,
 } from 'src/lib/api'
 import FeedPost from 'src/components/post/FeedPost'
 import {
@@ -41,7 +41,6 @@ export default function Page() {
   const onOpenComments = useCallback((id) => {
     bottomSheetModalRef.current?.present()
   }, [])
-
 
   const likeMutation = useMutation({
     mutationFn: async (handleLike) => {
@@ -109,17 +108,17 @@ export default function Page() {
         snapPoints={snapPoints}
         backdropComponent={renderBackdrop}
       >
-        <CommentFeed 
-          id={id} 
-          user={user} 
+        <CommentFeed
+          id={id}
+          user={user}
           gotoProfile={handleGotoProfile}
           gotoUsernameProfile={handleGotoUsernameProfile}
         />
       </BottomSheetModal>
       <ScrollView flexShrink={1}>
-        <FeedPost 
-          post={data} 
-          user={user} 
+        <FeedPost
+          post={data}
+          user={user}
           onOpenComments={onOpenComments}
           onLike={handleLike}
           onDeletePost={onDeletePost}

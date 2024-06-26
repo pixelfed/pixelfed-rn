@@ -19,7 +19,7 @@ import { Stack, useLocalSearchParams, Link } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
 import { useAuth } from '@state/AuthProvider'
 import { openBrowserAsync } from 'src/utils'
-import * as Application from 'expo-application';
+import * as Application from 'expo-application'
 
 export default function Page() {
   const [user, setUser] = useState()
@@ -111,14 +111,14 @@ export default function Page() {
           </Group>
 
           {/* <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}> */}
-            {/* <GroupButton
+          {/* <GroupButton
               icon="life-buoy"
               title="Accessibility"
               path="/settings/accessibility/"
             /> */}
-            {/* <GroupButton icon="droplet" title="Appearance" path="/settings/appearance/" /> */}
-            {/* <GroupButton icon="camera" title="Media" path="/settings/media" /> */}
-            {/* <GroupButton icon="shield" title="Security" path="/settings/security" /> */}
+          {/* <GroupButton icon="droplet" title="Appearance" path="/settings/appearance/" /> */}
+          {/* <GroupButton icon="camera" title="Media" path="/settings/media" /> */}
+          {/* <GroupButton icon="shield" title="Security" path="/settings/security" /> */}
           {/* </Group> */}
 
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
@@ -148,7 +148,9 @@ export default function Page() {
               <XStack alignItems="center" ml="$1" gap="$3">
                 <Text fontSize="$6">Version</Text>
               </XStack>
-              <Text fontSize="$6" color="$gray9">{version}</Text>
+              <Text fontSize="$6" color="$gray9">
+                {version}
+              </Text>
             </XStack>
           </Button>
 

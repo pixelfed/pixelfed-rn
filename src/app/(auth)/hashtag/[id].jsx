@@ -145,41 +145,52 @@ export default function Page() {
                 <Text fontWeight="bold">{prettyCount(hashtag?.count ?? 0)}</Text>{' '}
                 <Text color="$gray9">posts</Text>
               </Text>
-              { hashtag?.count > 0 ? <>
-              
-              {hashtag.following ? (
-                <Button
-                  borderColor="$blue9"
-                  h={35}
-                  size="$5"
-                  fontWeight="bold"
-                  color="$blue9"
-                  alignSelf="stretch"
-                >
-                  Unfollow
-                </Button>
-              ) : (
-                <Button
-                  bg="$blue9"
-                  h={35}
-                  size="$5"
-                  color="white"
-                  fontWeight="bold"
-                  alignSelf="stretch"
-                >
-                  Follow
-                </Button>
-              )}
-              {hashtag.following ? (
-                <Text fontSize="$4" color="$gray9" flexWrap="wrap" allowFontScaling={false}> 
-                  You are following this hashtag
-                </Text>
-              ) : (
-                <Text fontSize="$4" color="$gray9" flexWrap="wrap" allowFontScaling={false}>
-                  Follow to see posts like these in your home feed
-                </Text>
-              )}
-              </> : null}
+              {hashtag?.count > 0 ? (
+                <>
+                  {hashtag.following ? (
+                    <Button
+                      borderColor="$blue9"
+                      h={35}
+                      size="$5"
+                      fontWeight="bold"
+                      color="$blue9"
+                      alignSelf="stretch"
+                    >
+                      Unfollow
+                    </Button>
+                  ) : (
+                    <Button
+                      bg="$blue9"
+                      h={35}
+                      size="$5"
+                      color="white"
+                      fontWeight="bold"
+                      alignSelf="stretch"
+                    >
+                      Follow
+                    </Button>
+                  )}
+                  {hashtag.following ? (
+                    <Text
+                      fontSize="$4"
+                      color="$gray9"
+                      flexWrap="wrap"
+                      allowFontScaling={false}
+                    >
+                      You are following this hashtag
+                    </Text>
+                  ) : (
+                    <Text
+                      fontSize="$4"
+                      color="$gray9"
+                      flexWrap="wrap"
+                      allowFontScaling={false}
+                    >
+                      Follow to see posts like these in your home feed
+                    </Text>
+                  )}
+                </>
+              ) : null}
             </YStack>
           </XStack>
         </View>
@@ -251,7 +262,7 @@ export default function Page() {
           }
         }}
         onEndReachedThreshold={0.9}
-        contentContainerStyle={{flexGrow: 1}}
+        contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={RenderEmpty}
         ListHeaderComponent={<Header hashtag={hashtag} feed={feed} />}
         ListFooterComponent={() =>

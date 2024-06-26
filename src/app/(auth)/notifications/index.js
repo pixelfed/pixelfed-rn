@@ -58,14 +58,20 @@ export default function NotificationsScreen() {
       <FlatList
         data={data?.pages.flatMap((page) => page.data)}
         ItemSeparatorComponent={ItemSeparator}
-        renderItem={({item}) => <RenderNotificationItem item={item} />}
+        renderItem={({ item }) => <RenderNotificationItem item={item} />}
         onEndReached={() => {
           if (hasNextPage) fetchNextPage()
         }}
         refreshing={isFetching}
         onRefresh={() => queryClient.invalidateQueries({ queryKey: ['notifications'] })}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={() => (isFetchingNextPage ? <View py="$10"><ActivityIndicator /></View>: null)}
+        ListFooterComponent={() =>
+          isFetchingNextPage ? (
+            <View py="$10">
+              <ActivityIndicator />
+            </View>
+          ) : null
+        }
       />
     </SafeAreaView>
   )

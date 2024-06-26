@@ -17,7 +17,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { ShareIntentProvider } from 'expo-share-intent'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { VideoProvider } from 'src/hooks/useVideoProvider'; 
+import { VideoProvider } from 'src/hooks/useVideoProvider'
 
 import Constants from 'expo-constants'
 

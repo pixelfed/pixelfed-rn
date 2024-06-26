@@ -92,12 +92,7 @@ export async function selfPost(
   return rawRes ? resp : resp.json()
 }
 
-export async function selfDelete(
-  path,
-  params = {},
-  rawRes = false,
-  idempotency = false
-) {
+export async function selfDelete(path, params = {}, rawRes = false, idempotency = false) {
   let headers = {}
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
@@ -120,12 +115,7 @@ export async function selfDelete(
   return rawRes ? resp : resp.json()
 }
 
-export async function selfGet(
-  path,
-  params = {},
-  rawRes = false,
-  idempotency = false
-) {
+export async function selfGet(path, params = {}, rawRes = false, idempotency = false) {
   let headers = {}
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
@@ -648,7 +638,7 @@ export async function sendChatMessage(id, message) {
   return await selfPost(path, {
     to_id: id,
     message: message,
-    type: 'text'
+    type: 'text',
   })
 }
 
@@ -669,17 +659,19 @@ export async function getAdminStats() {
 
 export async function adminInstances(queryKey = false, sort, sortBy) {
   const instance = Storage.getString('app.instance')
-  let path = queryKey.pageParam ? queryKey.pageParam : `https://${instance}/api/admin/instances/list?order_by=sort=${sort}&sort_by=${sortBy}`
-  const res = await fetchData(path);
+  let path = queryKey.pageParam
+    ? queryKey.pageParam
+    : `https://${instance}/api/admin/instances/list?order_by=sort=${sort}&sort_by=${sortBy}`
+  const res = await fetchData(path)
   return { data: res.data, nextPage: res.links?.next, prevPage: res.links?.prev }
 }
 
 export async function adminInstanceGet(params) {
-  return await selfGet('api/admin/instances/get', params);
+  return await selfGet('api/admin/instances/get', params)
 }
 
 export async function getDomainBlocks(params) {
-  return await selfGet('api/v1/domain_blocks', params);
+  return await selfGet('api/v1/domain_blocks', params)
 }
 
 export async function deleteStatusV1(id) {
@@ -704,9 +696,9 @@ export async function getTrendingPostsV1() {
     headers: new Headers({
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      'X-Pixelfed-Api': 1
+      'X-Pixelfed-Api': 1,
     }),
   })
   const res = await response.json()
-  return res?.statuses.filter(s => s.media_attachments[0].type === 'image')
+  return res?.statuses.filter((s) => s.media_attachments[0].type === 'image')
 }

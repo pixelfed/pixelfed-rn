@@ -36,7 +36,12 @@ import {
   BottomSheetTextInput,
 } from '@gorhom/bottom-sheet'
 import UserAvatar from '../common/UserAvatar'
-import { _timeAgo, htmlToTextWithLineBreaks, likeCountLabel, prettyCount } from 'src/utils'
+import {
+  _timeAgo,
+  htmlToTextWithLineBreaks,
+  likeCountLabel,
+  prettyCount,
+} from 'src/utils'
 import ReadMore from '../common/ReadMore'
 import AutolinkText from '../common/AutolinkText'
 
@@ -172,7 +177,8 @@ export default function CommentFeed({
           </YStack>
         </View>
       )
-    }, [gotoUsernameProfile, gotoHashtag]
+    },
+    [gotoUsernameProfile, gotoHashtag]
   )
 
   const RenderHeader = useCallback(() => {

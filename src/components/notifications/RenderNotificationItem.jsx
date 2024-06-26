@@ -1,32 +1,32 @@
-import React, { PureComponent } from 'react';
-import { Pressable } from 'react-native';
+import React, { PureComponent } from 'react'
+import { Pressable } from 'react-native'
 import { Stack, Link } from 'expo-router'
 import { Text, View, YStack, XStack, Input } from 'tamagui'
 import UserAvatar from 'src/components/common/UserAvatar'
-import {_timeAgo} from 'src/utils';
+import { _timeAgo } from 'src/utils'
 
 class RenderItem extends PureComponent {
   render() {
-    const { item } = this.props;
+    const { item } = this.props
     const _msgText = (type) => {
-        switch (type) {
-          case 'like':
-          case 'favourite':
-            return 'liked a post'
-    
-          case 'follow':
-            return 'followed you'
-    
-          case 'mention':
-            return 'mentioned you'
-    
-          case 'reblog':
-            return 'shared your post'
-    
-          default:
-            return ' unknown notification type'
-        }
+      switch (type) {
+        case 'like':
+        case 'favourite':
+          return 'liked a post'
+
+        case 'follow':
+          return 'followed you'
+
+        case 'mention':
+          return 'mentioned you'
+
+        case 'reblog':
+          return 'shared your post'
+
+        default:
+          return ' unknown notification type'
       }
+    }
     return (
       <View px="$4" py="$2" key={item.id}>
         <XStack justifyContent="space-between" alignItems="center">
@@ -59,8 +59,8 @@ class RenderItem extends PureComponent {
           </Text>
         </XStack>
       </View>
-    );
+    )
   }
 }
 
-export default RenderItem;
+export default RenderItem

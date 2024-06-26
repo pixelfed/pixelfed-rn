@@ -32,7 +32,9 @@ export default function Page() {
     <View flexGrow={1} justifyContent="center" alignItems="center" py="$5">
       <YStack flexShrink={1} justifyContent="center" alignItems="center" gap="$5">
         <Feather name="alert-circle" size={70} />
-        <Text fontSize="$7" allowFontScaling={false}>You are not blocking any accounts</Text>
+        <Text fontSize="$7" allowFontScaling={false}>
+          You are not blocking any accounts
+        </Text>
       </YStack>
     </View>
   )
@@ -55,7 +57,7 @@ export default function Page() {
         renderItem={RenderItem}
         ItemSeparatorComponent={RenderSeparator}
         ListEmptyComponent={RenderEmpty}
-        contentContainerStyle={{flexGrow: 1}}
+        contentContainerStyle={{ flexGrow: 1 }}
       />
     </SafeAreaView>
   )

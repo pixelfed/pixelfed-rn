@@ -46,12 +46,14 @@ export default function FollowingScreen() {
   const ItemSeparator = () => <View h={1} bg="$gray5"></View>
 
   const RenderEmpty = () => (
-  <View flexGrow={1} justifyContent="center" alignItems="center" py="$5">
-    <YStack flexShrink={1} justifyContent="center" alignItems="center" gap="$5">
-      <Feather name="alert-circle" size={70} />
-      <Text fontSize="$7" allowFontScaling={false}>No results found</Text>
-    </YStack>
-  </View>
+    <View flexGrow={1} justifyContent="center" alignItems="center" py="$5">
+      <YStack flexShrink={1} justifyContent="center" alignItems="center" gap="$5">
+        <Feather name="alert-circle" size={70} />
+        <Text fontSize="$7" allowFontScaling={false}>
+          No results found
+        </Text>
+      </YStack>
+    </View>
   )
 
   const {
@@ -116,7 +118,7 @@ export default function FollowingScreen() {
         }}
         ListEmptyComponent={RenderEmpty}
         onEndReachedThreshold={0.5}
-        contentContainerStyle={{flexGrow: 1}}
+        contentContainerStyle={{ flexGrow: 1 }}
         ListFooterComponent={() =>
           isFetchingPreviousPage ? <ActivityIndicator /> : null
         }

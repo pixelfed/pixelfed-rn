@@ -27,7 +27,7 @@ export default function DiscoverScreen() {
     </Link>
   )
 
-  const AccountPartial = ({item}) => (
+  const AccountPartial = ({ item }) => (
     <Link href={`/profile/${item.id}`} asChild>
       <YStack
         px="$6"
@@ -52,19 +52,44 @@ export default function DiscoverScreen() {
       </YStack>
     </Link>
   )
-  const RenderAccounts = ({ item, index }) => (
-    index == 0 ? 
-    <>
-      <View flex={1} flexDirection='row' gap="$3">
-        <View bg="black" p="$5" borderRadius={10} justifyContent='center' alignContent='center'>
-          <Text color="white" fontSize={14} allowFontScaling={false} fontFamily={'system'} fontWeight={'600'} letterSpacing={-0.5}>Popular</Text>
-          <Text color="white" fontSize={14} allowFontScaling={false} fontFamily={'system'} fontWeight={'600'} letterSpacing={-0.5}>Accounts</Text>
+  const RenderAccounts = ({ item, index }) =>
+    index == 0 ? (
+      <>
+        <View flex={1} flexDirection="row" gap="$3">
+          <View
+            bg="black"
+            p="$5"
+            borderRadius={10}
+            justifyContent="center"
+            alignContent="center"
+          >
+            <Text
+              color="white"
+              fontSize={14}
+              allowFontScaling={false}
+              fontFamily={'system'}
+              fontWeight={'600'}
+              letterSpacing={-0.5}
+            >
+              Popular
+            </Text>
+            <Text
+              color="white"
+              fontSize={14}
+              allowFontScaling={false}
+              fontFamily={'system'}
+              fontWeight={'600'}
+              letterSpacing={-0.5}
+            >
+              Accounts
+            </Text>
+          </View>
+          <AccountPartial item={item} />
         </View>
-        <AccountPartial item={item} />
-      </View> 
-    </> : 
-    <AccountPartial item={item} />
-  )
+      </>
+    ) : (
+      <AccountPartial item={item} />
+    )
 
   const RenderPosts = ({ item }) => (
     <Link href={`/post/${item.id}`} asChild>
@@ -78,7 +103,16 @@ export default function DiscoverScreen() {
             }}
             resizeMode="cover"
           />
-          <Text position='absolute' zIndex={3} color="white" bottom={10} left={10} fontWeight={'bold'}>{ enforceLen(item.account.acct, 15, true, 'end') }</Text>
+          <Text
+            position="absolute"
+            zIndex={3}
+            color="white"
+            bottom={10}
+            left={10}
+            fontWeight={'bold'}
+          >
+            {enforceLen(item.account.acct, 15, true, 'end')}
+          </Text>
         </View>
       </YStack>
     </Link>
@@ -106,8 +140,12 @@ export default function DiscoverScreen() {
     enabled: !!accounts,
   })
 
-  if (isPending || isPopularAccountsPending || isPopularPostsPending ) {
-    return <View flexGrow={1} justifyContent='center' alignItems='center' py="$10"><ActivityIndicator /></View>
+  if (isPending || isPopularAccountsPending || isPopularPostsPending) {
+    return (
+      <View flexGrow={1} justifyContent="center" alignItems="center" py="$10">
+        <ActivityIndicator />
+      </View>
+    )
   }
 
   if (isError) {
