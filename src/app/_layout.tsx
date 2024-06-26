@@ -67,10 +67,9 @@ export default function RootLayoutWithContext() {
   return (
     <ShareIntentProvider
       options={{
-        debug: true,
+        debug: false,
         resetOnBackground: true,
         onResetShareIntent: () =>
-          // used when app going in background and when the reset button is pressed
           router.replace({
             pathname: '/',
           }),
