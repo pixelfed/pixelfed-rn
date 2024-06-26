@@ -110,16 +110,16 @@ export default function Page() {
             />
           </Group>
 
-          <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
-            <GroupButton
+          {/* <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}> */}
+            {/* <GroupButton
               icon="life-buoy"
               title="Accessibility"
               path="/settings/accessibility/"
-            />
+            /> */}
             {/* <GroupButton icon="droplet" title="Appearance" path="/settings/appearance/" /> */}
             {/* <GroupButton icon="camera" title="Media" path="/settings/media" /> */}
             {/* <GroupButton icon="shield" title="Security" path="/settings/security" /> */}
-          </Group>
+          {/* </Group> */}
 
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
             <GroupButton icon="server" title={instance} path="/settings/instance/" />
