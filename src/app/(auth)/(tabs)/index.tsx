@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, useRef, useMemo } from 'react'
 import { FlatList, StyleSheet, Pressable, ActivityIndicator } from 'react-native'
-import { Text, View, XStack, Select, Adapt, Sheet, Button } from 'tamagui'
+import { Text, View, XStack, Select, Adapt, Sheet, Button, Spinner } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
 import { Feather } from '@expo/vector-icons'
@@ -36,18 +36,23 @@ export default function HomeScreen() {
   const queryClient = useQueryClient()
   const { hasShareIntent } = useShareIntentContext()
   const params = useLocalSearchParams()
+  const [isPosting, setIsPosting] = useState(false)
 
   useEffect(() => {
     if (hasShareIntent) {
-      router.push('/camera')
+      router.navigate('camera')
     }
   }, [hasShareIntent])
 
   useEffect(() => {
+    if(params.ref30 === "1") {
+      setIsPosting(true)
+    }
     const timer = setTimeout(() => {
       if(params.ref30 === "1") {
           queryClient.invalidateQueries({ queryKey: ['homeFeed'] })
           router.setParams()
+          setIsPosting(false)
       }
     }, 10000);
 
@@ -212,6 +217,14 @@ export default function HomeScreen() {
       <StatusBar style="dark" />
       <Stack.Screen options={{ headerShown: false }} />
       <FeedHeader title="Home" user={user} />
+      { isPosting ?
+      <View p="$5">
+        <XStack gap="$3">
+          <Spinner />
+          <Text fontSize="$5" allowFontScaling={false}>Uploading new post, please wait...</Text>
+        </XStack>
+      </View>
+      : null }
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={1}
