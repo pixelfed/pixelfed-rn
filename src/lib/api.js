@@ -696,3 +696,17 @@ export async function deleteStatusV1(id) {
   })
   return await response.json()
 }
+
+export async function getTrendingPostsV1() {
+  let url = `https://beagle.pixelfed.net/api/v1/discover`
+  const response = await fetch(url, {
+    method: 'get',
+    headers: new Headers({
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      'X-Pixelfed-Api': 1
+    }),
+  })
+  const res = await response.json()
+  return res?.statuses.filter(s => s.media_attachments[0].type === 'image')
+}
