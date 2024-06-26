@@ -7,7 +7,12 @@ import { Feather } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, Stack, useRouter } from 'expo-router'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { fetchNetworkFeed, likeStatus, unlikeStatus } from 'src/lib/api'
+import { 
+    fetchNetworkFeed, 
+    likeStatus, 
+    unlikeStatus,
+    deleteStatusV1
+} from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
 import EmptyFeed from 'src/components/common/EmptyFeed'
 import { Storage } from 'src/state/cache'
@@ -76,10 +81,33 @@ export default function HomeScreen() {
         user={user}
         onOpenComments={onOpenComments}
         onLike={handleLike}
+        onDeletePost={onDeletePost}
       />
     ),
     [data]
   )
+
+  const onDeletePost = (id) => {
+    deletePostMutation.mutate(id)
+  }
+
+  const deletePostMutation = useMutation({
+    mutationFn: async (id) => {
+      return await deleteStatusV1(id)
+    },
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData(['fetchNetworkFeed'], (oldData) => {
+        if (!oldData) return oldData;
+    
+        const updatedPages = oldData.pages.map(page => ({
+          ...page,
+          data: page.data.filter(post => post.id != variables)
+        }));
+    
+        return { ...oldData, pages: updatedPages };
+      });
+    },
+  })
 
   const likeMutation = useMutation({
     mutationFn: async (handleLike) => {
