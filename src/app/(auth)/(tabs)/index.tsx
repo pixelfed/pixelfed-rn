@@ -34,7 +34,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (hasShareIntent) {
-      router.replace({ pathname: 'camera/shareintent' })
+      router.replace('/camera')
     }
   }, [hasShareIntent])
 
