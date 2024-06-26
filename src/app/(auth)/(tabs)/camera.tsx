@@ -101,8 +101,7 @@ export default function Camera() {
     [activeIndex, curAltext]
   )
 
-  const handleSheetChanges = useCallback((index: number) => {
-  }, [])
+  const handleSheetChanges = useCallback((index: number) => {}, [])
 
   const resetForm = () => {
     setCaption('')
