@@ -102,7 +102,6 @@ export default function Camera() {
   )
 
   const handleSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index)
   }, [])
 
   const resetForm = () => {

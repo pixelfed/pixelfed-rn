@@ -97,16 +97,6 @@ const PostMedia = React.memo(({ media, post }) => {
   const height = media[0].meta?.original?.width
     ? SCREEN_WIDTH * (media[0].meta?.original?.height / media[0].meta?.original.width)
     : 430
-  const videoRef = useRef(null)
-  const [paused, setPaused] = useState(true)
-
-  const onBuffer = (msg) => {
-    console.log(msg)
-  }
-
-  const onError = (msg) => {
-    console.log(msg)
-  }
 
   if (post.sensitive && !showSensitive) {
     return (

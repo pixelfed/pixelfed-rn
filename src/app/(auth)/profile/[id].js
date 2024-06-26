@@ -293,7 +293,6 @@ export default function ProfileScreen() {
 
   const onOpenMenu = () => {
     if (!user?.id) {
-      console.log('menu')
       return
     }
     bottomSheetModalRef.current?.present()

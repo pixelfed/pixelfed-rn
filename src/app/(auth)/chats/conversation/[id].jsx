@@ -74,7 +74,7 @@ export default function Page() {
       opts = [
         {
           text: 'Copy text',
-          onPress: () => console.log('copy text'),
+          onPress: () => null,
         },
       ]
     }
@@ -97,7 +97,6 @@ export default function Page() {
         style: 'cancel',
       },
     ])
-    console.log(message)
   }
 
   const _confirmDelete = (message) => {
