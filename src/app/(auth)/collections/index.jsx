@@ -69,11 +69,6 @@ export default function Screen() {
         options={{
           title: 'My Collections',
           headerBackTitle: 'Back',
-          headerRight: () => (
-            <Button chromeless p="$0" fontSize="$7" color="$blue10">
-              New
-            </Button>
-          ),
         }}
       />
 
