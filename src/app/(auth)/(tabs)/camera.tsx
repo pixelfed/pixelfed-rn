@@ -33,9 +33,11 @@ import { Switch } from 'src/components/form/Switch'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getInstanceV1, getComposeSettings, uploadMediaV2, postNewStatus } from 'src/lib/api'
 import mime from "mime";
+import { useShareIntentContext } from 'expo-share-intent'
 
-export default function CameraScreen() {
+export default function Camera() {
   const router = useRouter()
+  const { hasShareIntent, shareIntent, error: intentError, resetShareIntent } = useShareIntentContext()
   const userCache = JSON.parse(Storage.getString('user.profile'))
   const [captionInput, setCaption] = useState("")
   const [scope, setScope] = useState('public');
@@ -56,6 +58,16 @@ export default function CameraScreen() {
     'unlisted': 'eye-off',
     'private': 'lock'
   }
+
+  useEffect(() => {
+    if(shareIntent.files) {
+      let file = shareIntent.files[0]
+      setMedia([
+        { path: file.path, type: 'image', alttext: null }
+      ])
+      setCanPost(true)
+    }
+  }, [hasShareIntent])
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const altTextRef = useRef<BottomSheetModal>(null);
@@ -145,14 +157,14 @@ export default function CameraScreen() {
         return 'You marked this post as sensitive, it will be hidden behind a warning before media is displayed.'
       }
       if(scope == 'unlisted') {
-        return 'You marked this post as sensitive and unlisted, it will be hidden from public timlines and behind a warning before media is displayed.'
+        return 'You marked this post as sensitive and unlisted, it will be hidden from public timelines and behind a warning before media is displayed.'
       }
       if(scope == 'private') {
         return 'You marked this post as sensitive and private, it will only be shared to your followers and be hidden behind a warning before media is displayed.'
       }
     } else {
       if(scope == 'unlisted') {
-        return 'You marked this post as unlisted, it will be hidden from public timlines.'
+        return 'You marked this post as unlisted, it will be hidden from public timelines.'
       }
       if(scope == 'private') {
         return 'You marked this post as private, it will only be shared to your followers.'
@@ -290,7 +302,7 @@ export default function CameraScreen() {
       return await postNewStatus(params);
     }).then(res => {
       resetForm()
-      router.navigate('/?ref30=1')
+      router.replace('/?ref30=1')
     })
   }
 
