@@ -293,7 +293,7 @@ export default function ProfileScreen() {
           style: 'cancel',
         },
         {
-          text: 'Block',
+          text: 'Unmute',
           style: 'destructive',
           onPress: () => _handleUnmute(),
         },
