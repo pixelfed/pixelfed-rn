@@ -201,7 +201,7 @@ const PostAlbumMedia = ({ media, post, carouselRef, progress }) => {
   }
 
   return (
-    <View flex={1} borderBottomWidth={1} borderBottomColor="$gray5">
+    <>
     <Carousel
       ref={carouselRef}
       panGestureHandlerProps={{
@@ -213,7 +213,6 @@ const PostAlbumMedia = ({ media, post, carouselRef, progress }) => {
       height={height}
       vertical={false}
       data={post.media_attachments}
-      overscrollEnabled={false}
       renderItem={({ index }) => {
         const media = post.media_attachments[0]
         const height = media.meta?.original?.width
@@ -239,10 +238,10 @@ const PostAlbumMedia = ({ media, post, carouselRef, progress }) => {
       data={post.media_attachments}
       dotStyle={{ backgroundColor: 'rgba(0,0,0,0.16)', borderRadius: 50 }}
       activeDotStyle={{ backgroundColor: '#408DF6', borderRadius: 50 }}
-      containerStyle={{ gap: 5, marginTop: 10, marginBottom: -10, zIndex: 3 }}
+      containerStyle={{ gap: 5, marginTop: 10, marginBottom: -10, zIndex: 5 }}
       size={8}
     />
-    </View>
+    </>
   )
 }
 
@@ -317,6 +316,7 @@ const PostCaption = React.memo(
     commentsCount,
     createdAt,
     tags,
+    visibility,
     onOpenComments,
     onHashtagPress,
     onMentionPress,
@@ -343,14 +343,33 @@ const PostCaption = React.memo(
               </Text>
             </Pressable>
           ) : null}
-          <Link href={`/post/${postId}`}>
+
+          <XStack justifyContent='flex-start' alignItems='center' gap="$3">
+            { visibility == 'public' ?
             <XStack alignItems="center" gap="$2">
-              <Feather name="clock" color="#ccc" />
-              <Text color="$gray9" fontSize="$3">
-                {timeAgo}
-              </Text>
+              <Text color="$gray9" fontSize="$3">Public</Text>
             </XStack>
-          </Link>
+            : null}
+            { visibility == 'unlisted' ?
+            <XStack alignItems="center" gap="$2">
+              <Text color="$gray9" fontSize="$3">Unlisted</Text>
+            </XStack>
+            : null}
+            { visibility == 'private' ?
+            <XStack alignItems="center" gap="$1">
+              <Feather name="lock" color="#ccc" />
+              <Text color="$gray9" fontSize="$3">Followers only</Text>
+            </XStack>
+            : null}
+            <Link href={`/post/${postId}`} asChild>
+              <XStack alignItems="center" gap="$2">
+                <Feather name="clock" color="#ccc" />
+                <Text color="$gray9" fontSize="$3">
+                  {timeAgo}
+                </Text>
+              </XStack>
+            </Link>
+          </XStack>
         </YStack>
       </BorderlessSection>
     )
@@ -448,6 +467,7 @@ export default function FeedPost({ post, user, onOpenComments, onLike }) {
         commentsCount={post.reply_count}
         createdAt={post.created_at}
         tags={post.tags}
+        visibility={post.visibility}
         onOpenComments={() => onOpenComments(post.id)}
         onHashtagPress={(tag) => onGotoHashtag(tag)}
         onMentionPress={(tag) => onGotoMention(tag)}
@@ -462,59 +482,75 @@ export default function FeedPost({ post, user, onOpenComments, onLike }) {
         <BottomSheetScrollView>
           <YStack p="$5" gap="$3">
             <XStack justifyContent="space-between" gap="$2">
-              <Button py="$3" flexGrow={1} h={70} onPress={() => onGotoShare()}>
-                <YStack justifyContent="center" alignItems="center" gap="$2">
-                  <Feather name="share" size={20} />
-                  <Text>Share</Text>
-                </YStack>
-              </Button>
             </XStack>
 
-            <Button size="$5" justifyContent="start" onPress={() => onGotoAbout()}>
-              <XStack alignItems="center" gap="$3">
-                <Feather name="info" size={20} color="#999" />
-                <Text fontSize="$5">About this account</Text>
-              </XStack>
-            </Button>
 
             <Group separator={<Separator />}>
               <Group.Item>
-                <Button size="$5" justifyContent="start" onPress={() => goToPost()}>
+                <Button size="$5" justifyContent="start" onPress={() => onGotoShare()}>
                   <XStack alignItems="center" gap="$3">
-                    <Feather name="arrow-right-circle" size={20} color="#999" />
-                    <Text fontSize="$5">View Post</Text>
-                  </XStack>
-                </Button>
-              </Group.Item>
-              <Group.Item>
-                <Button size="$5" justifyContent="start" onPress={() => goToProfile()}>
-                  <XStack alignItems="center" gap="$3">
-                    <Feather name="user" size={20} color="#999" />
-                    <Text fontSize="$5">View Profile</Text>
+                    <Feather name="share" size={20} color="#aaa"  />
+                    <Text fontSize="$5" allowFontScaling={false}>Share</Text>
                   </XStack>
                 </Button>
               </Group.Item>
               <Group.Item>
                 <Button size="$5" justifyContent="start" onPress={() => openInBrowser()}>
                   <XStack alignItems="center" gap="$3">
-                    <Feather name="book" size={20} color="#999" />
-                    <Text fontSize="$5">Open in browser</Text>
+                    <Feather name="globe" size={20} color="#aaa" />
+                    <Text fontSize="$5" allowFontScaling={false}>Open in browser</Text>
                   </XStack>
                 </Button>
               </Group.Item>
+              <Group.Item>
+                <Button size="$5" justifyContent="start" onPress={() => onGotoAbout()}>
+                  <XStack alignItems="center" gap="$3">
+                    <Feather name="info" size={20} color="#aaa" />
+                    <Text fontSize="$5" allowFontScaling={false}>About this account</Text>
+                  </XStack>
+                </Button>
+              </Group.Item>
+            </Group>
+            <Group separator={<Separator />}>
+              <Group.Item>
+                <Button size="$5" justifyContent="start" onPress={() => goToPost()}>
+                  <XStack alignItems="center" gap="$3">
+                    <Feather name="arrow-right-circle" size={20} color="#aaa" />
+                    <Text fontSize="$5" allowFontScaling={false}>View Post</Text>
+                  </XStack>
+                </Button>
+              </Group.Item>
+              <Group.Item>
+                <Button size="$5" justifyContent="start" onPress={() => goToProfile()}>
+                  <XStack alignItems="center" gap="$3">
+                    <Feather name="user" size={20} color="#aaa" />
+                    <Text fontSize="$5" allowFontScaling={false}>View Profile</Text>
+                  </XStack>
+                </Button>
+              </Group.Item>
+              
               {user && user?.id != post?.account?.id ? (
                 <Group.Item>
                   <Button size="$5" justifyContent="start" onPress={() => goToReport()}>
                     <XStack alignItems="center" gap="$3">
                       <Feather name="alert-circle" size={20} color="red" />
-                      <Text fontSize="$5" color="$red9">
+                      <Text fontSize="$5" color="$red9" allowFontScaling={false}>
                         Report
                       </Text>
                     </XStack>
                   </Button>
                 </Group.Item>
               ) : null}
+              { user && user?.id === post?.account?.id ? <Group.Item>
+              <Button size="$5" justifyContent="start" onPress={() => onGotoAbout()}>
+                <XStack alignItems="center" gap="$3">
+                  <Feather name="trash" size={20} color="red" />
+                  <Text fontSize="$5" color="$red9" allowFontScaling={false}>Delete Post</Text>
+                </XStack>
+              </Button>
+              </Group.Item> : null }
             </Group>
+
           </YStack>
         </BottomSheetScrollView>
       </BottomSheetModal>
