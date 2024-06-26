@@ -195,16 +195,6 @@ export default function Page() {
       )
     }
 
-    useEffect(() => {
-      setTimeout(() => {
-        setTyping(true)
-      }, 2000)
-
-      setTimeout(() => {
-        setTyping(false)
-      }, 10000)
-    }, [])
-
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }} edges={['bottom']}>
           <Stack.Screen
