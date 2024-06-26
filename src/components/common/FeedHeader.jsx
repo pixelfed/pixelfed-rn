@@ -9,7 +9,7 @@ import { Link, Stack } from 'expo-router'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { fetchHomeFeed } from 'src/lib/api'
 
-export default (FeedHeader = ({ title = 'Home' }) => {
+export default (FeedHeader = ({ title = 'Home', user }) => {
   return (
     <XStack
       px="$3"
@@ -27,6 +27,11 @@ export default (FeedHeader = ({ title = 'Home' }) => {
         </Text>
       </XStack>
       <XStack gap="$5">
+        {/* { user?.is_admin ?<Link href="/admin/" asChild>
+          <Pressable>
+            <Feather name="power" size={26} color="red" />
+          </Pressable>
+        </Link> : null } */}
         <Link href="/notifications" asChild>
           <Pressable>
             <Feather name="heart" size={26} />
