@@ -53,7 +53,7 @@ export default function Page() {
             <GroupButton
               icon="external-link"
               title="Blocked Domains"
-              path="/settings/avatar"
+              path="/settings/privacy/blocked-domains"
             />
           </Group>
         </YStack>
