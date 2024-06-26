@@ -9,6 +9,7 @@ import { Link, Stack, useLocalSearchParams } from 'expo-router'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { getAccountById, getAccountFollowing } from 'src/lib/api'
 import UserAvatar from 'src/components/common/UserAvatar'
+import Feather from '@expo/vector-icons/Feather'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
@@ -43,6 +44,15 @@ export default function FollowingScreen() {
   const profileId = profile?.id
 
   const ItemSeparator = () => <View h={1} bg="$gray5"></View>
+
+  const RenderEmpty = () => (
+  <View flexGrow={1} justifyContent="center" alignItems="center" py="$5">
+    <YStack flexShrink={1} justifyContent="center" alignItems="center" gap="$5">
+      <Feather name="alert-circle" size={70} />
+      <Text fontSize="$7" allowFontScaling={false}>No results found</Text>
+    </YStack>
+  </View>
+  )
 
   const {
     status,
@@ -104,7 +114,9 @@ export default function FollowingScreen() {
         onEndReached={() => {
           if (hasPreviousPage && !isFetchingPreviousPage) fetchPreviousPage()
         }}
+        ListEmptyComponent={RenderEmpty}
         onEndReachedThreshold={0.5}
+        contentContainerStyle={{flexGrow: 1}}
         ListFooterComponent={() =>
           isFetchingPreviousPage ? <ActivityIndicator /> : null
         }
