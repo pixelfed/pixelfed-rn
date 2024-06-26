@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link } from 'expo-router'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { getAccountById, getAccountStatusesById } from 'src/lib/api'
+import Feather from '@expo/vector-icons/Feather'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
@@ -47,7 +48,7 @@ export default function ProfileScreen() {
     queryFn: async ({ pageParam }) => {
       const data = await getAccountStatusesById(userId, pageParam)
       return data.filter((p) => {
-        return p.pf_type == 'photo' && p.media_attachments.length
+        return ['photo', 'photo:album', 'video'].includes(p.pf_type) && p.media_attachments.length
       })
     },
     initialPageParam: 0,
@@ -78,6 +79,9 @@ export default function ProfileScreen() {
             }}
             resizeMode="cover"
           />
+          { item.pf_type === 'photo:album' ?
+          <View position='absolute' right={5} top={5}><Feather name="columns" color="white" size={20} /></View>
+          : null}
         </View>
       </Link>
     ) : null

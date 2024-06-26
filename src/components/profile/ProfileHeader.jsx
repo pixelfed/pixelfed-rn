@@ -185,6 +185,13 @@ export default function ProfileHeader({
                 </Text>
               </View>
             ) : null}
+            {profile && profile?.is_admin ? (
+              <View bg="$red9" borderRadius={5} px={10} py={3}>
+                <Text color="white" fontWeight="bold" fontSize="$2">
+                  Admin
+                </Text>
+              </View>
+            ) : null}
           </XStack>
       
           <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>

@@ -62,8 +62,70 @@ export default function ProfileScreen() {
   )
 
   const RenderItem = useCallback(
-    ({ item }) =>
-      item && item.media_attachments && item.media_attachments[0].url ? (
+    ({ item }) => {
+      if(!item || !item.media_attachments) {
+        return <View bg="$gray4"></View>
+      }
+      const med = item.media_attachments[0]
+      const murl = med.url
+      const isSensitive = item.sensitive;
+      const hasPreview = med.preview_url && !med.preview_url.endsWith('no-preview.png')
+
+      if(isSensitive) {
+        return (
+          <ZStack w={SCREEN_WIDTH / 3 - 2} h={SCREEN_WIDTH / 3 - 2}>
+            <Blurhash
+              blurhash={item.media_attachments[0]?.blurhash}
+              style={{
+                flex: 1,
+                width: SCREEN_WIDTH / 3 - 2,
+                height: SCREEN_WIDTH / 3 - 2,
+              }}
+            />
+            <View p="$2" justifyContent="flex-end" alignItems="flex-end">
+              <Feather name="eye-off" size={20} color="white" />
+            </View>
+          </ZStack>
+        )
+      }
+
+      if(med?.type === 'video') {
+        return (
+          <Link href={`/post/${item.id}`} asChild>
+            <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
+                <ZStack w={SCREEN_WIDTH / 3 - 2} h={SCREEN_WIDTH / 3 - 2}>
+                  { hasPreview && med.preview_url ?
+                  <FastImage
+                    style={{
+                      width: SCREEN_WIDTH / 3 - 2,
+                      height: SCREEN_WIDTH / 3 - 2,
+                      backgroundColor: '#ddd',
+                    }}
+                    source={{
+                      uri: med.preview_url,
+                      priority: FastImage.priority.normal,
+                    }}
+                    resizeMode={FastImage.resizeMode.cover}
+                  />
+                  :
+                    <Blurhash
+                      blurhash={med.blurhash}
+                      style={{
+                        flex: 1,
+                        width: SCREEN_WIDTH / 3 - 2,
+                        height: SCREEN_WIDTH / 3 - 2,
+                      }}
+                    />
+                  }
+                  <View p="$2" justifyContent="flex-end" alignItems="flex-end">
+                    <Feather name="video" size={20} color="white" />
+                  </View>
+                </ZStack>
+              </View>
+          </Link>
+        )
+      }
+      return item && item.media_attachments && item.media_attachments[0].url ? (
         <Link href={`/post/${item.id}`} asChild>
           <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
             {item.sensitive ? (
@@ -94,10 +156,17 @@ export default function ProfileScreen() {
                 resizeMode={FastImage.resizeMode.cover}
               />
             )}
+            { item.pf_type === 'photo:album' ?
+            <View position='absolute' right={5} top={5}><Feather name="columns" color="white" size={20} /></View>
+            : null}
+
+            { item.pf_type === 'video' ?
+            <View position='absolute' right={5} top={5}><Feather name="video" color="white" size={20} /></View>
+            : null}
           </View>
         </Link>
-      ) : null,
-    []
+      ) : null
+    }, []
   )
 
   const EmptyFeed = () => (
@@ -396,7 +465,7 @@ export default function ProfileScreen() {
     queryFn: async ({ pageParam }) => {
       const data = await getAccountStatusesById(userId, pageParam)
       const res = data.filter((p) => {
-        return p.pf_type == 'photo' && p.media_attachments.length
+        return ['photo', 'photo:album', 'video'].includes(p.pf_type) && p.media_attachments.length
       })
       return res
     },
