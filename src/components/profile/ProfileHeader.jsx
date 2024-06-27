@@ -53,9 +53,13 @@ export default function ProfileHeader({
     router.push(`/chats/conversation/${profile?.id}}`)
   }
 
+  const onGotoSettings = () => {
+    router.navigate(`/settings/profile`)
+  }
+
   const ActionButton = () => {
     if (isSelf || selfUser?.id == profile?.id) {
-      return <EditProfile />
+      return <EditProfile onPress={() => onGotoSettings()} />
     }
 
     if (relationship && relationship.requested) {
