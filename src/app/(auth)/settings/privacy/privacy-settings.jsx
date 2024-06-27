@@ -176,6 +176,8 @@ export default function Page() {
             </Switch>
           </XStack>
           <Separator />
+          {/* 
+          // Temp unavailable, needs backend support (webUI uses internal api for this)
           <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
             <YStack maxWidth="75%" gap="$2">
               <Text fontSize="$5" fontWeight={'bold'}>
@@ -195,7 +197,7 @@ export default function Page() {
               <Switch.Thumb animation="quicker" />
             </Switch>
           </XStack>
-          <Separator />
+          <Separator /> */}
           <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
             <YStack maxWidth="75%" gap="$2">
               <Text fontSize="$5" fontWeight={'bold'}>
