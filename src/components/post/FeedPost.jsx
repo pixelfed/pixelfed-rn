@@ -72,10 +72,10 @@ const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMe
               />
               <YStack gap={3}>
                 <Text fontWeight="bold" fontSize="$5">
-                  {username}
+                  { enforceLen(username, 20, true) }
                 </Text>
                 <Text fontWeight="300" fontSize="$3" color="$gray9">
-                  {displayName}
+                  { enforceLen(displayName, 25, true) }
                 </Text>
               </YStack>
             </XStack>
