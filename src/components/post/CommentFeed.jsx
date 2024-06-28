@@ -119,13 +119,17 @@ export default function CommentFeed({
                       {_timeAgo(item.created_at)}
                     </Text>
                   </XStack>
-                  { postType === 'photo' ?
+                  {postType === 'photo' ? (
                     <FastImage
-                      source={{uri: item?.media_attachments[0].url, width: 200, height: 200}}
-                      style={{width: 200, height: 200, borderRadius: 10}}
+                      source={{
+                        uri: item?.media_attachments[0].url,
+                        width: 200,
+                        height: 200,
+                      }}
+                      style={{ width: 200, height: 200, borderRadius: 10 }}
                       resizeMode={FastImage.resizeMode.cover}
-                    /> : null
-                  }
+                    />
+                  ) : null}
                   <ReadMore numberOfLines={3}>
                     <AutolinkText
                       text={captionText}

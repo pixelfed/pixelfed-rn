@@ -1,4 +1,4 @@
-import { Alert, Dimensions, Share, StyleSheet, Pressable, Platform} from 'react-native'
+import { Alert, Dimensions, Share, StyleSheet, Pressable, Platform } from 'react-native'
 import { Button, Group, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
 import { Feather, Ionicons } from '@expo/vector-icons'
 import FastImage from 'react-native-fast-image'
@@ -17,7 +17,7 @@ import {
 } from '@gorhom/bottom-sheet'
 import Carousel, { ICarouselInstance, Pagination } from 'react-native-reanimated-carousel'
 import { useSharedValue, runOnJS } from 'react-native-reanimated'
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import ReadMore from '../common/ReadMore'
 import LikeButton from 'src/components/common/LikeButton'
 import AutolinkText from 'src/components/common/AutolinkText'
@@ -73,10 +73,10 @@ const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMe
               />
               <YStack gap={3}>
                 <Text fontWeight="bold" fontSize="$5">
-                  { enforceLen(username, 20, true) }
+                  {enforceLen(username, 20, true)}
                 </Text>
                 <Text fontWeight="300" fontSize="$3" color="$gray9">
-                  { enforceLen(displayName, 25, true) }
+                  {enforceLen(displayName, 25, true)}
                 </Text>
               </YStack>
             </XStack>
@@ -85,7 +85,10 @@ const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMe
       </View>
       <Pressable onPress={() => onOpenMenu()}>
         <View px="$3">
-          <Feather name={Platform.OS === 'ios' ? "more-horizontal" : "more-vertical"} size={25} />
+          <Feather
+            name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
+            size={25}
+          />
         </View>
       </Pressable>
     </XStack>
@@ -111,7 +114,13 @@ const PostMedia = React.memo(({ media, post }) => {
           }}
         />
         <YStack justifyContent="center" alignItems="center" flexGrow={1}>
-          <YStack justifyContent="center" alignItems="center" flexGrow={1} m="$3" gap="$5">
+          <YStack
+            justifyContent="center"
+            alignItems="center"
+            flexGrow={1}
+            m="$3"
+            gap="$5"
+          >
             <Feather name="eye-off" size={40} color="white" />
             <Text fontSize="$5" color="white" allowFontScaling={false}>
               This post contains sensitive or mature content
@@ -120,8 +129,10 @@ const PostMedia = React.memo(({ media, post }) => {
           <YStack w={SCREEN_WIDTH} flexShrink={1}>
             <Separator />
             <Pressable onPress={() => setSensitive(true)}>
-              <View py={15} justifyContent='center' alignItems='center'>
-                <Text color="white" fontWeight={'bold'}>Tap to view</Text>
+              <View py={15} justifyContent="center" alignItems="center">
+                <Text color="white" fontWeight={'bold'}>
+                  Tap to view
+                </Text>
               </View>
             </Pressable>
           </YStack>
@@ -191,9 +202,7 @@ const PostAlbumMedia = ({ media, post, carouselRef, progress }) => {
     <>
       <Carousel
         ref={carouselRef}
-        onConfigurePanGesture={gestureChain => (
-          gestureChain.activeOffsetX([-10, 10])
-        )}
+        onConfigurePanGesture={(gestureChain) => gestureChain.activeOffsetX([-10, 10])}
         width={SCREEN_WIDTH}
         height={height}
         vertical={false}
@@ -246,7 +255,7 @@ const PostActions = React.memo(
     post,
     handleLike,
     onBookmark,
-    hasBookmarked
+    hasBookmarked,
   }) => (
     <BorderlessSection>
       <YStack pt="$3" pb="$2" px="$2" gap={10}>
@@ -379,7 +388,14 @@ const PostCaption = React.memo(
   }
 )
 
-export default function FeedPost({ post, user, onOpenComments, onLike, onDeletePost, onBookmark }) {
+export default function FeedPost({
+  post,
+  user,
+  onOpenComments,
+  onLike,
+  onDeletePost,
+  onBookmark,
+}) {
   const bottomSheetModalRef = useRef(null)
   const carouselRef = useRef(null)
   const progress = useSharedValue(0)
@@ -456,18 +472,18 @@ export default function FeedPost({ post, user, onOpenComments, onLike, onDeleteP
   }
 
   const handleShowLike = () => {
-    if(!post.favourited) {
+    if (!post.favourited) {
       setTmpFav(true)
     }
     onLike()
   }
 
   const onSingleTap = () => {
-    if(post.pf_type !== 'photo') {
-      return;
+    if (post.pf_type !== 'photo') {
+      return
     }
 
-    goToPost();
+    goToPost()
   }
 
   // const singleTap = Gesture.Tap()
@@ -500,7 +516,7 @@ export default function FeedPost({ post, user, onOpenComments, onLike, onDeleteP
         />
       ) : post.media_attachments?.length === 1 ? (
         /*<GestureDetector gesture={Gesture.Exclusive(doubleTap, singleTap)}>*/
-          <PostMedia media={post.media_attachments} post={post} />
+        <PostMedia media={post.media_attachments} post={post} />
         /*</GestureDetector>*/
       ) : null}
       <PostActions

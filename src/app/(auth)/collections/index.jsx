@@ -8,7 +8,6 @@ import FastImage from 'react-native-fast-image'
 import { formatTimestamp } from 'src/utils'
 import Feather from '@expo/vector-icons/Feather'
 
-
 export default function Screen() {
   const RenderItem = ({ item }) => (
     <YStack px="$5" mb="$5">

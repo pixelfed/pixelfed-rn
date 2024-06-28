@@ -38,8 +38,12 @@ export default function Page() {
     queryFn: getAccountById,
   })
 
-  if(isFetching) {
-    return <View><ActivityIndicator /></View>
+  if (isFetching) {
+    return (
+      <View>
+        <ActivityIndicator />
+      </View>
+    )
   }
 
   const updateProfilePhoto = () => {

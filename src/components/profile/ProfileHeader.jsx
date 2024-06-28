@@ -122,7 +122,10 @@ export default function ProfileHeader({
           </Button>
         ) : (
           <Button chromeless p="$0" onPress={() => openMenu()}>
-            <Feather name={Platform.OS === 'ios' ? "more-horizontal" : "more-vertical"} size={26} />
+            <Feather
+              name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
+              size={26}
+            />
           </Button>
         )}
       </XStack>
@@ -153,13 +156,18 @@ export default function ProfileHeader({
 
         <XStack w="100%" justifyContent="space-between" alignItems="center" mt="$3">
           <View style={{ borderRadius: 100, overflow: 'hidden' }}>
-            <Avatar circular size={SCREEN_WIDTH > 400 ? "$10" : "$8"} borderWidth={1} borderColor="$gray5">
+            <Avatar
+              circular
+              size={SCREEN_WIDTH > 400 ? '$10' : '$8'}
+              borderWidth={1}
+              borderColor="$gray5"
+            >
               <Avatar.Image src={profile?.avatar} />
               <Avatar.Fallback backgroundColor="$gray4" />
             </Avatar>
           </View>
 
-          <XStack gap={SCREEN_WIDTH > 400 ? "$7" : "$5"} mx="$5" alignItems="flex-start">
+          <XStack gap={SCREEN_WIDTH > 400 ? '$7' : '$5'} mx="$5" alignItems="flex-start">
             <YStack alignItems="center" gap="$1">
               <Text fontWeight="bold" fontSize="$5" allowFontScaling={false}>
                 {prettyCount(profile?.statuses_count ? profile.statuses_count : 0)}

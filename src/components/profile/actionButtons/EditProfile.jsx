@@ -1,6 +1,6 @@
 import { Button } from 'tamagui'
 
-export default function EditProfile({onPress}) {
+export default function EditProfile({ onPress }) {
   return (
     <Button
       theme="light"
