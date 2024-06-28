@@ -33,10 +33,14 @@ export default function Page() {
   const queryClient = useQueryClient()
 
   const [newProfilePhoto, setProfilePhoto] = useState()
-  const { data: user } = useQuery({
+  const { data: user, isFetching } = useQuery({
     queryKey: ['profileById', userCache.id],
     queryFn: getAccountById,
   })
+
+  if(isFetching) {
+    return <View><ActivityIndicator /></View>
+  }
 
   const updateProfilePhoto = () => {
     const isDefault = user?.avatar.includes('default.')
@@ -119,7 +123,7 @@ export default function Page() {
           overflow="hidden"
           flexWrap="wrap"
           pb="$3"
-          borderBottomWidth={border ? 1 : 'auto'}
+          borderBottomWidth={border ? 1 : 0}
           borderBottomColor="$gray4"
         >
           <Link href={path}>
@@ -135,7 +139,7 @@ export default function Page() {
           overflow="hidden"
           flexWrap="wrap"
           pb="$3"
-          borderBottomWidth={border ? 1 : 'auto'}
+          borderBottomWidth={border ? 1 : 0}
           borderBottomColor="$gray4"
         >
           <Text fontSize="$6" flexWrap="wrap">
@@ -176,7 +180,7 @@ export default function Page() {
 
         <Separator />
 
-        <YStack gap="0" pt="$2">
+        <YStack gap="$0" pt="$2">
           <LinkField
             label="Name"
             value={user?.display_name}
