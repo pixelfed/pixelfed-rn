@@ -7,7 +7,7 @@ import { Feather } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, Stack, useRouter } from 'expo-router'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { fetchNetworkFeed, likeStatus, unlikeStatus, deleteStatusV1 } from 'src/lib/api'
+import { fetchNetworkFeed, likeStatus, unlikeStatus, deleteStatusV1, postBookmark } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
 import EmptyFeed from 'src/components/common/EmptyFeed'
 import { Storage } from 'src/state/cache'
@@ -21,8 +21,6 @@ import {
 import CommentFeed from 'src/components/post/CommentFeed'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { useVideo } from 'src/hooks/useVideoProvider'
-
-const keyExtractor = (_, index) => `post-${_.id}-${index}`
 
 export default function HomeScreen() {
   const router = useRouter()
@@ -77,13 +75,20 @@ export default function HomeScreen() {
       <FeedPost
         post={item}
         user={user}
-        onOpenComments={onOpenComments}
-        onLike={handleLike}
-        onDeletePost={onDeletePost}
+        onOpenComments={() => onOpenComments}
+        onLike={() => handleLike}
+        onDeletePost={() => onDeletePost}
+        onBookmark={() => onBookmark(item.id)}
       />
     ),
     [data]
   )
+
+  const keyExtractor = useCallback((item) => item.id.toString(), []);
+
+  const onBookmark = (id) => {
+    bookmarkMutation.mutate(id)
+  }
 
   const onDeletePost = (id) => {
     deletePostMutation.mutate(id)
@@ -105,6 +110,12 @@ export default function HomeScreen() {
         return { ...oldData, pages: updatedPages }
       })
     },
+  })
+
+  const bookmarkMutation = useMutation({
+    mutationFn: async(id) => {
+        return await postBookmark(id)
+    }
   })
 
   const likeMutation = useMutation({
@@ -221,7 +232,7 @@ export default function HomeScreen() {
         onViewableItemsChanged={onViewRef}
         viewabilityConfig={viewConfigRef.current}
         onEndReached={() => {
-          if (hasNextPage) fetchNextPage()
+          if (hasNextPage && !isFetchingNextPage) fetchNextPage()
         }}
         onEndReachedThreshold={0.5}
         ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}
