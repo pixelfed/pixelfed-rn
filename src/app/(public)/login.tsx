@@ -12,7 +12,7 @@ import {
   XStack,
 } from 'tamagui'
 import { useAuth } from '@state/AuthProvider'
-import { ActivityIndicator, SafeAreaView } from 'react-native'
+import { ActivityIndicator, Platform, SafeAreaView } from 'react-native'
 import { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 
@@ -59,7 +59,7 @@ export default function Login() {
             />
           </View>
 
-          <YStack flexDirection="row">
+          <YStack flexDirection="row" mb={Platform.OS === 'ios' ? 0 : "$5"}>
             <Link href="/selectServer" asChild>
               <Button
                 size="$6"
