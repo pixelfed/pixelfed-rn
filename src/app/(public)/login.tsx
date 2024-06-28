@@ -5,6 +5,7 @@ import {
   Form,
   Button,
   YStack,
+  Image,
   Label,
   Input,
   Separator,
@@ -34,53 +35,45 @@ export default function Login() {
   }, [])
 
   return (
-    <SafeAreaView style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'center' }}>
-      <StatusBar style="dark" />
+    <SafeAreaView
+      style={{
+        backgroundColor: 'black',
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+      edges={['top']}
+    >
+      <StatusBar style="light" />
       {isLoading || loading ? (
         <View m="$5">
-          <ActivityIndicator />
+          <ActivityIndicator style={'light'} />
         </View>
       ) : (
-        <>
-          <Text fontSize={30} mt="$6" letterSpacing={-1}>
-            Pixelfed Sign in
-          </Text>
-          <Form alignSelf="stretch" mx="$5" gap="$5" onSubmit={handleLogin}>
-            <YStack>
-              <Label fontWeight={'bold'}>Server</Label>
-              <Input
-                size="$6"
-                value={server}
-                onChangeText={setServer}
-                bg="white"
-                borderWidth={2}
-              />
-            </YStack>
+        <YStack flexGrow={1} w="100%" px="$5">
+          <View flexGrow={1} justifyContent='center' alignItems='center'>
+            <Image
+                source={require('../../../assets/icon.png')}
+                width={140}
+                height={140}
+                />
+          </View>
 
-            <Form.Trigger asChild>
-              <Button theme="blue" size="$6" bg="$blue9" color="white" fontWeight="bold">
-                Sign in
-              </Button>
-            </Form.Trigger>
-          </Form>
-          <YStack m="$5" flexDirection="row">
-            <Separator borderColor="$gray8" borderWidth={0.3} />
-          </YStack>
-          <YStack mx="$5" flexGrow={1} flexDirection="row">
+          <YStack flexDirection="row">
             <Link href="/selectServer" asChild>
               <Button
                 size="$6"
-                theme="blue"
-                bg="$blue4"
-                borderColor="$blue6"
-                color="$blue9"
+                theme="gray"
+                themeInverse={true}
+                color="white"
+                fontWeight="bold"
                 flexGrow={1}
               >
-                Select Server
+                Login
               </Button>
             </Link>
           </YStack>
-        </>
+        </YStack>
       )}
     </SafeAreaView>
   )
