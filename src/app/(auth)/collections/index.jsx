@@ -16,8 +16,8 @@ export default function Screen() {
           {item.title ? item.title : 'Untitled Collection'}
           {item.items && item.items.length > 6 ? ` (${item.items.length})` : null}
         </Text>
-        <XStack justifyContent="space-between">
-          <Text fontSize="$4" color="$gray10">
+        <XStack justifyContent="space-between" flexWrap="wrap" flexShrink={1} gap="$2">
+          <Text fontSize="$4" color="$gray10" flexWrap="wrap">
             {item.description ? item.description : 'No description'}
           </Text>
           <Text fontSize="$4" color="$gray9">
