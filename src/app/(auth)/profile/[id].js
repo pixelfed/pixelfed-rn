@@ -176,7 +176,7 @@ export default function ProfileScreen() {
   }, [])
 
   const EmptyFeed = () => (
-    <View h="100%" flexGrow={1}>
+    <View flexGrow={1}>
       {!isFetching && !user.id ? (
         <YStack flexGrow={1} justifyContent="center" alignItems="center" gap="$5">
           <View p="$6" borderWidth={2} borderColor="$gray5" borderRadius={100}>
@@ -569,6 +569,7 @@ export default function ProfileScreen() {
         }}
         onEndReachedThreshold={0.1}
         ListEmptyComponent={EmptyFeed}
+        contentContainerStyle={{flexGrow: 1}}
         ListFooterComponent={() =>
           !userError && isFetched && isFetchingNextPage ? (
             <View p="$5">
