@@ -24,7 +24,7 @@ import * as Application from 'expo-application'
 export default function Page() {
   const [user, setUser] = useState()
   const instance = Storage.getString('app.instance')
-  const buildVersion = 46
+  const buildVersion = 48
   const version = Application.nativeApplicationVersion + '.' + buildVersion
 
   useEffect(() => {
