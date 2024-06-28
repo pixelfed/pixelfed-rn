@@ -5,7 +5,9 @@ import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { getSelfCollections } from 'src/lib/api'
 import { FlatList } from 'react-native'
 import FastImage from 'react-native-fast-image'
-import { formatTimestamp } from '../../../utils'
+import { formatTimestamp } from 'src/utils'
+import Feather from '@expo/vector-icons/Feather'
+
 
 export default function Screen() {
   const RenderItem = ({ item }) => (
@@ -58,6 +60,18 @@ export default function Screen() {
   )
 
   const Separator = () => <View h={10} />
+
+  const RenderEmpty = () => (
+    <View flexGrow={1} justifyContent="center" alignItems="center" py="$5">
+      <YStack flexShrink={1} justifyContent="center" alignItems="center" gap="$5">
+        <Feather name="inbox" size={70} />
+        <Text fontSize="$7" allowFontScaling={false}>
+          No collections found
+        </Text>
+      </YStack>
+    </View>
+  )
+
   const { data: collections } = useQuery({
     queryKey: ['getSelfCollections'],
     queryFn: getSelfCollections,
@@ -76,6 +90,8 @@ export default function Screen() {
         data={collections}
         renderItem={RenderItem}
         ItemSeparatorComponent={Separator}
+        ListEmptyComponent={RenderEmpty}
+        contentContainerStyle={{ flexGrow: 1 }}
       />
     </SafeAreaView>
   )
