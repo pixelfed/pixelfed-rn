@@ -16,6 +16,7 @@ import {
   StyleSheet,
   Alert,
   Platform,
+  Linking,
 } from 'react-native'
 import { Storage } from 'src/state/cache'
 import UserAvatar from 'src/components/common/UserAvatar'
@@ -134,7 +135,38 @@ export default function Camera() {
   }
 
   const openCamera = async () => {
-    Alert.alert('Camera unavailable', 'You do not have permission to use the camera.')
+    let res = await ImagePicker.requestCameraPermissionsAsync()
+
+    if(res && res.granted == false) {
+      Alert.alert(
+        'Camera Access Needed',
+        'This app requires camera access to function properly. Please enable camera permissions in your device settings.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { 
+            text: 'Open Settings', 
+            onPress: () => {
+              if (Platform.OS === 'ios') {
+                Linking.openURL('app-settings:');
+              } else {
+                Linking.openSettings();
+              }
+            }
+          }
+        ],
+        { cancelable: true }
+      );
+      return;
+    }
+    let result = await ImagePicker.launchCameraAsync()
+
+    if (!result.canceled) {
+      setMedia([
+        ...media,
+        { path: result.assets[0].uri, type: result.assets[0].type, alttext: null },
+      ])
+      setCanPost(true)
+    }
   }
 
   const toggleScope = () => {
@@ -433,6 +465,7 @@ export default function Camera() {
                   maxLength={serverConfig?.configuration.statuses.max_characters}
                   backgroundColor={'white'}
                   numberOfLines={4}
+                  multiline={true}
                   placeholder="Share your moment..."
                   placeholderTextColor={'#ccc'}
                 />
@@ -504,12 +537,12 @@ export default function Camera() {
                   justifyContent="center"
                   alignItems="center"
                 >
-                  <XStack gap="$2">
-                    <Text fontSize="$7" lineHeight={30} color="$gray12">Tap</Text>
+                  <XStack gap="$2" alignItems='center'>
+                    <Text fontSize="$7" lineHeight={30} color="$gray12" allowFontScaling={false}>Tap</Text>
                     <PressableOpacity onPress={pickImage}><Feather name="image" size={24} color="black" /></PressableOpacity>
-                    <Text fontSize="$7" lineHeight={30} color="$gray12"> or </Text>
+                    <Text fontSize="$7" lineHeight={30} color="$gray12" allowFontScaling={false}> or </Text>
                     <PressableOpacity onPress={openCamera}><Feather name="camera" size={24} color="black" /></PressableOpacity>
-                    <Text fontSize="$7" lineHeight={30} color="$gray12"> to add media</Text>
+                    <Text fontSize="$7" lineHeight={30} color="$gray12" allowFontScaling={false}> to add media</Text>
                   </XStack>
                 </View>
               )}
