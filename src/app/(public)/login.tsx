@@ -51,12 +51,12 @@ export default function Login() {
         </View>
       ) : (
         <YStack flexGrow={1} w="100%" px="$5">
-          <View flexGrow={1} justifyContent='center' alignItems='center'>
+          <View flexGrow={1} justifyContent="center" alignItems="center">
             <Image
-                source={require('../../../assets/icon.png')}
-                width={140}
-                height={140}
-                />
+              source={require('../../../assets/icon.png')}
+              width={140}
+              height={140}
+            />
           </View>
 
           <YStack flexDirection="row">

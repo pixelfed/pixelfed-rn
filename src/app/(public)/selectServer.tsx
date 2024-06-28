@@ -90,7 +90,7 @@ export default function Register() {
   )
 
   return (
-    <SafeAreaView edges={['top']} style={{flex: 1, backgroundColor: 'black'}}>
+    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: 'black' }}>
       <StatusBar style="light" />
       <Stack.Screen options={{ headerShown: false }} />
       <View justifyContent="center" alignItems="center" mb="$5">
@@ -118,7 +118,11 @@ export default function Register() {
         renderItem={RenderItem}
         ListFooterComponent={<View h={100} />}
         onScroll={() => Keyboard.dismiss()}
-        contentContainerStyle={{ flexGrow: 1, marginHorizontal: 10, backgroundColor: '#000' }}
+        contentContainerStyle={{
+          flexGrow: 1,
+          marginHorizontal: 10,
+          backgroundColor: '#000',
+        }}
         keyExtractor={(item) => item.domain}
       />
     </SafeAreaView>
@@ -150,7 +154,7 @@ const styles = {
     position: 'absolute',
     left: 30,
     zIndex: 2,
-    color: '#999'
+    color: '#999',
   },
   clearButton: {
     position: 'absolute',
