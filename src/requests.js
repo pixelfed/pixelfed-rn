@@ -155,7 +155,7 @@ export async function loginPreflightCheck(server) {
       return false
     }
   } catch (e) {
-    Alert.alert('Error', 'Cannot reach serverw.')
+    Alert.alert('Error', 'Cannot reach server.')
     return false
   }
 
