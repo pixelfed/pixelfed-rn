@@ -6,8 +6,8 @@ import { queryApi } from 'src/requests'
 import { useState, useEffect, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, router, Link } from 'expo-router'
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
-import { getHashtagByName, getHashtagByNameFeed, getHashtagRelated } from 'src/lib/api'
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { getHashtagByName, getHashtagByNameFeed, getHashtagRelated, followHashtag, unfollowHashtag } from 'src/lib/api'
 import { prettyCount } from '../../../utils'
 import FastImage from 'react-native-fast-image'
 import { Feather } from '@expo/vector-icons'
@@ -16,6 +16,7 @@ const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function Page() {
   const { id } = useLocalSearchParams()
+  const queryClient = useQueryClient()
 
   const RenderItem = useCallback(
     ({ item }) =>
@@ -68,6 +69,23 @@ export default function Page() {
     []
   )
 
+  const followMutation = useMutation({
+    mutationFn: (action) => {
+      return action === 'follow' ? followHashtag(id) : unfollowHashtag(id)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['getHashtagByName'] })
+    },
+  })
+
+  const handleOnFollow = () => {
+    followMutation.mutate('follow')
+  }
+  
+  const handleOnUnfollow = () => {
+    followMutation.mutate('unfollow')
+  }
+
   const RenderEmpty = () => (
     <View flex={1}>
       <Separator borderColor="#ccc" />
@@ -119,7 +137,7 @@ export default function Page() {
   })
 
   const Header = useCallback(
-    ({ hashtag, feed }) => {
+    ({ hashtag, feed, onUnfollow, onFollow }) => {
       return (
         <View p="$4" flexShrink={1}>
           <XStack alignItems="center" gap="$4">
@@ -155,6 +173,7 @@ export default function Page() {
                       fontWeight="bold"
                       color="$blue9"
                       alignSelf="stretch"
+                      onPress={onUnfollow}
                     >
                       Unfollow
                     </Button>
@@ -166,6 +185,7 @@ export default function Page() {
                       color="white"
                       fontWeight="bold"
                       alignSelf="stretch"
+                      onPress={onFollow}
                     >
                       Follow
                     </Button>
@@ -264,7 +284,7 @@ export default function Page() {
         onEndReachedThreshold={0.9}
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={RenderEmpty}
-        ListHeaderComponent={<Header hashtag={hashtag} feed={feed} />}
+        ListHeaderComponent={<Header hashtag={hashtag} feed={feed} onFollow={handleOnFollow} onUnfollow={handleOnUnfollow} />}
         ListFooterComponent={() =>
           isFetching || isFetchingNextPage ? (
             <View p="$5">

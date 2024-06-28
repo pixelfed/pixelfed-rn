@@ -706,3 +706,11 @@ export async function getTrendingPostsV1() {
 export async function postBookmark(id) {
   return await selfPost(`api/v1/statuses/${id}/bookmark`)
 }
+
+export async function followHashtag(id) {
+  return await selfPost(`api/v1/tags/${id}/follow`)
+}
+
+export async function unfollowHashtag(id) {
+  return await selfPost(`api/v1/tags/${id}/unfollow`)
+}
