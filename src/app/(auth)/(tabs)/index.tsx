@@ -7,7 +7,7 @@ import { Feather } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { fetchHomeFeed, likeStatus, unlikeStatus, deleteStatusV1 } from 'src/lib/api'
+import { fetchHomeFeed, likeStatus, unlikeStatus, deleteStatusV1, postBookmark } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
 import EmptyFeed from 'src/components/common/EmptyFeed'
 import { Storage } from 'src/state/cache'
@@ -103,9 +103,10 @@ export default function HomeScreen() {
       <FeedPost
         post={item}
         user={user}
-        onOpenComments={onOpenComments}
-        onLike={handleLike}
-        onDeletePost={onDeletePost}
+        onOpenComments={() => onOpenComments}
+        onLike={() => handleLike}
+        onDeletePost={() => onDeletePost}
+        onBookmark={() => onBookmark}
       />
     ),
     [data]
@@ -132,6 +133,16 @@ export default function HomeScreen() {
       })
     },
   })
+
+  const bookmarkMutation = useMutation({
+    mutationFn: async(id) => {
+        return await postBookmark(id)
+    }
+  })
+
+  const onBookmark = (id) => {
+    bookmarkMutation.mutate(id)
+  }
 
   const likeMutation = useMutation({
     mutationFn: async (handleLike) => {
