@@ -224,9 +224,9 @@ export async function fetchHomeFeed({ pageParam = false }) {
   let url
   if (!pageParam) {
     const instance = Storage.getString('app.instance')
-    url = `https://${instance}/api/v1/timelines/home?_pe=1`
+    url = `https://${instance}/api/v1/timelines/home?_pe=1&limit=20`
   } else {
-    url = pageParam + '&_pe=1'
+    url = pageParam + '&_pe=1&limit=20'
   }
   return await fetchPaginatedData(url)
 }
@@ -235,9 +235,9 @@ export async function fetchNetworkFeed({ pageParam = false }) {
   let url
   if (!pageParam) {
     const instance = Storage.getString('app.instance')
-    url = `https://${instance}/api/v1/timelines/public?_pe=1`
+    url = `https://${instance}/api/v1/timelines/public?_pe=1&limit=20`
   } else {
-    url = pageParam + '&_pe=1'
+    url = pageParam + '&_pe=1&limit=20'
   }
 
   return await fetchPaginatedData(url)
@@ -701,4 +701,8 @@ export async function getTrendingPostsV1() {
   })
   const res = await response.json()
   return res?.statuses.filter((s) => s.media_attachments[0].type === 'image')
+}
+
+export async function postBookmark(id) {
+  return await selfPost(`api/v1/statuses/${id}/bookmark`)
 }
