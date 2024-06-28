@@ -1,6 +1,6 @@
 import { Alert, Dimensions, Pressable, Share, StyleSheet } from 'react-native'
 import { Button, Group, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
-import { Feather } from '@expo/vector-icons'
+import { Feather, Ionicons } from '@expo/vector-icons'
 import FastImage from 'react-native-fast-image'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
@@ -190,23 +190,27 @@ const PostAlbumMedia = ({ media, post, carouselRef, progress }) => {
   }
 
   return (
-    <>
+    <View>
       <Carousel
         ref={carouselRef}
-        panGestureHandlerProps={{
-          activeOffsetX: [-20, 20],
-          failOffsetY: [-20, 20],
-        }}
+        onConfigurePanGesture={gestureChain => (
+          gestureChain.activeOffsetX([-10, 10])
+        )}
         width={SCREEN_WIDTH}
-        onProgressChange={progress}
         height={height}
         vertical={false}
+        onProgressChange={progress}
+        mode="parallax"
+        modeConfig={{
+          parallaxScrollingScale: 0.9,
+          parallaxScrollingOffset: 50,
+        }}
         data={post.media_attachments}
         renderItem={({ index }) => {
           const media = post.media_attachments[0]
           const height = media.meta?.original?.width
             ? SCREEN_WIDTH * (media.meta?.original?.height / media.meta?.original.width)
-            : 430
+            : 500
           return (
             <FastImage
               style={{
@@ -229,7 +233,7 @@ const PostAlbumMedia = ({ media, post, carouselRef, progress }) => {
         containerStyle={{ gap: 5, marginTop: 10, marginBottom: -10, zIndex: 5 }}
         size={8}
       />
-    </>
+    </View>
   )
 }
 
@@ -243,6 +247,8 @@ const PostActions = React.memo(
     onOpenComments,
     post,
     handleLike,
+    onBookmark,
+    hasBookmarked
   }) => (
     <BorderlessSection>
       <YStack pt="$3" pb="$2" px="$2" gap={10}>
@@ -254,9 +260,14 @@ const PostActions = React.memo(
             </Pressable>
             {/* <Feather name="refresh-cw" size={26} /> */}
           </XStack>
-          <XStack gap="$4">
-            <Feather name="bookmark" size={30} />
-          </XStack>
+          <PressableOpacity onPress={() => onBookmark()}>
+            <XStack gap="$4">
+              { hasBookmarked ?
+                <Ionicons name="bookmark" size={30} /> :
+                <Feather name="bookmark" size={30} />
+              }
+              </XStack>
+          </PressableOpacity>
         </XStack>
         {likesCount || sharesCount ? (
           <XStack justifyContent="space-between" alignItems="flex-end">
@@ -370,7 +381,7 @@ const PostCaption = React.memo(
   }
 )
 
-export default function FeedPost({ post, user, onOpenComments, onLike, onDeletePost }) {
+export default function FeedPost({ post, user, onOpenComments, onLike, onDeletePost, onBookmark }) {
   const bottomSheetModalRef = useRef(null)
   const carouselRef = useRef(null)
   const progress = useSharedValue(0)
@@ -468,11 +479,13 @@ export default function FeedPost({ post, user, onOpenComments, onLike, onDeleteP
         hasLiked={post.favourited}
         hasShared={false}
         post={post}
+        hasBookmarked={post?.bookmarked}
         likesCount={post.favourites_count}
         likedBy={post.liked_by}
         sharesCount={post.reblogs_count}
         handleLike={() => onLike(post.id, post.favourited)}
         onOpenComments={() => onOpenComments(post.id)}
+        onBookmark={() => onBookmark(post.id)}
       />
       <PostCaption
         postId={post.id}
