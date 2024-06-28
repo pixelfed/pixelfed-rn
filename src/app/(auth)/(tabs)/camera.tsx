@@ -11,13 +11,7 @@ import {
 } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { Stack, useRouter } from 'expo-router'
-import {
-  ActivityIndicator,
-  StyleSheet,
-  Alert,
-  Platform,
-  Linking,
-} from 'react-native'
+import { ActivityIndicator, StyleSheet, Alert, Platform, Linking } from 'react-native'
 import { Storage } from 'src/state/cache'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { useState, useRef, useCallback, useMemo, useEffect } from 'react'
@@ -137,26 +131,26 @@ export default function Camera() {
   const openCamera = async () => {
     let res = await ImagePicker.requestCameraPermissionsAsync()
 
-    if(res && res.granted == false) {
+    if (res && res.granted == false) {
       Alert.alert(
         'Camera Access Needed',
         'This app requires camera access to function properly. Please enable camera permissions in your device settings.',
         [
           { text: 'Cancel', style: 'cancel' },
-          { 
-            text: 'Open Settings', 
+          {
+            text: 'Open Settings',
             onPress: () => {
               if (Platform.OS === 'ios') {
-                Linking.openURL('app-settings:');
+                Linking.openURL('app-settings:')
               } else {
-                Linking.openSettings();
+                Linking.openSettings()
               }
-            }
-          }
+            },
+          },
         ],
         { cancelable: true }
-      );
-      return;
+      )
+      return
     }
     let result = await ImagePicker.launchCameraAsync()
 
@@ -537,12 +531,39 @@ export default function Camera() {
                   justifyContent="center"
                   alignItems="center"
                 >
-                  <XStack gap="$2" alignItems='center'>
-                    <Text fontSize="$7" lineHeight={30} color="$gray12" allowFontScaling={false}>Tap</Text>
-                    <PressableOpacity onPress={pickImage}><Feather name="image" size={24} color="black" /></PressableOpacity>
-                    <Text fontSize="$7" lineHeight={30} color="$gray12" allowFontScaling={false}> or </Text>
-                    <PressableOpacity onPress={openCamera}><Feather name="camera" size={24} color="black" /></PressableOpacity>
-                    <Text fontSize="$7" lineHeight={30} color="$gray12" allowFontScaling={false}> to add media</Text>
+                  <XStack gap="$2" alignItems="center">
+                    <Text
+                      fontSize="$7"
+                      lineHeight={30}
+                      color="$gray12"
+                      allowFontScaling={false}
+                    >
+                      Tap
+                    </Text>
+                    <PressableOpacity onPress={pickImage}>
+                      <Feather name="image" size={24} color="black" />
+                    </PressableOpacity>
+                    <Text
+                      fontSize="$7"
+                      lineHeight={30}
+                      color="$gray12"
+                      allowFontScaling={false}
+                    >
+                      {' '}
+                      or{' '}
+                    </Text>
+                    <PressableOpacity onPress={openCamera}>
+                      <Feather name="camera" size={24} color="black" />
+                    </PressableOpacity>
+                    <Text
+                      fontSize="$7"
+                      lineHeight={30}
+                      color="$gray12"
+                      allowFontScaling={false}
+                    >
+                      {' '}
+                      to add media
+                    </Text>
                   </XStack>
                 </View>
               )}

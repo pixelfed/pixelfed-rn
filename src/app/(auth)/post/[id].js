@@ -24,11 +24,11 @@ import CommentFeed from 'src/components/post/CommentFeed'
 
 export default function Page() {
   const { id } = useLocalSearchParams()
-  const navigation = useNavigation();
+  const navigation = useNavigation()
 
   useLayoutEffect(() => {
-    navigation.setOptions({ title: 'Post' });
-  }, [navigation]);
+    navigation.setOptions({ title: 'Post' })
+  }, [navigation])
   const user = JSON.parse(Storage.getString('user.profile'))
   const queryClient = useQueryClient()
   const bottomSheetModalRef = useRef(null)
