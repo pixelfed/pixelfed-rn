@@ -1,4 +1,4 @@
-import { Alert, Dimensions, Pressable, Share, StyleSheet } from 'react-native'
+import { Alert, Dimensions, Share, StyleSheet, Pressable} from 'react-native'
 import { Button, Group, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
 import { Feather, Ionicons } from '@expo/vector-icons'
 import FastImage from 'react-native-fast-image'
@@ -110,23 +110,19 @@ const PostMedia = React.memo(({ media, post }) => {
           }}
         />
         <YStack justifyContent="center" alignItems="center" flexGrow={1}>
-          <YStack justifyContent="center" alignItems="center" flexGrow={1} gap="$3">
-            <Feather name="eye-off" size={55} color="white" />
-            <Text fontSize="$7" color="white">
+          <YStack justifyContent="center" alignItems="center" flexGrow={1} m="$3" gap="$5">
+            <Feather name="eye-off" size={40} color="white" />
+            <Text fontSize="$5" color="white" allowFontScaling={false}>
               This post contains sensitive or mature content
             </Text>
           </YStack>
           <YStack w={SCREEN_WIDTH} flexShrink={1}>
             <Separator />
-            <Button
-              alignSelf="stretch"
-              size="$5"
-              color="white"
-              onPress={() => setSensitive(true)}
-              chromeless
-            >
-              Tap to view
-            </Button>
+            <Pressable onPress={() => setSensitive(true)}>
+              <View py={15} justifyContent='center' alignItems='center'>
+                <Text color="white" fontWeight={'bold'}>Tap to view</Text>
+              </View>
+            </Pressable>
           </YStack>
         </YStack>
       </ZStack>
@@ -136,6 +132,7 @@ const PostMedia = React.memo(({ media, post }) => {
   if (post.pf_type === 'video') {
     return <VideoPlayer source={mediaUrl} height={height} videoId={post.id} />
   }
+
   return (
     <View flex={1} borderBottomWidth={1} borderBottomColor="$gray5">
       <FastImage
