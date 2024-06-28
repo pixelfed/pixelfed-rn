@@ -7,7 +7,7 @@ import {
   prettyCount,
 } from 'src/utils'
 import { Link, router } from 'expo-router'
-import { Dimensions, Pressable } from 'react-native'
+import { Dimensions, Pressable, Platform } from 'react-native'
 import EditProfile from './actionButtons/EditProfile'
 import FollowingProfile from './actionButtons/FollowingProfile'
 import FollowProfile from './actionButtons/FollowProfile'
@@ -122,7 +122,7 @@ export default function ProfileHeader({
           </Button>
         ) : (
           <Button chromeless p="$0" onPress={() => openMenu()}>
-            <Feather name="more-horizontal" size={26} />
+            <Feather name={Platform.OS === 'ios' ? "more-horizontal" : "more-vertical"} size={26} />
           </Button>
         )}
       </XStack>
