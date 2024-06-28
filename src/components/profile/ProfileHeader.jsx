@@ -86,7 +86,6 @@ export default function ProfileHeader({
     await openBrowserAsync(profile?.website)
   }
 
-
   const RenderGuestHeader = () => (
     <XStack w="100%" justifyContent="space-between" alignItems="center" gap="$10">
       <View>
@@ -112,7 +111,12 @@ export default function ProfileHeader({
             </Text>
           </Pressable>
         ) : (
-          <Text fontWeight="bold" fontSize={Platform.OS === 'ios' ? 20 : 15} flexWrap="wrap" allowFontScaling={false}>
+          <Text
+            fontWeight="bold"
+            fontSize={Platform.OS === 'ios' ? 20 : 15}
+            flexWrap="wrap"
+            allowFontScaling={false}
+          >
             {profile?.acct ?? 'User'}
           </Text>
         )}

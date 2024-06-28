@@ -569,7 +569,7 @@ export default function ProfileScreen() {
         }}
         onEndReachedThreshold={0.1}
         ListEmptyComponent={EmptyFeed}
-        contentContainerStyle={{flexGrow: 1}}
+        contentContainerStyle={{ flexGrow: 1 }}
         ListFooterComponent={() =>
           !userError && isFetched && isFetchingNextPage ? (
             <View p="$5">
