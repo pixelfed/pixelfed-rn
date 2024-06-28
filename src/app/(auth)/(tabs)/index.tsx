@@ -24,8 +24,6 @@ import UserAvatar from 'src/components/common/UserAvatar'
 import Welcome from 'src/components/onboarding/Welcome'
 import { useVideo } from 'src/hooks/useVideoProvider'
 
-const keyExtractor = (_, index) => `post-${_.id}-${index}`
-
 export default function HomeScreen() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -103,14 +101,16 @@ export default function HomeScreen() {
       <FeedPost
         post={item}
         user={user}
-        onOpenComments={() => onOpenComments}
-        onLike={() => handleLike}
-        onDeletePost={() => onDeletePost}
-        onBookmark={() => onBookmark}
+        onOpenComments={() => onOpenComments(item.id)}
+        onLike={() => handleLike(item.id, item.favourited)}
+        onDeletePost={() => onDeletePost(item.id)}
+        onBookmark={() => onBookmark(item.id)}
       />
     ),
-    [data]
+    []
   )
+
+  const keyExtractor = useCallback((item) => item.id.toString(), []);
 
   const onDeletePost = (id) => {
     deletePostMutation.mutate(id)
@@ -269,7 +269,7 @@ export default function HomeScreen() {
         onViewableItemsChanged={onViewRef}
         viewabilityConfig={viewConfigRef.current}
         onEndReached={() => {
-          if (hasNextPage) fetchNextPage()
+          if (hasNextPage && !isFetchingNextPage) fetchNextPage()
         }}
         onEndReachedThreshold={0.5}
         ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}
