@@ -12,11 +12,12 @@ import {
 } from 'tamagui'
 import { useAuth } from '@state/AuthProvider'
 import { ActivityIndicator, SafeAreaView } from 'react-native'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 
 export default function Login() {
   const [server, setServer] = useState('pixelfed.social')
+  const [loading, setLoading] = useState(true);
 
   const { login, isLoading } = useAuth()
 
@@ -24,10 +25,18 @@ export default function Login() {
     login(server)
   }
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <SafeAreaView style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'center' }}>
       <StatusBar style="dark" />
-      {isLoading ? (
+      {isLoading || loading ? (
         <View m="$5">
           <ActivityIndicator />
         </View>
