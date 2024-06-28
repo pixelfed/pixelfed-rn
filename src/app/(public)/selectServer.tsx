@@ -1,10 +1,18 @@
-import { Stack, router, useNavigation } from 'expo-router'
-import { Text, View, Form, Button, YStack, Label, Input, Image, XStack } from 'tamagui'
-import { useAuth } from '@state/AuthProvider'
-import { ActivityIndicator, FlatList, SafeAreaView } from 'react-native'
-import { useState } from 'react'
+import React, { useState, useMemo } from 'react'
+import { Text, View, Button, YStack, Image, XStack } from 'tamagui'
+import {
+  ActivityIndicator,
+  FlatList,
+  Keyboard,
+  SafeAreaView,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native'
 import { StatusBar } from 'expo-status-bar'
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
+import { Stack } from 'expo-router'
+import { useAuth } from '@state/AuthProvider'
+import { Feather } from '@expo/vector-icons'
 import { getOpenServers } from 'src/lib/api'
 import { enforceLen, prettyCount } from 'src/utils'
 
@@ -16,9 +24,18 @@ export default function Register() {
 
   const { login, isLoading } = useAuth()
 
+  const [searchQuery, setSearchQuery] = useState('')
+
   const handleLogin = (server) => {
     login(server)
   }
+
+  const filteredData = useMemo(() => {
+    if (!data) return []
+    return data.filter((item) =>
+      item.domain.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }, [data, searchQuery])
 
   const RenderItem = ({ item }) => (
     <Button
@@ -26,6 +43,7 @@ export default function Register() {
       px="$2"
       mb="$3"
       size="$5"
+      bg="$gray1"
       borderWidth={1}
       borderRadius={40}
       borderColor="$gray6"
@@ -79,13 +97,59 @@ export default function Register() {
           Select your server
         </Text>
       </View>
-
+      <View style={styles.searchContainer}>
+        <Feather name="search" size={20} color="#000" style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search servers..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+        {searchQuery ? (
+          <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearButton}>
+            <Feather name="x" size={20} color="#ccc" />
+          </TouchableOpacity>
+        ) : null}
+      </View>
       <FlatList
-        data={data}
+        data={filteredData}
         renderItem={RenderItem}
         ListFooterComponent={<View h={100} />}
+        onScroll={() => Keyboard.dismiss()}
         contentContainerStyle={{ flexGrow: 1, marginHorizontal: 10 }}
+        keyExtractor={(item) => item.domain}
       />
     </SafeAreaView>
   )
+}
+
+const styles = {
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    position: 'relative',
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 19,
+    height: 50,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 30,
+    paddingLeft: 50,
+    paddingRight: 50,
+    backgroundColor: '#fff',
+  },
+  searchIcon: {
+    position: 'absolute',
+    left: 30,
+    zIndex: 2,
+  },
+  clearButton: {
+    position: 'absolute',
+    right: 30,
+    zIndex: 2,
+  },
 }
