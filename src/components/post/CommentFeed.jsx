@@ -44,6 +44,7 @@ import {
 } from 'src/utils'
 import ReadMore from '../common/ReadMore'
 import AutolinkText from '../common/AutolinkText'
+import FastImage from 'react-native-fast-image'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
@@ -97,6 +98,7 @@ export default function CommentFeed({
   const renderItem = useCallback(
     ({ item }) => {
       const captionText = htmlToTextWithLineBreaks(item.content)
+      const postType = item.pf_type
       return (
         <View style={styles.itemContainer}>
           <YStack flexShrink={1}>
@@ -117,6 +119,13 @@ export default function CommentFeed({
                       {_timeAgo(item.created_at)}
                     </Text>
                   </XStack>
+                  { postType === 'photo' ?
+                    <FastImage
+                      source={{uri: item?.media_attachments[0].url, width: 200, height: 200}}
+                      style={{width: 200, height: 200, borderRadius: 10}}
+                      resizeMode={FastImage.resizeMode.cover}
+                    /> : null
+                  }
                   <ReadMore numberOfLines={3}>
                     <AutolinkText
                       text={captionText}
