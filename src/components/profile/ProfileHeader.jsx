@@ -7,7 +7,7 @@ import {
   prettyCount,
 } from 'src/utils'
 import { Link, router } from 'expo-router'
-import { Pressable } from 'react-native'
+import { Dimensions, Pressable } from 'react-native'
 import EditProfile from './actionButtons/EditProfile'
 import FollowingProfile from './actionButtons/FollowingProfile'
 import FollowProfile from './actionButtons/FollowProfile'
@@ -17,6 +17,8 @@ import ReadMore from 'src/components/common/ReadMore'
 import AutolinkText from 'src/components/common/AutolinkText'
 import { useState } from 'react'
 import { PressableOpacity } from 'react-native-pressable-opacity'
+
+const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileHeader({
   profile,
@@ -30,7 +32,6 @@ export default function ProfileHeader({
   onCancelFollowRequest,
 }) {
   const [usernameTruncated, setUsernameTruncated] = useState(profile?.acct?.length > 40)
-
   const _prettyCount = (num) => {
     if (!num) {
       return 0
@@ -84,6 +85,8 @@ export default function ProfileHeader({
   const _openWebsite = async () => {
     await openBrowserAsync(profile?.website)
   }
+
+  console.log(SCREEN_WIDTH)
 
   const RenderGuestHeader = () => (
     <XStack w="100%" justifyContent="space-between" alignItems="center" gap="$10">
@@ -150,18 +153,18 @@ export default function ProfileHeader({
 
         <XStack w="100%" justifyContent="space-between" alignItems="center" mt="$3">
           <View style={{ borderRadius: 100, overflow: 'hidden' }}>
-            <Avatar circular size="$10" borderWidth={1} borderColor="$gray5">
+            <Avatar circular size={SCREEN_WIDTH > 400 ? "$10" : "$8"} borderWidth={1} borderColor="$gray5">
               <Avatar.Image src={profile?.avatar} />
               <Avatar.Fallback backgroundColor="$gray4" />
             </Avatar>
           </View>
 
-          <XStack gap="$7" mx="$5" alignItems="flex-start">
+          <XStack gap={SCREEN_WIDTH > 400 ? "$7" : "$5"} mx="$5" alignItems="flex-start">
             <YStack alignItems="center" gap="$1">
-              <Text fontWeight="bold" fontSize="$6" allowFontScaling={false}>
+              <Text fontWeight="bold" fontSize="$5" allowFontScaling={false}>
                 {prettyCount(profile?.statuses_count ? profile.statuses_count : 0)}
               </Text>
-              <Text fontSize="$3" allowFontScaling={false}>
+              <Text fontSize="$2" allowFontScaling={false}>
                 Posts
               </Text>
             </YStack>
@@ -169,20 +172,20 @@ export default function ProfileHeader({
             {profile && profile.id ? (
               <Link href={`/profile/following/${profile?.id}`} asChild>
                 <YStack alignItems="center" gap="$1">
-                  <Text fontWeight="bold" fontSize="$6" allowFontScaling={false}>
+                  <Text fontWeight="bold" fontSize="$5" allowFontScaling={false}>
                     {prettyCount(profile?.following_count ? profile.following_count : 0)}
                   </Text>
-                  <Text fontSize="$3" allowFontScaling={false}>
+                  <Text fontSize="$2" allowFontScaling={false}>
                     Following
                   </Text>
                 </YStack>
               </Link>
             ) : (
               <YStack alignItems="center" gap="$1">
-                <Text fontWeight="bold" fontSize="$6" allowFontScaling={false}>
+                <Text fontWeight="bold" fontSize="$5" allowFontScaling={false}>
                   0
                 </Text>
-                <Text fontSize="$3" allowFontScaling={false}>
+                <Text fontSize="$2" allowFontScaling={false}>
                   Following
                 </Text>
               </YStack>
@@ -191,10 +194,10 @@ export default function ProfileHeader({
             {profile && profile.id ? (
               <Link href={`/profile/followers/${profile?.id}`} asChild>
                 <YStack alignItems="center" gap="$1">
-                  <Text fontWeight="bold" fontSize="$6" allowFontScaling={false}>
+                  <Text fontWeight="bold" fontSize="$5" allowFontScaling={false}>
                     {prettyCount(profile?.followers_count ? profile.followers_count : 0)}
                   </Text>
-                  <Text fontSize="$3" allowFontScaling={false}>
+                  <Text fontSize="$2" allowFontScaling={false}>
                     Followers
                   </Text>
                 </YStack>
