@@ -4,7 +4,7 @@ import { StyleSheet, TouchableOpacity, Alert, Pressable } from 'react-native'
 import { Text, View, useTheme } from 'tamagui'
 
 const mentionRegex = /@\w+(?:@\w+\.\w+(?:\.\w+)*)?/g
-const hashtagRegex = /#[a-zA-Z0-9]+(?:[a-zA-Z0-9_-]*[a-zA-Z0-9])?/g
+const hashtagRegex = /#[\p{L}\p{N}]+(?:[\p{L}\p{N}_-]*[\p{L}\p{N}])?/gu
 
 const parseText = (text) => {
   const matches = []
