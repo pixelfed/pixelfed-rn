@@ -86,49 +86,53 @@ export default function ProfileHeader({
     await openBrowserAsync(profile?.website)
   }
 
-  console.log(SCREEN_WIDTH)
 
   const RenderGuestHeader = () => (
     <XStack w="100%" justifyContent="space-between" alignItems="center" gap="$10">
-      <Link href={{ screen: '', action: 'goBack' }} asChild>
-        <Pressable>
-          <XStack alignItems="center" gap="$5">
-            <Feather name="chevron-left" size={26} />
-          </XStack>
-        </Pressable>
-      </Link>
+      <View>
+        <Link href={{ screen: '', action: 'goBack' }} asChild>
+          <Pressable>
+            <XStack alignItems="center" gap="$5">
+              <Feather name="chevron-left" size={26} />
+            </XStack>
+          </Pressable>
+        </Link>
+      </View>
 
-      {usernameTruncated ? (
-        <Pressable onPress={() => setUsernameTruncated(false)}>
-          <Text
-            flexShrink={1}
-            fontWeight="bold"
-            fontSize={profile?.acct.length > 40 ? 15 : 20}
-            flexWrap="wrap"
-          >
-            {enforceLen(profile?.acct, 35, true, 'middle')}
-          </Text>
-        </Pressable>
-      ) : (
-        <Text flexShrink={1} fontWeight="bold" fontSize={20} flexWrap="wrap">
-          {profile?.acct ?? 'User'}
-        </Text>
-      )}
-
-      <XStack alignItems="center" gap="$5">
-        {selfUser?.id == profile?.id ? (
-          <Button chromeless p="$0" size="$2" onPress={() => onShare()}>
-            <Feather name="share" size={23} />
-          </Button>
+      <View flexShrink={1}>
+        {usernameTruncated ? (
+          <Pressable onPress={() => setUsernameTruncated(false)}>
+            <Text
+              flexShrink={1}
+              fontWeight="bold"
+              fontSize={profile?.acct.length > 40 ? 15 : 20}
+              flexWrap="wrap"
+            >
+              {enforceLen(profile?.acct, 35, true, 'middle')}
+            </Text>
+          </Pressable>
         ) : (
-          <Button chromeless p="$0" onPress={() => openMenu()}>
-            <Feather
-              name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
-              size={26}
-            />
-          </Button>
+          <Text fontWeight="bold" fontSize={Platform.OS === 'ios' ? 20 : 15} flexWrap="wrap" allowFontScaling={false}>
+            {profile?.acct ?? 'User'}
+          </Text>
         )}
-      </XStack>
+      </View>
+      <View>
+        <XStack alignItems="center" gap="$5">
+          {selfUser?.id == profile?.id ? (
+            <Button chromeless p="$0" size="$2" onPress={() => onShare()}>
+              <Feather name="share" size={23} />
+            </Button>
+          ) : (
+            <Button chromeless p="$0" onPress={() => openMenu()}>
+              <Feather
+                name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
+                size={26}
+              />
+            </Button>
+          )}
+        </XStack>
+      </View>
     </XStack>
   )
 
