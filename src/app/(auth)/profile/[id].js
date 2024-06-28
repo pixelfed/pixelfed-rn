@@ -72,19 +72,23 @@ export default function ProfileScreen() {
 
     if (isSensitive) {
       return (
-        <ZStack w={SCREEN_WIDTH / 3 - 2} h={SCREEN_WIDTH / 3 - 2}>
-          <Blurhash
-            blurhash={item.media_attachments[0]?.blurhash}
-            style={{
-              flex: 1,
-              width: SCREEN_WIDTH / 3 - 2,
-              height: SCREEN_WIDTH / 3 - 2,
-            }}
-          />
-          <View p="$2" justifyContent="flex-end" alignItems="flex-end">
-            <Feather name="eye-off" size={20} color="white" />
+        <Link href={`/post/${item.id}`} asChild>
+          <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
+            <ZStack w={SCREEN_WIDTH / 3 - 2} h={SCREEN_WIDTH / 3 - 2}>
+              <Blurhash
+                blurhash={item.media_attachments[0]?.blurhash}
+                style={{
+                  flex: 1,
+                  width: SCREEN_WIDTH / 3 - 2,
+                  height: SCREEN_WIDTH / 3 - 2,
+                }}
+              />
+              <View p="$2" justifyContent="flex-end" alignItems="flex-end">
+                <Feather name="eye-off" size={20} color="white" />
+              </View>
+            </ZStack>
           </View>
-        </ZStack>
+        </Link>
       )
     }
 
