@@ -5,20 +5,15 @@ import {
   YStack,
   XStack,
   TextArea,
-  Tabs,
   Separator,
-  SizableText,
-  H5,
   ScrollView,
   ZStack,
 } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
-import { router, Stack, useFocusEffect, useRouter } from 'expo-router'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { Stack, useRouter } from 'expo-router'
 import {
   ActivityIndicator,
   StyleSheet,
-  TouchableOpacity,
   Alert,
   Platform,
 } from 'react-native'
@@ -36,7 +31,7 @@ import {
   BottomSheetTextInput,
 } from '@gorhom/bottom-sheet'
 import { Switch } from 'src/components/form/Switch'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import {
   getInstanceV1,
   getComposeSettings,
@@ -501,18 +496,21 @@ export default function Camera() {
               ) : (
                 <View
                   p="$3"
-                  bg="$gray3"
+                  bg="$gray2"
                   borderWidth={1}
-                  borderColor="$gray6"
+                  borderColor="$gray4"
                   mr="$3"
                   borderRadius={10}
                   justifyContent="center"
                   alignItems="center"
                 >
-                  <Text fontSize="$7" lineHeight={30} color="$gray9">
-                    Tap <Feather name="image" size={24} color="black" /> or{' '}
-                    <Feather name="camera" size={24} color="black" /> to add media
-                  </Text>
+                  <XStack gap="$2">
+                    <Text fontSize="$7" lineHeight={30} color="$gray12">Tap</Text>
+                    <PressableOpacity onPress={pickImage}><Feather name="image" size={24} color="black" /></PressableOpacity>
+                    <Text fontSize="$7" lineHeight={30} color="$gray12"> or </Text>
+                    <PressableOpacity onPress={openCamera}><Feather name="camera" size={24} color="black" /></PressableOpacity>
+                    <Text fontSize="$7" lineHeight={30} color="$gray12"> to add media</Text>
+                  </XStack>
                 </View>
               )}
             </View>
