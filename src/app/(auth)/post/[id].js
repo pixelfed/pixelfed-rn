@@ -3,9 +3,9 @@ import { Image, ScrollView, Text, View, YStack } from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
 import { Storage } from 'src/state/cache'
 import { queryApi } from 'src/requests'
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback, useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, router } from 'expo-router'
+import { Stack, useLocalSearchParams, router, useNavigation } from 'expo-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   getStatusById,
@@ -24,6 +24,11 @@ import CommentFeed from 'src/components/post/CommentFeed'
 
 export default function Page() {
   const { id } = useLocalSearchParams()
+  const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: 'Post' });
+  }, [navigation]);
   const user = JSON.parse(Storage.getString('user.profile'))
   const queryClient = useQueryClient()
   const bottomSheetModalRef = useRef(null)
