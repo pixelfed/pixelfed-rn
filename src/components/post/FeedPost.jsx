@@ -1,4 +1,4 @@
-import { Alert, Dimensions, Share, StyleSheet, Pressable} from 'react-native'
+import { Alert, Dimensions, Share, StyleSheet, Pressable, Platform} from 'react-native'
 import { Button, Group, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
 import { Feather, Ionicons } from '@expo/vector-icons'
 import FastImage from 'react-native-fast-image'
@@ -85,7 +85,7 @@ const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMe
       </View>
       <Pressable onPress={() => onOpenMenu()}>
         <View px="$3">
-          <Feather name="more-horizontal" size={25} />
+          <Feather name={Platform.OS === 'ios' ? "more-horizontal" : "more-vertical"} size={25} />
         </View>
       </Pressable>
     </XStack>
