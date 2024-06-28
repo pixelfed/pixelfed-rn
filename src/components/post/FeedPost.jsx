@@ -16,7 +16,8 @@ import {
   BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet'
 import Carousel, { ICarouselInstance, Pagination } from 'react-native-reanimated-carousel'
-import { useSharedValue } from 'react-native-reanimated'
+import { useSharedValue, runOnJS } from 'react-native-reanimated'
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import ReadMore from '../common/ReadMore'
 import LikeButton from 'src/components/common/LikeButton'
 import AutolinkText from 'src/components/common/AutolinkText'
@@ -187,7 +188,7 @@ const PostAlbumMedia = ({ media, post, carouselRef, progress }) => {
   }
 
   return (
-    <View>
+    <>
       <Carousel
         ref={carouselRef}
         onConfigurePanGesture={gestureChain => (
@@ -230,7 +231,7 @@ const PostAlbumMedia = ({ media, post, carouselRef, progress }) => {
         containerStyle={{ gap: 5, marginTop: 10, marginBottom: -10, zIndex: 5 }}
         size={8}
       />
-    </View>
+    </>
   )
 }
 
@@ -257,14 +258,14 @@ const PostActions = React.memo(
             </Pressable>
             {/* <Feather name="refresh-cw" size={26} /> */}
           </XStack>
-          <PressableOpacity onPress={() => onBookmark()}>
+          {/* <PressableOpacity onPress={() => onBookmark()}>
             <XStack gap="$4">
               { hasBookmarked ?
                 <Ionicons name="bookmark" size={30} /> :
                 <Feather name="bookmark" size={30} />
               }
               </XStack>
-          </PressableOpacity>
+          </PressableOpacity> */}
         </XStack>
         {likesCount || sharesCount ? (
           <XStack justifyContent="space-between" alignItems="flex-end">
@@ -383,6 +384,7 @@ export default function FeedPost({ post, user, onOpenComments, onLike, onDeleteP
   const carouselRef = useRef(null)
   const progress = useSharedValue(0)
   const snapPoints = useMemo(() => ['45%', '50%'], [])
+  const [tmpFav, setTmpFav] = useState(false)
 
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
@@ -453,6 +455,33 @@ export default function FeedPost({ post, user, onOpenComments, onLike, onDeleteP
     } catch (error) {}
   }
 
+  const handleShowLike = () => {
+    if(!post.favourited) {
+      setTmpFav(true)
+    }
+    onLike()
+  }
+
+  const onSingleTap = () => {
+    if(post.pf_type !== 'photo') {
+      return;
+    }
+
+    goToPost();
+  }
+
+  // const singleTap = Gesture.Tap()
+  //     .numberOfTaps(1)
+  //     .onStart(() => {
+  //       runOnJS(onSingleTap)();
+  //     });
+
+  // const doubleTap = Gesture.Tap()
+  //     .numberOfTaps(2)
+  //     .onStart(() => {
+  //       runOnJS(handleShowLike)();
+  //     });
+
   return (
     <View flex={1} style={{ width: SCREEN_WIDTH }}>
       <PostHeader
@@ -470,7 +499,9 @@ export default function FeedPost({ post, user, onOpenComments, onLike, onDeleteP
           progress={progress}
         />
       ) : post.media_attachments?.length === 1 ? (
-        <PostMedia media={post.media_attachments} post={post} />
+        /*<GestureDetector gesture={Gesture.Exclusive(doubleTap, singleTap)}>*/
+          <PostMedia media={post.media_attachments} post={post} />
+        /*</GestureDetector>*/
       ) : null}
       <PostActions
         hasLiked={post.favourited}
