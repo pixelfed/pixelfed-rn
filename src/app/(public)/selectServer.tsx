@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react'
 import { Text, View, Button, YStack, Image, XStack } from 'tamagui'
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Keyboard,
   SafeAreaView,
@@ -10,7 +11,7 @@ import {
 } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { useQuery } from '@tanstack/react-query'
-import { Stack } from 'expo-router'
+import { Stack, useRouter } from 'expo-router'
 import { useAuth } from '@state/AuthProvider'
 import { Feather } from '@expo/vector-icons'
 import { getOpenServers } from 'src/lib/api'
@@ -22,12 +23,18 @@ export default function Register() {
     queryFn: getOpenServers,
   })
 
+  const router = useRouter()
+
   const { login, isLoading } = useAuth()
 
   const [searchQuery, setSearchQuery] = useState('')
 
   const handleLogin = (server) => {
     login(server)
+  }
+
+  const manualLogin = () => {
+    router.push('/manualLogin')
   }
 
   const filteredData = useMemo(() => {
@@ -113,6 +120,20 @@ export default function Register() {
           </TouchableOpacity>
         ) : null}
       </View>
+      
+      <View mx="$3" mb="$3">
+        <Button
+          onPress={() => manualLogin()}
+          px="$2"
+          size="$5"
+          theme="gray"
+          themeInverse={true}
+          borderWidth={1}
+          borderRadius={40}
+          >
+          <Text color="white" allowFontScaling={false} fontWeight="bold">Tap here to login with a server domain</Text>
+        </Button>
+        </View>
       <FlatList
         data={filteredData}
         renderItem={RenderItem}
