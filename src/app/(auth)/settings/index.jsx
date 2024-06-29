@@ -13,15 +13,19 @@ import {
 import ProfileHeader from '@components/profile/ProfileHeader'
 import { Storage } from 'src/state/cache'
 import { queryApi } from 'src/requests'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, Link } from 'expo-router'
+import { Stack, useLocalSearchParams, Link, useNavigation } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
 import { useAuth } from '@state/AuthProvider'
 import { openBrowserAsync } from 'src/utils'
 import * as Application from 'expo-application'
 
 export default function Page() {
+  const navigation = useNavigation()
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: 'Settings' })
+  }, [navigation])
   const [user, setUser] = useState()
   const instance = Storage.getString('app.instance')
   const buildVersion = 48

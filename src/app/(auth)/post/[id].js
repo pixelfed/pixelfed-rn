@@ -27,7 +27,7 @@ export default function Page() {
   const navigation = useNavigation()
 
   useLayoutEffect(() => {
-    navigation.setOptions({ title: 'Post' })
+    navigation.setOptions({ title: 'Post', headerBackTitle: 'Back' })
   }, [navigation])
   const user = JSON.parse(Storage.getString('user.profile'))
   const queryClient = useQueryClient()

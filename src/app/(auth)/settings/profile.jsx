@@ -218,7 +218,7 @@ export default function Page() {
             label="Website"
             value={user?.website}
             placeholder="Add your website"
-            path=""
+            path="settings/updateWebsite"
             border={false}
           />
         </YStack>
