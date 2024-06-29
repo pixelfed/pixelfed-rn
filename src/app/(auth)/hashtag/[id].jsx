@@ -6,8 +6,19 @@ import { queryApi } from 'src/requests'
 import { useState, useEffect, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, router, Link } from 'expo-router'
-import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getHashtagByName, getHashtagByNameFeed, getHashtagRelated, followHashtag, unfollowHashtag } from 'src/lib/api'
+import {
+  useQuery,
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
+import {
+  getHashtagByName,
+  getHashtagByNameFeed,
+  getHashtagRelated,
+  followHashtag,
+  unfollowHashtag,
+} from 'src/lib/api'
 import { prettyCount } from '../../../utils'
 import FastImage from 'react-native-fast-image'
 import { Feather } from '@expo/vector-icons'
@@ -81,7 +92,7 @@ export default function Page() {
   const handleOnFollow = () => {
     followMutation.mutate('follow')
   }
-  
+
   const handleOnUnfollow = () => {
     followMutation.mutate('unfollow')
   }
@@ -284,7 +295,14 @@ export default function Page() {
         onEndReachedThreshold={0.9}
         contentContainerStyle={{ flexGrow: 1 }}
         ListEmptyComponent={RenderEmpty}
-        ListHeaderComponent={<Header hashtag={hashtag} feed={feed} onFollow={handleOnFollow} onUnfollow={handleOnUnfollow} />}
+        ListHeaderComponent={
+          <Header
+            hashtag={hashtag}
+            feed={feed}
+            onFollow={handleOnFollow}
+            onUnfollow={handleOnUnfollow}
+          />
+        }
         ListFooterComponent={() =>
           isFetching || isFetchingNextPage ? (
             <View p="$5">

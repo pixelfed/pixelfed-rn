@@ -59,7 +59,7 @@ export default function Login() {
             />
           </View>
 
-          <YStack flexDirection="row" mb={Platform.OS === 'ios' ? 0 : "$5"}>
+          <YStack flexDirection="row" mb={Platform.OS === 'ios' ? 0 : '$5'}>
             <Link href="/selectServer" asChild>
               <Button
                 size="$6"

@@ -120,7 +120,7 @@ export default function Register() {
           </TouchableOpacity>
         ) : null}
       </View>
-      
+
       <View mx="$3" mb="$3">
         <Button
           onPress={() => manualLogin()}
@@ -130,10 +130,12 @@ export default function Register() {
           themeInverse={true}
           borderWidth={1}
           borderRadius={40}
-          >
-          <Text color="white" allowFontScaling={false} fontWeight="bold">Tap here to login with a server domain</Text>
+        >
+          <Text color="white" allowFontScaling={false} fontWeight="bold">
+            Tap here to login with a server domain
+          </Text>
         </Button>
-        </View>
+      </View>
       <FlatList
         data={filteredData}
         renderItem={RenderItem}

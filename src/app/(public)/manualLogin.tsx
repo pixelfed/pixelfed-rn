@@ -42,37 +42,39 @@ export default function Login() {
         alignItems: 'center',
       }}
     >
-        <Stack.Screen
-            options={{
-                headerShown: false
-            }}
-        />
-        <StatusBar style="light" />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+      />
+      <StatusBar style="light" />
 
-        <YStack w="100%" px="$5">
-            <Text fontSize={30} my="$6" letterSpacing={-1} color="white">
-                Pixelfed Sign in
-            </Text>
-            <Form gap="$5" onSubmit={handleLogin}>
-            <YStack>
-                <Label fontWeight={'bold'} color="$gray10">Server domain</Label>
-                <Input
-                size="$6"
-                theme="dark"
-                themeInverse={true}
-                value={server}
-                onChangeText={setServer}
-                borderWidth={2}
-                />
-            </YStack>
+      <YStack w="100%" px="$5">
+        <Text fontSize={30} my="$6" letterSpacing={-1} color="white">
+          Pixelfed Sign in
+        </Text>
+        <Form gap="$5" onSubmit={handleLogin}>
+          <YStack>
+            <Label fontWeight={'bold'} color="$gray10">
+              Server domain
+            </Label>
+            <Input
+              size="$6"
+              theme="dark"
+              themeInverse={true}
+              value={server}
+              onChangeText={setServer}
+              borderWidth={2}
+            />
+          </YStack>
 
-            <Form.Trigger asChild>
-                <Button theme="blue" size="$6" bg="$blue9" color="white" fontWeight="bold">
-                Sign in
-                </Button>
-            </Form.Trigger>
-            </Form>
-        </YStack>
+          <Form.Trigger asChild>
+            <Button theme="blue" size="$6" bg="$blue9" color="white" fontWeight="bold">
+              Sign in
+            </Button>
+          </Form.Trigger>
+        </Form>
+      </YStack>
     </SafeAreaView>
   )
 }
