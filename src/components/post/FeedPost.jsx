@@ -406,6 +406,7 @@ export default function FeedPost({
   onDeletePost,
   onBookmark,
   disableReadMore = false,
+  isPermalink = false,
 }) {
   const bottomSheetModalRef = useRef(null)
   const carouselRef = useRef(null)
@@ -599,16 +600,18 @@ export default function FeedPost({
               </Group.Item>
             </Group>
             <Group separator={<Separator />}>
-              <Group.Item>
-                <Button size="$5" justifyContent="start" onPress={() => goToPost()}>
-                  <XStack alignItems="center" gap="$3">
-                    <Feather name="arrow-right-circle" size={20} color="#aaa" />
-                    <Text fontSize="$5" allowFontScaling={false}>
-                      View Post
-                    </Text>
-                  </XStack>
-                </Button>
-              </Group.Item>
+              {!isPermalink ? (
+                <Group.Item>
+                  <Button size="$5" justifyContent="start" onPress={() => goToPost()}>
+                    <XStack alignItems="center" gap="$3">
+                      <Feather name="arrow-right-circle" size={20} color="#aaa" />
+                      <Text fontSize="$5" allowFontScaling={false}>
+                        View Post
+                      </Text>
+                    </XStack>
+                  </Button>
+                </Group.Item>
+              ) : null}
               <Group.Item>
                 <Button size="$5" justifyContent="start" onPress={() => goToProfile()}>
                   <XStack alignItems="center" gap="$3">

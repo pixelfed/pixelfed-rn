@@ -128,6 +128,7 @@ export default function Page() {
           onLike={handleLike}
           onDeletePost={onDeletePost}
           disableReadMore={true}
+          isPermalink={true}
         />
       </ScrollView>
     </SafeAreaView>
