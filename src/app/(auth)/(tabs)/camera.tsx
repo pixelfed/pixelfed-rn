@@ -10,11 +10,11 @@ import {
   ZStack,
 } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
-import { Stack, useRouter } from 'expo-router'
+import { Stack, useNavigation, useRouter } from 'expo-router'
 import { ActivityIndicator, StyleSheet, Alert, Platform, Linking } from 'react-native'
 import { Storage } from 'src/state/cache'
 import UserAvatar from 'src/components/common/UserAvatar'
-import { useState, useRef, useCallback, useMemo, useEffect } from 'react'
+import { useState, useRef, useCallback, useMemo, useEffect, useLayoutEffect } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import { FlatList } from 'react-native-gesture-handler'
 import FastImage from 'react-native-fast-image'
@@ -49,7 +49,7 @@ export default function Camera() {
   const [scope, setScope] = useState('public')
   const [isSensitive, setSensitive] = useState(false)
   const [media, setMedia] = useState([])
-  const [mediaEdit, setMediaEdit] = useState(true)
+  const [mediaEdit, setMediaEdit] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const [curAltext, setCurAltext] = useState('')
   const [canPost, setCanPost] = useState(false)
@@ -72,6 +72,11 @@ export default function Camera() {
       setCanPost(true)
     }
   }, [hasShareIntent])
+
+  const navigation = useNavigation()
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: 'New Post' })
+  }, [navigation])
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const altTextRef = useRef<BottomSheetModal>(null)
@@ -98,7 +103,7 @@ export default function Camera() {
     setScope('public')
     setSensitive(false)
     setMedia([])
-    setMediaEdit(true)
+    setMediaEdit(false)
     setActiveIndex(0)
     setCurAltext('')
     setCanPost(false)
