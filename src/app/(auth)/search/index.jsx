@@ -207,6 +207,7 @@ export default function SearchScreen() {
           onChangeText={(text) => setQuery(text)}
           value={query}
           bg="white"
+          autoFocus={true}
           size="$6"
         />
 
