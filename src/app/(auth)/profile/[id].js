@@ -65,12 +65,13 @@ export default function ProfileScreen() {
     if (!item || !item.media_attachments) {
       return <View bg="$gray4"></View>
     }
+    const forceSensitive = Storage.getBoolean('ui.forceSensitive') === true
     const med = item.media_attachments[0]
     const murl = med.url
     const isSensitive = item.sensitive
     const hasPreview = med.preview_url && !med.preview_url.endsWith('no-preview.png')
 
-    if (isSensitive) {
+    if (isSensitive && !forceSensitive) {
       return (
         <Link href={`/post/${item.id}`} asChild>
           <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
@@ -131,7 +132,7 @@ export default function ProfileScreen() {
     return item && item.media_attachments && item.media_attachments[0].url ? (
       <Link href={`/post/${item.id}`} asChild>
         <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
-          {item.sensitive ? (
+          {item.sensitive && !forceSensitive ? (
             <ZStack w={SCREEN_WIDTH / 3 - 2} h={SCREEN_WIDTH / 3 - 2}>
               <Blurhash
                 blurhash={item.media_attachments[0]?.blurhash}

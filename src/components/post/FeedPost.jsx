@@ -28,6 +28,7 @@ import { BlurView } from '@react-native-community/blur'
 import VideoPlayer from './VideoPlayer'
 import ReadMoreAndroid from '../common/ReadMoreAndroid'
 import ReadMoreApple from '../common/ReadMoreApple'
+import { Storage } from 'src/state/cache'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 const AVATAR_WIDTH = 45
@@ -100,11 +101,12 @@ const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMe
 const PostMedia = React.memo(({ media, post }) => {
   const mediaUrl = media[0].url
   const [showSensitive, setSensitive] = useState(false)
+  const forceSensitive = Storage.getBoolean('ui.forceSensitive') == true
   const height = media[0].meta?.original?.width
     ? SCREEN_WIDTH * (media[0].meta?.original?.height / media[0].meta?.original.width)
     : 430
 
-  if (post.sensitive && !showSensitive) {
+  if (!forceSensitive && post.sensitive && !showSensitive) {
     return (
       <ZStack w={SCREEN_WIDTH} h={height}>
         <Blurhash

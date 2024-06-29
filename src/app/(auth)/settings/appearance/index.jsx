@@ -10,7 +10,6 @@ import {
   XStack,
   YStack,
   Button,
-  Switch,
   Theme,
 } from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
@@ -21,38 +20,12 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, Link } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
 import { openBrowserAsync, prettyCount } from '../../../../utils'
+import { Switch } from 'src/components/form/Switch'
 
 export default function Screen() {
   const instance = Storage.getString('app.instance')
-  const [darkMode, setDarkMode] = useState(false)
+  const forceSensitive = Storage.getBoolean('ui.forceSensitive')
 
-  const openLink = async (path) => {
-    await openBrowserAsync(`https://${instance}/${path}`)
-  }
-
-  const openExternalLink = async (url) => {
-    await openBrowserAsync(`https://${url}`)
-  }
-
-  const GroupButton = ({ icon, title, path }) => (
-    <Group.Item>
-      <Button
-        onPress={() => openLink(path)}
-        bg="$gray1"
-        justifyContent="start"
-        size="$5"
-        px="$3"
-      >
-        <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
-          <XStack alignItems="center" ml="$1" gap="$3">
-            <Feather name={icon} size={17} color="#666" />
-            <Text fontSize="$6">{title}</Text>
-          </XStack>
-          <Feather name="chevron-right" size={20} color="#ccc" />
-        </XStack>
-      </Button>
-    </Group.Item>
-  )
   return (
     <SafeAreaView flex={1} edges={['bottom']}>
       <Stack.Screen
@@ -61,36 +34,28 @@ export default function Screen() {
           headerBackTitle: 'Back',
         }}
       />
-      <Theme name={darkMode ? 'dark' : 'light'}>
-        <ScrollView flexShrink={1}>
-          <YStack gap="$5">
-            <XStack
-              p="$5"
-              bg="$background"
-              justifyContent="space-between"
-              alignItems="center"
-              borderRadius={'$3'}
-            >
-              <YStack maxWidth="60%" gap="$2">
-                <Text fontSize="$5" fontWeight={'bold'}>
-                  Dark Mode
-                </Text>
-                <Text fontSize="$3" color="$gray9">
-                  Enable dark mode design
-                </Text>
-              </YStack>
-              <Switch
-                size="$3"
-                defaultChecked={darkMode}
-                value={darkMode}
-                onCheckedChange={setDarkMode}
-              >
-                <Switch.Thumb animation="quicker" />
-              </Switch>
-            </XStack>
+
+      <ScrollView flexShrink={1}>
+        <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
+          <YStack maxWidth="60%" gap="$2">
+            <Text fontSize="$5" fontWeight={'bold'}>
+              Force Show Sensitive/NSFW Media
+            </Text>
+            <Text fontSize="$3" color="$gray9">
+              Removes sensitive content warnings and displays media across accounts, feeds
+              and hashtags.
+            </Text>
           </YStack>
-        </ScrollView>
-      </Theme>
+          <Switch
+            size="$3"
+            defaultChecked={forceSensitive}
+            onCheckedChange={(checked) => Storage.set('ui.forceSensitive', checked)}
+          >
+            <Switch.Thumb animation="quicker" />
+          </Switch>
+        </XStack>
+        <Separator />
+      </ScrollView>
     </SafeAreaView>
   )
 }
