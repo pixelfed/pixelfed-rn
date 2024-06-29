@@ -158,12 +158,20 @@ const PostMedia = React.memo(({ media, post }) => {
   )
 })
 
+const calculateHeight = (item) => {
+  if (item.meta?.original?.width) {
+    return SCREEN_WIDTH * (item.meta.original.height / item.meta.original.width)
+  }
+  return 500
+}
+
 const PostAlbumMedia = ({ media, post, carouselRef, progress }) => {
   const mediaUrl = media[0].url
   const [showSensitive, setSensitive] = useState(false)
-  const height = media[0].meta?.original?.width
-    ? SCREEN_WIDTH * (media[0].meta?.original?.height / media[0].meta?.original.width)
-    : 430
+  const height = media.reduce((max, item) => {
+    const height = calculateHeight(item)
+    return height > max ? height : max
+  }, 0)
 
   if (post.sensitive && !showSensitive) {
     return (
@@ -217,9 +225,6 @@ const PostAlbumMedia = ({ media, post, carouselRef, progress }) => {
         data={post.media_attachments}
         renderItem={({ index }) => {
           const media = post.media_attachments[0]
-          const height = media.meta?.original?.width
-            ? SCREEN_WIDTH * (media.meta?.original?.height / media.meta?.original.width)
-            : 500
           return (
             <FastImage
               style={{
