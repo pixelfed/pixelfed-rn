@@ -5,7 +5,7 @@ import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
 import { Feather } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link, Stack, useRouter } from 'expo-router'
+import { Link, Stack, useNavigation, useRouter } from 'expo-router'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   fetchNetworkFeed,
@@ -27,10 +27,13 @@ import {
 import CommentFeed from 'src/components/post/CommentFeed'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { useVideo } from 'src/hooks/useVideoProvider'
+import { useFocusEffect } from '@react-navigation/native'
 
 export default function HomeScreen() {
   const router = useRouter()
   const queryClient = useQueryClient()
+  const navigation = useNavigation()
+  const flatListRef = useRef(null)
 
   const [replyId, setReplyId] = useState(null)
   const [sheetType, setSheetType] = useState('comments')
@@ -46,6 +49,16 @@ export default function HomeScreen() {
       <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
     ),
     []
+  )
+
+  useFocusEffect(
+    useCallback(() => {
+      const unsubscribe = navigation.addListener('tabPress', () => {
+        flatListRef.current?.scrollToOffset({ animated: true, offset: 0 })
+      })
+
+      return unsubscribe
+    }, [navigation])
   )
 
   const onOpenComments = useCallback(
@@ -227,6 +240,7 @@ export default function HomeScreen() {
         ) : null}
       </BottomSheetModal>
       <FlatList
+        ref={flatListRef}
         data={data?.pages.flatMap((page) => page.data)}
         keyExtractor={keyExtractor}
         renderItem={renderItem}

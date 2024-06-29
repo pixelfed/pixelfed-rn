@@ -5,7 +5,7 @@ import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
 import { Feather } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router'
+import { Link, Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   fetchHomeFeed,
@@ -29,10 +29,13 @@ import { useShareIntentContext } from 'expo-share-intent'
 import UserAvatar from 'src/components/common/UserAvatar'
 import Welcome from 'src/components/onboarding/Welcome'
 import { useVideo } from 'src/hooks/useVideoProvider'
+import { useFocusEffect } from '@react-navigation/native'
 
 export default function HomeScreen() {
   const router = useRouter()
+  const navigation = useNavigation()
   const queryClient = useQueryClient()
+  const flatListRef = useRef(null)
   const { hasShareIntent } = useShareIntentContext()
   const params = useLocalSearchParams()
   const [isPosting, setIsPosting] = useState(false)
@@ -57,6 +60,16 @@ export default function HomeScreen() {
 
     return () => clearTimeout(timer)
   }, [params.ref30])
+
+  useFocusEffect(
+    useCallback(() => {
+      const unsubscribe = navigation.addListener('tabPress', () => {
+        flatListRef.current?.scrollToOffset({ animated: true, offset: 0 })
+      })
+
+      return unsubscribe
+    }, [navigation])
+  )
 
   const [replyId, setReplyId] = useState(null)
   const [sheetType, setSheetType] = useState('comments')
@@ -264,6 +277,7 @@ export default function HomeScreen() {
         {sheetType === 'welcome' ? <Welcome onContinue={handleOnContinue} /> : null}
       </BottomSheetModal>
       <FlatList
+        ref={flatListRef}
         data={data?.pages.flatMap((page) => page.data)}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
