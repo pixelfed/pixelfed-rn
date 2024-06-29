@@ -1,9 +1,9 @@
 import { Link, Stack } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ScrollView, Text, View, XStack, YStack, Button } from 'tamagui'
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { getSelfCollections } from 'src/lib/api'
-import { FlatList } from 'react-native'
+import { ActivityIndicator, FlatList } from 'react-native'
 import FastImage from 'react-native-fast-image'
 import { formatTimestamp } from 'src/utils'
 import Feather from '@expo/vector-icons/Feather'
@@ -71,10 +71,39 @@ export default function Screen() {
     </View>
   )
 
-  const { data: collections } = useQuery({
+  const {
+    data: collections,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteQuery({
     queryKey: ['getSelfCollections'],
     queryFn: getSelfCollections,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      if (lastPage.length === 0) {
+        return undefined
+      }
+      return lastPageParam + 1
+    },
+    getPreviousPageParam: (firstPage, allPages, firstPageParam) => {
+      if (firstPageParam <= 1) {
+        return undefined
+      }
+      return firstPageParam - 1
+    },
   })
+
+  if (status === 'pending') {
+    return <ActivityIndicator />
+  }
+
+  if (status === 'error') {
+    return <Text>{error.message}</Text>
+  }
 
   return (
     <SafeAreaView flex={1} edges={['bottom']}>
@@ -86,11 +115,21 @@ export default function Screen() {
       />
 
       <FlatList
-        data={collections}
+        data={collections.pages.flat()}
         renderItem={RenderItem}
         ItemSeparatorComponent={Separator}
         ListEmptyComponent={RenderEmpty}
         contentContainerStyle={{ flexGrow: 1 }}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) fetchNextPage()
+        }}
+        ListFooterComponent={() =>
+          isFetchingNextPage ? (
+            <View p="$3">
+              <ActivityIndicator />
+            </View>
+          ) : null
+        }
       />
     </SafeAreaView>
   )
