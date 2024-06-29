@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Dimensions,
   Alert,
+  Platform,
 } from 'react-native'
 import { Text, View, XStack, Select, Adapt, Sheet, YStack, Separator } from 'tamagui'
 import { StatusBar } from 'expo-status-bar'
@@ -42,6 +43,7 @@ import {
   likeCountLabel,
   prettyCount,
 } from 'src/utils'
+import ReadMoreAndroid from '../common/ReadMoreAndroid'
 import ReadMore from '../common/ReadMore'
 import AutolinkText from '../common/AutolinkText'
 import FastImage from 'react-native-fast-image'
@@ -130,13 +132,23 @@ export default function CommentFeed({
                       resizeMode={FastImage.resizeMode.cover}
                     />
                   ) : null}
-                  <ReadMore numberOfLines={3}>
-                    <AutolinkText
-                      text={captionText}
-                      onMentionPress={gotoUsernameProfile}
-                      onHashtagPress={gotoHashtag}
-                    />
-                  </ReadMore>
+                  {Platform.OS === 'ios' ? (
+                    <ReadMore numberOfLines={3} renderRevealedFooter={() => <></>}>
+                      <AutolinkText
+                        text={captionText}
+                        onMentionPress={gotoUsernameProfile}
+                        onHashtagPress={gotoHashtag}
+                      />
+                    </ReadMore>
+                  ) : (
+                    <ReadMoreAndroid numberOfLines={3} renderRevealedFooter={() => <></>}>
+                      <AutolinkText
+                        text={captionText}
+                        onMentionPress={gotoUsernameProfile}
+                        onHashtagPress={gotoHashtag}
+                      />
+                    </ReadMoreAndroid>
+                  )}
                   <XStack mt="$2" gap="$4">
                     <Pressable onPress={() => commentRef?.current.focus()}>
                       <Text fontWeight="bold" fontSize="$3" color="$gray9">

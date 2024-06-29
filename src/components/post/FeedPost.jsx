@@ -26,6 +26,8 @@ import Video, { VideoRef } from 'react-native-video'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import { BlurView } from '@react-native-community/blur'
 import VideoPlayer from './VideoPlayer'
+import ReadMoreAndroid from '../common/ReadMoreAndroid'
+import ReadMoreApple from '../common/ReadMoreApple'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 const AVATAR_WIDTH = 45
@@ -341,15 +343,24 @@ const PostCaption = React.memo(
                 onHashtagPress={onHashtagPress}
                 onMentionPress={onMentionPress}
               />
-            ) : (
-              <ReadMore numberOfLines={3} renderRevealedFooter={() => <></>}>
+            ) : Platform.OS === 'ios' ? (
+              <ReadMoreApple numberOfLines={3} renderRevealedFooter={() => <></>}>
                 <AutolinkText
                   text={captionText}
                   username={username}
                   onHashtagPress={onHashtagPress}
                   onMentionPress={onMentionPress}
                 />
-              </ReadMore>
+              </ReadMoreApple>
+            ) : (
+              <ReadMoreAndroid numberOfLines={3} renderRevealedFooter={() => <></>}>
+                <AutolinkText
+                  text={captionText}
+                  username={username}
+                  onHashtagPress={onHashtagPress}
+                  onMentionPress={onMentionPress}
+                />
+              </ReadMoreAndroid>
             )}
           </XStack>
           {commentsCount ? (

@@ -170,6 +170,7 @@ export function enforceLen(str, len, ellipsis = false, mode = 'end') {
 
 export function htmlToTextWithLineBreaks(html) {
   html = html.replaceAll('&#39;', "'")
+  html = html.replaceAll('&amp;', '&')
   html = html.replaceAll(/<\/p>/gi, '\n')
   html = html.replaceAll(/<p[^>]*>/gi, '')
   html = html.replaceAll(/<[^>]+>/gi, '')
