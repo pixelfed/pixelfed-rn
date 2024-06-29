@@ -11,7 +11,14 @@ import {
 } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { Stack, useNavigation, useRouter } from 'expo-router'
-import { ActivityIndicator, StyleSheet, Alert, Platform, Linking } from 'react-native'
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Alert,
+  Platform,
+  Linking,
+  Keyboard,
+} from 'react-native'
 import { Storage } from 'src/state/cache'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { useState, useRef, useCallback, useMemo, useEffect, useLayoutEffect } from 'react'
@@ -89,7 +96,7 @@ export default function Camera() {
   const openAltText = useCallback(
     (item) => {
       const idx = media.map((m) => m.path).indexOf(item.path)
-      setActiveIndex(idx)
+      setActiveIndex(item.path)
       setCurAltext(media[idx]?.alttext)
       altTextRef.current?.present()
     },
@@ -212,7 +219,7 @@ export default function Camera() {
   const saveAltText = () => {
     setMedia(
       media.map((m, idx) => {
-        if (idx === activeIndex) {
+        if (m.path === activeIndex) {
           return { ...m, alttext: curAltext }
         } else {
           return m
@@ -375,10 +382,16 @@ export default function Camera() {
   }
 
   const uploadMediaToIds = async (capture) => {
-    return await uploadMediaV2({
-      file: capture.file,
-      description: capture.description,
-    })
+    return await uploadMediaV2(
+      capture.description
+        ? {
+            file: capture.file,
+            description: capture.description,
+          }
+        : {
+            file: capture.file,
+          }
+    )
       .then((res) => {
         return res
       })
@@ -437,7 +450,7 @@ export default function Camera() {
         </View>
       ) : (
         <>
-          <ScrollView>
+          <ScrollView onScroll={() => Keyboard.dismiss()}>
             <YStack px="$3" pt="$3" pb="$1">
               <XStack gap="$3" justifyContent="space-between" alignItems="center">
                 <XStack gap="$3" alignItems="center">
@@ -615,13 +628,13 @@ export default function Camera() {
             backdropComponent={renderBackdrop}
           >
             <BottomSheetView style={styles.contentContainer}>
-              <Text fontSize="$9" fontWeight="bold" px="$3" pb="$1">
+              <Text fontSize="$9" fontWeight="bold" px="$3" mb="$3">
                 Alt Text
               </Text>
               <BottomSheetTextInput
                 style={styles.input}
                 multiline={true}
-                numberOfLines={4}
+                numberOfLines={6}
                 maxLength={composeSettings?.max_altext_length}
                 defaultValue={curAltext}
                 onChangeText={setCurAltext}
@@ -662,14 +675,12 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   input: {
-    minHeight: 120,
-    maxHeight: 200,
-    marginTop: 8,
-    marginBottom: 10,
+    height: 130,
     borderRadius: 10,
-    fontSize: 18,
-    lineHeight: 40,
-    padding: 20,
+    fontSize: 22,
+    lineHeight: 30,
+    paddingHorizontal: 15,
+    paddingVertical: 30,
     borderWidth: 0.33,
     borderColor: '#ccc',
     backgroundColor: 'white',
