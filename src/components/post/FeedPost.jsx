@@ -326,6 +326,7 @@ const PostCaption = React.memo(
     onOpenComments,
     onHashtagPress,
     onMentionPress,
+    disableReadMore,
   }) => {
     const timeAgo = formatTimestamp(createdAt)
     const captionText = htmlToTextWithLineBreaks(caption)
@@ -333,14 +334,23 @@ const PostCaption = React.memo(
       <BorderlessSection>
         <YStack gap="$3" pt="$1" pb="$3" px="$2">
           <XStack flexWrap="wrap" pr="$3">
-            <ReadMore numberOfLines={3} renderRevealedFooter={() => <></>}>
+            {disableReadMore ? (
               <AutolinkText
                 text={captionText}
                 username={username}
                 onHashtagPress={onHashtagPress}
                 onMentionPress={onMentionPress}
               />
-            </ReadMore>
+            ) : (
+              <ReadMore numberOfLines={3} renderRevealedFooter={() => <></>}>
+                <AutolinkText
+                  text={captionText}
+                  username={username}
+                  onHashtagPress={onHashtagPress}
+                  onMentionPress={onMentionPress}
+                />
+              </ReadMore>
+            )}
           </XStack>
           {commentsCount ? (
             <Pressable onPress={() => onOpenComments()}>
@@ -395,6 +405,7 @@ export default function FeedPost({
   onLike,
   onDeletePost,
   onBookmark,
+  disableReadMore = false,
 }) {
   const bottomSheetModalRef = useRef(null)
   const carouselRef = useRef(null)
@@ -539,6 +550,7 @@ export default function FeedPost({
         createdAt={post.created_at}
         tags={post.tags}
         visibility={post.visibility}
+        disableReadMore={disableReadMore}
         onOpenComments={() => onOpenComments(post.id)}
         onHashtagPress={(tag) => onGotoHashtag(tag)}
         onMentionPress={(tag) => onGotoMention(tag)}

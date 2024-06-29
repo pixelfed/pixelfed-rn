@@ -127,6 +127,7 @@ export default function Page() {
           onOpenComments={onOpenComments}
           onLike={handleLike}
           onDeletePost={onDeletePost}
+          disableReadMore={true}
         />
       </ScrollView>
     </SafeAreaView>
