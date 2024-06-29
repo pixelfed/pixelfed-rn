@@ -24,7 +24,9 @@ import { Switch } from 'src/components/form/Switch'
 
 export default function Screen() {
   const instance = Storage.getString('app.instance')
-  const forceSensitive = Storage.getBoolean('ui.forceSensitive')
+  const forceSensitive = Storage.getBoolean('ui.forceSensitive') == true
+  const legacyCarousel = Storage.getBoolean('ui.legacyCarousel') == true
+  const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
 
   return (
     <SafeAreaView flex={1} edges={['bottom']}>
@@ -50,6 +52,42 @@ export default function Screen() {
             size="$3"
             defaultChecked={forceSensitive}
             onCheckedChange={(checked) => Storage.set('ui.forceSensitive', checked)}
+          >
+            <Switch.Thumb animation="quicker" />
+          </Switch>
+        </XStack>
+        <Separator />
+        <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
+          <YStack maxWidth="60%" gap="$2">
+            <Text fontSize="$5" fontWeight={'bold'}>
+              Use Legacy Carousel
+            </Text>
+            <Text fontSize="$3" color="$gray9">
+              Uses full width, non-parallax carousels for media album posts.
+            </Text>
+          </YStack>
+          <Switch
+            size="$3"
+            defaultChecked={legacyCarousel}
+            onCheckedChange={(checked) => Storage.set('ui.legacyCarousel', checked)}
+          >
+            <Switch.Thumb animation="quicker" />
+          </Switch>
+        </XStack>
+        <Separator />
+        <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
+          <YStack maxWidth="60%" gap="$2">
+            <Text fontSize="$5" fontWeight={'bold'}>
+              Hide Captions
+            </Text>
+            <Text fontSize="$3" color="$gray9">
+              Hides post captions on feeds
+            </Text>
+          </YStack>
+          <Switch
+            size="$3"
+            defaultChecked={hideCaptions}
+            onCheckedChange={(checked) => Storage.set('ui.hideCaptions', checked)}
           >
             <Switch.Thumb animation="quicker" />
           </Switch>

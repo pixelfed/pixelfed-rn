@@ -431,6 +431,7 @@ export default function FeedPost({
   const progress = useSharedValue(0)
   const snapPoints = useMemo(() => ['45%', '50%'], [])
   const [tmpFav, setTmpFav] = useState(false)
+  const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
 
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
@@ -549,31 +550,36 @@ export default function FeedPost({
         <PostMedia media={post.media_attachments} post={post} />
         /*</GestureDetector>*/
       ) : null}
-      <PostActions
-        hasLiked={post.favourited}
-        hasShared={false}
-        post={post}
-        hasBookmarked={post?.bookmarked}
-        likesCount={post.favourites_count}
-        likedBy={post.liked_by}
-        sharesCount={post.reblogs_count}
-        handleLike={() => onLike(post.id, post.favourited)}
-        onOpenComments={() => onOpenComments(post.id)}
-        onBookmark={() => onBookmark(post.id)}
-      />
-      <PostCaption
-        postId={post.id}
-        username={post.account?.username}
-        caption={post.content}
-        commentsCount={post.reply_count}
-        createdAt={post.created_at}
-        tags={post.tags}
-        visibility={post.visibility}
-        disableReadMore={disableReadMore}
-        onOpenComments={() => onOpenComments(post.id)}
-        onHashtagPress={(tag) => onGotoHashtag(tag)}
-        onMentionPress={(tag) => onGotoMention(tag)}
-      />
+      {!hideCaptions || isPermalink ? (
+        <>
+          <PostActions
+            hasLiked={post.favourited}
+            hasShared={false}
+            post={post}
+            hasBookmarked={post?.bookmarked}
+            likesCount={post.favourites_count}
+            likedBy={post.liked_by}
+            sharesCount={post.reblogs_count}
+            handleLike={() => onLike(post.id, post.favourited)}
+            onOpenComments={() => onOpenComments(post.id)}
+            onBookmark={() => onBookmark(post.id)}
+          />
+
+          <PostCaption
+            postId={post.id}
+            username={post.account?.username}
+            caption={post.content}
+            commentsCount={post.reply_count}
+            createdAt={post.created_at}
+            tags={post.tags}
+            visibility={post.visibility}
+            disableReadMore={disableReadMore}
+            onOpenComments={() => onOpenComments(post.id)}
+            onHashtagPress={(tag) => onGotoHashtag(tag)}
+            onMentionPress={(tag) => onGotoMention(tag)}
+          />
+        </>
+      ) : null}
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={1}
