@@ -539,9 +539,9 @@ export async function unblockProfileById(id) {
   return await selfPost(path)
 }
 
-export async function getSelfCollections() {
+export async function getSelfCollections({ pageParam = 1 }) {
   const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1.1/collections/self`
+  let url = `https://${instance}/api/v1.1/collections/self?page=${pageParam}`
   return await fetchData(url)
 }
 
