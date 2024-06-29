@@ -37,6 +37,8 @@ export default function Page() {
     queryFn: getConfig,
   })
 
+  const maxLen = config ? Math.floor(config?.account.max_bio_length) : 0
+
   const { data: user } = useQuery({
     queryKey: ['profileById', userCache.id],
     queryFn: getAccountById,
@@ -83,10 +85,10 @@ export default function Page() {
       />
       <ScrollView flexGrow={1}>
         <XStack py="$3" px="$4" justifyContent="space-between">
-          <Text color="$gray8">Bio</Text>
+          <Text color="$gray10">Bio</Text>
 
           <View alignItems="flex-end" justifyContent="flex-end">
-            <Text color="$gray8">
+            <Text color="$gray10">
               {bio?.length}/{config?.account.max_bio_length}
             </Text>
           </View>
@@ -97,12 +99,16 @@ export default function Page() {
           placeholder="Add an optional bio"
           p="$1"
           mx="$3"
+          numberOfLines={8}
+          maxLength={maxLen}
           size="$6"
           onChangeText={setBio}
         />
 
-        <Text pl="$3" pr="$10" py="$3" color="$gray8">
-          Add an optional bio to describe yourself
+        <Text p="$3" color="$gray9">
+          Add an optional bio to describe yourself. Hashtags and mentions will be linked,
+          make sure you use full webfinger addresses for remote accounts
+          (@pixelfed@mastodon.social)
         </Text>
       </ScrollView>
     </SafeAreaView>
