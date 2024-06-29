@@ -94,9 +94,9 @@ export default function HomeScreen() {
       <FeedPost
         post={item}
         user={user}
-        onOpenComments={() => onOpenComments}
-        onLike={() => handleLike}
-        onDeletePost={() => onDeletePost}
+        onOpenComments={() => onOpenComments(item.id)}
+        onLike={() => handleLike(item.id)}
+        onDeletePost={() => onDeletePost(item.id)}
         onBookmark={() => onBookmark(item.id)}
       />
     ),
