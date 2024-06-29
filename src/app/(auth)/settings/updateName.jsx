@@ -89,6 +89,7 @@ export default function Page() {
           borderRightWidth={0}
           borderTopWidth={0}
           bg="white"
+          maxLength={30}
           placeholder="Add your full name, or nickname"
           p="0"
           m="0"
