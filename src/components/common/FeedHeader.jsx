@@ -21,11 +21,13 @@ export default (FeedHeader = ({ title = 'Home', user }) => {
         </Text>
       </XStack>
       <XStack gap="$5">
-        {/* { user?.is_admin ?<Link href="/admin/" asChild>
-          <Pressable>
-            <Feather name="power" size={26} color="red" />
-          </Pressable>
-        </Link> : null } */}
+        {user?.is_admin ? (
+          <Link href="/admin/" asChild>
+            <Pressable>
+              <Feather name="power" size={26} color="red" />
+            </Pressable>
+          </Link>
+        ) : null}
         <Link href="/notifications" asChild>
           <Pressable>
             <Feather name="heart" size={26} />

@@ -157,6 +157,23 @@ async function fetchPaginatedData(url) {
   return { data, nextPage: links?.next, prevPage: links?.prev }
 }
 
+async function fetchCursorPagination(url) {
+  const instance = Storage.getString('app.instance')
+  const token = Storage.getString('app.token')
+
+  const response = await fetch(url, {
+    method: 'get',
+    headers: new Headers({
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
+  })
+  const data = await response.json()
+
+  return { data: data.data, nextPage: data?.links?.next, prevPage: data?.links?.prev }
+}
+
 async function fetchData(url) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
@@ -713,4 +730,36 @@ export async function followHashtag(id) {
 
 export async function unfollowHashtag(id) {
   return await selfPost(`api/v1/tags/${id}/unfollow`)
+}
+
+export async function getAdminConfig() {
+  return await selfGet('api/admin/config')
+}
+
+export async function updateAdminConfig(params) {
+  return await selfPost('api/admin/config/update', params)
+}
+
+export async function getAdminUsers(cursor) {
+  console.log(cursor)
+  let url
+  const instance = Storage.getString('app.instance')
+  url = cursor != null ? cursor : `https://${instance}/api/admin/users/list?sort=desc`
+  return await fetchCursorPagination(url)
+}
+
+export async function getModReports() {
+  return await selfGet('api/admin/mod-reports/list')
+}
+
+export async function getAutospamReports() {
+  return await selfGet('api/admin/autospam/list')
+}
+
+export async function postReportHandle(params) {
+  return await selfPost('api/admin/mod-reports/handle', params)
+}
+
+export async function postAutospamHandle(params) {
+  return await selfPost('api/admin/autospam/handle', params)
 }
