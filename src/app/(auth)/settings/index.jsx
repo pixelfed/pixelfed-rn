@@ -28,7 +28,7 @@ export default function Page() {
   }, [navigation])
   const [user, setUser] = useState()
   const instance = Storage.getString('app.instance')
-  const buildVersion = 49
+  const buildVersion = 50
   const version = Application.nativeApplicationVersion + '.' + buildVersion
 
   useEffect(() => {
@@ -145,7 +145,7 @@ export default function Page() {
                 <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
                   <XStack alignItems="center" ml="$1" gap="$3">
                     <Feather name="help-circle" size={17} color="#666" />
-                    <Text fontSize="$6">Report an issue, or feedback</Text>
+                    <Text fontSize="$6">Report an issue or feedback</Text>
                   </XStack>
                   <Feather name="chevron-right" size={20} color="#ccc" />
                 </XStack>
