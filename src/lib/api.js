@@ -741,7 +741,6 @@ export async function updateAdminConfig(params) {
 }
 
 export async function getAdminUsers(cursor) {
-  console.log(cursor)
   let url
   const instance = Storage.getString('app.instance')
   url = cursor != null ? cursor : `https://${instance}/api/admin/users/list?sort=desc`
