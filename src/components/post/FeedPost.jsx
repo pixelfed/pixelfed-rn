@@ -273,10 +273,10 @@ const PostActions = React.memo(
     onBookmark,
     hasBookmarked,
   }) => {
-    const hasAltText = post.media_attachments[0].description?.length
+    const hasAltText = post?.media_attachments[0]?.description?.length
 
     const onShowAlt = () => {
-      Alert.alert('Alt Text', post.media_attachments[0].description)
+      Alert.alert('Alt Text', post?.media_attachments[0]?.description)
     }
     return (
       <BorderlessSection>
