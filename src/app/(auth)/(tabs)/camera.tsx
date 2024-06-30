@@ -29,8 +29,10 @@ import { PressableOpacity } from 'react-native-pressable-opacity'
 import {
   BottomSheetModal,
   BottomSheetView,
+  BottomSheetScrollView,
   BottomSheetBackdrop,
   BottomSheetTextInput,
+  SCREEN_WIDTH,
 } from '@gorhom/bottom-sheet'
 import { Switch } from 'src/components/form/Switch'
 import { useQuery } from '@tanstack/react-query'
@@ -88,7 +90,7 @@ export default function Camera() {
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const altTextRef = useRef<BottomSheetModal>(null)
-  const snapPoints = useMemo(() => ['25%', '50%'], [])
+  const snapPoints = useMemo(() => ['50%', '70%', '90%'], [])
 
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
@@ -643,11 +645,20 @@ export default function Camera() {
             snapPoints={snapPoints}
             onChange={handleSheetChanges}
             backdropComponent={renderBackdrop}
+            keyboardBehavior="extend"
           >
-            <BottomSheetView style={styles.contentContainer}>
+            <BottomSheetScrollView style={styles.contentContainer}>
               <Text fontSize="$9" fontWeight="bold" px="$3" mb="$3">
                 Alt Text
               </Text>
+              <Separator />
+              <XStack justifyContent="center" my="$3">
+                <FastImage
+                  source={{ uri: activeIndex }}
+                  style={{ width: '100%', height: Keyboard.isVisible() ? 140 : 240 }}
+                  resizeMode={FastImage.resizeMode.contain}
+                />
+              </XStack>
               <BottomSheetTextInput
                 style={styles.input}
                 multiline={true}
@@ -657,9 +668,9 @@ export default function Camera() {
                 onChangeText={setCurAltext}
                 placeholder="Add optional alt text to describe the media for visually impaired"
               />
-              <YStack mb="$3">
+              <YStack mt="$1" mb="$3">
                 <XStack justifyContent="flex-end">
-                  <Text color="$gray9">
+                  <Text color="$gray8" fontWeight="bold">
                     {curAltext && curAltext?.length ? curAltext.length : 0}/
                     {composeSettings?.max_altext_length}
                   </Text>
@@ -674,7 +685,7 @@ export default function Camera() {
               >
                 Save
               </Button>
-            </BottomSheetView>
+            </BottomSheetScrollView>
           </BottomSheetModal>
         </>
       )}
