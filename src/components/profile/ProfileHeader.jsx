@@ -142,7 +142,13 @@ export default function ProfileHeader({
 
   const RenderSelfHeader = () => (
     <XStack w="100%" justifyContent="space-between" alignItems="center" gap="$10">
-      <Text flexShrink={1} fontWeight="bold" fontSize={26} allowFontScaling={false} flexWrap="wrap">
+      <Text
+        flexShrink={1}
+        fontWeight="bold"
+        fontSize={26}
+        allowFontScaling={false}
+        flexWrap="wrap"
+      >
         {profile?.acct ?? 'User'}
       </Text>
 
