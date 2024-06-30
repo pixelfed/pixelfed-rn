@@ -68,7 +68,9 @@ export default (AutolinkText = ({ username, text, onMentionPress, onHashtagPress
                 {part.value}
               </Text>
             )
-          } else if (part.type === 'hashtag') {
+          }
+
+          if (part.type === 'hashtag') {
             return (
               <Text
                 key={index}
@@ -79,13 +81,13 @@ export default (AutolinkText = ({ username, text, onMentionPress, onHashtagPress
                 {part.value}
               </Text>
             )
-          } else {
-            return (
-              <Text key={index} fontSize="$5">
-                {part.value}
-              </Text>
-            )
           }
+
+          return (
+            <Text key={index} fontSize="$5">
+              {part.value}
+            </Text>
+          )
         })}
     </Text>
   )

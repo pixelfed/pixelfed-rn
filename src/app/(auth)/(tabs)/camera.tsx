@@ -52,6 +52,7 @@ export default function Camera() {
     resetShareIntent,
   } = useShareIntentContext()
   const userCache = JSON.parse(Storage.getString('user.profile'))
+  const requireSelfAltText = Storage.getBoolean('ui.requireSelfAltText') == true
   const [captionInput, setCaption] = useState('')
   const [scope, setScope] = useState('public')
   const [isSensitive, setSensitive] = useState(false)
@@ -221,9 +222,8 @@ export default function Camera() {
       media.map((m, idx) => {
         if (m.path === activeIndex) {
           return { ...m, alttext: curAltext }
-        } else {
-          return m
         }
+        return m
       })
     )
     setCurAltext('')
@@ -347,6 +347,23 @@ export default function Camera() {
 
   const _handlePost = async () => {
     setIsPosting(true)
+
+    if (requireSelfAltText == true) {
+      const count = media
+        .map((m) => {
+          return m && m.alttext && m.alttext.length
+        })
+        .filter((r) => r).length
+
+      if (count !== media.length) {
+        Alert.alert(
+          'Missing Alt Text',
+          'You have enabled the requirement for alt text, and we found missing alt text. Please add alt text for each media to proceed.'
+        )
+        setIsPosting(false)
+        return
+      }
+    }
 
     const uploads = media.map((cap) => {
       let uri = cap.path

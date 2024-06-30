@@ -21,6 +21,8 @@ import { Storage } from 'src/state/cache'
 import { Switch } from 'src/components/form/Switch'
 export default function Screen() {
   const instance = Storage.getString('app.instance')
+  const showAltText = Storage.getBoolean('ui.showAltText') == true
+  const requireSelfAltText = Storage.getBoolean('ui.requireSelfAltText') == true
 
   const { data, isPending, error } = useQuery({
     queryKey: ['getAppSettings'],
@@ -66,11 +68,15 @@ export default function Screen() {
               Show Alt Text Button
             </Text>
             <Text fontSize="$3" color="$gray9">
-              Adds a tappable button on the bottom left corner of media to easily view alt
-              text
+              Adds a tappable button on the bottom right corner of media to easily view
+              alt text
             </Text>
           </YStack>
-          <Switch size="$3" defaultChecked={false}>
+          <Switch
+            size="$3"
+            defaultChecked={showAltText}
+            onCheckedChange={(checked) => Storage.set('ui.showAltText', checked)}
+          >
             <Switch.Thumb animation="quicker" />
           </Switch>
         </XStack>
@@ -85,7 +91,11 @@ export default function Screen() {
               shared
             </Text>
           </YStack>
-          <Switch size="$3" defaultChecked={false}>
+          <Switch
+            size="$3"
+            defaultChecked={requireSelfAltText}
+            onCheckedChange={(checked) => Storage.set('ui.requireSelfAltText', checked)}
+          >
             <Switch.Thumb animation="quicker" />
           </Switch>
         </XStack>
@@ -104,7 +114,7 @@ export default function Screen() {
           </Switch>
         </XStack>
         <Separator />
-        <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
+        {/* <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
           <YStack maxWidth="60%" gap="$2">
             <Text fontSize="$5" fontWeight={'bold'}>
               Reduce Motion
@@ -117,8 +127,8 @@ export default function Screen() {
             <Switch.Thumb animation="quicker" />
           </Switch>
         </XStack>
-        <Separator />
-        <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
+        <Separator /> */}
+        {/* <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
           <YStack maxWidth="60%" gap="$2">
             <Text fontSize="$5" fontWeight={'bold'}>
               Hide videos
@@ -130,8 +140,8 @@ export default function Screen() {
           <Switch size="$3" defaultChecked={false}>
             <Switch.Thumb animation="quicker" />
           </Switch>
-        </XStack>
-        <Separator />
+        </XStack> */}
+        {/* <Separator />
         <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
           <YStack maxWidth="60%" gap="$2">
             <Text fontSize="$5" fontWeight={'bold'}>
@@ -144,7 +154,7 @@ export default function Screen() {
           <Switch size="$3" defaultChecked={false}>
             <Switch.Thumb animation="quicker" />
           </Switch>
-        </XStack>
+        </XStack> */}
       </ScrollView>
     </SafeAreaView>
   )

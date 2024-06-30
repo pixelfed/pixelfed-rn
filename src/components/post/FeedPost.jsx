@@ -269,64 +269,81 @@ const PostActions = React.memo(
     onOpenComments,
     post,
     handleLike,
+    showAltText,
     onBookmark,
     hasBookmarked,
-  }) => (
-    <BorderlessSection>
-      <YStack pt="$3" pb="$2" px="$2" gap={10}>
-        <XStack gap="$4" justifyContent="space-between">
-          <XStack gap="$5">
-            <LikeButton hasLiked={hasLiked} handleLike={handleLike} />
-            <Pressable onPress={() => onOpenComments()}>
-              <Feather name="message-circle" size={30} />
-            </Pressable>
-            {/* <Feather name="refresh-cw" size={26} /> */}
-          </XStack>
-          {/* <PressableOpacity onPress={() => onBookmark()}>
-            <XStack gap="$4">
-              { hasBookmarked ?
-                <Ionicons name="bookmark" size={30} /> :
-                <Feather name="bookmark" size={30} />
-              }
-              </XStack>
-          </PressableOpacity> */}
-        </XStack>
-        {likesCount || sharesCount ? (
-          <XStack justifyContent="space-between" alignItems="flex-end">
-            {likesCount ? (
-              likedBy && likesCount > 1 ? (
-                <Link href={`/post/likes/${post.id}`}>
-                  <Text fontSize="$3">Liked by </Text>
-                  <Text fontWeight="bold" fontSize="$3">
-                    {enforceLen(likedBy.username, 12, true)}
+  }) => {
+    const hasAltText = post.media_attachments[0].description?.length
+
+    const onShowAlt = () => {
+      Alert.alert('Alt Text', post.media_attachments[0].description)
+    }
+    return (
+      <BorderlessSection>
+        <YStack pt="$3" pb="$2" px="$2" gap={10}>
+          <XStack gap="$4" justifyContent="space-between">
+            <XStack gap="$5">
+              <LikeButton hasLiked={hasLiked} handleLike={handleLike} />
+              <Pressable onPress={() => onOpenComments()}>
+                <Feather name="message-circle" size={30} />
+              </Pressable>
+              {/* <Feather name="refresh-cw" size={26} /> */}
+            </XStack>
+            {/* <PressableOpacity onPress={() => onBookmark()}>
+              <XStack gap="$4">
+                { hasBookmarked ?
+                  <Ionicons name="bookmark" size={30} /> :
+                  <Feather name="bookmark" size={30} />
+                }
+                </XStack>
+            </PressableOpacity> */}
+            {showAltText && hasAltText ? (
+              <PressableOpacity onPress={() => onShowAlt()}>
+                <XStack bg="black" px="$3" py={4} borderRadius={5}>
+                  <Text color="white" fontSize="$5" fontWeight="bold">
+                    ALT
                   </Text>
-                  <Text fontSize="$3"> and </Text>
-                  <Text fontWeight="bold" fontSize="$3">
-                    {likesCount - 1} {likesCount - 1 > 1 ? 'others' : 'other'}
-                  </Text>
-                </Link>
-              ) : (
-                <Link href={`/post/likes/${post.id}`}>
-                  <Text fontWeight="bold" fontSize="$3">
-                    {likesCount} {likesCount > 1 ? 'Likes' : 'Like'}
-                  </Text>
-                </Link>
-              )
-            ) : (
-              <View flexGrow={1}></View>
-            )}
-            {likesCount && sharesCount ? (
-              <Link href={`/post/shares/${post.id}`}>
-                <Text fontWeight="bold" fontSize="$3">
-                  {sharesCount} {sharesCount > 1 ? 'Shares' : 'Share'}
-                </Text>
-              </Link>
+                </XStack>
+              </PressableOpacity>
             ) : null}
           </XStack>
-        ) : null}
-      </YStack>
-    </BorderlessSection>
-  )
+          {likesCount || sharesCount ? (
+            <XStack justifyContent="space-between" alignItems="flex-end">
+              {likesCount ? (
+                likedBy && likesCount > 1 ? (
+                  <Link href={`/post/likes/${post.id}`}>
+                    <Text fontSize="$3">Liked by </Text>
+                    <Text fontWeight="bold" fontSize="$3">
+                      {enforceLen(likedBy.username, 12, true)}
+                    </Text>
+                    <Text fontSize="$3"> and </Text>
+                    <Text fontWeight="bold" fontSize="$3">
+                      {likesCount - 1} {likesCount - 1 > 1 ? 'others' : 'other'}
+                    </Text>
+                  </Link>
+                ) : (
+                  <Link href={`/post/likes/${post.id}`}>
+                    <Text fontWeight="bold" fontSize="$3">
+                      {likesCount} {likesCount > 1 ? 'Likes' : 'Like'}
+                    </Text>
+                  </Link>
+                )
+              ) : (
+                <View flexGrow={1}></View>
+              )}
+              {likesCount && sharesCount ? (
+                <Link href={`/post/shares/${post.id}`}>
+                  <Text fontWeight="bold" fontSize="$3">
+                    {sharesCount} {sharesCount > 1 ? 'Shares' : 'Share'}
+                  </Text>
+                </Link>
+              ) : null}
+            </XStack>
+          ) : null}
+        </YStack>
+      </BorderlessSection>
+    )
+  }
 )
 
 const PostCaption = React.memo(
@@ -439,6 +456,7 @@ export default function FeedPost({
   const [tmpFav, setTmpFav] = useState(false)
   const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
   const legacyCarousel = Storage.getBoolean('ui.legacyCarousel') == true
+  const showAltText = Storage.getBoolean('ui.showAltText') == true
 
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
@@ -568,6 +586,7 @@ export default function FeedPost({
             likesCount={post.favourites_count}
             likedBy={post.liked_by}
             sharesCount={post.reblogs_count}
+            showAltText={showAltText}
             handleLike={() => onLike(post.id, post.favourited)}
             onOpenComments={() => onOpenComments(post.id)}
             onBookmark={() => onBookmark(post.id)}

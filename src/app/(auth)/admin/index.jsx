@@ -58,11 +58,11 @@ export default function Page() {
 
     if (currentHour < 12) {
       return `Good morning sunshine! ☀️`
-    } else if (currentHour < 18) {
-      return `Good afternoon, ${userName}!`
-    } else {
-      return `Good evening, ${userName}, hope you had a great day!`
     }
+    if (currentHour < 18) {
+      return `Good afternoon, ${userName}!`
+    }
+    return `Good evening, ${userName}, hope you had a great day!`
   }
 
   const { data: stats } = useQuery({

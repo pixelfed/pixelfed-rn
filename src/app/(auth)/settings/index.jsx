@@ -116,17 +116,22 @@ export default function Page() {
           </Group>
 
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
-            {/* <GroupButton
+            <GroupButton
               icon="life-buoy"
               title="Accessibility"
               path="/settings/accessibility/"
-            /> */}
+            />
             <GroupButton icon="droplet" title="Appearance" path="/settings/appearance/" />
             {/* <GroupButton icon="camera" title="Media" path="/settings/media" /> */}
             {/* <GroupButton icon="shield" title="Security" path="/settings/security" /> */}
           </Group>
 
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
+            {/* <GroupButton
+              icon="user-plus"
+              title="Invite friends"
+              path="/settings/invites/"
+            /> */}
             <GroupButton icon="server" title={instance} path="/settings/instance/" />
             <GroupButton icon="align-left" title="Legal" path="/settings/legal/" />
             <Group.Item>

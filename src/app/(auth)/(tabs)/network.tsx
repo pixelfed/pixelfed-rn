@@ -100,7 +100,7 @@ export default function HomeScreen() {
         onBookmark={() => onBookmark(item.id)}
       />
     ),
-    [data]
+    []
   )
 
   const keyExtractor = useCallback((item) => item.id.toString(), [])
