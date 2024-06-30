@@ -167,91 +167,97 @@ const calculateHeight = (item) => {
   return 500
 }
 
-const PostAlbumMedia = ({ media, post, carouselRef, progress }) => {
-  const mediaUrl = media[0].url
-  const [showSensitive, setSensitive] = useState(false)
-  const height = media.reduce((max, item) => {
-    const height = calculateHeight(item)
-    return height > max ? height : max
-  }, 0)
+const PostAlbumMedia = React.memo(
+  ({ media, post, carouselRef, progress, legacyCarousel }) => {
+    const mediaUrl = media[0].url
+    const [showSensitive, setSensitive] = useState(false)
+    const height = media.reduce((max, item) => {
+      const height = calculateHeight(item)
+      return height > max ? height : max
+    }, 0)
 
-  if (post.sensitive && !showSensitive) {
+    if (post.sensitive && !showSensitive) {
+      return (
+        <ZStack w={SCREEN_WIDTH} h={height}>
+          <Blurhash
+            blurhash={media[0]?.blurhash}
+            style={{
+              flex: 1,
+              width: SCREEN_WIDTH,
+              height: height,
+            }}
+          />
+          <YStack justifyContent="center" alignItems="center" flexGrow={1}>
+            <YStack justifyContent="center" alignItems="center" flexGrow={1} gap="$3">
+              <Feather name="eye-off" size={55} color="white" />
+              <Text fontSize="$7" color="white">
+                This post contains sensitive or mature content
+              </Text>
+            </YStack>
+            <YStack w={SCREEN_WIDTH} flexShrink={1}>
+              <Separator />
+              <Button
+                alignSelf="stretch"
+                size="$5"
+                color="white"
+                onPress={() => setSensitive(true)}
+                chromeless
+              >
+                Tap to view
+              </Button>
+            </YStack>
+          </YStack>
+        </ZStack>
+      )
+    }
+
     return (
-      <ZStack w={SCREEN_WIDTH} h={height}>
-        <Blurhash
-          blurhash={media[0]?.blurhash}
-          style={{
-            flex: 1,
-            width: SCREEN_WIDTH,
-            height: height,
+      <>
+        <Carousel
+          ref={carouselRef}
+          onConfigurePanGesture={(gestureChain) => gestureChain.activeOffsetX([-10, 10])}
+          width={SCREEN_WIDTH}
+          height={height}
+          vertical={false}
+          onProgressChange={progress}
+          mode={legacyCarousel ? 'normal' : 'parallax'}
+          modeConfig={
+            legacyCarousel
+              ? {}
+              : {
+                  parallaxScrollingScale: 0.9,
+                  parallaxScrollingOffset: 50,
+                }
+          }
+          data={post.media_attachments}
+          renderItem={({ index }) => {
+            const media = post.media_attachments[0]
+            return (
+              <FastImage
+                style={{
+                  width: SCREEN_WIDTH,
+                  height: height,
+                  backgroundColor: '#000',
+                  zIndex: -2,
+                }}
+                source={{ uri: post.media_attachments[index].url }}
+                resizeMode={FastImage.resizeMode.contain}
+              />
+            )
           }}
         />
-        <YStack justifyContent="center" alignItems="center" flexGrow={1}>
-          <YStack justifyContent="center" alignItems="center" flexGrow={1} gap="$3">
-            <Feather name="eye-off" size={55} color="white" />
-            <Text fontSize="$7" color="white">
-              This post contains sensitive or mature content
-            </Text>
-          </YStack>
-          <YStack w={SCREEN_WIDTH} flexShrink={1}>
-            <Separator />
-            <Button
-              alignSelf="stretch"
-              size="$5"
-              color="white"
-              onPress={() => setSensitive(true)}
-              chromeless
-            >
-              Tap to view
-            </Button>
-          </YStack>
-        </YStack>
-      </ZStack>
+        <Pagination.Basic
+          progress={progress}
+          data={post.media_attachments}
+          dotStyle={{ backgroundColor: 'rgba(0,0,0,0.16)', borderRadius: 50 }}
+          activeDotStyle={{ backgroundColor: '#408DF6', borderRadius: 50 }}
+          containerStyle={{ gap: 5, marginTop: 10, marginBottom: -10, zIndex: 5 }}
+          size={8}
+        />
+      </>
     )
   }
-
-  return (
-    <>
-      <Carousel
-        ref={carouselRef}
-        onConfigurePanGesture={(gestureChain) => gestureChain.activeOffsetX([-10, 10])}
-        width={SCREEN_WIDTH}
-        height={height}
-        vertical={false}
-        onProgressChange={progress}
-        mode="parallax"
-        modeConfig={{
-          parallaxScrollingScale: 0.9,
-          parallaxScrollingOffset: 50,
-        }}
-        data={post.media_attachments}
-        renderItem={({ index }) => {
-          const media = post.media_attachments[0]
-          return (
-            <FastImage
-              style={{
-                width: SCREEN_WIDTH,
-                height: height,
-                backgroundColor: '#000',
-                zIndex: -2,
-              }}
-              source={{ uri: post.media_attachments[index].url }}
-              resizeMode={FastImage.resizeMode.contain}
-            />
-          )
-        }}
-      />
-      <Pagination.Basic
-        progress={progress}
-        data={post.media_attachments}
-        dotStyle={{ backgroundColor: 'rgba(0,0,0,0.16)', borderRadius: 50 }}
-        activeDotStyle={{ backgroundColor: '#408DF6', borderRadius: 50 }}
-        containerStyle={{ gap: 5, marginTop: 10, marginBottom: -10, zIndex: 5 }}
-        size={8}
-      />
-    </>
-  )
-}
+)
 
 const PostActions = React.memo(
   ({
@@ -432,6 +438,7 @@ export default function FeedPost({
   const snapPoints = useMemo(() => ['45%', '50%'], [])
   const [tmpFav, setTmpFav] = useState(false)
   const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
+  const legacyCarousel = Storage.getBoolean('ui.legacyCarousel') == true
 
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
@@ -544,6 +551,7 @@ export default function FeedPost({
           post={post}
           carouselRef={carouselRef}
           progress={progress}
+          legacyCarousel={legacyCarousel}
         />
       ) : post.media_attachments?.length === 1 ? (
         /*<GestureDetector gesture={Gesture.Exclusive(doubleTap, singleTap)}>*/
