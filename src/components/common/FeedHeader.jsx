@@ -24,13 +24,13 @@ export default (FeedHeader = ({ title = 'Home', user }) => {
         {user?.is_admin ? (
           <Link href="/admin/" asChild>
             <Pressable>
-              <Feather name="power" size={26} color="red" />
+              <Feather name="log-in" size={26} color="red" />
             </Pressable>
           </Link>
         ) : null}
         <Link href="/notifications" asChild>
           <Pressable>
-            <Feather name="heart" size={26} />
+            <Feather name="bell" size={26} />
           </Pressable>
         </Link>
         <Link href="/chats" asChild>
