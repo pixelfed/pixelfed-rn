@@ -29,7 +29,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.pixelfed.android"
+      "package": "com.pixelfed"
     },
     "web": {
       "favicon": "./assets/favicon.png"

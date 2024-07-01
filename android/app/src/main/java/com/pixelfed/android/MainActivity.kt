@@ -1,4 +1,4 @@
-package com.pixelfed.android
+package com.pixelfed
 
 import android.os.Build
 import android.os.Bundle

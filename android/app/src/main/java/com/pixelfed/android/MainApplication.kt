@@ -1,4 +1,4 @@
-package com.pixelfed.android
+package com.pixelfed
 
 import android.app.Application
 import android.content.res.Configuration
