@@ -104,7 +104,7 @@ export default function ProfileHeader({
             <Text
               flexShrink={1}
               fontWeight="bold"
-              fontSize={profile?.acct.length > 40 ? 15 : 20}
+              fontSize={profile?.acct.length > 40 ? 15 : 18}
               flexWrap="wrap"
             >
               {enforceLen(profile?.acct, 35, true, 'middle')}
@@ -113,8 +113,9 @@ export default function ProfileHeader({
         ) : (
           <Text
             fontWeight="bold"
-            fontSize={Platform.OS === 'ios' ? 20 : 15}
+            fontSize={Platform.OS === 'ios' ? 18 : 15}
             flexWrap="wrap"
+            adjustsFontSizeToFit={true}
             allowFontScaling={false}
           >
             {profile?.acct ?? 'User'}
