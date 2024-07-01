@@ -12,6 +12,16 @@ export function randomKey(length) {
   return result
 }
 
+function removeDuplicateObjects(array, keyProps) {
+  return array.filter(
+    (obj, index, self) =>
+      index ===
+      self.findIndex((t) => {
+        return keyProps.every((prop) => t[prop] === obj[prop])
+      })
+  )
+}
+
 export function objectToForm(obj) {
   let form = new FormData()
 
@@ -428,6 +438,18 @@ export async function getTrendingPopularPosts() {
   return await fetchData(url)
 }
 
+export async function getTrendingPopularPostsMonthly() {
+  const instance = Storage.getString('app.instance')
+  let url = `https://${instance}/api/v1.1/discover/posts/trending?range=monthly`
+  return await fetchData(url)
+}
+
+export async function getTrendingPopularPostsYearly() {
+  const instance = Storage.getString('app.instance')
+  let url = `https://${instance}/api/v1.1/discover/posts/trending?range=yearly`
+  return await fetchData(url)
+}
+
 export async function getAccountRelationship({ queryKey }) {
   const instance = Storage.getString('app.instance')
   let url = `https://${instance}/api/v1/accounts/relationships?id[]=${queryKey[1]}&_pe=1`
@@ -707,17 +729,15 @@ export async function deleteStatusV1(id) {
 }
 
 export async function getTrendingPostsV1() {
-  let url = `https://beagle.pixelfed.net/api/v1/discover`
-  const response = await fetch(url, {
-    method: 'get',
-    headers: new Headers({
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'X-Pixelfed-Api': 1,
-    }),
-  })
-  const res = await response.json()
-  return res?.statuses.filter((s) => s.media_attachments[0].type === 'image')
+  const res = await selfGet('api/v1.1/discover/posts/network/trending')
+  const accounts = removeDuplicateObjects(
+    res.map((s) => s.account),
+    ['id']
+  )
+  return {
+    accounts: accounts,
+    posts: res.filter((s) => s.pf_type === 'photo'),
+  }
 }
 
 export async function postBookmark(id) {

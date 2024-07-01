@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, SafeAreaView } from 'react-native'
+import { ActivityIndicator, FlatList, SafeAreaView, Dimensions } from 'react-native'
 import { Text, YStack, ZStack, Button, ScrollView, View, XStack, Image } from 'tamagui'
 import { Storage } from 'src/state/cache'
 import { useEffect } from 'react'
@@ -14,11 +14,8 @@ import UserAvatar from 'src/components/common/UserAvatar'
 import { enforceLen, prettyCount } from 'src/utils'
 import FastImage from 'react-native-fast-image'
 
+const SCREEN_WIDTH = Dimensions.get('screen').width
 export default function DiscoverScreen() {
-  const cacheClear = () => {
-    Storage.clearAll()
-  }
-
   const RenderTags = ({ item }) => (
     <Link href={`/hashtag/${item.hashtag}`} asChild>
       <View bg="$gray3" py="$2" px="$3" borderRadius={5} mr="$2">
@@ -31,7 +28,7 @@ export default function DiscoverScreen() {
     <Link href={`/profile/${item.id}`} asChild>
       <YStack
         px="$6"
-        py="$2"
+        py="$3"
         borderWidth={1}
         borderColor="$gray5"
         borderRadius={10}
@@ -52,44 +49,33 @@ export default function DiscoverScreen() {
       </YStack>
     </Link>
   )
-  const RenderAccounts = ({ item, index }) =>
-    index == 0 ? (
-      <>
-        <View flex={1} flexDirection="row" gap="$3">
-          <View
-            bg="black"
-            p="$5"
-            borderRadius={10}
-            justifyContent="center"
-            alignContent="center"
-          >
+  const RenderAccounts = ({ item, index }) => <AccountPartial item={item} />
+
+  const RenderTrendingPosts = ({ item }) => {
+    return (
+      <Link href={`/post/${item.id}`} asChild>
+        <YStack justifyContent="center" alignItems="center" gap="$2" mr="$3">
+          <View borderRadius={10} overflow="hidden">
+            <FastImage
+              source={{ uri: item.media_attachments[0].url }}
+              style={{ width: SCREEN_WIDTH / 1.3, height: SCREEN_WIDTH / 1.3 }}
+              resizeMode={FastImage.resizeMode.cover}
+            />
             <Text
+              position="absolute"
+              zIndex={3}
               color="white"
-              fontSize={14}
-              allowFontScaling={false}
-              fontFamily={'system'}
-              fontWeight={'600'}
-              letterSpacing={-0.5}
+              bottom={10}
+              left={10}
+              fontWeight={'bold'}
             >
-              Popular
-            </Text>
-            <Text
-              color="white"
-              fontSize={14}
-              allowFontScaling={false}
-              fontFamily={'system'}
-              fontWeight={'600'}
-              letterSpacing={-0.5}
-            >
-              Accounts
+              {enforceLen(item.account.acct, 15, true, 'end')}
             </Text>
           </View>
-          <AccountPartial item={item} />
-        </View>
-      </>
-    ) : (
-      <AccountPartial item={item} />
+        </YStack>
+      </Link>
     )
+  }
 
   const RenderPosts = ({ item }) => (
     <Link href={`/post/${item.id}`} asChild>
@@ -99,7 +85,7 @@ export default function DiscoverScreen() {
             source={{
               uri: item.media_attachments[0].url,
               width: 160,
-              height: 210,
+              height: 160,
             }}
             resizeMode="cover"
           />
@@ -128,19 +114,19 @@ export default function DiscoverScreen() {
     queryFn: getTrendingHashtags,
   })
 
-  const { data: accounts, isPending: isPopularAccountsPending } = useQuery({
-    queryKey: ['getTrendingPopularAccounts'],
-    queryFn: getTrendingPopularAccounts,
-    enabled: !!hashtags,
-  })
-
   const { data: posts, isPending: isPopularPostsPending } = useQuery({
     queryKey: ['getTrendingPopularPosts'],
     queryFn: getTrendingPopularPosts,
-    enabled: !!accounts,
+    enabled: !!hashtags,
   })
 
-  if (isPending || isPopularAccountsPending || isPopularPostsPending) {
+  const { data: trendingPosts, isPending: isTrendingPostsPending } = useQuery({
+    queryKey: ['getTrendingPostsV1'],
+    queryFn: getTrendingPostsV1,
+    enabled: !!hashtags,
+  })
+
+  if (isPending || isPopularPostsPending || isTrendingPostsPending) {
     return (
       <View flexGrow={1} justifyContent="center" alignItems="center" py="$10">
         <ActivityIndicator />
@@ -162,95 +148,69 @@ export default function DiscoverScreen() {
           <Text fontSize="$10" fontWeight="bold" letterSpacing={-1.4}>
             Discover
           </Text>
-          {/* <Button onPress={() => console.log(Storage.getString('app.token'))}>
-            Token
-          </Button>
-          <Button onPress={() => console.log(Storage.clearAll())}>Purge All</Button> */}
         </YStack>
-        <View ml="$5" mb="$0">
-          <YStack pb="$4" gap="$3">
-            {/* <XStack justifyContent="space-between" alignItems="center">
-              <Text fontSize="$5" color="$gray9">
-                Trending Hashtags
+        {hashtags && hashtags.length ? (
+          <View ml="$5" mt="$5">
+            <YStack pb="$4" gap="$3">
+              <Text fontSize="$6" allowFontScaling={false}>
+                Trending tags
               </Text>
-            </XStack> */}
-            <FlatList
-              data={hashtags}
-              renderItem={RenderTags}
-              showsHorizontalScrollIndicator={false}
-              horizontal
-            />
-          </YStack>
-        </View>
-
-        <View ml="$5" mb="$0">
-          <YStack pb="$4" gap="$3">
-            {/* <XStack justifyContent="space-between" alignItems="center">
-              <Text fontSize="$5" color="$gray9">
-                Trending Accounts
-              </Text>
-            </XStack> */}
-            <FlatList
-              data={accounts}
-              renderItem={RenderAccounts}
-              showsHorizontalScrollIndicator={false}
-              horizontal
-            />
-          </YStack>
-        </View>
-
-        <View ml="$5">
-          <YStack pb="$4" gap="$3">
-            {/* <XStack justifyContent="space-between" alignItems="center">
-              <Text fontSize="$5" color="$gray9">
-                Trending Posts
-              </Text>
-            </XStack> */}
-            <FlatList
-              data={posts}
-              renderItem={RenderPosts}
-              showsHorizontalScrollIndicator={false}
-              horizontal
-            />
-          </YStack>
-        </View>
-
-        {/* <View mx="$5" mb="$4" bg="black" borderRadius={10}>
-          <ZStack minHeight={190} gap="$3" justifyContent='flex-end'>
-              <FastImage
-                source={{uri: 'https://pxscdn.com/public/m/_v2/618207790902380453/3b17271c9-2ea36d/8QZjjoyk7NIS/Tq8gkA7XmrgObeoe87rKpSXa66bGHSIx83UeI28l.png'}}
-                style={{width: '100%', height: 190, borderRadius: 10}}
+              <FlatList
+                data={hashtags}
+                renderItem={RenderTags}
+                showsHorizontalScrollIndicator={false}
+                horizontal
               />
-              <Text p="$3" color="white" fontWeight={'light'} fontSize="$9" letterSpacing={-1.15}>Photo of the week</Text>
-          </ZStack>
-        </View> */}
+            </YStack>
+          </View>
+        ) : null}
 
-        {/* <XStack mx="$5" gap="$4" overflow='hidden'>
-          <View flexShrink={1} bg="black" borderRadius={10}>
-            <YStack minHeight={100} p="$4" gap="$1" justifyContent='flex-start'>
-                <Text color="white" fontWeight={'light'} fontSize="$9" letterSpacing={-0.95}>Spotlight</Text>
-                <Text fontSize="$7" flexWrap='wrap' color="$gray10">#cats, #catsOfPixelfed</Text>
+        {trendingPosts && trendingPosts.accounts ? (
+          <View ml="$5" mt="$5">
+            <YStack pb="$4" gap="$3">
+              <Text fontSize="$6" allowFontScaling={false}>
+                Popular accounts
+              </Text>
+              <FlatList
+                data={trendingPosts.accounts}
+                renderItem={RenderAccounts}
+                showsHorizontalScrollIndicator={false}
+                horizontal
+              />
             </YStack>
           </View>
-          <View flexGrow={1} bg="black" borderRadius={10}>
-            <YStack minHeight={100} p="$4" gap="$1" justifyContent='flex-start'>
-                <Text color="white" fontWeight={'light'} fontSize="$9" letterSpacing={-0.95}>Top 100</Text>
-                <Text fontSize="$7" flexWrap='wrap' color="$gray10">@dansup, @gargr...</Text>
+        ) : null}
+
+        {posts && posts.length ? (
+          <View ml="$5" mt="$5">
+            <YStack pb="$4" gap="$3">
+              <Text fontSize="$6" allowFontScaling={false}>
+                Trending today
+              </Text>
+              <FlatList
+                data={posts}
+                renderItem={RenderPosts}
+                showsHorizontalScrollIndicator={false}
+                horizontal
+              />
             </YStack>
           </View>
-        </XStack> */}
-        {/* <YStack flexGrow={1} alignSelf="stretch" m="$5" gap="$3">
-          <Button
-            theme="light"
-            size="$6"
-            bg="$red8"
-            color="white"
-            fontWeight="bold"
-            onPress={() => cacheClear()}
-          >
-            Cache Clear
-          </Button>
-        </YStack> */}
+        ) : null}
+
+        {trendingPosts && trendingPosts.posts ? (
+          <View ml="$5" mt="$5">
+            <YStack pb="$4" gap="$3">
+              <Text fontSize="$6" allowFontScaling={false}>
+                Popular around the fediverse
+              </Text>
+              <FlatList
+                data={trendingPosts.posts}
+                renderItem={RenderTrendingPosts}
+                horizontal
+              />
+            </YStack>
+          </View>
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   )
