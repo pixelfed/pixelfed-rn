@@ -4,21 +4,17 @@ import { Button, XStack } from 'tamagui'
 
 export default function FollowingProfile({ onPress, onSendMessage }) {
   const handleAction = () => {
-    Alert.alert(
-      'Confirm Unfollow',
-      'Are you sure you want to unfollow this account?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel'
-        },
-        {
-          text: 'Unfollow',
-          style: 'destructive',
-          onPress: () => onPress()
-        }
-      ]
-    )
+    Alert.alert('Confirm Unfollow', 'Are you sure you want to unfollow this account?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Unfollow',
+        style: 'destructive',
+        onPress: () => onPress(),
+      },
+    ])
   }
   return (
     <XStack w="100%" my="$3" gap="$2">
