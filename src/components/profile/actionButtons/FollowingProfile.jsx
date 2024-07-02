@@ -1,7 +1,25 @@
 import { Link } from 'expo-router'
+import { Alert } from 'react-native'
 import { Button, XStack } from 'tamagui'
 
 export default function FollowingProfile({ onPress, onSendMessage }) {
+  const handleAction = () => {
+    Alert.alert(
+      'Confirm Unfollow',
+      'Are you sure you want to unfollow this account?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        },
+        {
+          text: 'Unfollow',
+          style: 'destructive',
+          onPress: () => onPress()
+        }
+      ]
+    )
+  }
   return (
     <XStack w="100%" my="$3" gap="$2">
       <Button
@@ -14,7 +32,7 @@ export default function FollowingProfile({ onPress, onSendMessage }) {
         fontWeight="bold"
         fontSize="$4"
         flexGrow={1}
-        onPress={() => onPress()}
+        onPress={() => handleAction()}
       >
         Unfollow
       </Button>
