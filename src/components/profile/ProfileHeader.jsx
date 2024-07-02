@@ -107,7 +107,7 @@ export default function ProfileHeader({
               fontSize={profile?.acct.length > 40 ? 15 : 18}
               flexWrap="wrap"
             >
-              {enforceLen(profile?.acct, 35, true, 'middle')}
+              {enforceLen(profile?.acct, 30, true, 'middle')}
             </Text>
           </Pressable>
         ) : (
@@ -118,7 +118,7 @@ export default function ProfileHeader({
             adjustsFontSizeToFit={true}
             allowFontScaling={false}
           >
-            {profile?.acct ?? 'User'}
+            {enforceLen(profile?.acct ?? 'User', 15, true)}
           </Text>
         )}
       </View>
@@ -175,7 +175,7 @@ export default function ProfileHeader({
               circular
               size={SCREEN_WIDTH > 400 ? '$10' : '$8'}
               borderWidth={1}
-              borderColor="$gray5"
+              borderColor={profile?.local ? '$gray5' : '$gray3'}
             >
               <Avatar.Image src={profile?.avatar} />
               <Avatar.Fallback backgroundColor="$gray4" />
@@ -240,7 +240,7 @@ export default function ProfileHeader({
 
         <YStack w="100%" mt="$3" gap={5}>
           <XStack gap="$2" alignItems="center">
-            <Text fontSize="$6" fontWeight={'bold'}>
+            <Text fontSize="$6" fontWeight={'bold'} flexWrap="wrap">
               {profile?.display_name}
             </Text>
             {relationship && relationship?.muting ? (
@@ -258,6 +258,22 @@ export default function ProfileHeader({
               </View>
             ) : null}
           </XStack>
+          {profile && !profile?.local ? (
+            <XStack mt={-5} alignItems="center" gap={1}>
+              <Feather name="at-sign" color="#888" />
+              <Text
+                color="black"
+                fontWeight={300}
+                fontSize="$3"
+                lineHeight={16}
+                mb={1}
+                allowFontScaling={false}
+                flexWrap="wrap"
+              >
+                {enforceLen(profile?.acct, 50, true)}
+              </Text>
+            </XStack>
+          ) : null}
 
           <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
             <AutolinkText
