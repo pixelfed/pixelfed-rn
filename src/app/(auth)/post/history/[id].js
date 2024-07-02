@@ -30,8 +30,8 @@ export default function Page() {
     const oldWords = oldContent.split(/\s+/)
     const newWords = newContent.split(/\s+/)
     const diff = []
-    let i = 0,
-      j = 0
+    let i = 0
+    let j = 0
 
     while (i < oldWords.length && j < newWords.length) {
       if (oldWords[i] === newWords[j]) {
