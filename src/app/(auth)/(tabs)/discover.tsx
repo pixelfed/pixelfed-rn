@@ -1,4 +1,10 @@
-import { ActivityIndicator, FlatList, SafeAreaView, Dimensions, Platform } from 'react-native'
+import {
+  ActivityIndicator,
+  FlatList,
+  SafeAreaView,
+  Dimensions,
+  Platform,
+} from 'react-native'
 import { Text, YStack, ZStack, Button, ScrollView, View, XStack, Image } from 'tamagui'
 import { Storage } from 'src/state/cache'
 import { useEffect } from 'react'
@@ -144,7 +150,7 @@ export default function DiscoverScreen() {
   return (
     <SafeAreaView flex={1} edges={['left']} style={{ backgroundColor: '#fff' }}>
       <ScrollView>
-        <YStack px="$5" py="$3" mt={Platform.OS === 'android' ? "$7" : "$0"}>
+        <YStack px="$5" py="$3" mt={Platform.OS === 'android' ? '$7' : '$0'}>
           <Text fontSize="$10" fontWeight="bold" letterSpacing={-1.4}>
             Discover
           </Text>
