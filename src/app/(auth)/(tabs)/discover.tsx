@@ -142,7 +142,7 @@ export default function DiscoverScreen() {
     )
   }
   return (
-    <SafeAreaView flex={1} edges={['left']} style={{ backgroundColor: '#fff' }}>
+    <SafeAreaView flex={1} edges={['top']} style={{ backgroundColor: '#fff' }}>
       <ScrollView>
         <YStack px="$5" py="$3">
           <Text fontSize="$10" fontWeight="bold" letterSpacing={-1.4}>

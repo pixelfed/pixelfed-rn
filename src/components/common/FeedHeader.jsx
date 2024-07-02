@@ -24,7 +24,7 @@ export default (FeedHeader = ({ title = 'Home', user }) => {
         {user?.is_admin ? (
           <Link href="/admin/" asChild>
             <Pressable>
-              <Feather name="log-in" size={26} color="red" />
+              <Feather name="tool" size={26} color="red" />
             </Pressable>
           </Link>
         ) : null}

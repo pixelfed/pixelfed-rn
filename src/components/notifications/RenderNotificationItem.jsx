@@ -39,49 +39,57 @@ class RenderItem extends PureComponent {
               </Pressable>
             </Link>
 
-            <XStack gap="$1" alignItems="center">
-              <Text fontSize="$3" fontWeight={'bold'} allowFontScaling={false}>
-                {enforceLen(item.account.acct, 15, true)}{' '}
-              </Text>
-              {item.status ? (
-                <Link
-                  href={`/post/${item.status.in_reply_to_id ? item.status.in_reply_to_id : item.status.id}`}
-                  asChild
-                >
-                  <Text
-                    fontSize="$3"
-                    color="$blue10"
-                    fontWeight="bold"
-                    allowFontScaling={false}
+            <YStack gap={5}>
+              <XStack gap="$1" alignItems="center">
+                <Text fontSize="$2" fontWeight={'bold'} allowFontScaling={false}>
+                  {enforceLen(item.account.acct, 25, true)}{' '}
+                </Text>
+              </XStack>
+              <XStack gap="$1" alignItems="center">
+                {item.status ? (
+                  <Link
+                    href={`/post/${item.status.in_reply_to_id ? item.status.in_reply_to_id : item.status.id}`}
+                    asChild
                   >
+                    <Text
+                      fontSize="$2"
+                      color="$blue10"
+                      fontWeight="bold"
+                      allowFontScaling={false}
+                    >
+                      {_msgText(item.type)}
+                    </Text>
+                  </Link>
+                ) : (
+                  <Text fontSize="$2" allowFontScaling={false}>
                     {_msgText(item.type)}
                   </Text>
-                </Link>
-              ) : (
-                <Text fontSize="$3" allowFontScaling={false}>
-                  {_msgText(item.type)}
+                )}
+                <Text
+                  ml="$2"
+                  fontSize="$2"
+                  color="$gray9"
+                  fontWeight={'bold'}
+                  allowFontScaling={false}
+                >
+                  {_timeAgo(item.created_at)}
                 </Text>
-              )}
-              <Text
-                ml="$2"
-                fontSize="$3"
-                color="$gray9"
-                fontWeight={'bold'}
-                allowFontScaling={false}
-              >
-                {_timeAgo(item.created_at)}
-              </Text>
-            </XStack>
+              </XStack>
+            </YStack>
           </XStack>
 
           {item.status &&
           item.status.media_attachments?.length &&
           item.status.media_attachments[0].type === 'image' ? (
-            <FastImage
-              source={{ uri: item.status.media_attachments[0].url }}
-              style={{ width: 50, height: 50, borderRadius: 5 }}
-              resizeMode={FastImage.resizeMode.cover}
-            />
+            <Link
+              href={`/post/${item.status.in_reply_to_id ? item.status.in_reply_to_id : item.status.id}`}
+            >
+              <FastImage
+                source={{ uri: item.status.media_attachments[0].url }}
+                style={{ width: 50, height: 50, borderRadius: 5 }}
+                resizeMode={FastImage.resizeMode.cover}
+              />
+            </Link>
           ) : null}
         </XStack>
       </View>

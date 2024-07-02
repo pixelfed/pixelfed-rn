@@ -44,8 +44,8 @@ export default function NotificationsScreen() {
   }, [activeTab, refetch])
 
   const handleTabChange = (value) => {
-    setActiveTab(value)
     queryClient.invalidateQueries(['notifications', value])
+    setActiveTab(value)
   }
 
   if (isFetching && !isFetchingNextPage) {
