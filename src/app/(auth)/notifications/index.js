@@ -18,6 +18,7 @@ export default function NotificationsScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Notifications', headerBackTitle: 'Back' })
   }, [navigation])
+
   const [activeTab, setActiveTab] = useState('all')
 
   const {
