@@ -4,6 +4,8 @@ import { Stack, Link } from 'expo-router'
 import { Text, View, YStack, XStack, Input } from 'tamagui'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { _timeAgo } from 'src/utils'
+import FastImage from 'react-native-fast-image'
+import { enforceLen } from 'src/utils'
 
 class RenderItem extends PureComponent {
   render() {
@@ -37,26 +39,50 @@ class RenderItem extends PureComponent {
               </Pressable>
             </Link>
 
-            <XStack>
-              <Text fontWeight={'bold'}>{item.account.username} </Text>
+            <XStack gap="$1" alignItems="center">
+              <Text fontSize="$3" fontWeight={'bold'} allowFontScaling={false}>
+                {enforceLen(item.account.acct, 15, true)}{' '}
+              </Text>
               {item.status ? (
                 <Link
                   href={`/post/${item.status.in_reply_to_id ? item.status.in_reply_to_id : item.status.id}`}
                   asChild
                 >
-                  <Text color="$blue10" fontWeight="bold">
+                  <Text
+                    fontSize="$3"
+                    color="$blue10"
+                    fontWeight="bold"
+                    allowFontScaling={false}
+                  >
                     {_msgText(item.type)}
                   </Text>
                 </Link>
               ) : (
-                <Text>{_msgText(item.type)}</Text>
+                <Text fontSize="$3" allowFontScaling={false}>
+                  {_msgText(item.type)}
+                </Text>
               )}
+              <Text
+                ml="$2"
+                fontSize="$3"
+                color="$gray9"
+                fontWeight={'bold'}
+                allowFontScaling={false}
+              >
+                {_timeAgo(item.created_at)}
+              </Text>
             </XStack>
           </XStack>
 
-          <Text color="$gray9" fontWeight={'bold'} fontSize="$3">
-            {_timeAgo(item.created_at)}
-          </Text>
+          {item.status &&
+          item.status.media_attachments?.length &&
+          item.status.media_attachments[0].type === 'image' ? (
+            <FastImage
+              source={{ uri: item.status.media_attachments[0].url }}
+              style={{ width: 50, height: 50, borderRadius: 5 }}
+              resizeMode={FastImage.resizeMode.cover}
+            />
+          ) : null}
         </XStack>
       </View>
     )

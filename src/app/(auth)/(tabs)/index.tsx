@@ -27,15 +27,14 @@ import {
 import CommentFeed from 'src/components/post/CommentFeed'
 import { useShareIntentContext } from 'expo-share-intent'
 import UserAvatar from 'src/components/common/UserAvatar'
-import Welcome from 'src/components/onboarding/Welcome'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
 
 export default function HomeScreen() {
   const router = useRouter()
   const navigation = useNavigation()
-  const queryClient = useQueryClient()
   const flatListRef = useRef(null)
+  const queryClient = useQueryClient()
   const { hasShareIntent } = useShareIntentContext()
   const params = useLocalSearchParams()
   const [isPosting, setIsPosting] = useState(false)

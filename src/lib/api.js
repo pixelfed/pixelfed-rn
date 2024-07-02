@@ -235,15 +235,24 @@ export async function searchQuery(query) {
   return mapd
 }
 
-export async function fetchNotifications({ pageParam = false }) {
+export async function fetchNotifications({ queryKey, pageParam = false }) {
   let url
+  const filterMap = {
+    likes: 'favourite',
+    follows: 'follow',
+    mentions: 'mention',
+    reblogs: 'reblog',
+  }
   if (!pageParam) {
     const instance = Storage.getString('app.instance')
-    url = `https://${instance}/api/v1/notifications`
+    if (queryKey[1] != 'all') {
+      url = `https://${instance}/api/v1/notifications?types[]=${filterMap[queryKey[1]]}`
+    } else {
+      url = `https://${instance}/api/v1/notifications`
+    }
   } else {
     url = pageParam
   }
-
   return await fetchPaginatedData(url)
 }
 
