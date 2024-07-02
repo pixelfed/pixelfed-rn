@@ -3,9 +3,9 @@ import { Image, Text, View, YStack, XStack } from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
 import { Storage } from 'src/state/cache'
 import { queryApi } from 'src/requests'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link, Stack, useLocalSearchParams } from 'expo-router'
+import { Link, Stack, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { getAccountById, getAccountFollowers } from 'src/lib/api'
 import UserAvatar from 'src/components/common/UserAvatar'
@@ -15,7 +15,10 @@ const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function FollowersScreen() {
   const { id } = useLocalSearchParams()
-
+  const navigation = useNavigation()
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: 'Followers', headerBackTitle: 'Back' })
+  }, [navigation])
   const RenderItem = ({ item }) => {
     return (
       <View p="$3">
