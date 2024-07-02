@@ -10,7 +10,7 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "lint": "npx @biomejs/biome check --apply ./src",
+    "lint": "npx @biomejs/biome check --write ./src",
     "postinstall": "patch-package"
   },
   "jest": {
