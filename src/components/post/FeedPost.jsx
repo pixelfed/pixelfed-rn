@@ -4,6 +4,7 @@ import { Feather, Ionicons } from '@expo/vector-icons'
 import FastImage from 'react-native-fast-image'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
+  _timeAgo,
   enforceLen,
   formatTimestamp,
   htmlToTextWithLineBreaks,
@@ -359,6 +360,7 @@ const PostCaption = React.memo(
     onHashtagPress,
     onMentionPress,
     disableReadMore,
+    editedAt,
   }) => {
     const timeAgo = formatTimestamp(createdAt)
     const captionText = htmlToTextWithLineBreaks(caption)
@@ -432,6 +434,16 @@ const PostCaption = React.memo(
                 </Text>
               </XStack>
             </Link>
+            {editedAt ? (
+              <Link href={`/post/history/${postId}`} asChild>
+                <XStack alignItems="center" gap="$2">
+                  <Feather name="edit" color="#ccc" />
+                  <Text color="$gray9" fontSize="$3">
+                    Last Edited {_timeAgo(editedAt)}
+                  </Text>
+                </XStack>
+              </Link>
+            ) : null}
           </XStack>
         </YStack>
       </BorderlessSection>
@@ -604,6 +616,7 @@ export default function FeedPost({
             onOpenComments={() => onOpenComments(post.id)}
             onHashtagPress={(tag) => onGotoHashtag(tag)}
             onMentionPress={(tag) => onGotoMention(tag)}
+            editedAt={post.edited_at}
           />
         </>
       ) : null}
