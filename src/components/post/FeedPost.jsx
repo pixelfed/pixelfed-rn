@@ -169,7 +169,7 @@ const calculateHeight = (item) => {
 }
 
 const PostAlbumMedia = React.memo(
-  ({ media, post, carouselRef, progress, legacyCarousel }) => {
+  ({ media, post, carouselRef, progress, legacyCarousel, onUpdateProgress }) => {
     const mediaUrl = media[0].url
     const [showSensitive, setSensitive] = useState(false)
     const height = media.reduce((max, item) => {
@@ -220,7 +220,7 @@ const PostAlbumMedia = React.memo(
           width={SCREEN_WIDTH}
           height={height}
           vertical={false}
-          onProgressChange={progress}
+          onProgressChange={onUpdateProgress}
           mode={legacyCarousel ? 'normal' : 'parallax'}
           modeConfig={
             legacyCarousel
@@ -269,15 +269,16 @@ const PostActions = React.memo(
     sharesCount,
     onOpenComments,
     post,
+    progress,
     handleLike,
     showAltText,
     onBookmark,
     hasBookmarked,
   }) => {
     const hasAltText = post?.media_attachments[0]?.description?.length
-
     const onShowAlt = () => {
-      Alert.alert('Alt Text', post?.media_attachments[0]?.description)
+      const idx = Math.floor(progress.value)
+      Alert.alert(`Alt Text for #${idx + 1}`, post?.media_attachments[idx]?.description)
     }
     return (
       <BorderlessSection>
@@ -555,6 +556,13 @@ export default function FeedPost({
     goToPost()
   }
 
+  const updateProgress = useCallback(
+    (offsetProgress, absoluteProgress) => {
+      progress.value = absoluteProgress
+    },
+    [progress]
+  )
+
   // const singleTap = Gesture.Tap()
   //     .numberOfTaps(1)
   //     .onStart(() => {
@@ -579,6 +587,7 @@ export default function FeedPost({
       {post.media_attachments?.length > 1 ? (
         <PostAlbumMedia
           media={post.media_attachments}
+          onUpdateProgress={updateProgress}
           post={post}
           carouselRef={carouselRef}
           progress={progress}
@@ -595,6 +604,7 @@ export default function FeedPost({
             hasLiked={post.favourited}
             hasShared={false}
             post={post}
+            progress={progress}
             hasBookmarked={post?.bookmarked}
             likesCount={post.favourites_count}
             likedBy={post.liked_by}
