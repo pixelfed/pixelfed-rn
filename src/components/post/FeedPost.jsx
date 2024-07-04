@@ -467,7 +467,8 @@ export default function FeedPost({
   const snapPoints = useMemo(() => ['45%', '50%'], [])
   const [tmpFav, setTmpFav] = useState(false)
   const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
-  const legacyCarousel = Storage.getBoolean('ui.legacyCarousel') == true
+  //const legacyCarousel = Storage.getBoolean('ui.legacyCarousel') == true
+  const legacyCarousel = true
   const showAltText = Storage.getBoolean('ui.showAltText') == true
 
   const handlePresentModalPress = useCallback(() => {

@@ -796,6 +796,6 @@ export async function getStatusHistory(id) {
   return await selfGet(`api/v1/statuses/${id}/history`)
 }
 
-export async function getMutualFollowing({queryKey}) {
+export async function getMutualFollowing({ queryKey }) {
   return await selfGet(`api/v1.1/accounts/mutuals/${queryKey[1]}`)
 }

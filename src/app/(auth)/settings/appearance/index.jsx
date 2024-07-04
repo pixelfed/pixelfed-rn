@@ -57,7 +57,7 @@ export default function Screen() {
           </Switch>
         </XStack>
         <Separator />
-        <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
+        {/* <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
           <YStack maxWidth="60%" gap="$2">
             <Text fontSize="$5" fontWeight={'bold'}>
               Use Legacy Carousel
@@ -74,7 +74,7 @@ export default function Screen() {
             <Switch.Thumb animation="quicker" />
           </Switch>
         </XStack>
-        <Separator />
+        <Separator /> */}
         <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
           <YStack maxWidth="60%" gap="$2">
             <Text fontSize="$5" fontWeight={'bold'}>

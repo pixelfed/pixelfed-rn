@@ -31,7 +31,7 @@ export default function ProfileHeader({
   onShare,
   onUnfollow,
   onCancelFollowRequest,
-  mutuals
+  mutuals,
 }) {
   const [usernameTruncated, setUsernameTruncated] = useState(profile?.acct?.length > 40)
   const _prettyCount = (num) => {
@@ -169,24 +169,33 @@ export default function ProfileHeader({
   const RenderMutuals = () => {
     const top3 = mutuals.slice(0, 3)
     return (
-      <XStack alignItems='center' gap="$2" mt="$2" >
-        <XStack gap={-10} >
-          { top3.map(m => (
-            <UserAvatar key={m.id} url={m.avatar} size="$2"/>
+      <XStack alignItems="center" gap="$2" mt="$2">
+        <XStack gap={-10}>
+          {top3.map((m) => (
+            <UserAvatar key={m.id} url={m.avatar} size="$2" />
           ))}
         </XStack>
         <XStack maxWidth="80%" flexWrap="wrap">
-          <Text fontSize="$2" allowFontScaling={false}>Followed by </Text>
-          { top3.map((t, index) => <Link key={index} href={`/profile/${t.id}`} asChild>
-            <XStack>
-              <Text fontWeight="bold" fontSize="$3" allowFontScaling={false}>{t.username}</Text>
-              <Text fontSize="$3" allowFontScaling={false}>{top3.length > 2 && index != 2 ? ', ' : ' '}</Text>
-            </XStack>
-          </Link>
-          )}
-          { top3.length === 3 ?
-          <Text>and <Text fontWeight="bold">{mutuals.length - top3.length} others</Text></Text>
-          : null }
+          <Text fontSize="$2" allowFontScaling={false}>
+            Followed by{' '}
+          </Text>
+          {top3.map((t, index) => (
+            <Link key={index} href={`/profile/${t.id}`} asChild>
+              <XStack>
+                <Text fontWeight="bold" fontSize="$3" allowFontScaling={false}>
+                  {t.username}
+                </Text>
+                <Text fontSize="$3" allowFontScaling={false}>
+                  {top3.length > 2 && index != 2 ? ', ' : ' '}
+                </Text>
+              </XStack>
+            </Link>
+          ))}
+          {top3.length === 3 ? (
+            <Text>
+              and <Text fontWeight="bold">{mutuals.length - top3.length} others</Text>
+            </Text>
+          ) : null}
         </XStack>
       </XStack>
     )
@@ -331,9 +340,11 @@ export default function ProfileHeader({
           ) : null}
         </YStack>
 
-        { mutuals && mutuals.length ? <View w="100%" flexGrow={1}>
-          <RenderMutuals />
-          </View> : null }
+        {mutuals && mutuals.length ? (
+          <View w="100%" flexGrow={1}>
+            <RenderMutuals />
+          </View>
+        ) : null}
 
         <ActionButton />
       </View>
