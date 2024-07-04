@@ -100,7 +100,7 @@ export default function Page() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={['bottom']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['bottom']}>
       <Stack.Screen
         options={{
           title: 'Post',
