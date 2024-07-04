@@ -65,7 +65,7 @@ export default function Page() {
           <ActivityIndicator />
         </View>
       ) : (
-        <ScrollView flexGrow={1}>
+        <ScrollView>
           <YStack p="$5" bg="white" gap="$3">
             <Text fontSize="$7" fontWeight="bold">
               Why are you reporting this profile?
