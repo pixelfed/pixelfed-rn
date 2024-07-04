@@ -3,9 +3,9 @@ import { Avatar, Image, ScrollView, Text, View, YStack, XStack, Separator } from
 import ProfileHeader from '@components/profile/ProfileHeader'
 import { Storage } from 'src/state/cache'
 import { queryApi } from 'src/requests'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
+import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import {
   useQuery,
   useInfiniteQuery,
@@ -31,6 +31,10 @@ export default function Page() {
   const { id } = useLocalSearchParams()
   const router = useRouter()
   const queryClient = useQueryClient()
+  const navigation = useNavigation()
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: 'Conversation', headerBackTitle: 'Back' })
+  }, [navigation])
   const [messages, setMessages] = useState([])
   const [isReloading, setReloading] = useState(false)
   const [isTyping, setTyping] = useState(false)
@@ -199,7 +203,7 @@ export default function Page() {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['bottom']}>
       <Stack.Screen
         options={{
-          title: 'Direct Message',
+          title: 'Conversation',
           headerBackTitle: 'Back',
           headerRight: () =>
             isReloading ? (

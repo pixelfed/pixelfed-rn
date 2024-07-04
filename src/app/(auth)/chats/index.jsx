@@ -3,9 +3,9 @@ import { Avatar, Image, ScrollView, Text, View, YStack, XStack, Separator } from
 import ProfileHeader from '@components/profile/ProfileHeader'
 import { Storage } from 'src/state/cache'
 import { queryApi } from 'src/requests'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link, Stack, useLocalSearchParams } from 'expo-router'
+import { Link, Stack, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { getConversations, getAccountStatusesById } from 'src/lib/api'
 import { _timeAgo } from 'src/utils'
@@ -13,7 +13,10 @@ import UserAvatar from 'src/components/common/UserAvatar'
 
 export default function Page() {
   const selfUser = JSON.parse(Storage.getString('user.profile'))
-
+  const navigation = useNavigation()
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: 'Direct Messages', headerBackTitle: 'Back' })
+  }, [navigation])
   const { isPending, isFetching, isError, data, error } = useQuery({
     queryKey: ['getConversations'],
     queryFn: getConversations,
@@ -87,7 +90,7 @@ export default function Page() {
     <SafeAreaView style={{ flex: 1 }} edges={['left']}>
       <Stack.Screen
         options={{
-          title: 'Chats',
+          title: 'Direct Messages',
           headerBackTitle: 'Back',
         }}
       />
