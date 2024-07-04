@@ -56,9 +56,9 @@ export default function Login() {
               theme="dark"
               themeInverse={true}
               value={server}
-              placeholder='pixelfed.social'
+              placeholder="pixelfed.social"
               onChangeText={setServer}
-              autoCapitalize='none'
+              autoCapitalize="none"
               borderWidth={2}
               autoFocus={true}
             />
@@ -70,7 +70,13 @@ export default function Login() {
             </Button>
           </Form.Trigger>
         </Form>
-        <Button mt="$5" theme="dark" themeInverse={true} size="$3" onPress={() => router.back()}>
+        <Button
+          mt="$5"
+          theme="dark"
+          themeInverse={true}
+          size="$3"
+          onPress={() => router.back()}
+        >
           Go back
         </Button>
       </YStack>
