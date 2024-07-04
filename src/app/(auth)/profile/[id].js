@@ -25,6 +25,7 @@ import {
   unmuteProfileById,
   followAccountById,
   unfollowAccountById,
+  getMutualFollowing,
 } from 'src/lib/api'
 import {
   BottomSheetModal,
@@ -232,6 +233,12 @@ export default function ProfileScreen() {
     queryKey: ['getAccountRelationship', userId],
     queryFn: getAccountRelationship,
     enabled: !!userId && !userError,
+  })
+
+  const { data: mutuals, isError: mutualsError } = useQuery({
+    queryKey: ['getMutualFollowing', userId],
+    queryFn: getMutualFollowing,
+    enabled: !!relationship,
   })
 
   const blockMutation = useMutation({
@@ -448,9 +455,10 @@ export default function ProfileScreen() {
         onUnfollow={() => _handleUnfollow()}
         onCancelFollowRequest={() => _handleCancelFollowRequest()}
         onShare={() => _handleOnShare()}
+        mutuals={mutuals}
       />
     ),
-    [user, relationship]
+    [user, relationship, mutuals]
   )
 
   const {

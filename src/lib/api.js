@@ -795,3 +795,7 @@ export async function postAutospamHandle(params) {
 export async function getStatusHistory(id) {
   return await selfGet(`api/v1/statuses/${id}/history`)
 }
+
+export async function getMutualFollowing({queryKey}) {
+  return await selfGet(`api/v1.1/accounts/mutuals/${queryKey[1]}`)
+}
