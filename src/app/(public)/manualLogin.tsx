@@ -1,4 +1,4 @@
-import { Link, router, Stack, useNavigation } from 'expo-router'
+import { Link, router, Stack, useNavigation, useRouter } from 'expo-router'
 import {
   Text,
   View,
@@ -16,22 +16,15 @@ import { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 
 export default function Login() {
-  const [server, setServer] = useState('pixelfed.social')
+  const [server, setServer] = useState('')
   const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
   const { login, isLoading } = useAuth()
 
   const handleLogin = () => {
     login(server)
   }
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false)
-    }, 2000)
-
-    return () => clearTimeout(timer)
-  }, [])
 
   return (
     <SafeAreaView
@@ -63,8 +56,11 @@ export default function Login() {
               theme="dark"
               themeInverse={true}
               value={server}
+              placeholder='pixelfed.social'
               onChangeText={setServer}
+              autoCapitalize='none'
               borderWidth={2}
+              autoFocus={true}
             />
           </YStack>
 
@@ -74,6 +70,9 @@ export default function Login() {
             </Button>
           </Form.Trigger>
         </Form>
+        <Button mt="$5" theme="dark" themeInverse={true} size="$3" onPress={() => router.back()}>
+          Go back
+        </Button>
       </YStack>
     </SafeAreaView>
   )

@@ -85,11 +85,11 @@ export default function Register() {
           >
             {enforceLen(item.domain, 30, true, 'middle')}
           </Text>
-          <Text fontSize="$3" color="$gray10">
+          <Text fontSize="$3" color="$gray5">
             {prettyCount(item.user_count)} users
           </Text>
         </YStack>
-        <Text pr="$3" color="$blue9" fontWeight={'bold'}>
+        <Text pr="$3" color="$blue8" fontWeight={'bold'}>
           Login
         </Text>
       </XStack>
