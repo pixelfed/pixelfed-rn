@@ -28,7 +28,7 @@ export default function ProfileScreen() {
         message: user.url,
       })
     } catch (error) {
-      Alert.alert(error.message)
+      Alert.alert(error?.message)
     }
   }
 
