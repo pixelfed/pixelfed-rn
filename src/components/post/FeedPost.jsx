@@ -278,7 +278,11 @@ const PostActions = React.memo(
     const hasAltText = post?.media_attachments[0]?.description?.length
     const onShowAlt = () => {
       const idx = Math.floor(progress.value)
-      Alert.alert(`Alt Text for #${idx + 1}`, post?.media_attachments[idx]?.description)
+      Alert.alert(
+        `Alt Text for #${idx + 1}`,
+        post?.media_attachments[idx]?.description ??
+          'Media was not tagged with any alt text.'
+      )
     }
     return (
       <BorderlessSection>
@@ -465,7 +469,7 @@ export default function FeedPost({
   const bottomSheetModalRef = useRef(null)
   const carouselRef = useRef(null)
   const progress = useSharedValue(0)
-  const snapPoints = useMemo(() => ['45%', '50%'], [])
+  const snapPoints = useMemo(() => ['45%', '55%'], [])
   const [tmpFav, setTmpFav] = useState(false)
   const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
   //const legacyCarousel = Storage.getBoolean('ui.legacyCarousel') == true
@@ -531,6 +535,11 @@ export default function FeedPost({
   const onGotoAbout = () => {
     bottomSheetModalRef.current?.close()
     router.push(`/profile/about/${post.account.id}`)
+  }
+
+  const _onEditPost = (id) => {
+    bottomSheetModalRef.current?.close()
+    router.push(`/post/edit/${id}`)
   }
 
   const onGotoShare = async () => {
@@ -705,6 +714,22 @@ export default function FeedPost({
                       <Feather name="alert-circle" size={20} color="red" />
                       <Text fontSize="$5" color="$red9" allowFontScaling={false}>
                         Report
+                      </Text>
+                    </XStack>
+                  </Button>
+                </Group.Item>
+              ) : null}
+              {user && user?.id === post?.account?.id ? (
+                <Group.Item>
+                  <Button
+                    size="$5"
+                    justifyContent="start"
+                    onPress={() => _onEditPost(post.id)}
+                  >
+                    <XStack alignItems="center" gap="$3">
+                      <Feather name="edit" size={20} color="#aaa" />
+                      <Text fontSize="$5" allowFontScaling={false}>
+                        Edit Post
                       </Text>
                     </XStack>
                   </Button>

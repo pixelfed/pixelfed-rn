@@ -102,6 +102,35 @@ export async function selfPost(
   return rawRes ? resp : resp.json()
 }
 
+export async function selfPut(
+  path,
+  params = {},
+  asForm = false,
+  rawRes = false,
+  idempotency = false
+) {
+  let headers = {}
+  const instance = Storage.getString('app.instance')
+  const token = Storage.getString('app.token')
+  const url = `https://${instance}/${path}`
+
+  headers['Authorization'] = `Bearer ${token}`
+  headers['Accept'] = 'application/json'
+  headers['Content-Type'] = asForm ? 'multipart/form-data' : 'application/json'
+
+  if (idempotency) {
+    headers['Idempotency-Key'] = randomKey(40)
+  }
+
+  const resp = await fetch(url, {
+    method: 'PUT',
+    body: asForm ? objectToForm(params) : JSON.stringify(params),
+    headers,
+  })
+
+  return rawRes ? resp : resp.json()
+}
+
 export async function selfDelete(path, params = {}, rawRes = false, idempotency = false) {
   let headers = {}
   const instance = Storage.getString('app.instance')
@@ -737,6 +766,24 @@ export async function deleteStatusV1(id) {
   return await response.json()
 }
 
+export async function editPostMedia(id, description) {
+  const instance = Storage.getString('app.instance')
+  const token = Storage.getString('app.token')
+  const params = new URLSearchParams({
+    description: description,
+  })
+  let url = `https://${instance}/api/v1/media/${id}?${params}`
+  const response = await fetch(url, {
+    method: 'put',
+    headers: new Headers({
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
+  })
+  return await response.json()
+}
+
 export async function getTrendingPostsV1() {
   const res = await selfGet('api/v1.1/discover/posts/network/trending')
   const accounts = removeDuplicateObjects(
@@ -798,4 +845,19 @@ export async function getStatusHistory(id) {
 
 export async function getMutualFollowing({ queryKey }) {
   return await selfGet(`api/v1.1/accounts/mutuals/${queryKey[1]}`)
+}
+
+export async function getSelfLikes({ queryKey, pageParam = false }) {
+  let url
+  const instance = Storage.getString('app.instance')
+  if (!pageParam) {
+    url = `https://${instance}/api/v1/likes`
+  } else {
+    url = pageParam
+  }
+  return await fetchPaginatedData(url)
+}
+
+export async function putEditPost(id, params) {
+  return await selfPut(`api/v1/statuses/${id}`, params)
 }
