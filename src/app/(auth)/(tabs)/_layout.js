@@ -13,7 +13,7 @@ export default function AppLayout() {
     return <Redirect href="/login" />
   }
   return (
-    <Tabs>
+    <Tabs initialRouteName="index" backBehavior="history">
       <Tabs.Screen
         name="index"
         options={{
