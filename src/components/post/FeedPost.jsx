@@ -469,7 +469,7 @@ export default function FeedPost({
   const bottomSheetModalRef = useRef(null)
   const carouselRef = useRef(null)
   const progress = useSharedValue(0)
-  const snapPoints = useMemo(() => ['45%', '55%'], [])
+  const snapPoints = useMemo(() => ['45%', '65%'], [])
   const [tmpFav, setTmpFav] = useState(false)
   const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
   //const legacyCarousel = Storage.getBoolean('ui.legacyCarousel') == true
