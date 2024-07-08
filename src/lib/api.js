@@ -847,7 +847,7 @@ export async function getMutualFollowing({ queryKey }) {
   return await selfGet(`api/v1.1/accounts/mutuals/${queryKey[1]}`)
 }
 
-export async function getSelfLikes({ queryKey, pageParam = false }) {
+export async function getSelfLikes({ pageParam = false }) {
   let url
   const instance = Storage.getString('app.instance')
   if (!pageParam) {

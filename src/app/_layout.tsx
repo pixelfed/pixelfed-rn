@@ -8,7 +8,7 @@ import { Stack, useRouter, ErrorBoundary } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import React, { useEffect } from 'react'
 import AuthProvider from '../state/AuthProvider'
-import { useColorScheme, type AppStateStatus, Platform } from 'react-native'
+import { useColorScheme, type AppStateStatus, Platform, LogBox } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-query'
 import { useAppState } from 'src/hooks/useAppState'
@@ -23,7 +23,10 @@ import Constants from 'expo-constants'
 
 export const unstable_settings = {
   initialRouteName: '/login',
+  backBehavior: "history"
 }
+
+LogBox.ignoreAllLogs()
 
 SplashScreen.preventAutoHideAsync()
 
@@ -92,19 +95,17 @@ function RootLayoutNav() {
               <ToastProvider native={true} burntOptions={{ from: 'bottom' }}>
                 <ThemeProvider value={DefaultTheme}>
                   <VideoProvider>
-                    <SafeAreaProvider>
-                      <Stack>
-                        <Stack.Screen
-                          name="(auth)/(tabs)"
-                          options={{ headerShown: false }}
-                        />
-                        <Stack.Screen
-                          name="(public)/login"
-                          options={{ headerShown: false }}
-                        />
-                      </Stack>
-                      <ToastViewport />
-                    </SafeAreaProvider>
+                    <Stack>
+                      <Stack.Screen
+                        name="(auth)/(tabs)"
+                        options={{ headerShown: false, backBehavior: "order" }}
+                      />
+                      <Stack.Screen
+                        name="(public)/login"
+                        options={{ headerShown: false }}
+                      />
+                    </Stack>
+                    <ToastViewport />
                   </VideoProvider>
                 </ThemeProvider>
               </ToastProvider>
