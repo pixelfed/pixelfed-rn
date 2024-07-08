@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Keyboard,
   Dimensions,
+  Platform,
 } from 'react-native'
 import {
   ScrollView,
@@ -42,20 +43,23 @@ const RenderItem = React.memo(({ item, onUpdateMediaAlt }) => (
       <View w={100} h={160} bg="$gray8"></View>
     )}
     <YStack flexGrow={1} width="70%" gap="$2">
-      <Text fontSize="$3" allowFontScaling={false}>
+      <Text fontSize="$3" allowFontScaling={false} color="$gray9">
         Media Alt Text
       </Text>
 
       <TextArea
         size="$4"
-        fontSize="$7"
+        fontSize={Platform.OS === 'ios' ? '$7' : '$5'}
         borderWidth={1}
+        flexGrow={1}
         defaultValue={item.description}
         onChangeText={(text) => onUpdateMediaAlt(item.id, text)}
         maxLength={1000}
         backgroundColor={'white'}
         numberOfLines={4}
+        rows={4}
         multiline={true}
+        textAlignVertical="top"
         placeholder="Add descriptive alt text to describe your media here..."
         placeholderTextColor={'#ccc'}
       />
@@ -185,12 +189,12 @@ export default function Page() {
           headerRight: HeaderRight,
         }}
       />
-      <ScrollView>
+      <ScrollView onScroll={() => Keyboard.dismiss()}>
         <YStack p="$3" gap="$3">
           <XStack gap="$3" justifyContent="space-between" alignItems="center">
             <XStack gap="$3" alignItems="center">
               <UserAvatar url={user?.avatar} size="$3" />
-              <Text fontSize="$7" fontWeight="bold">
+              <Text fontSize={Platform.OS === 'ios' ? '$7' : '$5'} fontWeight="bold">
                 {user?.username}
               </Text>
             </XStack>
@@ -204,13 +208,15 @@ export default function Page() {
 
           <TextArea
             size="$4"
-            fontSize="$7"
+            fontSize={Platform.OS === 'ios' ? '$7' : '$5'}
             borderWidth={1}
             defaultValue={caption}
             onChangeText={setCaption}
             maxLength={serverConfig?.configuration.statuses.max_characters}
             backgroundColor={'white'}
             numberOfLines={4}
+            textAlignVertical="top"
+            rows={4}
             multiline={true}
             placeholder="Share your moment..."
             placeholderTextColor={'#ccc'}
@@ -223,9 +229,9 @@ export default function Page() {
             borderRadius="$3"
             justifyContent="space-between"
           >
-            <YStack maxWidth="60%" gap="$2">
-              <Text fontSize="$5" fontWeight={'bold'}>
-                Contains Sensitive/NSFW Media
+            <YStack maxWidth="70%" gap="$2">
+              <Text fontSize="$4" fontWeight={'bold'}>
+                Contains Sensitive Media
               </Text>
               <Text fontSize="$3" color="$gray9">
                 Applies a sensitive content warning.
@@ -258,13 +264,14 @@ export default function Page() {
                 </XStack>
                 <TextArea
                   size="$4"
-                  fontSize="$7"
+                  fontSize={Platform.OS === 'ios' ? '$7' : '$5'}
                   borderWidth={1}
                   defaultValue={spoilerText}
                   onChangeText={setSpoiler}
                   maxLength={140}
                   backgroundColor={'white'}
                   numberOfLines={4}
+                  textAlignVertical="top"
                   multiline={true}
                   placeholder="Set an optional spoiler content warning"
                   placeholderTextColor={'#ccc'}
