@@ -43,6 +43,11 @@ export default function Page() {
     bottomSheetModalRef.current?.close()
     router.push(`/profile/${id}`)
   }
+
+  const handleGotoHashtag = (id) => {
+    bottomSheetModalRef.current?.close()
+    router.push(`/hashtag/${id}`)
+  }
   const onOpenComments = useCallback((id) => {
     bottomSheetModalRef.current?.present()
   }, [])
@@ -117,6 +122,7 @@ export default function Page() {
           id={id}
           user={user}
           gotoProfile={handleGotoProfile}
+          gotoHashtag={handleGotoHashtag}
           gotoUsernameProfile={handleGotoUsernameProfile}
         />
       </BottomSheetModal>
