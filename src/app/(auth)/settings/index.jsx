@@ -35,12 +35,12 @@ export default function Page() {
     const userJson = JSON.parse(Storage.getString('user.profile'))
     setUser(userJson)
   }, [])
+  
+  const { logout, isLoading } = useAuth()
 
   const cacheClear = () => {
     logout()
   }
-
-  const { logout, isLoading } = useAuth()
 
   const onFeedback = async () => {
     openBrowserAsync('https://github.com/pixelfed/pixelfed-rn/discussions')

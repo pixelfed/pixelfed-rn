@@ -851,7 +851,7 @@ export async function getSelfLikes({ queryKey, pageParam = false }) {
   let url
   const instance = Storage.getString('app.instance')
   if (!pageParam) {
-    url = `https://${instance}/api/v1/likes`
+    url = `https://${instance}/api/v1/favourites`
   } else {
     url = pageParam
   }
