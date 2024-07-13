@@ -858,6 +858,17 @@ export async function getSelfLikes({ pageParam = false }) {
   return await fetchPaginatedData(url)
 }
 
+export async function getSelfBookmarks({ pageParam = false }) {
+  let url
+  const instance = Storage.getString('app.instance')
+  if (!pageParam) {
+    url = `https://${instance}/api/v1/bookmarks`
+  } else {
+    url = pageParam
+  }
+  return await fetchPaginatedData(url)
+}
+
 export async function putEditPost(id, params) {
   return await selfPut(`api/v1/statuses/${id}`, params)
 }

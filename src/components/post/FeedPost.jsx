@@ -366,6 +366,8 @@ const PostCaption = React.memo(
     onMentionPress,
     disableReadMore,
     editedAt,
+    isLikeFeed,
+    likedAt,
   }) => {
     const timeAgo = formatTimestamp(createdAt)
     const captionText = htmlToTextWithLineBreaks(caption)
@@ -449,6 +451,14 @@ const PostCaption = React.memo(
                 </XStack>
               </Link>
             ) : null}
+            {isLikeFeed && likedAt ? (
+              <XStack alignItems="center" gap="$2">
+                <Feather name="heart" color="#ccc" />
+                <Text color="$gray9" fontSize="$3">
+                  Liked {_timeAgo(likedAt)} ago
+                </Text>
+              </XStack>
+            ) : null}
           </XStack>
         </YStack>
       </BorderlessSection>
@@ -465,6 +475,8 @@ export default function FeedPost({
   onBookmark,
   disableReadMore = false,
   isPermalink = false,
+  isLikeFeed = false,
+  likedAt,
 }) {
   const bottomSheetModalRef = useRef(null)
   const carouselRef = useRef(null)
@@ -637,6 +649,8 @@ export default function FeedPost({
             onHashtagPress={(tag) => onGotoHashtag(tag)}
             onMentionPress={(tag) => onGotoMention(tag)}
             editedAt={post.edited_at}
+            isLikeFeed={isLikeFeed}
+            likedAt={likedAt}
           />
         </>
       ) : null}

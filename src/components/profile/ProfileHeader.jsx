@@ -60,6 +60,14 @@ export default function ProfileHeader({
     router.navigate(`/settings/profile`)
   }
 
+  const gotoSelfLikes = () => {
+    router.navigate(`/profile/likes`)
+  }
+
+  const gotoBookmarks = () => {
+    router.navigate(`/profile/bookmarks`)
+  }
+
   const ActionButton = () => {
     if (isSelf || selfUser?.id == profile?.id) {
       return <EditProfile onPress={() => onGotoSettings()} />
@@ -166,10 +174,31 @@ export default function ProfileHeader({
     </XStack>
   )
 
+  const RenderMutualSeparator = ({ index }) => {
+    const top3 = mutuals.slice(0, 3)
+    const totalLen = mutuals.length
+
+    if (totalLen === 1) {
+      return
+    }
+
+    if (totalLen === 3) {
+      if (index != top3.length - 1) {
+        return index === top3.length - 2 ? ' and ' : ', '
+      }
+      return ' '
+    }
+
+    if (totalLen < 4) {
+      return index != top3.length - 1 ? ' and ' : ' '
+    }
+    return index != top3.length - 1 ? ', ' : ' '
+  }
+
   const RenderMutuals = () => {
     const top3 = mutuals.slice(0, 3)
     return (
-      <XStack alignItems="center" gap="$2" mt="$2">
+      <XStack alignItems="center" gap="$2" mt="$3" mb="$1">
         <XStack gap={-10}>
           {top3.map((m) => (
             <UserAvatar key={m.id} url={m.avatar} size="$2" />
@@ -186,15 +215,17 @@ export default function ProfileHeader({
                   {t.username}
                 </Text>
                 <Text fontSize="$3" allowFontScaling={false}>
-                  {top3.length > 2 && index != 2 ? ', ' : ' '}
+                  <RenderMutualSeparator index={index} />
                 </Text>
               </XStack>
             </Link>
           ))}
-          {top3.length === 3 ? (
-            <Text>
-              and <Text fontWeight="bold">{mutuals.length - top3.length} others</Text>
-            </Text>
+          {top3.length === 3 && mutuals.length > 3 ? (
+            <Link href={`/profile/followers/${profile?.id}`} asChild>
+              <Text>
+                and <Text fontWeight="bold">{mutuals.length - top3.length} others</Text>
+              </Text>
+            </Link>
           ) : null}
         </XStack>
       </XStack>
@@ -224,7 +255,7 @@ export default function ProfileHeader({
               <Text fontWeight="bold" fontSize="$5" allowFontScaling={false}>
                 {prettyCount(profile?.statuses_count ? profile.statuses_count : 0)}
               </Text>
-              <Text fontSize="$2" allowFontScaling={false}>
+              <Text fontSize="$2" allowFontScaling={false} color="$gray9">
                 Posts
               </Text>
             </YStack>
@@ -235,7 +266,7 @@ export default function ProfileHeader({
                   <Text fontWeight="bold" fontSize="$5" allowFontScaling={false}>
                     {prettyCount(profile?.following_count ? profile.following_count : 0)}
                   </Text>
-                  <Text fontSize="$2" allowFontScaling={false}>
+                  <Text fontSize="$2" allowFontScaling={false} color="$gray9">
                     Following
                   </Text>
                 </YStack>
@@ -257,7 +288,7 @@ export default function ProfileHeader({
                   <Text fontWeight="bold" fontSize="$5" allowFontScaling={false}>
                     {prettyCount(profile?.followers_count ? profile.followers_count : 0)}
                   </Text>
-                  <Text fontSize="$2" allowFontScaling={false}>
+                  <Text fontSize="$2" allowFontScaling={false} color="$gray9">
                     Followers
                   </Text>
                 </YStack>
@@ -348,7 +379,23 @@ export default function ProfileHeader({
 
         <ActionButton />
       </View>
-      <Separator />
+
+      {isSelf ? (
+        <>
+          <Separator borderColor="$gray6" />
+          <XStack justifyContent="space-around" px="$5" py="$3" mb="$1">
+            <Feather name="grid" size={20} />
+
+            <PressableOpacity onPress={() => gotoSelfLikes()}>
+              <Feather name="heart" size={20} color="#999" />
+            </PressableOpacity>
+
+            <PressableOpacity onPress={() => gotoBookmarks()}>
+              <Feather name="bookmark" size={20} color="#999" />
+            </PressableOpacity>
+          </XStack>
+        </>
+      ) : null}
     </View>
   )
 }
