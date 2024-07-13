@@ -143,9 +143,6 @@ export default function HomeScreen() {
         ? await likeStatus(handleLike)
         : await unlikeStatus(handleLike)
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['fetchNetworkFeed'] })
-    },
   })
 
   const handleLike = async (id, state) => {

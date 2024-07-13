@@ -168,9 +168,6 @@ export default function HomeScreen() {
         ? await likeStatus(handleLike)
         : await unlikeStatus(handleLike)
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['homeFeed'] })
-    },
   })
 
   const handleLike = async (id, state) => {
