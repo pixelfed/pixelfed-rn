@@ -61,19 +61,19 @@ export default function DiscoverScreen() {
     return (
       <Link href={`/post/${item.id}`} asChild>
         <YStack justifyContent="center" alignItems="center" gap="$2" mr="$3">
-          <View borderRadius={10} overflow="hidden">
+          <View borderRadius={10} overflow="hidden" bg="black">
             <FastImage
               source={{ uri: item.media_attachments[0].url }}
               style={{ width: SCREEN_WIDTH / 1.3, height: SCREEN_WIDTH / 1.3 }}
               resizeMode={FastImage.resizeMode.cover}
             />
             <Text
-              position="absolute"
-              zIndex={3}
               color="white"
-              bottom={10}
-              left={10}
+              alignSelf="center"
               fontWeight={'bold'}
+              fontSize="$1"
+              allowFontScaling={false}
+              py={4}
             >
               {enforceLen(item.account.acct, 15, true, 'end')}
             </Text>
@@ -86,7 +86,7 @@ export default function DiscoverScreen() {
   const RenderPosts = ({ item }) => (
     <Link href={`/post/${item.id}`} asChild>
       <YStack justifyContent="center" alignItems="center" gap="$2" mr="$3">
-        <View borderRadius={10} overflow="hidden">
+        <View borderRadius={10} overflow="hidden" bg="black">
           <Image
             source={{
               uri: item.media_attachments[0].url,
@@ -96,14 +96,14 @@ export default function DiscoverScreen() {
             resizeMode="cover"
           />
           <Text
-            position="absolute"
-            zIndex={3}
             color="white"
-            bottom={10}
-            left={10}
+            alignSelf="center"
             fontWeight={'bold'}
+            fontSize="$1"
+            allowFontScaling={false}
+            py={4}
           >
-            {enforceLen(item.account.acct, 15, true, 'end')}
+            {enforceLen(item.account.acct, 13, true, 'end')}
           </Text>
         </View>
       </YStack>
