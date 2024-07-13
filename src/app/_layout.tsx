@@ -23,7 +23,7 @@ import Constants from 'expo-constants'
 
 export const unstable_settings = {
   initialRouteName: '/login',
-  backBehavior: "history"
+  backBehavior: 'history',
 }
 
 LogBox.ignoreAllLogs()
@@ -98,7 +98,7 @@ function RootLayoutNav() {
                     <Stack>
                       <Stack.Screen
                         name="(auth)/(tabs)"
-                        options={{ headerShown: false, backBehavior: "order" }}
+                        options={{ headerShown: false, backBehavior: 'order' }}
                       />
                       <Stack.Screen
                         name="(public)/login"

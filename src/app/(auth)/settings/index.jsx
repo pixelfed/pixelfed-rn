@@ -35,7 +35,7 @@ export default function Page() {
     const userJson = JSON.parse(Storage.getString('user.profile'))
     setUser(userJson)
   }, [])
-  
+
   const { logout, isLoading } = useAuth()
 
   const cacheClear = () => {

@@ -13,7 +13,7 @@ export default function AppLayout() {
     return <Redirect href="/login" />
   }
   return (
-    <Tabs screenOptions={{initialRouteName:"index", backBehavior:"order"}}>
+    <Tabs screenOptions={{ initialRouteName: 'index', backBehavior: 'order' }}>
       <Tabs.Screen
         name="index"
         options={{
