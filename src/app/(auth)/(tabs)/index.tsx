@@ -6,13 +6,14 @@ import { StatusBar } from 'expo-status-bar'
 import { Feather } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   fetchHomeFeed,
   likeStatus,
   unlikeStatus,
   deleteStatusV1,
   postBookmark,
+  getSelfAccount,
 } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
 import EmptyFeed from 'src/components/common/EmptyFeed'
@@ -94,8 +95,6 @@ export default function HomeScreen() {
     [replyId]
   )
 
-  const userJson = Storage.getString('user.profile')
-  const user = JSON.parse(userJson)
   const { playVideo, currentVideoId } = useVideo()
 
   const onViewRef = useCallback(
@@ -200,6 +199,15 @@ export default function HomeScreen() {
   }
 
   const {
+    data: user
+  } = useQuery({
+    queryKey: ['getSelfAccount'],
+    queryFn: getSelfAccount
+  })
+
+  const userId = user?.id
+
+  const {
     data,
     fetchNextPage,
     fetchPreviousPage,
@@ -213,8 +221,9 @@ export default function HomeScreen() {
     error,
   } = useInfiniteQuery({
     queryKey: ['homeFeed'],
-    initialPageParam: null,
     queryFn: fetchHomeFeed,
+    initialPageParam: null,
+    enabled: !!userId,
     refetchOnWindowFocus: false,
     getNextPageParam: (lastPage) => lastPage.nextPage,
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
@@ -270,7 +279,7 @@ export default function HomeScreen() {
             handleReport={handleCommentReport}
           />
         ) : null}
-        {sheetType === 'welcome' ? <Welcome onContinue={handleOnContinue} /> : null}
+        {/* {sheetType === 'welcome' ? <Welcome onContinue={handleOnContinue} /> : null} */}
       </BottomSheetModal>
       <FlatList
         ref={flatListRef}
