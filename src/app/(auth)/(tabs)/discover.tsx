@@ -15,13 +15,18 @@ import {
   getTrendingPopularPosts,
   getTrendingPostsV1,
 } from 'src/lib/api'
-import { Link } from 'expo-router'
+import { Link, useRouter } from 'expo-router'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { enforceLen, prettyCount } from 'src/utils'
 import FastImage from 'react-native-fast-image'
+import { PressableOpacity } from 'react-native-pressable-opacity'
+import { Feather } from '@expo/vector-icons'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
+
 export default function DiscoverScreen() {
+  const router = useRouter()
+
   const RenderTags = ({ item }) => (
     <Link href={`/hashtag/${item.hashtag}`} asChild>
       <View bg="$gray3" py="$2" px="$3" borderRadius={5} mr="$2">
@@ -151,9 +156,14 @@ export default function DiscoverScreen() {
     <SafeAreaView flex={1} edges={['left']} style={{ backgroundColor: '#fff' }}>
       <ScrollView>
         <YStack px="$5" py="$3" mt={Platform.OS === 'android' ? '$7' : '$0'}>
-          <Text fontSize="$10" fontWeight="bold" letterSpacing={-1.4}>
-            Discover
-          </Text>
+          <XStack justifyContent="space-between" alignItems="center">
+            <Text fontSize="$10" fontWeight="bold" letterSpacing={-1.4}>
+              Discover
+            </Text>
+            <PressableOpacity onPress={() => router.push('/search')}>
+              <Feather name="search" size={30} />
+            </PressableOpacity>
+          </XStack>
         </YStack>
         {hashtags && hashtags.length ? (
           <View ml="$5" mt="$5">
