@@ -6,7 +6,12 @@ import { StatusBar } from 'expo-status-bar'
 import { Feather } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import {
   fetchHomeFeed,
   likeStatus,
@@ -30,6 +35,25 @@ import { useShareIntentContext } from 'expo-share-intent'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
+
+export function ErrorBoundary(props: ErrorBoundaryProps) {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white',
+      }}
+    >
+      <Text fontSize="$8" allowFontScaling={false} color="red">
+        Something went wrong!
+      </Text>
+      <Text>{props.error?.message}</Text>
+      <Text onPress={props.retry}>Try Again?</Text>
+    </View>
+  )
+}
 
 export default function HomeScreen() {
   const router = useRouter()
@@ -95,6 +119,8 @@ export default function HomeScreen() {
     [replyId]
   )
 
+  const userJson = Storage.getString('user.profile')
+  const user = JSON.parse(userJson)
   const { playVideo, currentVideoId } = useVideo()
 
   const onViewRef = useCallback(
@@ -124,10 +150,10 @@ export default function HomeScreen() {
         onBookmark={() => onBookmark(item.id)}
       />
     ),
-    []
+    [user]
   )
 
-  const keyExtractor = useCallback((item) => item.id.toString(), [])
+  const keyExtractor = useCallback((item) => item?.id, [])
 
   const onDeletePost = (id) => {
     deletePostMutation.mutate(id)
@@ -198,14 +224,12 @@ export default function HomeScreen() {
     router.push(`/post/report/${id}`)
   }
 
-  const {
-    data: user
-  } = useQuery({
+  const { data: userSelf } = useQuery({
     queryKey: ['getSelfAccount'],
-    queryFn: getSelfAccount
+    queryFn: getSelfAccount,
   })
 
-  const userId = user?.id
+  const userId = userSelf?.id
 
   const {
     data,
@@ -217,6 +241,7 @@ export default function HomeScreen() {
     isRefetching,
     refetch,
     isFetching,
+    status,
     isError,
     error,
   } = useInfiniteQuery({
@@ -249,7 +274,7 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="dark" />
       <Stack.Screen options={{ headerShown: false }} />
-      <FeedHeader title="Home" user={user} />
+      <FeedHeader title="Pixelfed" user={user} />
       {isPosting ? (
         <View p="$5">
           <XStack gap="$3">
@@ -290,7 +315,7 @@ export default function HomeScreen() {
         refreshing={isRefetching}
         onRefresh={refetch}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<EmptyFeed />}
+        ListEmptyComponent={status === 'success' ? <EmptyFeed /> : null}
         onViewableItemsChanged={onViewRef}
         viewabilityConfig={viewConfigRef.current}
         onEndReached={() => {
