@@ -119,7 +119,10 @@ export function parseLinkHeader(header) {
 }
 
 export function prettyCount(number) {
-  if (number < 1000) return number.toString()
+  if (!number) {
+    return 0
+  }
+  if (number < 1000) return number
   if (number < 1000000) {
     return (number / 1000).toFixed(number % 1000 === 0 ? 0 : 1) + 'K'
   }
@@ -169,6 +172,9 @@ export function enforceLen(str, len, ellipsis = false, mode = 'end') {
 }
 
 export function htmlToTextWithLineBreaks(html) {
+  if (!html || !html.length) {
+    return html
+  }
   html = html.replaceAll('&#39;', "'")
   html = html.replaceAll('&amp;', '&')
   html = html.replaceAll(/<\/p>/gi, '\n')
