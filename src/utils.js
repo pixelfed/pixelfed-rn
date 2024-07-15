@@ -182,3 +182,33 @@ export function htmlToTextWithLineBreaks(html) {
   html = html.replaceAll(/<[^>]+>/gi, '')
   return html.trim()
 }
+
+export function extractMainVersion(version) {
+  const regex = /^(\d+\.\d+\.\d+)/
+  const match = version.match(regex)
+  if (match) {
+    return match[1]
+  }
+  return null
+}
+
+export function compareSemver(version1, version2) {
+  const parseVersion = (version) => {
+    const mainVersion = extractMainVersion(version)
+    return mainVersion ? mainVersion.split('.').map(Number) : [0, 0, 0]
+  }
+
+  const [major1, minor1, patch1] = parseVersion(version1)
+  const [major2, minor2, patch2] = parseVersion(version2)
+
+  if (major1 > major2) return 1
+  if (major1 < major2) return -1
+
+  if (minor1 > minor2) return 1
+  if (minor1 < minor2) return -1
+
+  if (patch1 > patch2) return 1
+  if (patch1 < patch2) return -1
+
+  return 0
+}

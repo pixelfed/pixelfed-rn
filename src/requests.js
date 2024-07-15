@@ -1,5 +1,6 @@
 import { Alert } from 'react-native'
 import { Storage } from './state/cache'
+import { compareSemver } from './utils'
 
 export function objectToForm(obj) {
   let form = new FormData()
@@ -138,12 +139,21 @@ export async function loginPreflightCheck(server) {
     let res = await getJsonWithTimeout(url, false, false, false, 5000)
     let json = await res.json()
     if (!json) {
-      Alert.alert('Error', 'Cannot reach server.')
+      Alert.alert('Error', 'This server is not compatible or is unavailable.')
       return false
     }
 
     if (!json.software || !json.software.name || !json.software.version) {
       Alert.alert('Error', 'Cannot reach server. Invalid software')
+      return false
+    }
+
+    const validVersion = compareSemver(json.software.version, '0.12.1')
+    if (validVersion === -1) {
+      Alert.alert(
+        'Error',
+        'Invalid or outdated version, please ask your admin to update.'
+      )
       return false
     }
 
@@ -155,7 +165,7 @@ export async function loginPreflightCheck(server) {
       return false
     }
   } catch (e) {
-    Alert.alert('Error', 'Cannot reach server.')
+    Alert.alert('Error', 'This server is not compatible or is unavailable.')
     return false
   }
 
