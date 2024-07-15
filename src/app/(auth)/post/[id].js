@@ -74,6 +74,16 @@ export default function Page() {
     router.push(`/profile/0?byUsername=${id.slice(1)}`)
   }
 
+  const handleShowLikes = (id) => {
+    bottomSheetModalRef.current?.close()
+    router.push(`/post/likes/${id}`)
+  }
+
+  const handleCommentReport = (id) => {
+    bottomSheetModalRef.current?.close()
+    router.push(`/post/report/${id}`)
+  }
+
   const onDeletePost = (id) => {
     deletePostMutation.mutate(id)
   }
@@ -121,6 +131,8 @@ export default function Page() {
         <CommentFeed
           id={id}
           user={user}
+          showLikes={handleShowLikes}
+          handleReport={handleCommentReport}
           gotoProfile={handleGotoProfile}
           gotoHashtag={handleGotoHashtag}
           gotoUsernameProfile={handleGotoUsernameProfile}
