@@ -16,12 +16,17 @@ export default (FeedHeader = ({ title = 'Home', user }) => {
       borderBottomColor="$gray5"
     >
       <XStack alignItems="center" gap="$1">
-        <Text fontSize={30} fontWeight="bold" letterSpacing={-1}>
+        <Text
+          fontSize={title === 'Pixelfed' ? 25 : 19}
+          fontWeight="bold"
+          letterSpacing={-0.5}
+          allowFontScaling={false}
+        >
           {title}
         </Text>
       </XStack>
       <XStack gap="$5">
-        {user?.is_admin ? (
+        {title === 'Pixelfed' && user?.is_admin ? (
           <Link href="/admin/" asChild>
             <Pressable>
               <Feather name="tool" size={26} color="red" />
