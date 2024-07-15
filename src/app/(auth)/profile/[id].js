@@ -73,12 +73,36 @@ export default function ProfileScreen() {
     const hasPreview = med.preview_url && !med.preview_url.endsWith('no-preview.png')
 
     if (isSensitive && !forceSensitive) {
+      const bh =
+        item.media_attachments[0]?.blurhash ?? 'U4Rfzst8?bt7ogayj[j[~pfQ9Goe%Mj[WBay'
+
+      if (!bh || bh === 'U4Rfzst8?bt7ogayj[j[~pfQ9Goe%Mj[WBay') {
+        return (
+          <Link href={`/post/${item.id}`} asChild>
+            <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
+              <ZStack w={SCREEN_WIDTH / 3 - 2} h={SCREEN_WIDTH / 3 - 2}>
+                <View
+                  style={{
+                    flex: 1,
+                    width: SCREEN_WIDTH / 3 - 2,
+                    height: SCREEN_WIDTH / 3 - 2,
+                    backgroundColor: 'black',
+                  }}
+                />
+                <View p="$2" justifyContent="flex-end" alignItems="flex-end">
+                  <Feather name="eye-off" size={20} color="white" />
+                </View>
+              </ZStack>
+            </View>
+          </Link>
+        )
+      }
       return (
         <Link href={`/post/${item.id}`} asChild>
           <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
             <ZStack w={SCREEN_WIDTH / 3 - 2} h={SCREEN_WIDTH / 3 - 2}>
               <Blurhash
-                blurhash={item.media_attachments[0]?.blurhash}
+                blurhash={bh}
                 style={{
                   flex: 1,
                   width: SCREEN_WIDTH / 3 - 2,
