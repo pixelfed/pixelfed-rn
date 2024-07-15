@@ -1,18 +1,24 @@
 import { useCallback, useEffect, useState, useRef, useMemo } from 'react'
 import { FlatList, StyleSheet, Pressable, ActivityIndicator } from 'react-native'
-import { Text, View, XStack, Select, Adapt, Sheet, Button, YStack } from 'tamagui'
+import { Text, View, XStack, Select, Adapt, Sheet, Button, Spinner } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
 import { Feather } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link, Stack, useNavigation, useRouter } from 'expo-router'
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { Link, Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import {
   fetchNetworkFeed,
   likeStatus,
   unlikeStatus,
   deleteStatusV1,
   postBookmark,
+  getSelfAccount,
 } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
 import EmptyFeed from 'src/components/common/EmptyFeed'
@@ -29,11 +35,40 @@ import UserAvatar from 'src/components/common/UserAvatar'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
 
+export function ErrorBoundary(props: ErrorBoundaryProps) {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white',
+      }}
+    >
+      <Text fontSize="$8" allowFontScaling={false} color="red">
+        Something went wrong!
+      </Text>
+      <Text>{props.error?.message}</Text>
+      <Text onPress={props.retry}>Try Again?</Text>
+    </View>
+  )
+}
+
 export default function HomeScreen() {
   const router = useRouter()
-  const queryClient = useQueryClient()
   const navigation = useNavigation()
   const flatListRef = useRef(null)
+  const queryClient = useQueryClient()
+
+  useFocusEffect(
+    useCallback(() => {
+      const unsubscribe = navigation.addListener('tabPress', () => {
+        flatListRef.current?.scrollToOffset({ animated: true, offset: 0 })
+      })
+
+      return unsubscribe
+    }, [navigation])
+  )
 
   const [replyId, setReplyId] = useState(null)
   const [sheetType, setSheetType] = useState('comments')
@@ -49,16 +84,6 @@ export default function HomeScreen() {
       <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
     ),
     []
-  )
-
-  useFocusEffect(
-    useCallback(() => {
-      const unsubscribe = navigation.addListener('tabPress', () => {
-        flatListRef.current?.scrollToOffset({ animated: true, offset: 0 })
-      })
-
-      return unsubscribe
-    }, [navigation])
   )
 
   const onOpenComments = useCallback(
@@ -95,19 +120,15 @@ export default function HomeScreen() {
         post={item}
         user={user}
         onOpenComments={() => onOpenComments(item.id)}
-        onLike={() => handleLike(item.id)}
+        onLike={() => handleLike(item.id, item.favourited)}
         onDeletePost={() => onDeletePost(item.id)}
         onBookmark={() => onBookmark(item.id)}
       />
     ),
-    []
+    [user]
   )
 
-  const keyExtractor = useCallback((item) => item.id.toString(), [])
-
-  const onBookmark = (id) => {
-    bookmarkMutation.mutate(id)
-  }
+  const keyExtractor = useCallback((item) => item?.id, [])
 
   const onDeletePost = (id) => {
     deletePostMutation.mutate(id)
@@ -136,6 +157,10 @@ export default function HomeScreen() {
       return await postBookmark(id)
     },
   })
+
+  const onBookmark = (id) => {
+    bookmarkMutation.mutate(id)
+  }
 
   const likeMutation = useMutation({
     mutationFn: async (handleLike) => {
@@ -174,6 +199,13 @@ export default function HomeScreen() {
     router.push(`/post/report/${id}`)
   }
 
+  const { data: userSelf } = useQuery({
+    queryKey: ['getSelfAccount'],
+    queryFn: getSelfAccount,
+  })
+
+  const userId = userSelf?.id
+
   const {
     data,
     fetchNextPage,
@@ -188,8 +220,9 @@ export default function HomeScreen() {
     error,
   } = useInfiniteQuery({
     queryKey: ['fetchNetworkFeed'],
-    initialPageParam: null,
     queryFn: fetchNetworkFeed,
+    initialPageParam: null,
+    enabled: !!userId,
     refetchOnWindowFocus: false,
     getNextPageParam: (lastPage) => lastPage.nextPage,
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
@@ -197,7 +230,7 @@ export default function HomeScreen() {
 
   if (isFetching && !isFetchingNextPage && !isRefetching) {
     return (
-      <View flexGrow={1} mt="$5">
+      <View flexGrow={1} mt="$5" py="$5" justifyContent="center" alignItems="center">
         <ActivityIndicator color={'#000'} />
       </View>
     )
@@ -215,7 +248,8 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="dark" />
       <Stack.Screen options={{ headerShown: false }} />
-      <FeedHeader title="Network" />
+      <FeedHeader title="Local Feed" user={user} />
+
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={1}
