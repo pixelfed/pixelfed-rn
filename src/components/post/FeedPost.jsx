@@ -17,8 +17,7 @@ import {
   BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet'
 import Carousel, { ICarouselInstance, Pagination } from 'react-native-reanimated-carousel'
-import { useSharedValue, runOnJS } from 'react-native-reanimated'
-import { Gesture, GestureDetector } from 'react-native-gesture-handler'
+import { useSharedValue } from 'react-native-reanimated'
 import ReadMore from '../common/ReadMore'
 import LikeButton from 'src/components/common/LikeButton'
 import AutolinkText from 'src/components/common/AutolinkText'
@@ -28,7 +27,6 @@ import { PressableOpacity } from 'react-native-pressable-opacity'
 import { BlurView } from '@react-native-community/blur'
 import VideoPlayer from './VideoPlayer'
 import ReadMoreAndroid from '../common/ReadMoreAndroid'
-import ReadMoreApple from '../common/ReadMoreApple'
 import { Storage } from 'src/state/cache'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
@@ -133,13 +131,18 @@ const PostMedia = React.memo(({ media, post }) => {
           </YStack>
           <YStack w={SCREEN_WIDTH} flexShrink={1}>
             <Separator />
-            <Pressable onPress={() => setSensitive(true)}>
-              <View py={15} justifyContent="center" alignItems="center">
-                <Text color="white" fontWeight={'bold'}>
+            <PressableOpacity onPress={() => setSensitive(true)}>
+              <View p="$4" justifyContent="center" alignItems="center">
+                <Text
+                  fontSize="$4"
+                  color="white"
+                  fontWeight={'bold'}
+                  allowFontScaling={false}
+                >
                   Tap to view
                 </Text>
               </View>
-            </Pressable>
+            </PressableOpacity>
           </YStack>
         </YStack>
       </ZStack>
@@ -168,97 +171,94 @@ const calculateHeight = (item) => {
   return 500
 }
 
-const PostAlbumMedia = React.memo(
-  ({ media, post, carouselRef, progress, legacyCarousel, onUpdateProgress }) => {
-    const mediaUrl = media[0].url
-    const [showSensitive, setSensitive] = useState(false)
-    const height = media.reduce((max, item) => {
-      const height = calculateHeight(item)
-      return height > max ? height : max
-    }, 0)
+const PostAlbumMedia = ({ media, post, progress }) => {
+  const mediaUrl = media[0].url
+  const [showSensitive, setSensitive] = useState(false)
+  const height = media.reduce((max, item) => {
+    const height = calculateHeight(item)
+    return height > max ? height : max
+  }, 0)
 
-    if (post.sensitive && !showSensitive) {
-      return (
-        <ZStack w={SCREEN_WIDTH} h={height}>
-          <Blurhash
-            blurhash={media[0]?.blurhash}
-            style={{
-              flex: 1,
-              width: SCREEN_WIDTH,
-              height: height,
-            }}
-          />
-          <YStack justifyContent="center" alignItems="center" flexGrow={1}>
-            <YStack justifyContent="center" alignItems="center" flexGrow={1} gap="$3">
-              <Feather name="eye-off" size={55} color="white" />
-              <Text fontSize="$7" color="white">
-                This post contains sensitive or mature content
-              </Text>
-            </YStack>
-            <YStack w={SCREEN_WIDTH} flexShrink={1}>
-              <Separator />
-              <Button
-                alignSelf="stretch"
-                size="$5"
-                color="white"
-                onPress={() => setSensitive(true)}
-                chromeless
-              >
-                Tap to view
-              </Button>
-            </YStack>
-          </YStack>
-        </ZStack>
-      )
-    }
-
+  if (post.sensitive && !showSensitive) {
     return (
-      <>
-        <Carousel
-          ref={carouselRef}
-          onConfigurePanGesture={(gestureChain) => gestureChain.activeOffsetX([-10, 10])}
-          width={SCREEN_WIDTH}
-          height={height}
-          vertical={false}
-          onProgressChange={onUpdateProgress}
-          mode={legacyCarousel ? 'normal' : 'parallax'}
-          modeConfig={
-            legacyCarousel
-              ? {}
-              : {
-                  parallaxScrollingScale: 0.9,
-                  parallaxScrollingOffset: 50,
-                }
-          }
-          data={post.media_attachments}
-          renderItem={({ index }) => {
-            const media = post.media_attachments[0]
-            return (
-              <FastImage
-                style={{
-                  width: SCREEN_WIDTH,
-                  height: height,
-                  backgroundColor: '#000',
-                  zIndex: -2,
-                }}
-                source={{ uri: post.media_attachments[index].url }}
-                resizeMode={FastImage.resizeMode.contain}
-              />
-            )
+      <ZStack w={SCREEN_WIDTH} h={height}>
+        <Blurhash
+          blurhash={media[0]?.blurhash}
+          style={{
+            flex: 1,
+            width: SCREEN_WIDTH,
+            height: height,
           }}
         />
-        <Pagination.Basic
-          progress={progress}
-          data={post.media_attachments}
-          dotStyle={{ backgroundColor: 'rgba(0,0,0,0.16)', borderRadius: 50 }}
-          activeDotStyle={{ backgroundColor: '#408DF6', borderRadius: 50 }}
-          containerStyle={{ gap: 5, marginTop: 10, marginBottom: -10, zIndex: 5 }}
-          size={8}
-        />
-      </>
+        <YStack justifyContent="center" alignItems="center" flexGrow={1}>
+          <YStack justifyContent="center" alignItems="center" flexGrow={1} gap="$3">
+            <Feather name="eye-off" size={55} color="white" />
+            <Text fontSize="$7" color="white">
+              This post contains sensitive or mature content
+            </Text>
+          </YStack>
+          <YStack w={SCREEN_WIDTH} flexShrink={1}>
+            <Separator />
+
+            <PressableOpacity onPress={() => setSensitive(true)}>
+              <View p="$4" justifyContent="center" alignItems="center">
+                <Text
+                  fontSize="$4"
+                  color="white"
+                  fontWeight={'bold'}
+                  allowFontScaling={false}
+                >
+                  Tap to view
+                </Text>
+              </View>
+            </PressableOpacity>
+          </YStack>
+        </YStack>
+      </ZStack>
     )
   }
-)
+
+  return (
+    <YStack zIndex={1}>
+      <Carousel
+        onConfigurePanGesture={(gestureChain) => gestureChain.activeOffsetX([-10, 10])}
+        width={SCREEN_WIDTH}
+        height={height}
+        vertical={false}
+        onProgressChange={progress}
+        data={post.media_attachments}
+        renderItem={({ index }) => {
+          const media = post.media_attachments[0]
+          return (
+            <FastImage
+              style={{
+                width: SCREEN_WIDTH,
+                height: height,
+                backgroundColor: '#000',
+              }}
+              source={{ uri: post.media_attachments[index].url }}
+              resizeMode={FastImage.resizeMode.contain}
+            />
+          )
+        }}
+      />
+      <Pagination.Basic
+        progress={progress}
+        data={post.media_attachments}
+        dotStyle={{ backgroundColor: 'rgba(0,0,0,0.16)', borderRadius: 50 }}
+        activeDotStyle={{ backgroundColor: '#408DF6', borderRadius: 50 }}
+        containerStyle={{
+          gap: 5,
+          position: 'absolute',
+          bottom: 0,
+          marginBottom: -30,
+          zIndex: 10,
+        }}
+        size={8}
+      />
+    </YStack>
+  )
+}
 
 const PostActions = React.memo(
   ({
@@ -279,8 +279,8 @@ const PostActions = React.memo(
     const onShowAlt = () => {
       const idx = Math.floor(progress.value)
       Alert.alert(
-        `Alt Text for #${idx + 1}`,
-        post?.media_attachments[idx]?.description ??
+        'Alt Text',
+        post?.media_attachments[idx].description ??
           'Media was not tagged with any alt text.'
       )
     }
@@ -383,14 +383,14 @@ const PostCaption = React.memo(
                 onMentionPress={onMentionPress}
               />
             ) : Platform.OS === 'ios' ? (
-              <ReadMoreApple numberOfLines={3} renderRevealedFooter={() => <></>}>
+              <ReadMore numberOfLines={3} renderRevealedFooter={() => <></>}>
                 <AutolinkText
                   text={captionText}
                   username={username}
                   onHashtagPress={onHashtagPress}
                   onMentionPress={onMentionPress}
                 />
-              </ReadMoreApple>
+              </ReadMore>
             ) : (
               <ReadMoreAndroid numberOfLines={3} renderRevealedFooter={() => <></>}>
                 <AutolinkText
@@ -479,13 +479,9 @@ export default function FeedPost({
   likedAt,
 }) {
   const bottomSheetModalRef = useRef(null)
-  const carouselRef = useRef(null)
   const progress = useSharedValue(0)
   const snapPoints = useMemo(() => ['45%', '65%'], [])
-  const [tmpFav, setTmpFav] = useState(false)
   const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
-  //const legacyCarousel = Storage.getBoolean('ui.legacyCarousel') == true
-  const legacyCarousel = true
   const showAltText = Storage.getBoolean('ui.showAltText') == true
 
   const handlePresentModalPress = useCallback(() => {
@@ -562,40 +558,6 @@ export default function FeedPost({
     } catch (error) {}
   }
 
-  const handleShowLike = () => {
-    if (!post.favourited) {
-      setTmpFav(true)
-    }
-    onLike()
-  }
-
-  const onSingleTap = () => {
-    if (post.pf_type !== 'photo') {
-      return
-    }
-
-    goToPost()
-  }
-
-  const updateProgress = useCallback(
-    (offsetProgress, absoluteProgress) => {
-      progress.value = absoluteProgress
-    },
-    [progress]
-  )
-
-  // const singleTap = Gesture.Tap()
-  //     .numberOfTaps(1)
-  //     .onStart(() => {
-  //       runOnJS(onSingleTap)();
-  //     });
-
-  // const doubleTap = Gesture.Tap()
-  //     .numberOfTaps(2)
-  //     .onStart(() => {
-  //       runOnJS(handleShowLike)();
-  //     });
-
   return (
     <View flex={1} style={{ width: SCREEN_WIDTH }}>
       <PostHeader
@@ -606,18 +568,9 @@ export default function FeedPost({
         onOpenMenu={() => handlePresentModalPress()}
       />
       {post.media_attachments?.length > 1 ? (
-        <PostAlbumMedia
-          media={post.media_attachments}
-          onUpdateProgress={updateProgress}
-          post={post}
-          carouselRef={carouselRef}
-          progress={progress}
-          legacyCarousel={legacyCarousel}
-        />
+        <PostAlbumMedia media={post.media_attachments} post={post} progress={progress} />
       ) : post.media_attachments?.length === 1 ? (
-        /*<GestureDetector gesture={Gesture.Exclusive(doubleTap, singleTap)}>*/
         <PostMedia media={post.media_attachments} post={post} />
-        /*</GestureDetector>*/
       ) : null}
       {!hideCaptions || isPermalink ? (
         <>
