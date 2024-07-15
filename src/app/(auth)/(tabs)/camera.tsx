@@ -41,6 +41,7 @@ import {
   getComposeSettings,
   uploadMediaV2,
   postNewStatus,
+  getSelfAccount,
 } from 'src/lib/api'
 import mime from 'mime'
 import { useShareIntentContext } from 'expo-share-intent'
@@ -94,6 +95,10 @@ export default function Camera() {
 
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
+  }, [])
+
+  const handleOnScroll = useCallback(() => {
+    Keyboard.dismiss()
   }, [])
 
   const openAltText = useCallback(
@@ -417,6 +422,11 @@ export default function Camera() {
       .catch((err) => {})
   }
 
+  const { data: userSelf } = useQuery({
+    queryKey: ['getSelfAccount'],
+    queryFn: getSelfAccount,
+  })
+
   const {
     isPending,
     isSuccess,
@@ -426,6 +436,7 @@ export default function Camera() {
   } = useQuery({
     queryKey: ['cameraInstance'],
     queryFn: getInstanceV1,
+    enabled: !!userSelf,
   })
 
   const {
@@ -436,7 +447,11 @@ export default function Camera() {
     queryKey: ['composeSettings'],
     queryFn: async () => {
       const res = await getComposeSettings()
-      setScope(res.default_scope)
+      if (userSelf && userSelf?.locked) {
+        setScope('private')
+      } else {
+        setScope(res.default_scope)
+      }
       res.max_altext_length = Number.parseInt(res.max_altext_length)
       return res
     },
@@ -469,7 +484,7 @@ export default function Camera() {
         </View>
       ) : (
         <>
-          <ScrollView onScroll={() => Keyboard.dismiss()}>
+          <ScrollView onScroll={handleOnScroll} scrollEventThrottle={16}>
             <YStack px="$3" pt="$3" pb="$1">
               <XStack gap="$3" justifyContent="space-between" alignItems="center">
                 <XStack gap="$3" alignItems="center">
