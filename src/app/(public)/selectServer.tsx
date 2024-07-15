@@ -16,6 +16,8 @@ import { useAuth } from '@state/AuthProvider'
 import { Feather } from '@expo/vector-icons'
 import { getOpenServers } from 'src/lib/api'
 import { enforceLen, prettyCount } from 'src/utils'
+import FastImage from 'react-native-fast-image'
+import { PressableOpacity } from 'react-native-pressable-opacity'
 
 export default function Register() {
   const { data } = useQuery({
@@ -61,19 +63,15 @@ export default function Register() {
         alignItems="center"
         overflow="hidden"
       >
-        {item.user_count > 400 ? (
-          <Image
+        {item.user_count > 1400 ? (
+          <FastImage
             source={{ uri: item.header_thumbnail }}
-            width={100}
-            height={40}
-            borderRadius={20}
+            style={{ width: 100, height: 40, borderRadius: 20 }}
           />
         ) : (
-          <Image
+          <FastImage
             source={require('../../../assets/icon.png')}
-            width={40}
-            height={40}
-            borderRadius={20}
+            style={{ width: 40, height: 40, borderRadius: 20 }}
           />
         )}
         <YStack gap="$1" flexGrow={1}>
@@ -85,9 +83,15 @@ export default function Register() {
           >
             {enforceLen(item.domain, 30, true, 'middle')}
           </Text>
-          <Text fontSize="$3" color="$gray5">
-            {prettyCount(item.user_count)} users
-          </Text>
+          <XStack gap="$2">
+            <Text fontSize="$3" color="$gray5">
+              {prettyCount(item.user_count)} users
+            </Text>
+
+            <Text fontSize="$3" color="$gray10">
+              v{enforceLen(item.version, 20, true)}
+            </Text>
+          </XStack>
         </YStack>
         <Text pr="$3" color="$blue8" fontWeight={'bold'}>
           Login
@@ -122,19 +126,18 @@ export default function Register() {
       </View>
 
       <View mx="$3" mb="$3">
-        <Button
-          onPress={() => manualLogin()}
-          px="$2"
-          size="$5"
-          theme="gray"
-          themeInverse={true}
-          borderWidth={1}
-          borderRadius={40}
-        >
-          <Text color="white" allowFontScaling={false} fontWeight="bold">
+        <PressableOpacity onPress={() => manualLogin()}>
+          <Text
+            textAlign="center"
+            color="$gray9"
+            allowFontScaling={false}
+            fontSize="$3"
+            fontWeight="bold"
+            py="$2"
+          >
             Tap here to login with a server domain
           </Text>
-        </Button>
+        </PressableOpacity>
       </View>
       <FlatList
         data={filteredData}
