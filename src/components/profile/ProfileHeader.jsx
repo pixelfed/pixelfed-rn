@@ -6,7 +6,7 @@ import {
   openBrowserAsync,
   prettyCount,
 } from 'src/utils'
-import { Link, router } from 'expo-router'
+import { Link, router, useRouter } from 'expo-router'
 import { Dimensions, Pressable, Platform } from 'react-native'
 import EditProfile from './actionButtons/EditProfile'
 import FollowingProfile from './actionButtons/FollowingProfile'
@@ -33,6 +33,7 @@ export default function ProfileHeader({
   onCancelFollowRequest,
   mutuals,
 }) {
+  const router = useRouter()
   const [usernameTruncated, setUsernameTruncated] = useState(profile?.acct?.length > 40)
   const _prettyCount = (num) => {
     if (!num) {
@@ -99,13 +100,11 @@ export default function ProfileHeader({
   const RenderGuestHeader = () => (
     <XStack w="100%" justifyContent="space-between" alignItems="center" gap="$10">
       <View>
-        <Link href={{ screen: '', action: 'goBack' }} asChild>
-          <Pressable>
-            <XStack alignItems="center" gap="$5">
-              <Feather name="chevron-left" size={26} />
-            </XStack>
-          </Pressable>
-        </Link>
+        <Pressable onPress={() => router.back()}>
+          <XStack alignItems="center" gap="$5">
+            <Feather name="chevron-left" size={26} />
+          </XStack>
+        </Pressable>
       </View>
 
       <View flexShrink={1}>
