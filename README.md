@@ -1,12 +1,17 @@
 # Pixelfed (React Native)
 
 <p align="center">
-<img src="https://pixelfed.nyc3.cdn.digitaloceanspaces.com/media/pixelfed-app-screenshot-2.jpg" width="400">
+<img src="https://pixelfed.nyc3.cdn.digitaloceanspaces.com/media/pixelfed-app-screenshot-3.jpg" width="400">
 </p>
 
-(WIP) The official Pixelfed mobile app source code.
+The official Pixelfed mobile app source code.
 
-I'm in the process of refactoring the original code which uses a now deprecated UI framework.
+## Join the Beta
+<center>
+[<img src="https://pixelfed.nyc3.cdn.digitaloceanspaces.com/media/testflight.png" width="120">](https://pixelfed.org/go/testflight-ios-beta)
+&nbsp; &nbsp; &nbsp;
+[<img src="https://pixelfed.nyc3.cdn.digitaloceanspaces.com/media/google-play.png" width="136">](https://play.google.com/apps/testing/com.pixelfed)
+</center>
 
 ## License
 
