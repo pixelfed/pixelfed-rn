@@ -7,11 +7,16 @@
 The official Pixelfed mobile app source code.
 
 ## Join the Beta
-<center>
-[<img src="https://pixelfed.nyc3.cdn.digitaloceanspaces.com/media/testflight.png" width="120">](https://pixelfed.org/go/testflight-ios-beta)
-&nbsp; &nbsp; &nbsp;
-[<img src="https://pixelfed.nyc3.cdn.digitaloceanspaces.com/media/google-play.png" width="136">](https://play.google.com/apps/testing/com.pixelfed)
-</center>
+
+<p align="center">
+  <a href="https://pixelfed.org/go/testflight-ios-beta">
+    <img src="https://pixelfed.nyc3.cdn.digitaloceanspaces.com/media/testflight.png" width="120">
+  </a>
+  &nbsp; &nbsp; &nbsp;
+  <a href="https://play.google.com/apps/testing/com.pixelfed">
+    <img src="https://pixelfed.nyc3.cdn.digitaloceanspaces.com/media/google-play.png" width="136">
+  </a>
+</p>
 
 ## License
 
