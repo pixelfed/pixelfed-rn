@@ -1,9 +1,9 @@
 import { Link, router, Stack, useRouter } from 'expo-router'
-import { ActivityIndicator, FlatList, StyleSheet } from 'react-native'
+import { ActivityIndicator, Alert, FlatList, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Separator, Text, XStack, YStack, View, Group, Button } from 'tamagui'
 import { useQuery, useMutation } from '@tanstack/react-query'
-import { getModReports, postReportHandle } from 'src/lib/api'
+import { getModReports, postReportHandle, postUserHandle } from 'src/lib/api'
 import { _timeAgo, enforceLen, htmlToTextWithLineBreaks } from 'src/utils'
 import { Feather } from '@expo/vector-icons'
 import {
@@ -35,7 +35,12 @@ export default function Screen() {
 
   const mutation = useMutation({
     mutationFn: (update) => {
-      return postReportHandle(update)
+      if (account?.object_type === 'App\\Status') {
+        return postReportHandle(update)
+      }
+      if (account?.object_type === 'App\\Profile') {
+        return postUserHandle(update)
+      }
     },
     onSuccess: () => {
       router.back()
@@ -43,6 +48,23 @@ export default function Screen() {
   })
 
   const _handleReport = (type) => {
+    if (type === 'delete') {
+      Alert.alert('Confirm deletion', 'Are you sure you want to delete this?', [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            bottomSheetModalRef.current?.close()
+            mutation.mutate({
+              action: type,
+              id: activeReport?.id,
+            })
+          },
+        },
+      ])
+      return
+    }
     bottomSheetModalRef.current?.close()
     mutation.mutate({
       action: type,
@@ -60,6 +82,39 @@ export default function Screen() {
     router.push(`/post/${id}`)
   }
 
+  const RenderReportedAccount = () => (
+    <YStack my="$3" alignItems="center" gap="$3">
+      <Text color="$gray9">Reported account </Text>
+      {activeReport?.object_type === 'App\\Status' ? (
+        <PressableOpacity onPress={() => gotoProfile(activeReport?.status?.account?.id)}>
+          <XStack bg="$gray4" p="$2" gap="$2" alignItems="center" borderRadius={10}>
+            <FastImage
+              source={{ uri: activeReport?.status?.account?.avatar }}
+              style={{ width: 20, height: 20, borderRadius: 30 }}
+            />
+            <Text fontWeight={'bold'}>
+              {enforceLen(activeReport?.status?.account?.acct, 15, true)}
+            </Text>
+          </XStack>
+        </PressableOpacity>
+      ) : null}
+
+      {activeReport?.object_type === 'App\\Profile' ? (
+        <PressableOpacity onPress={() => gotoProfile(activeReport?.account?.id)}>
+          <XStack bg="$gray4" p="$2" gap="$2" alignItems="center" borderRadius={10}>
+            <FastImage
+              source={{ uri: activeReport?.account?.avatar }}
+              style={{ width: 20, height: 20, borderRadius: 30 }}
+            />
+            <Text fontWeight={'bold'}>
+              {enforceLen(activeReport?.account?.acct, 15, true)}
+            </Text>
+          </XStack>
+        </PressableOpacity>
+      ) : null}
+    </YStack>
+  )
+
   const RenderEmpty = () => (
     <View flex={1}>
       <Separator borderColor="#ccc" />
@@ -75,6 +130,23 @@ export default function Screen() {
   const RenderItem = ({ item }) => {
     const objectType = item.object_type == 'App\\Status' ? 'post' : 'profile'
     if (objectType === 'post') {
+      const reportedBy = item?.reported_by_account?.username
+      const msg = `#${item.id} - ${item.type} post report`
+      return (
+        <PressableOpacity onPress={() => handlePresentModalPress(item)}>
+          <XStack p="$5" bg="white" justifyContent="space-between" alignItems="center">
+            <Text fontWeight="$6" allowFontScaling={false}>
+              {msg}
+            </Text>
+            <Text fontWeight="$5" allowFontScaling={false} color="$gray10">
+              {_timeAgo(item.created_at)}
+            </Text>
+          </XStack>
+        </PressableOpacity>
+      )
+    }
+
+    if (objectType === 'profile') {
       const reportedBy = item?.reported_by_account?.username
       const msg = `#${item.id} - ${item.type} post report`
       return (
@@ -141,22 +213,7 @@ export default function Screen() {
             </XStack>
           </XStack>
           <XStack mb="$3" justifyContent="space-between" alignItems="center">
-            <YStack my="$3" alignItems="center" gap="$3">
-              <Text color="$gray9">Reported account </Text>
-              <PressableOpacity
-                onPress={() => gotoProfile(activeReport?.status?.account?.id)}
-              >
-                <XStack bg="$gray4" p="$2" gap="$2" alignItems="center" borderRadius={10}>
-                  <FastImage
-                    source={{ uri: activeReport?.status?.account?.avatar }}
-                    style={{ width: 20, height: 20, borderRadius: 30 }}
-                  />
-                  <Text fontWeight={'bold'}>
-                    {enforceLen(activeReport?.status?.account?.acct, 15, true)}
-                  </Text>
-                </XStack>
-              </PressableOpacity>
-            </YStack>
+            <RenderReportedAccount />
             <YStack my="$3" alignItems="center" gap="$3">
               <Text color="$gray9">Reported by </Text>
               <PressableOpacity
@@ -168,11 +225,7 @@ export default function Screen() {
                     style={{ width: 20, height: 20, borderRadius: 30 }}
                   />
                   <Text fontWeight={'bold'}>
-                    {enforceLen(
-                      activeReport?.reported_by_account?.acct + 'asdjaskdjaskdjaskdsajk',
-                      15,
-                      true
-                    )}
+                    {enforceLen(activeReport?.reported_by_account?.acct, 15, true)}
                   </Text>
                 </XStack>
               </PressableOpacity>
@@ -217,34 +270,48 @@ export default function Screen() {
                 Ignore
               </Button>
             </Group.Item>
-            <Group
-              orientation="horizontal"
-              separator={<Separator vertical borderColor="$gray4" />}
-            >
+            {activeReport?.object_type === 'App\\Status' ? (
+              <Group
+                orientation="horizontal"
+                separator={<Separator vertical borderColor="$gray4" />}
+              >
+                <Group.Item>
+                  <Button
+                    flexGrow={1}
+                    size="$5"
+                    fontWeight="bold"
+                    onPress={() => _handleReport('unlist')}
+                  >
+                    Unlist Post
+                  </Button>
+                </Group.Item>
+                <Group.Item>
+                  <Button
+                    flexGrow={1}
+                    size="$5"
+                    fontWeight="bold"
+                    onPress={() => _handleReport('cw')}
+                  >
+                    Mark Sensitive
+                  </Button>
+                </Group.Item>
+              </Group>
+            ) : null}
+            {activeReport?.object_type === 'App\\Profile' ? (
               <Group.Item>
                 <Button
                   flexGrow={1}
                   size="$5"
+                  theme="red"
+                  bg="$red9"
+                  color="white"
                   fontWeight="bold"
-                  onPress={() => _handleReport('unlist')}
+                  onPress={() => _handleReport('delete')}
                 >
-                  Unlist Post
+                  Delete Account
                 </Button>
               </Group.Item>
-              <Group.Item>
-                <Button
-                  flexGrow={1}
-                  size="$5"
-                  fontWeight="bold"
-                  onPress={() => _handleReport('cw')}
-                >
-                  Mark Sensitive
-                </Button>
-              </Group.Item>
-            </Group>
-            {/* <Group.Item>
-                        <Button flexGrow={1} size="$5" theme="red" fontWeight="bold">Delete Post</Button>
-                    </Group.Item> */}
+            ) : null}
           </Group>
         </BottomSheetView>
       </BottomSheetModal>

@@ -36,38 +36,40 @@ export default function Screen() {
   const queryClient = useQueryClient()
 
   const RenderItem = ({ item }) => (
-    <View px="$5" py="$3" bg="white">
-      <XStack alignItems="center" gap="$3">
-        <UserAvatar url={item.avatar} size="$3" />
-        <YStack gap={3}>
-          <Text fontSize="$6">{item.username}</Text>
-          <XStack gap="$3">
-            <Text color="$gray9">{enforceLen(item.name, 10, true)}</Text>
-            <Separator vertical />
-            <XStack alignItems="center" gap={4}>
-              <Feather name="users" color="#ccc" />
-              <Text color="$gray9" fontSize={10} allowFontScaling={false}>
-                {prettyCount(item.followers_count)}
-              </Text>
+    <Link href={`/admin/users/show/${item.id}`} asChild>
+      <View px="$5" py="$3" bg="white">
+        <XStack alignItems="center" gap="$3">
+          <UserAvatar url={item.avatar} size="$3" />
+          <YStack gap={3}>
+            <Text fontSize="$6">{item.username}</Text>
+            <XStack gap="$3">
+              <Text color="$gray9">{enforceLen(item.name, 10, true)}</Text>
+              <Separator vertical />
+              <XStack alignItems="center" gap={4}>
+                <Feather name="users" color="#ccc" />
+                <Text color="$gray9" fontSize={10} allowFontScaling={false}>
+                  {prettyCount(item.followers_count)}
+                </Text>
+              </XStack>
+              <Separator vertical />
+              <XStack alignItems="center" gap={4}>
+                <Feather name="user-plus" color="#ccc" />
+                <Text color="$gray9" fontSize={10} allowFontScaling={false}>
+                  {prettyCount(item.following_count)}
+                </Text>
+              </XStack>
+              <Separator vertical />
+              <XStack alignItems="center" gap={4}>
+                <Feather name="clock" color="#ccc" />
+                <Text color="$gray9" fontSize={10} allowFontScaling={false}>
+                  {_timeAgo(item.created_at)}
+                </Text>
+              </XStack>
             </XStack>
-            <Separator vertical />
-            <XStack alignItems="center" gap={4}>
-              <Feather name="user-plus" color="#ccc" />
-              <Text color="$gray9" fontSize={10} allowFontScaling={false}>
-                {prettyCount(item.following_count)}
-              </Text>
-            </XStack>
-            <Separator vertical />
-            <XStack alignItems="center" gap={4}>
-              <Feather name="clock" color="#ccc" />
-              <Text color="$gray9" fontSize={10} allowFontScaling={false}>
-                {_timeAgo(item.created_at)}
-              </Text>
-            </XStack>
-          </XStack>
-        </YStack>
-      </XStack>
-    </View>
+          </YStack>
+        </XStack>
+      </View>
+    </Link>
   )
 
   const {

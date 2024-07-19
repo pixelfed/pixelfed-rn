@@ -823,12 +823,20 @@ export async function getAdminUsers(cursor) {
   return await fetchCursorPagination(url)
 }
 
+export async function getAdminUser(id) {
+  return await selfGet(`api/admin/users/get?user_id=${id}`)
+}
+
 export async function getModReports() {
   return await selfGet('api/admin/mod-reports/list')
 }
 
 export async function getAutospamReports() {
   return await selfGet('api/admin/autospam/list')
+}
+
+export async function postUserHandle(params) {
+  return await selfPost('api/admin/users/action', params)
 }
 
 export async function postReportHandle(params) {
