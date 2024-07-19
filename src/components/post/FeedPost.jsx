@@ -171,7 +171,7 @@ const calculateHeight = (item) => {
   return 500
 }
 
-const PostAlbumMedia = ({ media, post, progress }) => {
+const PostAlbumMedia = React.memo(({ media, post, progress }) => {
   const mediaUrl = media[0].url
   const [showSensitive, setSensitive] = useState(false)
   const height = media.reduce((max, item) => {
@@ -258,7 +258,7 @@ const PostAlbumMedia = ({ media, post, progress }) => {
       />
     </YStack>
   )
-}
+})
 
 const PostActions = React.memo(
   ({
