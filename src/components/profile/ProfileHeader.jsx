@@ -15,7 +15,7 @@ import BlockingProfile from './actionButtons/BlockingProfile'
 import FollowRequested from './actionButtons/FollowRequested'
 import ReadMore from 'src/components/common/ReadMore'
 import AutolinkText from 'src/components/common/AutolinkText'
-import { useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import FastImage from 'react-native-fast-image'
 import UserAvatar from 'src/components/common/UserAvatar'
@@ -194,7 +194,7 @@ export default function ProfileHeader({
     return index != top3.length - 1 ? ', ' : ' '
   }
 
-  const RenderMutuals = () => {
+  const RenderMutuals = useCallback(() => {
     const top3 = mutuals.slice(0, 3)
     return (
       <XStack alignItems="center" gap="$2" mt="$3" mb="$1">
@@ -221,7 +221,7 @@ export default function ProfileHeader({
           ))}
           {top3.length === 3 && mutuals.length > 3 ? (
             <Link href={`/profile/followers/${profile?.id}`} asChild>
-              <Text>
+              <Text fontSize="$3" allowFontScaling={false}>
                 and <Text fontWeight="bold">{mutuals.length - top3.length} others</Text>
               </Text>
             </Link>
@@ -229,7 +229,24 @@ export default function ProfileHeader({
         </XStack>
       </XStack>
     )
-  }
+  }, [mutuals])
+
+  const RenderBio = useCallback(
+    () => (
+      <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
+        <AutolinkText
+          text={profile?.note
+            ?.replaceAll('&amp;', '&')
+            .replaceAll('\n\n', '\n')
+            .replaceAll(/(<([^>]+)>)/gi, '')}
+          username={false}
+          onHashtagPress={onHashtagPress}
+          onMentionPress={onMentionPress}
+        />
+      </ReadMore>
+    ),
+    [profile]
+  )
 
   return (
     <View flex={1}>
@@ -342,17 +359,7 @@ export default function ProfileHeader({
             </XStack>
           ) : null}
 
-          <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
-            <AutolinkText
-              text={profile?.note
-                ?.replaceAll('&amp;', '&')
-                .replaceAll('\n\n', '\n')
-                .replaceAll(/(<([^>]+)>)/gi, '')}
-              username={false}
-              onHashtagPress={onHashtagPress}
-              onMentionPress={onMentionPress}
-            />
-          </ReadMore>
+          <RenderBio />
 
           {profile?.website && profile?.website.trim().length ? (
             <PressableOpacity onPress={() => _openWebsite()}>
@@ -374,7 +381,9 @@ export default function ProfileHeader({
           <View w="100%" flexGrow={1}>
             <RenderMutuals />
           </View>
-        ) : null}
+        ) : (
+          <View h={10}></View>
+        )}
 
         <ActionButton />
       </View>

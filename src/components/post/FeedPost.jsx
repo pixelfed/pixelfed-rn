@@ -302,7 +302,6 @@ const PostActions = React.memo(
               : null } */}
             </XStack>
             <XStack gap="$2">
-
               {/* <PressableOpacity onPress={() => onBookmark()}>
                 <XStack gap="$4">
                   { hasBookmarked ?
@@ -319,7 +318,7 @@ const PostActions = React.memo(
                     </Text>
                   </XStack>
                 </PressableOpacity>
-              ) : null }
+              ) : null}
             </XStack>
           </XStack>
           {likesCount || sharesCount ? (
