@@ -10,6 +10,8 @@ import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { getConversations, getAccountStatusesById } from 'src/lib/api'
 import { _timeAgo } from 'src/utils'
 import UserAvatar from 'src/components/common/UserAvatar'
+import { PressableOpacity } from 'react-native-pressable-opacity'
+import Feather from '@expo/vector-icons/Feather'
 
 export default function Page() {
   const selfUser = JSON.parse(Storage.getString('user.profile'))
@@ -17,6 +19,7 @@ export default function Page() {
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Direct Messages', headerBackTitle: 'Back' })
   }, [navigation])
+
   const { isPending, isFetching, isError, data, error } = useQuery({
     queryKey: ['getConversations'],
     queryFn: getConversations,
@@ -33,6 +36,14 @@ export default function Page() {
   if (isError) {
     return <Text>Error: {error.message}</Text>
   }
+
+  const HeaderRight = () => (
+    <Link href="/chats/search" asChild>
+      <PressableOpacity>
+        <Feather name="plus" size={25} color="#0091ff" />
+      </PressableOpacity>
+    </Link>
+  )
 
   const RenderItem = ({ item }) => {
     let isSelf = selfUser.id == item.last_status?.account?.id
@@ -92,6 +103,7 @@ export default function Page() {
         options={{
           title: 'Direct Messages',
           headerBackTitle: 'Back',
+          headerRight: HeaderRight,
         }}
       />
       <FlatList
