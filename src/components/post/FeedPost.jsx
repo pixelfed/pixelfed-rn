@@ -179,6 +179,8 @@ const PostAlbumMedia = React.memo(({ media, post, progress }) => {
     return height > max ? height : max
   }, 0)
 
+  const mediaList = post.media_attachments.slice(0, 10)
+
   if (post.sensitive && !showSensitive) {
     return (
       <ZStack w={SCREEN_WIDTH} h={height}>
@@ -226,9 +228,9 @@ const PostAlbumMedia = React.memo(({ media, post, progress }) => {
         height={height}
         vertical={false}
         onProgressChange={progress}
-        data={post.media_attachments}
+        data={mediaList}
         renderItem={({ index }) => {
-          const media = post.media_attachments[0]
+          const media = mediaList[0]
           return (
             <FastImage
               style={{
@@ -236,7 +238,7 @@ const PostAlbumMedia = React.memo(({ media, post, progress }) => {
                 height: height,
                 backgroundColor: '#000',
               }}
-              source={{ uri: post.media_attachments[index].url }}
+              source={{ uri: mediaList[index].url }}
               resizeMode={FastImage.resizeMode.contain}
             />
           )
@@ -244,11 +246,11 @@ const PostAlbumMedia = React.memo(({ media, post, progress }) => {
       />
       <Pagination.Basic
         progress={progress}
-        data={post.media_attachments}
+        data={mediaList}
         dotStyle={{ backgroundColor: 'rgba(0,0,0,0.16)', borderRadius: 50 }}
         activeDotStyle={{ backgroundColor: '#408DF6', borderRadius: 50 }}
         containerStyle={{
-          gap: 5,
+          gap: 2,
           position: 'absolute',
           bottom: 0,
           marginBottom: -30,
@@ -288,30 +290,37 @@ const PostActions = React.memo(
       <BorderlessSection>
         <YStack pt="$3" pb="$2" px="$2" gap={10}>
           <XStack gap="$4" justifyContent="space-between">
-            <XStack gap="$5">
+            <XStack gap="$4">
               <LikeButton hasLiked={hasLiked} handleLike={handleLike} />
               <Pressable onPress={() => onOpenComments()}>
                 <Feather name="message-circle" size={30} />
               </Pressable>
-              {/* <Feather name="refresh-cw" size={26} /> */}
-            </XStack>
-            {/* <PressableOpacity onPress={() => onBookmark()}>
-              <XStack gap="$4">
-                { hasBookmarked ?
-                  <Ionicons name="bookmark" size={30} /> :
-                  <Feather name="bookmark" size={30} />
-                }
-                </XStack>
-            </PressableOpacity> */}
-            {showAltText && hasAltText ? (
-              <PressableOpacity onPress={() => onShowAlt()}>
-                <XStack bg="black" px="$3" py={4} borderRadius={5}>
-                  <Text color="white" fontSize="$5" fontWeight="bold">
-                    ALT
-                  </Text>
-                </XStack>
+              {/* { post.visibility === 'public' ?
+              <PressableOpacity>
+                <Feather name="refresh-cw" size={27} color={post.reblogged ? 'gold' : 'black'} />
               </PressableOpacity>
-            ) : null}
+              : null } */}
+            </XStack>
+            <XStack gap="$2">
+
+              {/* <PressableOpacity onPress={() => onBookmark()}>
+                <XStack gap="$4">
+                  { hasBookmarked ?
+                    <Ionicons name="bookmark" size={30} /> :
+                    <Feather name="bookmark" size={30} />
+                  }
+                  </XStack>
+              </PressableOpacity> */}
+              {showAltText && hasAltText ? (
+                <PressableOpacity onPress={() => onShowAlt()}>
+                  <XStack bg="black" px="$3" py={4} borderRadius={5}>
+                    <Text color="white" fontSize="$5" fontWeight="bold">
+                      ALT
+                    </Text>
+                  </XStack>
+                </PressableOpacity>
+              ) : null }
+            </XStack>
           </XStack>
           {likesCount || sharesCount ? (
             <XStack justifyContent="space-between" alignItems="flex-end">
