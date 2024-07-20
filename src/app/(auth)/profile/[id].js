@@ -172,18 +172,28 @@ export default function ProfileScreen() {
               </View>
             </ZStack>
           ) : (
-            <FastImage
-              style={{
-                width: SCREEN_WIDTH / 3 - 2,
-                height: SCREEN_WIDTH / 3 - 2,
-                backgroundColor: '#ddd',
-              }}
-              source={{
-                uri: item.media_attachments[0].url,
-                priority: FastImage.priority.normal,
-              }}
-              resizeMode={FastImage.resizeMode.cover}
-            />
+            <>
+              <Blurhash
+                blurhash={item.media_attachments[0]?.blurhash}
+                style={{
+                  flex: 1,
+                  position: 'absolute',
+                  width: SCREEN_WIDTH / 3 - 2,
+                  height: SCREEN_WIDTH / 3 - 2,
+                }}
+              />
+              <FastImage
+                style={{
+                  width: SCREEN_WIDTH / 3 - 2,
+                  height: SCREEN_WIDTH / 3 - 2,
+                }}
+                source={{
+                  uri: item.media_attachments[0].url,
+                  priority: FastImage.priority.normal,
+                }}
+                resizeMode={FastImage.resizeMode.cover}
+              />
+            </>
           )}
           {item.pf_type === 'photo:album' ? (
             <View position="absolute" right={5} top={5}>
@@ -482,7 +492,7 @@ export default function ProfileScreen() {
         mutuals={mutuals}
       />
     ),
-    [user, relationship, mutuals]
+    [mutuals]
   )
 
   const {

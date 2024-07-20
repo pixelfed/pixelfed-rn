@@ -1,5 +1,15 @@
 import { FlatList, Dimensions, ActivityIndicator } from 'react-native'
-import { Image, ScrollView, Text, View, XStack, YStack, Button, Separator } from 'tamagui'
+import {
+  Image,
+  ScrollView,
+  Text,
+  View,
+  XStack,
+  YStack,
+  Button,
+  Separator,
+  ZStack,
+} from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
 import { Storage } from 'src/state/cache'
 import { queryApi } from 'src/requests'
@@ -22,6 +32,7 @@ import {
 import { prettyCount } from '../../../utils'
 import FastImage from 'react-native-fast-image'
 import { Feather } from '@expo/vector-icons'
+import { Blurhash } from 'react-native-blurhash'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
@@ -34,13 +45,26 @@ export default function Page() {
       item && item.media_attachments && item.media_attachments[0].url ? (
         <Link href={`/post/${item.id}`} asChild>
           <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
-            <Image
+            {item.media_attachments[0]?.blurhash ? (
+              <Blurhash
+                blurhash={item.media_attachments[0].blurhash}
+                style={{
+                  flex: 1,
+                  position: 'absolute',
+                  width: SCREEN_WIDTH / 3 - 2,
+                  height: SCREEN_WIDTH / 3 - 2,
+                }}
+              />
+            ) : null}
+            <FastImage
               source={{
                 uri: item.media_attachments[0].url,
+              }}
+              style={{
                 width: SCREEN_WIDTH / 3 - 2,
                 height: SCREEN_WIDTH / 3 - 2,
               }}
-              resizeMode="cover"
+              resizeMode={FastImage.resizeMode.cover}
             />
           </View>
         </Link>
