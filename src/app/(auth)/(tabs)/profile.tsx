@@ -9,6 +9,7 @@ import { Link } from 'expo-router'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { getAccountById, getAccountStatusesById } from 'src/lib/api'
 import Feather from '@expo/vector-icons/Feather'
+import { Blurhash } from 'react-native-blurhash'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
@@ -74,6 +75,17 @@ export default function ProfileScreen() {
     item && item.media_attachments[0].url ? (
       <Link href={`/post/${item.id}`}>
         <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
+          {item.media_attachments[0]?.blurhash ? (
+            <Blurhash
+              blurhash={item.media_attachments[0]?.blurhash}
+              style={{
+                flex: 1,
+                position: 'absolute',
+                width: SCREEN_WIDTH / 3 - 2,
+                height: SCREEN_WIDTH / 3 - 2,
+              }}
+            />
+          ) : null}
           <Image
             source={{
               uri: item.media_attachments[0].url,
