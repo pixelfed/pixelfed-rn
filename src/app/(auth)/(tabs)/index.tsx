@@ -19,6 +19,8 @@ import {
   deleteStatusV1,
   postBookmark,
   getSelfAccount,
+  reblogStatus,
+  unreblogStatus,
 } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
 import EmptyFeed from 'src/components/common/EmptyFeed'
@@ -148,6 +150,7 @@ export default function HomeScreen() {
         onLike={() => handleLike(item.id, item.favourited)}
         onDeletePost={() => onDeletePost(item.id)}
         onBookmark={() => onBookmark(item.id)}
+        onShare={() => onShare(item.id, item.reblogged)}
       />
     ),
     [user]
@@ -186,6 +189,18 @@ export default function HomeScreen() {
   const onBookmark = (id) => {
     bookmarkMutation.mutate(id)
   }
+
+  const onShare = (id, state) => {
+    shareMutation.mutate({ type: state == true ? 'unreblog' : 'reblog', id: id })
+  }
+
+  const shareMutation = useMutation({
+    mutationFn: async (handleShare) => {
+      return handleShare.type === 'reblog'
+        ? await reblogStatus(handleShare)
+        : await unreblogStatus(handleShare)
+    },
+  })
 
   const likeMutation = useMutation({
     mutationFn: async (handleLike) => {

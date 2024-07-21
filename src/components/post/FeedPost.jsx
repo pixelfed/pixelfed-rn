@@ -276,6 +276,7 @@ const PostActions = React.memo(
     showAltText,
     onBookmark,
     hasBookmarked,
+    onShare,
   }) => {
     const hasAltText = post?.media_attachments[0]?.description?.length
     const onShowAlt = () => {
@@ -295,11 +296,15 @@ const PostActions = React.memo(
               <Pressable onPress={() => onOpenComments()}>
                 <Feather name="message-circle" size={30} />
               </Pressable>
-              {/* { post.visibility === 'public' ?
-              <PressableOpacity>
-                <Feather name="refresh-cw" size={27} color={post.reblogged ? 'gold' : 'black'} />
-              </PressableOpacity>
-              : null } */}
+              {post.visibility === 'public' ? (
+                <PressableOpacity onPress={() => onShare()}>
+                  <Feather
+                    name="refresh-cw"
+                    size={27}
+                    color={post.reblogged ? 'gold' : 'black'}
+                  />
+                </PressableOpacity>
+              ) : null}
             </XStack>
             <XStack gap="$2">
               {/* <PressableOpacity onPress={() => onBookmark()}>
@@ -485,6 +490,7 @@ export default function FeedPost({
   isPermalink = false,
   isLikeFeed = false,
   likedAt,
+  onShare,
 }) {
   const bottomSheetModalRef = useRef(null)
   const progress = useSharedValue(0)
@@ -595,6 +601,7 @@ export default function FeedPost({
             handleLike={() => onLike(post.id, post.favourited)}
             onOpenComments={() => onOpenComments(post.id)}
             onBookmark={() => onBookmark(post.id)}
+            onShare={() => onShare(post.id)}
           />
 
           <PostCaption

@@ -13,6 +13,8 @@ import {
   likeStatus,
   unlikeStatus,
   deleteStatusV1,
+  reblogStatus,
+  unreblogStatus,
 } from 'src/lib/api'
 import FeedPost from 'src/components/post/FeedPost'
 import {
@@ -62,6 +64,18 @@ export default function Page() {
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ['getStatusById'] })
       }, 1000)
+    },
+  })
+
+  const onShare = (id, state) => {
+    shareMutation.mutate({ type: state == true ? 'unreblog' : 'reblog', id: id })
+  }
+
+  const shareMutation = useMutation({
+    mutationFn: async (handleShare) => {
+      return handleShare.type === 'reblog'
+        ? await reblogStatus(handleShare)
+        : await unreblogStatus(handleShare)
     },
   })
 
@@ -147,6 +161,7 @@ export default function Page() {
           onDeletePost={onDeletePost}
           disableReadMore={true}
           isPermalink={true}
+          onShare={() => onShare(data?.id, data?.reblogged)}
         />
       </ScrollView>
     </SafeAreaView>
