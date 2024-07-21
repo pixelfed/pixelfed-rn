@@ -547,6 +547,14 @@ export async function unlikeStatus({ id }) {
   return await response.json()
 }
 
+export async function reblogStatus({ id }) {
+  return await selfPost(`api/v1/statuses/${id}/reblog`)
+}
+
+export async function unreblogStatus({ id }) {
+  return await selfPost(`api/v1/statuses/${id}/unreblog`)
+}
+
 export async function reportStatus({ id, type }) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
