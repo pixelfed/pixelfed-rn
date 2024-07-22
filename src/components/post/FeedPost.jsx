@@ -278,9 +278,11 @@ const PostActions = React.memo(
     hasBookmarked,
     onShare,
   }) => {
-    const hasAltText = post?.media_attachments[0]?.description?.length
+    const hasAltText =
+      post?.media_attachments?.length > 0 &&
+      post?.media_attachments[0]?.description?.trim().length > 0
     const onShowAlt = () => {
-      const idx = Math.floor(progress.value)
+      const idx = Math.floor(progress?.value ?? 0)
       Alert.alert(
         'Alt Text',
         post?.media_attachments[idx].description ??
@@ -589,19 +591,19 @@ export default function FeedPost({
       {!hideCaptions || isPermalink ? (
         <>
           <PostActions
-            hasLiked={post.favourited}
+            hasLiked={post?.favourited}
             hasShared={false}
             post={post}
             progress={progress}
             hasBookmarked={post?.bookmarked}
-            likesCount={post.favourites_count}
-            likedBy={post.liked_by}
-            sharesCount={post.reblogs_count}
+            likesCount={post?.favourites_count}
+            likedBy={post?.liked_by}
+            sharesCount={post?.reblogs_count}
             showAltText={showAltText}
-            handleLike={() => onLike(post.id, post.favourited)}
-            onOpenComments={() => onOpenComments(post.id)}
-            onBookmark={() => onBookmark(post.id)}
-            onShare={() => onShare(post.id)}
+            handleLike={() => onLike(post?.id, post?.favourited)}
+            onOpenComments={() => onOpenComments(post?.id)}
+            onBookmark={() => onBookmark(post?.id)}
+            onShare={() => onShare(post?.id)}
           />
 
           <PostCaption
