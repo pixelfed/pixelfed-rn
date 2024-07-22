@@ -262,7 +262,7 @@ export default function HomeScreen() {
   } = useInfiniteQuery({
     queryKey: ['homeFeed'],
     queryFn: fetchHomeFeed,
-    initialPageParam: null,
+    initialPageParam: -1,
     enabled: !!userId,
     refetchOnWindowFocus: false,
     getNextPageParam: (lastPage) => lastPage.nextPage,
@@ -334,7 +334,7 @@ export default function HomeScreen() {
         onViewableItemsChanged={onViewRef}
         viewabilityConfig={viewConfigRef.current}
         onEndReached={() => {
-          if (hasNextPage && !isFetchingNextPage) fetchNextPage()
+          if (hasNextPage && !isFetching && !isFetchingNextPage) fetchNextPage()
         }}
         onEndReachedThreshold={0.5}
         ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}

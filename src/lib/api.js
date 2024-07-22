@@ -287,22 +287,26 @@ export async function fetchNotifications({ queryKey, pageParam = false }) {
 
 export async function fetchHomeFeed({ pageParam = false }) {
   let url
-  if (!pageParam) {
+  if (pageParam === -1) {
     const instance = Storage.getString('app.instance')
     url = `https://${instance}/api/v1/timelines/home?_pe=1&limit=20`
-  } else {
+  } else if (pageParam > 1) {
     url = pageParam + '&_pe=1&limit=20'
+  } else {
+    return { data: [], nextPage: null, prevPage: null }
   }
   return await fetchPaginatedData(url)
 }
 
 export async function fetchNetworkFeed({ pageParam = false }) {
   let url
-  if (!pageParam) {
+  if (pageParam === -1) {
     const instance = Storage.getString('app.instance')
     url = `https://${instance}/api/v1/timelines/public?_pe=1&limit=20`
-  } else {
+  } else if (pageParam > 1) {
     url = pageParam + '&_pe=1&limit=20'
+  } else {
+    return { data: [], nextPage: null, prevPage: null }
   }
 
   return await fetchPaginatedData(url)

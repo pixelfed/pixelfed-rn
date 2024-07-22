@@ -236,7 +236,7 @@ export default function HomeScreen() {
   } = useInfiniteQuery({
     queryKey: ['fetchNetworkFeed'],
     queryFn: fetchNetworkFeed,
-    initialPageParam: null,
+    initialPageParam: -1,
     enabled: !!userId,
     refetchOnWindowFocus: false,
     getNextPageParam: (lastPage) => lastPage.nextPage,
