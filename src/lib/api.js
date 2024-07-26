@@ -892,3 +892,7 @@ export async function getSelfBookmarks({ pageParam = false }) {
 export async function putEditPost(id, params) {
   return await selfPut(`api/v1/statuses/${id}`, params)
 }
+
+export async function getStoryCarousel() {
+  return await selfGet(`api/v1.1/stories/carousel`)
+}
