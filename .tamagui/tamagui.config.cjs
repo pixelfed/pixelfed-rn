@@ -58,12 +58,12 @@ var require_cjs = __commonJS({
       useForceUpdate: /* @__PURE__ */ __name(() => useForceUpdate2, "useForceUpdate")
     });
     module2.exports = __toCommonJS2(src_exports);
-    var import_react64 = require("react");
+    var import_react63 = require("react");
     var isServerSide2 = typeof window > "u";
     var idFn3 = /* @__PURE__ */ __name(() => {
     }, "idFn");
     function useForceUpdate2() {
-      return isServerSide2 ? idFn3 : (0, import_react64.useReducer)((x) => Math.random(), 0)[1];
+      return isServerSide2 ? idFn3 : (0, import_react63.useReducer)((x) => Math.random(), 0)[1];
     }
     __name(useForceUpdate2, "useForceUpdate");
   }
@@ -92,8 +92,8 @@ var require_LayoutGroupContext = __commonJS({
       LayoutGroupContext: /* @__PURE__ */ __name(() => LayoutGroupContext2, "LayoutGroupContext")
     });
     module2.exports = __toCommonJS2(LayoutGroupContext_exports);
-    var import_react64 = require("react");
-    var LayoutGroupContext2 = (0, import_react64.createContext)({});
+    var import_react63 = require("react");
+    var LayoutGroupContext2 = (0, import_react63.createContext)({});
   }
 });
 
@@ -120,11 +120,11 @@ var require_cjs2 = __commonJS({
       useConstant: /* @__PURE__ */ __name(() => useConstant2, "useConstant")
     });
     module2.exports = __toCommonJS2(src_exports);
-    var import_react64 = require("react");
+    var import_react63 = require("react");
     function useConstant2(fn) {
       if (typeof document > "u")
-        return (0, import_react64.useMemo)(() => fn(), []);
-      const ref = (0, import_react64.useRef)();
+        return (0, import_react63.useMemo)(() => fn(), []);
+      const ref = (0, import_react63.useRef)();
       return ref.current || (ref.current = { v: fn() }), ref.current.v;
     }
     __name(useConstant2, "useConstant");
@@ -155,9 +155,9 @@ var require_PresenceContext = __commonJS({
       ResetPresence: /* @__PURE__ */ __name(() => ResetPresence2, "ResetPresence")
     });
     module2.exports = __toCommonJS2(PresenceContext_exports);
-    var import_react64 = require("react");
+    var import_react63 = require("react");
     var import_jsx_runtime63 = require("react/jsx-runtime");
-    var PresenceContext2 = (0, import_react64.createContext)(null);
+    var PresenceContext2 = (0, import_react63.createContext)(null);
     var ResetPresence2 = /* @__PURE__ */ __name((props) => /* @__PURE__ */ (0, import_jsx_runtime63.jsx)(PresenceContext2.Provider, { value: null, children: props.children }), "ResetPresence");
   }
 });
@@ -187,18 +187,18 @@ var require_usePresence = __commonJS({
       usePresence: /* @__PURE__ */ __name(() => usePresence2, "usePresence")
     });
     module2.exports = __toCommonJS2(usePresence_exports);
-    var import_react64 = require("react");
+    var import_react63 = require("react");
     var import_PresenceContext2 = require_PresenceContext();
     function usePresence2() {
-      const context = (0, import_react64.useContext)(import_PresenceContext2.PresenceContext);
+      const context = (0, import_react63.useContext)(import_PresenceContext2.PresenceContext);
       if (!context)
         return [true, null, context];
       const { id, isPresent: isPresent22, onExitComplete, register } = context;
-      return (0, import_react64.useEffect)(() => register(id), []), !isPresent22 && onExitComplete ? [false, () => onExitComplete == null ? void 0 : onExitComplete(id), context] : [true, void 0, context];
+      return (0, import_react63.useEffect)(() => register(id), []), !isPresent22 && onExitComplete ? [false, () => onExitComplete == null ? void 0 : onExitComplete(id), context] : [true, void 0, context];
     }
     __name(usePresence2, "usePresence");
     function useIsPresent2() {
-      return isPresent2((0, import_react64.useContext)(import_PresenceContext2.PresenceContext));
+      return isPresent2((0, import_react63.useContext)(import_PresenceContext2.PresenceContext));
     }
     __name(useIsPresent2, "useIsPresent");
     function isPresent2(context) {
@@ -266,7 +266,7 @@ var require_PresenceChild = __commonJS({
     var import_use_constant3 = require_cjs2();
     var import_use_presence3 = require_cjs3();
     var React49 = __toESM2(require("react"));
-    var import_react64 = require("react");
+    var import_react63 = require("react");
     var import_jsx_runtime63 = require("react/jsx-runtime");
     var PresenceChild2 = React49.memo(
       ({
@@ -280,7 +280,7 @@ var require_PresenceChild = __commonJS({
         presenceAffectsLayout,
         custom
       }) => {
-        const presenceChildren = (0, import_use_constant3.useConstant)(newChildrenMap2), id = (0, import_react64.useId)() || "", context = React49.useMemo(
+        const presenceChildren = (0, import_use_constant3.useConstant)(newChildrenMap2), id = (0, import_react63.useId)() || "", context = React49.useMemo(
           () => ({
             id,
             initial,
@@ -344,7 +344,7 @@ var require_AnimatePresence = __commonJS({
     });
     module2.exports = __toCommonJS2(AnimatePresence_exports);
     var import_use_force_update2 = require_cjs();
-    var import_react64 = require("react");
+    var import_react63 = require("react");
     var import_LayoutGroupContext2 = require_LayoutGroupContext();
     var import_PresenceChild2 = require_PresenceChild();
     var import_jsx_runtime63 = require("react/jsx-runtime");
@@ -358,8 +358,8 @@ var require_AnimatePresence = __commonJS({
     __name(updateChildLookup2, "updateChildLookup");
     function onlyElements2(children) {
       const filtered = [];
-      return import_react64.Children.forEach(children, (child) => {
-        (0, import_react64.isValidElement)(child) && filtered.push(child);
+      return import_react63.Children.forEach(children, (child) => {
+        (0, import_react63.isValidElement)(child) && filtered.push(child);
       }), filtered;
     }
     __name(onlyElements2, "onlyElements");
@@ -374,10 +374,10 @@ var require_AnimatePresence = __commonJS({
       presenceAffectsLayout = true,
       custom
     }) => {
-      let forceRender = (0, import_react64.useContext)(import_LayoutGroupContext2.LayoutGroupContext).forceRender ?? (0, import_use_force_update2.useForceUpdate)();
-      const filteredChildren = onlyElements2(children), presentChildren = (0, import_react64.useRef)(filteredChildren), allChildren = (0, import_react64.useRef)(/* @__PURE__ */ new Map()).current, exiting = (0, import_react64.useRef)(/* @__PURE__ */ new Set()).current;
+      let forceRender = (0, import_react63.useContext)(import_LayoutGroupContext2.LayoutGroupContext).forceRender ?? (0, import_use_force_update2.useForceUpdate)();
+      const filteredChildren = onlyElements2(children), presentChildren = (0, import_react63.useRef)(filteredChildren), allChildren = (0, import_react63.useRef)(/* @__PURE__ */ new Map()).current, exiting = (0, import_react63.useRef)(/* @__PURE__ */ new Set()).current;
       updateChildLookup2(filteredChildren, allChildren);
-      const isInitialRender = (0, import_react64.useRef)(true);
+      const isInitialRender = (0, import_react63.useRef)(true);
       if (isInitialRender.current)
         return isInitialRender.current = false, /* @__PURE__ */ (0, import_jsx_runtime63.jsx)(import_jsx_runtime63.Fragment, { children: filteredChildren.map((child) => /* @__PURE__ */ (0, import_jsx_runtime63.jsx)(
           import_PresenceChild2.PresenceChild,
@@ -441,7 +441,7 @@ var require_AnimatePresence = __commonJS({
         );
       }), presentChildren.current = childrenToRender, /* @__PURE__ */ (0, import_jsx_runtime63.jsx)(import_jsx_runtime63.Fragment, { children: exiting.size ? childrenToRender : (
         // biome-ignore lint/correctness/useJsxKeyInIterable: <explanation>
-        childrenToRender.map((child) => (0, import_react64.cloneElement)(child))
+        childrenToRender.map((child) => (0, import_react63.cloneElement)(child))
       ) });
     }, "AnimatePresence");
     AnimatePresence2.displayName = "AnimatePresence";
@@ -753,12 +753,12 @@ var require_constants = __commonJS({
       useIsomorphicLayoutEffect: /* @__PURE__ */ __name(() => useIsomorphicLayoutEffect3, "useIsomorphicLayoutEffect")
     });
     module2.exports = __toCommonJS2(constants_exports);
-    var import_react64 = require("react");
+    var import_react63 = require("react");
     var isWeb9 = true;
     var isWindowDefined2 = typeof window < "u";
     var isServer3 = isWeb9 && !isWindowDefined2;
     var isClient5 = isWeb9 && isWindowDefined2;
-    var useIsomorphicLayoutEffect3 = isServer3 ? import_react64.useEffect : import_react64.useLayoutEffect;
+    var useIsomorphicLayoutEffect3 = isServer3 ? import_react63.useEffect : import_react63.useLayoutEffect;
     var isChrome3 = typeof navigator < "u" && /Chrome/.test(navigator.userAgent || "");
     var isWebTouchable3 = isClient5 && ("ontouchstart" in window || navigator.maxTouchPoints > 0);
     var isTouchable3 = !isWeb9 || isWebTouchable3;
@@ -1068,6 +1068,8 @@ var require_validStyleProps = __commonJS({
       ...stylePropsTransform2,
       ...stylePropsUnitless2,
       // RN doesn't support specific border styles per-edge
+      transition: true,
+      textWrap: true,
       backdropFilter: true,
       background: true,
       backgroundAttachment: true,
@@ -1201,13 +1203,13 @@ var require_withStaticProperties = __commonJS({
       withStaticProperties: /* @__PURE__ */ __name(() => withStaticProperties7, "withStaticProperties")
     });
     module2.exports = __toCommonJS2(withStaticProperties_exports);
-    var import_react64 = require("react");
+    var import_react63 = require("react");
     var Decorated2 = Symbol();
     var withStaticProperties7 = /* @__PURE__ */ __name((component, staticProps) => {
       const next = (() => {
         if (component[Decorated2]) {
-          const _ = (0, import_react64.forwardRef)(
-            (props, ref) => (0, import_react64.createElement)(component, { ...props, ref })
+          const _ = (0, import_react63.forwardRef)(
+            (props, ref) => (0, import_react63.createElement)(component, { ...props, ref })
           );
           for (const key in component) {
             const v = component[key];
@@ -1273,12 +1275,12 @@ var require_useGet = __commonJS({
     });
     module2.exports = __toCommonJS2(useGet_exports);
     var import_constants45 = require_cjs6();
-    var import_react64 = require("react");
+    var import_react63 = require("react");
     function useGet6(currentValue, initialValue2, forwardToFunction) {
-      const curRef = (0, import_react64.useRef)(initialValue2 ?? currentValue);
+      const curRef = (0, import_react63.useRef)(initialValue2 ?? currentValue);
       return (0, import_constants45.useIsomorphicLayoutEffect)(() => {
         curRef.current = currentValue;
-      }), (0, import_react64.useCallback)(
+      }), (0, import_react63.useCallback)(
         forwardToFunction ? (...args) => {
           var _a;
           return (_a = curRef.current) == null ? void 0 : _a.apply(null, args);
@@ -1370,7 +1372,7 @@ var require_useControllableState = __commonJS({
     });
     module2.exports = __toCommonJS2(useControllableState_exports);
     var import_use_event4 = require_cjs8();
-    var import_react64 = require("react");
+    var import_react63 = require("react");
     var emptyCallbackFn2 = /* @__PURE__ */ __name((_) => _(), "emptyCallbackFn");
     function useControllableState2({
       prop,
@@ -1380,12 +1382,12 @@ var require_useControllableState = __commonJS({
       preventUpdate,
       transition
     }) {
-      const [state, setState] = (0, import_react64.useState)(prop ?? defaultProp), previous = (0, import_react64.useRef)(state), propWins = strategy === "prop-wins" && prop !== void 0, value = propWins ? prop : state, onChangeCb = (0, import_use_event4.useEvent)(onChange || idFn3), transitionFn = transition ? import_react64.startTransition : emptyCallbackFn2;
-      (0, import_react64.useEffect)(() => {
+      const [state, setState] = (0, import_react63.useState)(prop ?? defaultProp), previous = (0, import_react63.useRef)(state), propWins = strategy === "prop-wins" && prop !== void 0, value = propWins ? prop : state, onChangeCb = (0, import_use_event4.useEvent)(onChange || idFn3), transitionFn = transition ? import_react63.startTransition : emptyCallbackFn2;
+      (0, import_react63.useEffect)(() => {
         prop !== void 0 && (previous.current = prop, transitionFn(() => {
           setState(prop);
         }));
-      }, [prop]), (0, import_react64.useEffect)(() => {
+      }, [prop]), (0, import_react63.useEffect)(() => {
         propWins || state !== previous.current && (previous.current = state, onChangeCb(state));
       }, [onChangeCb, state, propWins]);
       const setter = (0, import_use_event4.useEvent)((next) => {
@@ -1693,14 +1695,14 @@ var require_Collection = __commonJS({
     var import_compose_refs25 = require_cjs11();
     var import_constants45 = require_cjs6();
     var import_core61 = require("@tamagui/core");
-    var import_react64 = __toESM2(require("react"));
+    var import_react63 = __toESM2(require("react"));
     var import_jsx_runtime63 = require("react/jsx-runtime");
     function createCollection2(name) {
       const { Provider: CollectionProviderImpl, useStyledContext: useCollectionContext } = (0, import_core61.createStyledContext)({
         collectionRef: { current: null },
         itemMap: /* @__PURE__ */ new Map()
       }), CollectionProvider = /* @__PURE__ */ __name((props) => {
-        const { __scopeCollection, children } = props, ref = import_react64.default.useRef(null), itemMap = import_react64.default.useRef(/* @__PURE__ */ new Map()).current;
+        const { __scopeCollection, children } = props, ref = import_react63.default.useRef(null), itemMap = import_react63.default.useRef(/* @__PURE__ */ new Map()).current;
         return /* @__PURE__ */ (0, import_jsx_runtime63.jsx)(
           CollectionProviderImpl,
           {
@@ -1712,19 +1714,19 @@ var require_Collection = __commonJS({
         );
       }, "CollectionProvider");
       CollectionProvider.displayName = "CollectionProvider";
-      const COLLECTION_SLOT_NAME = name + "CollectionSlot", CollectionSlot = import_react64.default.forwardRef((props, forwardedRef) => {
+      const COLLECTION_SLOT_NAME = name + "CollectionSlot", CollectionSlot = import_react63.default.forwardRef((props, forwardedRef) => {
         const { __scopeCollection, children } = props, context = useCollectionContext(__scopeCollection), composedRefs = (0, import_compose_refs25.useComposedRefs)(forwardedRef, context.collectionRef);
         return /* @__PURE__ */ (0, import_jsx_runtime63.jsx)(import_core61.Slot, { ref: composedRefs, children });
       });
       CollectionSlot.displayName = COLLECTION_SLOT_NAME;
-      const ITEM_SLOT_NAME = name + "CollectionItemSlot", ITEM_DATA_ATTR = "data-collection-item", CollectionItemSlot = import_react64.default.forwardRef((props, forwardedRef) => {
-        const { __scopeCollection, children, ...itemData } = props, ref = import_react64.default.useRef(null), composedRefs = (0, import_compose_refs25.useComposedRefs)(forwardedRef, ref), context = useCollectionContext(__scopeCollection);
-        return import_react64.default.useEffect(() => (context.itemMap.set(ref, { ref, ...itemData }), () => void context.itemMap.delete(ref))), /* @__PURE__ */ (0, import_jsx_runtime63.jsx)(import_core61.Slot, { [ITEM_DATA_ATTR]: "", ref: composedRefs, children });
+      const ITEM_SLOT_NAME = name + "CollectionItemSlot", ITEM_DATA_ATTR = "data-collection-item", CollectionItemSlot = import_react63.default.forwardRef((props, forwardedRef) => {
+        const { __scopeCollection, children, ...itemData } = props, ref = import_react63.default.useRef(null), composedRefs = (0, import_compose_refs25.useComposedRefs)(forwardedRef, ref), context = useCollectionContext(__scopeCollection);
+        return import_react63.default.useEffect(() => (context.itemMap.set(ref, { ref, ...itemData }), () => void context.itemMap.delete(ref))), /* @__PURE__ */ (0, import_jsx_runtime63.jsx)(import_core61.Slot, { [ITEM_DATA_ATTR]: "", ref: composedRefs, children });
       });
       CollectionItemSlot.displayName = ITEM_SLOT_NAME;
       function useCollection2(__scopeCollection) {
         const context = useCollectionContext(__scopeCollection);
-        return import_react64.default.useCallback(() => {
+        return import_react63.default.useCallback(() => {
           if (!import_constants45.isWeb)
             return [];
           const collectionNode = context.collectionRef.current;
@@ -2266,8 +2268,8 @@ var require_NestingContext = __commonJS({
       ButtonNestingContext: /* @__PURE__ */ __name(() => ButtonNestingContext2, "ButtonNestingContext")
     });
     module2.exports = __toCommonJS2(NestingContext_exports);
-    var import_react64 = require("react");
-    var ButtonNestingContext2 = (0, import_react64.createContext)(false);
+    var import_react63 = require("react");
+    var ButtonNestingContext2 = (0, import_react63.createContext)(false);
   }
 });
 
@@ -2548,7 +2550,7 @@ var require_wrapChildrenInText = __commonJS({
       wrapChildrenInText: /* @__PURE__ */ __name(() => wrapChildrenInText2, "wrapChildrenInText")
     });
     module2.exports = __toCommonJS2(wrapChildrenInText_exports);
-    var import_react64 = __toESM2(require("react"));
+    var import_react63 = __toESM2(require("react"));
     var import_jsx_runtime63 = (
       // so "data-disable-theme" is a hack to fix themeInverse, don't ask me why
       require("react/jsx-runtime")
@@ -2573,7 +2575,7 @@ var require_wrapChildrenInText = __commonJS({
       const props = {
         ...extraProps
       };
-      return color2 && (props.color = color2), fontFamily && (props.fontFamily = fontFamily), fontSize && (props.fontSize = fontSize), fontWeight && (props.fontWeight = fontWeight), letterSpacing && (props.letterSpacing = letterSpacing), textAlign && (props.textAlign = textAlign), size7 && (props.size = size7), fontStyle && (props.fontStyle = fontStyle), maxFontSizeMultiplier && (props.maxFontSizeMultiplier = maxFontSizeMultiplier), import_react64.default.Children.toArray(children).map((child, index8) => typeof child == "string" ? /* @__PURE__ */ (0, import_jsx_runtime63.jsx)(TextComponent, { ...props, ...textProps, children: child }, index8) : child);
+      return color2 && (props.color = color2), fontFamily && (props.fontFamily = fontFamily), fontSize && (props.fontSize = fontSize), fontWeight && (props.fontWeight = fontWeight), letterSpacing && (props.letterSpacing = letterSpacing), textAlign && (props.textAlign = textAlign), size7 && (props.size = size7), fontStyle && (props.fontStyle = fontStyle), maxFontSizeMultiplier && (props.maxFontSizeMultiplier = maxFontSizeMultiplier), import_react63.default.Children.toArray(children).map((child, index8) => typeof child == "string" ? /* @__PURE__ */ (0, import_jsx_runtime63.jsx)(TextComponent, { ...props, ...textProps, children: child }, index8) : child);
     }
     __name(wrapChildrenInText2, "wrapChildrenInText");
   }
@@ -27371,7 +27373,7 @@ var require_mutateTheme = __commonJS({
     module2.exports = __toCommonJS2(mutateTheme_exports);
     var import_constants45 = require_cjs6();
     var import_web22 = require("@tamagui/core");
-    var import_react64 = require("react");
+    var import_react63 = require("react");
     function mutateThemes({
       themes: themes3,
       batch,
@@ -27392,7 +27394,7 @@ var require_mutateTheme = __commonJS({
         res && (allThemesProxied[name] = res.theme, allThemesRaw[name] = res.themeRaw);
       }
       const cssRules = insertCSS ? insertThemeCSS(allThemesRaw, batch) : [];
-      return (0, import_react64.startTransition)(() => {
+      return (0, import_react63.startTransition)(() => {
         for (const themeName in allThemesProxied) {
           const theme = allThemesProxied[themeName];
           updateThemeConfig(themeName, theme), notifyThemeManagersOfUpdate(themeName, theme);
@@ -29305,16 +29307,19 @@ var selectionStyles = /* @__PURE__ */ __name((theme) => theme.color5 ? {
 var themes2 = process.env.TAMAGUI_OPTIMIZE_THEMES === "true" ? {} : themes;
 var config = {
   animations: animationsCSS,
-  defaultFont: "body",
-  shouldAddPrefersColorThemes: true,
-  themeClassNameOnRoot: true,
   themes: themes2,
   media,
   shorthands,
   tokens,
   fonts,
-  mediaQueryDefaultActive,
-  selectionStyles
+  selectionStyles,
+  settings: {
+    mediaQueryDefaultActive,
+    defaultFont: "body",
+    fastSchemeChange: true,
+    shouldAddPrefersColorThemes: true,
+    themeClassNameOnRoot: true
+  }
 };
 
 // node_modules/tamagui/dist/esm/index.mjs
@@ -29960,6 +29965,8 @@ var stylePropsView = {
   ...stylePropsTransform,
   ...stylePropsUnitless,
   // RN doesn't support specific border styles per-edge
+  transition: true,
+  textWrap: true,
   backdropFilter: true,
   background: true,
   backgroundAttachment: true,
@@ -30172,14 +30179,14 @@ function createContext4(rootComponentName, defaultContext) {
     });
   }
   __name(Provider, "Provider");
-  function useContext19(consumerName) {
+  function useContext20(consumerName) {
     const context = React2.useContext(Context);
     if (context) return context;
     if (defaultContext !== void 0) return defaultContext;
     throw new Error(`\`${consumerName}\` must be used within \`${rootComponentName}\``);
   }
-  __name(useContext19, "useContext");
-  return Provider.displayName = `${rootComponentName}Provider`, [Provider, useContext19];
+  __name(useContext20, "useContext");
+  return Provider.displayName = `${rootComponentName}Provider`, [Provider, useContext20];
 }
 __name(createContext4, "createContext");
 function createContextScope(scopeName, createContextScopeDeps = []) {
@@ -30200,7 +30207,7 @@ function createContextScope(scopeName, createContextScopeDeps = []) {
       });
     }
     __name(Provider, "Provider");
-    function useContext19(consumerName, scope, options) {
+    function useContext20(consumerName, scope, options) {
       var _a;
       const Context = ((_a = scope == null ? void 0 : scope[scopeName]) == null ? void 0 : _a[index8]) || BaseContext, context = React2.useContext(Context);
       if (context) return context;
@@ -30209,8 +30216,8 @@ function createContextScope(scopeName, createContextScopeDeps = []) {
       if (options == null ? void 0 : options.fallback) return (options == null ? void 0 : options.warn) !== false && console.warn(missingContextMessage), options.fallback;
       throw new Error(missingContextMessage);
     }
-    __name(useContext19, "useContext");
-    return Provider.displayName = `${rootComponentName}Provider`, [Provider, useContext19];
+    __name(useContext20, "useContext");
+    return Provider.displayName = `${rootComponentName}Provider`, [Provider, useContext20];
   }
   __name(createContext22, "createContext2");
   const createScope = /* @__PURE__ */ __name(() => {
@@ -32823,7 +32830,8 @@ var DialogSheetController = /* @__PURE__ */ __name((props) => {
   const context = useDialogContext("DialogSheetController", props.__scopeDialog), showSheet = useShowDialogSheet(context), breakpointActive = useSheetBreakpointActive(context), getShowSheet = (0, import_core16.useGet)(showSheet);
   return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(SheetController, {
     onOpenChange: /* @__PURE__ */ __name((val) => {
-      getShowSheet() && props.onOpenChange(val);
+      var _a;
+      getShowSheet() && ((_a = props.onOpenChange) == null ? void 0 : _a.call(props, val));
     }, "onOpenChange"),
     open: context.open,
     hidden: breakpointActive === false,
@@ -33000,7 +33008,6 @@ var DescriptionWarning2 = /* @__PURE__ */ __name(({
   if (!isWeb) return;
   document.getElementById(
     // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     (_a = contentRef.current) == null ? void 0 : _a.getAttribute("aria-describedby")
   ) || console.warn(`\`${CONTENT_NAME2}\` requires a description for the component to be accessible for screen reader users.
   
@@ -33050,6 +33057,7 @@ var Image = StyledImage.styleable((inProps, ref) => {
   const [props, style] = (0, import_core18.usePropsAndStyle)(inProps), {
     src,
     source,
+    objectFit,
     ...rest
   } = props;
   process.env.NODE_ENV === "development" && typeof src == "string" && (typeof props.width == "string" && props.width[0] !== "$" || typeof props.height == "string" && props.height[0] !== "$") && (hasWarned || (hasWarned = true, console.warn('React Native expects a numerical width/height. If you want to use a percent you must define the "source" prop with width, height, and uri.')));
@@ -33073,6 +33081,7 @@ var Image = StyledImage.styleable((inProps, ref) => {
     __name(run, "run");
     run();
   }, [src]), finalSource.default && (finalSource = finalSource.default)), /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(import_react_native_web6.Image, {
+    resizeMode: objectFit,
     ref,
     source: finalSource,
     style,
@@ -38523,7 +38532,8 @@ var PopoverSheetController = /* @__PURE__ */ __name(({
   const context = usePopoverContext(__scopePopover), showSheet = useShowPopoverSheet(context), breakpointActive = context.breakpointActive, getShowSheet = (0, import_core29.useGet)(showSheet);
   return /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(SheetController, {
     onOpenChange: /* @__PURE__ */ __name((val) => {
-      getShowSheet() && props.onOpenChange(val);
+      var _a;
+      getShowSheet() && ((_a = props.onOpenChange) == null ? void 0 : _a.call(props, val));
     }, "onOpenChange"),
     open: context.open,
     hidden: breakpointActive === false,
@@ -38565,6 +38575,7 @@ var ProgressIndicatorFrame = (0, import_core30.styled)(ThemeableStack, {
 var ProgressIndicator = ProgressIndicatorFrame.styleable(function(props, forwardedRef) {
   const {
     __scopeProgress,
+    animation,
     ...indicatorProps
   } = props, context = useProgressContext(INDICATOR_NAME2, __scopeProgress), pct = context.max - (context.value ?? 0), x = -(context.width === 0 ? 300 : context.width) * (pct / 100);
   return /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(ProgressIndicatorFrame, {
@@ -38578,7 +38589,8 @@ var ProgressIndicator = ProgressIndicatorFrame.styleable(function(props, forward
       opacity: context.width === 0 ? 0 : 1
     },
     ...indicatorProps,
-    ref: forwardedRef
+    ref: forwardedRef,
+    animation: context.width ? animation : null
   });
 });
 function defaultGetValueLabel(value, max2) {
@@ -44226,6 +44238,7 @@ var getSwitchWidth = /* @__PURE__ */ __name((val) => getSwitchHeight(val) * 2, "
 var SwitchFrame = (0, import_core47.styled)(YStack, {
   name: "Switch",
   tag: "button",
+  tabIndex: 0,
   variants: {
     unstyled: {
       false: {
@@ -46502,7 +46515,7 @@ var TooltipContent = PopperContentFrame.extractable(React46.forwardRef(({
   __scopeTooltip,
   ...props
 }, ref) => {
-  const popper = usePopperContext(__scopeTooltip || TOOLTIP_SCOPE), padding = props.padding ?? props.size ?? popper.size ?? getSize("$true", {
+  const preventAnimation = React46.useContext(PreventTooltipAnimationContext), popper = usePopperContext(__scopeTooltip || TOOLTIP_SCOPE), padding = props.unstyled ? void 0 : props.padding ?? props.size ?? popper.size ?? getSize("$true", {
     shift: -2
   });
   return /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(PopoverContent, {
@@ -46514,7 +46527,10 @@ var TooltipContent = PopperContentFrame.extractable(React46.forwardRef(({
       padding
     },
     ref,
-    ...props
+    ...props,
+    ...preventAnimation && {
+      animation: null
+    }
   });
 }));
 var TooltipArrow = React46.forwardRef((props, ref) => {
@@ -46529,12 +46545,19 @@ var TooltipArrow = React46.forwardRef((props, ref) => {
     ...rest
   });
 });
+var PreventTooltipAnimationContext = React46.createContext(false);
 var TooltipGroup = /* @__PURE__ */ __name(({
   children,
-  delay
-}) => /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(FloatingDelayGroup, {
-  delay: React46.useMemo(() => delay, [JSON.stringify(delay)]),
-  children
+  delay,
+  preventAnimation = false,
+  timeoutMs
+}) => /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(PreventTooltipAnimationContext.Provider, {
+  value: preventAnimation,
+  children: /* @__PURE__ */ (0, import_jsx_runtime56.jsx)(FloatingDelayGroup, {
+    timeoutMs,
+    delay: React46.useMemo(() => delay, [JSON.stringify(delay)]),
+    children
+  })
 }), "TooltipGroup");
 var TooltipComponent = React46.forwardRef(function(props, ref) {
   const {
@@ -46662,12 +46685,8 @@ var TooltipSimple = React47.forwardRef(({
   disabled,
   ...tooltipProps
 }, ref) => {
-  let context;
-  try {
-    context = useDelayGroupContext();
-  } catch {
-  }
-  const child = React47.Children.only(children), contents = /* @__PURE__ */ (0, import_jsx_runtime57.jsxs)(Tooltip2, {
+  const child = React47.Children.only(children);
+  return /* @__PURE__ */ (0, import_jsx_runtime57.jsxs)(Tooltip2, {
     disableRTL: true,
     offset: 15,
     restMs: 40,
@@ -46719,18 +46738,10 @@ var TooltipSimple = React47.forwardRef(({
       })]
     })]
   });
-  return context ? contents : /* @__PURE__ */ (0, import_jsx_runtime57.jsx)(TooltipGroup, {
-    delay: defaultTooltipDelay,
-    children: contents
-  });
 });
-var defaultTooltipDelay = {
-  open: 3e3,
-  close: 100
-};
 
 // node_modules/@tamagui/use-window-dimensions/dist/esm/index.mjs
-var import_react61 = require("react");
+var import_react60 = require("react");
 var import_react_native_web10 = __toESM(require_cjs20(), 1);
 var initialValue = {
   height: 800,
@@ -46751,7 +46762,7 @@ __name(subscribe, "subscribe");
 function useWindowDimensions({
   serverValue = initialValue
 } = {}) {
-  return (0, import_react61.useSyncExternalStore)(subscribe, () => import_react_native_web10.Dimensions.get("window"), () => isWeb ? serverValue : import_react_native_web10.Dimensions.get("window"));
+  return (0, import_react60.useSyncExternalStore)(subscribe, () => import_react_native_web10.Dimensions.get("window"), () => isWeb ? serverValue : import_react_native_web10.Dimensions.get("window"));
 }
 __name(useWindowDimensions, "useWindowDimensions");
 
@@ -46940,7 +46951,7 @@ var textAreaSizeVariant = /* @__PURE__ */ __name((val = "$true", extras) => {
 }, "textAreaSizeVariant");
 
 // node_modules/tamagui/dist/esm/views/Input.mjs
-var import_react62 = require("react");
+var import_react61 = require("react");
 var import_jsx_runtime60 = require("react/jsx-runtime");
 var defaultStyles = {
   size: "$true",
@@ -46993,7 +47004,7 @@ var InputFrame = (0, import_core56.styled)(import_react_native_web12.TextInput, 
   }
 });
 var Input = InputFrame.styleable((propsIn, forwardedRef) => {
-  const ref = (0, import_react62.useRef)(null), composedRefs = (0, import_core56.useComposedRefs)(forwardedRef, ref), props = useInputProps(propsIn, composedRefs);
+  const ref = (0, import_react61.useRef)(null), composedRefs = (0, import_core56.useComposedRefs)(forwardedRef, ref), props = useInputProps(propsIn, composedRefs);
   return /* @__PURE__ */ (0, import_jsx_runtime60.jsx)(InputFrame, {
     ...props
   });
@@ -47045,7 +47056,7 @@ var Spinner = YStack.extractable((0, import_core57.themeable)(React48.forwardRef
 
 // node_modules/tamagui/dist/esm/views/TextArea.mjs
 var import_core58 = require("@tamagui/core");
-var import_react63 = require("react");
+var import_react62 = require("react");
 var import_jsx_runtime62 = require("react/jsx-runtime");
 var TextAreaFrame = (0, import_core58.styled)(InputFrame, {
   name: "TextArea",
@@ -47068,7 +47079,7 @@ var TextAreaFrame = (0, import_core58.styled)(InputFrame, {
   }
 });
 var TextArea = TextAreaFrame.styleable((propsIn, forwardedRef) => {
-  const ref = (0, import_react63.useRef)(null), composedRefs = (0, import_core58.useComposedRefs)(forwardedRef, ref), props = useInputProps(propsIn, composedRefs), linesProp = {
+  const ref = (0, import_react62.useRef)(null), composedRefs = (0, import_core58.useComposedRefs)(forwardedRef, ref), props = useInputProps(propsIn, composedRefs), linesProp = {
     // web uses rows now, but native not caught up :/
     [isWeb ? "rows" : "numberOfLines"]: propsIn.unstyled ? void 0 : 4
   };
