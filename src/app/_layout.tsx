@@ -92,7 +92,7 @@ function RootLayoutNav() {
         <QueryClientProvider client={queryClient}>
           <BottomSheetModalProvider>
             <TamaguiProvider config={config} defaultTheme={'light'}>
-              <ToastProvider native={true} burntOptions={{ from: 'bottom' }}>
+              <ToastProvider native={true}>
                 <ThemeProvider value={DefaultTheme}>
                   <VideoProvider>
                     <Stack>
