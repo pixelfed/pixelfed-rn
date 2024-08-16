@@ -42,7 +42,8 @@ export default function Screen() {
               Disable Stories
             </Text>
             <Text fontSize="$3" color="$gray9">
-              Hides the Story feature and carousel from your home feed. You may still see Stories on the website, or other clients.
+              Hides the Story feature and carousel from your home feed. You may still see
+              Stories on the website, or other clients.
             </Text>
           </YStack>
           <Switch

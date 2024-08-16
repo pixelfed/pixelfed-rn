@@ -87,7 +87,11 @@ const StoryList: FC<StoryListProps> = ({
             progressActiveColor={progressActiveColor}
             progressContainerStyle={progressContainerStyle}
           />
-          <StoryHeader {...props} name={stories[lastSeenIndex + 1]?.username} createdAt={stories[lastSeenIndex + 1]?.createdAt} />
+          <StoryHeader
+            {...props}
+            name={stories[lastSeenIndex + 1]?.username}
+            createdAt={stories[lastSeenIndex + 1]?.createdAt}
+          />
           <StoryContent stories={stories} active={isActive} activeStory={activeStory} />
         </Animated.View>
       </Animated.View>

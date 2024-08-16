@@ -34,8 +34,8 @@ const StoryAvatar: FC<StoryAvatarProps> = ({
   const loaderColor = useDerivedValue(() =>
     seenStories.value[id] === stories[stories.length - 1]?.id ? seenColors : colors
   )
-  const hasSeen = useDerivedValue(() =>
-    seenStories.value[id] == stories[stories.length - 1]?.id
+  const hasSeen = useDerivedValue(
+    () => seenStories.value[id] == stories[stories.length - 1]?.id
   )
 
   const onLoad = () => {
@@ -43,7 +43,7 @@ const StoryAvatar: FC<StoryAvatarProps> = ({
   }
 
   const imageAnimatedStyles = useAnimatedStyle(() => ({
-    opacity: withTiming(isLoading.value ? 0.5 : (hasSeen ? 0.6 : 1)),
+    opacity: withTiming(isLoading.value ? 0.5 : hasSeen ? 0.6 : 1),
   }))
 
   return (

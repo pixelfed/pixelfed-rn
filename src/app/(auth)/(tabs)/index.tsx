@@ -39,9 +39,9 @@ import { useShareIntentContext } from 'expo-share-intent'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
-import PixelfedStories from 'src/components/stories';
+import PixelfedStories from 'src/components/stories'
 import { _timeAgo } from 'src/utils'
-import * as Burnt from "burnt";
+import * as Burnt from 'burnt'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   return (
@@ -70,9 +70,9 @@ export default function HomeScreen() {
   const { hasShareIntent } = useShareIntentContext()
   const params = useLocalSearchParams()
   const [isPosting, setIsPosting] = useState(false)
-  const [storyLoadError, setStoryError] = useState('');
+  const [storyLoadError, setStoryError] = useState('')
   const hideStories = Storage.getBoolean('ui.hideStories') == true
-  
+
   useEffect(() => {
     if (hasShareIntent) {
       router.navigate('camera')
@@ -109,8 +109,8 @@ export default function HomeScreen() {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const snapPoints = useMemo(() => ['50%', '70%'], [])
 
-  const sref = useRef( null );
-  
+  const sref = useRef(null)
+
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
   }, [])
@@ -250,11 +250,11 @@ export default function HomeScreen() {
 
   const { data: serverConfig } = useQuery({
     queryKey: ['getConfig'],
-    queryFn: getConfig
+    queryFn: getConfig,
   })
 
-  const validConfig = serverConfig?.version;
-  const storiesEnabled = hideStories === false && serverConfig?.features?.stories;
+  const validConfig = serverConfig?.version
+  const storiesEnabled = hideStories === false && serverConfig?.features?.stories
 
   const { data: userSelf } = useQuery({
     queryKey: ['getSelfAccount'],
@@ -262,16 +262,16 @@ export default function HomeScreen() {
       const res = await getSelfAccount()
       return res
     },
-    enabled: !!validConfig
+    enabled: !!validConfig,
   })
 
   useEffect(() => {
-    if(storyLoadError === 'error') {
+    if (storyLoadError === 'error') {
       Burnt.alert({
-        title: "Error loading stories",
-        preset: "custom",
-        message: "Please try again later!",
-        duration: 2.5, 
+        title: 'Error loading stories',
+        preset: 'custom',
+        message: 'Please try again later!',
+        duration: 2.5,
         layout: {
           iconSize: {
             height: 50,
@@ -280,14 +280,13 @@ export default function HomeScreen() {
         },
         icon: {
           ios: {
-            name: "exclamationmark.triangle",
-            color: "red",
+            name: 'exclamationmark.triangle',
+            color: 'red',
           },
         },
-      });
+      })
     }
   }, [storyLoadError])
-
 
   const userId = userSelf?.id
 
@@ -314,46 +313,55 @@ export default function HomeScreen() {
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
   })
 
-  const { data: stories, isFetching: storiesFetching, error: storyError} = useQuery({
+  const {
+    data: stories,
+    isFetching: storiesFetching,
+    error: storyError,
+  } = useQuery({
     queryKey: ['storyCarousel'],
     queryFn: async () => {
-        try {
-          const storiesRes = await getStoryCarousel();
-          if (!storiesRes || !storiesRes.nodes || !Array.isArray(storiesRes.nodes)) {
-            throw new Error('Invalid API response format for stories'); 
-          }
-    
-          const storyFmt = storiesRes.nodes.map((sry) => ({
-            id: sry.id,
-            username: sry.user.username,
-            avatar: sry.user.avatar,
-            stories: sry.nodes.map(snode => ({
-              id: snode.id,
-              source: { uri: snode.src },
-              username: sry.user.username,
-              mediaType: snode.type,
-              duration: snode.duration,
-              createdAt: _timeAgo(snode.created_at)
-            }))
-          }));
-    
-          return storyFmt;
-        } catch (error) {
-          console.error('Error fetching stories:', error);
-          setStoryError('error')
-          throw error; 
+      try {
+        const storiesRes = await getStoryCarousel()
+        if (!storiesRes || !storiesRes.nodes || !Array.isArray(storiesRes.nodes)) {
+          throw new Error('Invalid API response format for stories')
         }
+
+        const storyFmt = storiesRes.nodes.map((sry) => ({
+          id: sry.id,
+          username: sry.user.username,
+          avatar: sry.user.avatar,
+          stories: sry.nodes.map((snode) => ({
+            id: snode.id,
+            source: { uri: snode.src },
+            username: sry.user.username,
+            mediaType: snode.type,
+            duration: snode.duration,
+            createdAt: _timeAgo(snode.created_at),
+          })),
+        }))
+
+        return storyFmt
+      } catch (error) {
+        console.error('Error fetching stories:', error)
+        setStoryError('error')
+        throw error
+      }
     },
-    enabled: !!validConfig && !!storiesEnabled && storiesEnabled && data && status === 'success',
+    enabled:
+      !!validConfig && !!storiesEnabled && storiesEnabled && data && status === 'success',
     retry: 2,
-    retryDelay: 5000
+    retryDelay: 5000,
   })
 
-
   const RenderStories = useCallback(() => {
-    return (hideStories === false && stories && stories.length ? <PixelfedStories stories={stories} avatarListContainerStyle={{ padding: 10, gap: 10 }} modalAnimationDuration={300} /> : null)
+    return hideStories === false && stories && stories.length ? (
+      <PixelfedStories
+        stories={stories}
+        avatarListContainerStyle={{ padding: 10, gap: 10 }}
+        modalAnimationDuration={300}
+      />
+    ) : null
   }, [storiesFetching, stories, hideStories])
-
 
   if (isFetching && !isFetchingNextPage && !isRefetching) {
     return (
