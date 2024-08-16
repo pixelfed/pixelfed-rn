@@ -151,11 +151,12 @@ export default function Page() {
     queryKey: ['getHashtagByNameFeed', id],
     queryFn: async ({ pageParam }) => {
       const data = await getHashtagByNameFeed(id, pageParam)
-      return data.data.filter((p) => {
+
+      return data.data?.filter((p) => {
         return p.pf_type == 'photo' && p.media_attachments.length && !p.sensitive
       })
     },
-    initialPageParam: 0,
+    initialPageParam: null,
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
       if (lastPage.length === 0) {
         return undefined
@@ -286,7 +287,10 @@ export default function Page() {
   if (error) {
     return (
       <View flexGrow={1}>
-        <Text>Error</Text>
+        <YStack justifyContent='center' alignItems='center' flexGrow="1" p="$4">
+          <Text fontSize="$7">Oops! An Error Occured.</Text>
+          <Text>{error?.message}</Text>
+        </YStack>
       </View>
     )
   }
@@ -308,7 +312,6 @@ export default function Page() {
         renderItem={RenderItem}
         numColumns={3}
         showsVerticalScrollIndicator={false}
-        maxToRenderPerBatch={20}
         onEndReached={() => {
           if (hasNextPage) {
             if (!isFetching) {
