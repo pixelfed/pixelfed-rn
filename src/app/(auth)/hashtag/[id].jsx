@@ -35,42 +35,40 @@ import { Feather } from '@expo/vector-icons'
 import { Blurhash } from 'react-native-blurhash'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
+const IMAGE_WIDTH = SCREEN_WIDTH / 3 - 2
+
+const RenderItem = ({ item }) =>
+  item && item.media_attachments && item.media_attachments[0].url ? (
+    <Link href={`/post/${item.id}`} asChild>
+      <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
+        {item.media_attachments[0]?.blurhash ? (
+          <Blurhash
+            blurhash={item.media_attachments[0].blurhash}
+            style={{
+              flex: 1,
+              position: 'absolute',
+              width: IMAGE_WIDTH,
+              height: IMAGE_WIDTH,
+            }}
+          />
+        ) : null}
+        <FastImage
+          source={{
+            uri: item.media_attachments[0].url,
+          }}
+          style={{
+            width: IMAGE_WIDTH,
+            height: IMAGE_WIDTH,
+          }}
+          resizeMode={FastImage.resizeMode.cover}
+        />
+      </View>
+    </Link>
+  ) : null
 
 export default function Page() {
   const { id } = useLocalSearchParams()
   const queryClient = useQueryClient()
-
-  const RenderItem = useCallback(
-    ({ item }) =>
-      item && item.media_attachments && item.media_attachments[0].url ? (
-        <Link href={`/post/${item.id}`} asChild>
-          <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
-            {item.media_attachments[0]?.blurhash ? (
-              <Blurhash
-                blurhash={item.media_attachments[0].blurhash}
-                style={{
-                  flex: 1,
-                  position: 'absolute',
-                  width: SCREEN_WIDTH / 3 - 2,
-                  height: SCREEN_WIDTH / 3 - 2,
-                }}
-              />
-            ) : null}
-            <FastImage
-              source={{
-                uri: item.media_attachments[0].url,
-              }}
-              style={{
-                width: SCREEN_WIDTH / 3 - 2,
-                height: SCREEN_WIDTH / 3 - 2,
-              }}
-              resizeMode={FastImage.resizeMode.cover}
-            />
-          </View>
-        </Link>
-      ) : null,
-    []
-  )
 
   const RelatedTags = useCallback(
     ({ relatedTags }) =>
@@ -156,7 +154,7 @@ export default function Page() {
         return p.pf_type == 'photo' && p.media_attachments.length && !p.sensitive
       })
     },
-    initialPageParam: null,
+    initialPageParam: 0,
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
       if (lastPage.length === 0) {
         return undefined
@@ -169,104 +167,107 @@ export default function Page() {
       }, lastPage[0].id)
       return lowestId
     },
-    enabled: !isPending,
   })
 
   const Header = useCallback(
     ({ hashtag, feed, onUnfollow, onFollow }) => {
       return (
-        <View p="$4" flexShrink={1}>
-          <XStack alignItems="center" gap="$4">
-            <View w={100} h={100}>
-              {feed?.pages[0].length ? (
-                <FastImage
-                  source={{ uri: feed.pages[0][0].media_attachments[0].url }}
-                  style={{
-                    width: 100,
-                    height: 100,
-                    borderRadius: 100,
-                    borderWidth: 1,
-                    borderColor: '#eee',
-                  }}
-                  resizeMode={FastImage.resizeMode.cover}
-                />
-              ) : (
-                <View w={100} h={100} borderRadius={100} bg="$gray6"></View>
-              )}
-            </View>
-            <YStack flex={1} justifyContent="center" alignItems="center" gap="$2">
-              <Text fontSize="$6" allowFontScaling={false}>
-                <Text fontWeight="bold">{prettyCount(hashtag?.count ?? 0)}</Text>{' '}
-                <Text color="$gray9">posts</Text>
-              </Text>
-              {hashtag?.count > 0 ? (
-                <>
-                  {hashtag.following ? (
-                    <Button
-                      borderColor="$blue9"
-                      h={35}
-                      size="$5"
-                      fontWeight="bold"
-                      color="$blue9"
-                      alignSelf="stretch"
-                      onPress={onUnfollow}
-                    >
-                      Unfollow
-                    </Button>
-                  ) : (
-                    <Button
-                      bg="$blue9"
-                      h={35}
-                      size="$5"
-                      color="white"
-                      fontWeight="bold"
-                      alignSelf="stretch"
-                      onPress={onFollow}
-                    >
-                      Follow
-                    </Button>
-                  )}
-                  {hashtag.following ? (
-                    <Text
-                      fontSize="$4"
-                      color="$gray9"
-                      flexWrap="wrap"
-                      allowFontScaling={false}
-                    >
-                      You are following this hashtag
-                    </Text>
-                  ) : (
-                    <Text
-                      fontSize="$4"
-                      color="$gray9"
-                      flexWrap="wrap"
-                      allowFontScaling={false}
-                    >
-                      Follow to see posts like these in your home feed
-                    </Text>
-                  )}
-                </>
-              ) : null}
-            </YStack>
-          </XStack>
+        <View>
+          <View p="$4" flexShrink={1}>
+            <XStack alignItems="center" gap="$4">
+              <View w={100} h={100}>
+                {feed?.pages[0].length ? (
+                  <FastImage
+                    source={{ uri: feed.pages[0][0].media_attachments[0].url }}
+                    style={{
+                      width: 100,
+                      height: 100,
+                      borderRadius: 100,
+                      borderWidth: 1,
+                      borderColor: '#eee',
+                    }}
+                    resizeMode={FastImage.resizeMode.cover}
+                  />
+                ) : (
+                  <View w={100} h={100} borderRadius={100} bg="$gray6"></View>
+                )}
+              </View>
+              <YStack flex={1} justifyContent="center" alignItems="center" gap="$2">
+                <Text fontSize="$6" allowFontScaling={false}>
+                  <Text fontWeight="bold">{prettyCount(hashtag?.count ?? 0)}</Text>{' '}
+                  <Text color="$gray9">posts</Text>
+                </Text>
+                {hashtag?.count > 0 ? (
+                  <>
+                    {hashtag.following ? (
+                      <Button
+                        borderColor="$blue9"
+                        h={35}
+                        size="$5"
+                        fontWeight="bold"
+                        color="$blue9"
+                        alignSelf="stretch"
+                        onPress={onUnfollow}
+                      >
+                        Unfollow
+                      </Button>
+                    ) : (
+                      <Button
+                        bg="$blue9"
+                        h={35}
+                        size="$5"
+                        color="white"
+                        fontWeight="bold"
+                        alignSelf="stretch"
+                        onPress={onFollow}
+                      >
+                        Follow
+                      </Button>
+                    )}
+                    {hashtag.following ? (
+                      <Text
+                        fontSize="$4"
+                        color="$gray9"
+                        flexWrap="wrap"
+                        allowFontScaling={false}
+                      >
+                        You are following this hashtag
+                      </Text>
+                    ) : (
+                      <Text
+                        fontSize="$2"
+                        color="$gray9"
+                        flexWrap="wrap"
+                        allowFontScaling={false}
+                      >
+                        Follow to see posts like these in your home feed
+                      </Text>
+                    )}
+                  </>
+                ) : null}
+              </YStack>
+            </XStack>
+          </View>
+          <RelatedTags relatedTags={related} />
         </View>
       )
     },
-    [hashtag, feed]
+    [hashtag, feed, related]
   )
 
-  // const {
-  //   data: related,
-  //   isFetching: relatedIsFetching,
-  //   isError: relatedIsError,
-  //   error: relatedError,
-  // } = useQuery({
-  //   queryKey: ['getHashtagRelated', id],
-  //   queryFn: async ({ pageParam }) => {
-  //     const data = await getHashtagRelated(id)
-  //     return data.data
-  //   },
-  // })
+  const {
+    data: related,
+    isFetching: relatedIsFetching,
+    isError: relatedIsError,
+    error: relatedError,
+  } = useQuery({
+    queryKey: ['getHashtagRelated', id],
+    queryFn: async ({ pageParam }) => {
+      const data = await getHashtagRelated(id)
+      return data?.data
+    },
+    enabled: !!feed && !!hashtag,
+  })
 
   if (isPending || (isFetching && !isFetchingNextPage)) {
     return (
@@ -296,7 +297,7 @@ export default function Page() {
   }
 
   return (
-    <SafeAreaView flexGrow={1} edges={['bottom']}>
+    <SafeAreaView flexGrow={1} edges={['left']}>
       <Stack.Screen
         options={{
           title: `#${id}`,
@@ -304,7 +305,6 @@ export default function Page() {
         }}
       />
       {/* <Header hashtag={hashtag} feed={feed} /> */}
-      {/* <RelatedTags relatedTags={related} /> */}
       <FlatList
         data={feed?.pages.flat()}
         extraData={hashtag}
@@ -319,8 +319,7 @@ export default function Page() {
             }
           }
         }}
-        onEndReachedThreshold={0.9}
-        contentContainerStyle={{ flexGrow: 1 }}
+        onEndReachedThreshold={0.4}
         ListEmptyComponent={RenderEmpty}
         ListHeaderComponent={
           <Header
@@ -330,13 +329,23 @@ export default function Page() {
             onUnfollow={handleOnUnfollow}
           />
         }
-        ListFooterComponent={() =>
-          isFetching || isFetchingNextPage ? (
+        ListFooterComponent={
+          isFetchingNextPage ? (
             <View p="$5">
               <ActivityIndicator />
             </View>
           ) : null
         }
+        getItemLayout={(data, index) => {
+          const column = index % 3
+          const row = Math.floor(index / 3)
+
+          return {
+            length: IMAGE_WIDTH,
+            offset: (IMAGE_WIDTH + 2) * column,
+            index,
+          }
+        }}
       />
     </SafeAreaView>
   )
