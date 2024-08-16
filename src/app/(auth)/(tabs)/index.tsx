@@ -21,6 +21,8 @@ import {
   getSelfAccount,
   reblogStatus,
   unreblogStatus,
+  getStoryCarousel,
+  getConfig,
 } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
 import EmptyFeed from 'src/components/common/EmptyFeed'
@@ -37,6 +39,9 @@ import { useShareIntentContext } from 'expo-share-intent'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
+import PixelfedStories from 'src/components/stories';
+import { _timeAgo } from 'src/utils'
+import * as Burnt from "burnt";
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   return (
@@ -65,7 +70,9 @@ export default function HomeScreen() {
   const { hasShareIntent } = useShareIntentContext()
   const params = useLocalSearchParams()
   const [isPosting, setIsPosting] = useState(false)
-
+  const [storyLoadError, setStoryError] = useState('');
+  const hideStories = Storage.getBoolean('ui.hideStories') == true
+  
   useEffect(() => {
     if (hasShareIntent) {
       router.navigate('camera')
@@ -102,6 +109,8 @@ export default function HomeScreen() {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const snapPoints = useMemo(() => ['50%', '70%'], [])
 
+  const sref = useRef( null );
+  
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
   }, [])
@@ -239,10 +248,46 @@ export default function HomeScreen() {
     router.push(`/post/report/${id}`)
   }
 
+  const { data: serverConfig } = useQuery({
+    queryKey: ['getConfig'],
+    queryFn: getConfig
+  })
+
+  const validConfig = serverConfig?.version;
+  const storiesEnabled = hideStories === false && serverConfig?.features?.stories;
+
   const { data: userSelf } = useQuery({
     queryKey: ['getSelfAccount'],
-    queryFn: getSelfAccount,
+    queryFn: async () => {
+      const res = await getSelfAccount()
+      return res
+    },
+    enabled: !!validConfig
   })
+
+  useEffect(() => {
+    if(storyLoadError === 'error') {
+      Burnt.alert({
+        title: "Error loading stories",
+        preset: "custom",
+        message: "Please try again later!",
+        duration: 2.5, 
+        layout: {
+          iconSize: {
+            height: 50,
+            width: 50,
+          },
+        },
+        icon: {
+          ios: {
+            name: "exclamationmark.triangle",
+            color: "red",
+          },
+        },
+      });
+    }
+  }, [storyLoadError])
+
 
   const userId = userSelf?.id
 
@@ -263,11 +308,52 @@ export default function HomeScreen() {
     queryKey: ['homeFeed'],
     queryFn: fetchHomeFeed,
     initialPageParam: -1,
-    enabled: !!userId,
+    enabled: !!validConfig && !!userId,
     refetchOnWindowFocus: false,
     getNextPageParam: (lastPage) => lastPage.nextPage,
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
   })
+
+  const { data: stories, isFetching: storiesFetching, error: storyError} = useQuery({
+    queryKey: ['storyCarousel'],
+    queryFn: async () => {
+        try {
+          const storiesRes = await getStoryCarousel();
+          if (!storiesRes || !storiesRes.nodes || !Array.isArray(storiesRes.nodes)) {
+            throw new Error('Invalid API response format for stories'); 
+          }
+    
+          const storyFmt = storiesRes.nodes.map((sry) => ({
+            id: sry.id,
+            username: sry.user.username,
+            avatar: sry.user.avatar,
+            stories: sry.nodes.map(snode => ({
+              id: snode.id,
+              source: { uri: snode.src },
+              username: sry.user.username,
+              mediaType: snode.type,
+              duration: snode.duration,
+              createdAt: _timeAgo(snode.created_at)
+            }))
+          }));
+    
+          return storyFmt;
+        } catch (error) {
+          console.error('Error fetching stories:', error);
+          setStoryError('error')
+          throw error; 
+        }
+    },
+    enabled: !!validConfig && !!storiesEnabled && storiesEnabled && data && status === 'success',
+    retry: 2,
+    retryDelay: 5000
+  })
+
+
+  const RenderStories = useCallback(() => {
+    return (hideStories === false && stories && stories.length ? <PixelfedStories stories={stories} avatarListContainerStyle={{ padding: 10, gap: 10 }} modalAnimationDuration={300} /> : null)
+  }, [storiesFetching, stories, hideStories])
+
 
   if (isFetching && !isFetchingNextPage && !isRefetching) {
     return (
@@ -337,6 +423,7 @@ export default function HomeScreen() {
           if (hasNextPage && !isFetching && !isFetchingNextPage) fetchNextPage()
         }}
         onEndReachedThreshold={0.5}
+        ListHeaderComponent={() => <RenderStories />}
         ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}
       />
     </SafeAreaView>

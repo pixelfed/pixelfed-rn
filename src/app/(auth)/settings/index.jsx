@@ -122,7 +122,7 @@ export default function Page() {
               path="/settings/accessibility/"
             />
             <GroupButton icon="droplet" title="Appearance" path="/settings/appearance/" />
-            {/* <GroupButton icon="camera" title="Media" path="/settings/media" /> */}
+            <GroupButton icon="check-square" title="Features" path="/settings/features" />
             {/* <GroupButton icon="shield" title="Security" path="/settings/security" /> */}
           </Group>
 
