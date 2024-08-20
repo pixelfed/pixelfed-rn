@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useState, useRef, useMemo } from 'react'
-import { FlatList, StyleSheet, Pressable, ActivityIndicator } from 'react-native'
-import { Text, View, XStack, Select, Adapt, Sheet, Button, Spinner } from 'tamagui'
+import { useCallback, useState, useRef, useMemo } from 'react'
+import { FlatList, StyleSheet, ActivityIndicator, Platform } from 'react-native'
+import { Text, View } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
-import { Feather } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link, Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
+import { Stack, useNavigation, useRouter } from 'expo-router'
 import {
   useInfiniteQuery,
   useMutation,
@@ -27,13 +26,9 @@ import EmptyFeed from 'src/components/common/EmptyFeed'
 import { Storage } from 'src/state/cache'
 import {
   BottomSheetModal,
-  BottomSheetView,
   BottomSheetBackdrop,
-  BottomSheetFooter,
-  BottomSheetTextInput,
 } from '@gorhom/bottom-sheet'
 import CommentFeed from 'src/components/post/CommentFeed'
-import UserAvatar from 'src/components/common/UserAvatar'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
 
@@ -73,9 +68,8 @@ export default function HomeScreen() {
   )
 
   const [replyId, setReplyId] = useState(null)
-  const [sheetType, setSheetType] = useState('comments')
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
-  const snapPoints = useMemo(() => ['55%', '80%'], [])
+  const snapPoints = useMemo(() => Platform.OS === 'ios' ? ['50%', '70%'] : ['64%', '65%', '66%'], [])
 
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
@@ -291,23 +285,22 @@ export default function HomeScreen() {
 
       <BottomSheetModal
         ref={bottomSheetModalRef}
-        index={1}
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         backdropComponent={renderBackdrop}
-        keyboardBehavior={'extend'}
+        index={Platform.OS === 'ios' ? 1 : 0}
+        keyboardBehavior={ Platform.OS === 'ios' ? 'extend' : 'interactive' }
+        android_keyboardInputMode="adjustResize"
       >
-        {sheetType === 'comments' ? (
-          <CommentFeed
-            id={replyId}
-            showLikes={handleShowLikes}
-            gotoProfile={handleGotoProfile}
-            gotoUsernameProfile={handleGotoUsernameProfile}
-            gotoHashtag={gotoHashtag}
-            user={user}
-            handleReport={handleCommentReport}
-          />
-        ) : null}
+        <CommentFeed
+          id={replyId}
+          showLikes={handleShowLikes}
+          gotoProfile={handleGotoProfile}
+          gotoUsernameProfile={handleGotoUsernameProfile}
+          gotoHashtag={gotoHashtag}
+          user={user}
+          handleReport={handleCommentReport}
+        />
       </BottomSheetModal>
       <FlatList
         ref={flatListRef}

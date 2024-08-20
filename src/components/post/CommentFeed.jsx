@@ -307,7 +307,7 @@ export default function CommentFeed({
     )
   }
   return (
-    <>
+    <BottomSheetView style={styles.contentContainer}>
       <BottomSheetFlatList
         data={data?.pages.flatMap((page) => page.data)}
         keyExtractor={(i) => i?.id}
@@ -315,25 +315,30 @@ export default function CommentFeed({
         ListHeaderComponent={RenderHeader}
         ListEmptyComponent={RenderEmpty}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.contentContainer}
+        contentContainerStyle={styles.contentCommentsContainer}
       />
-      <BottomSheetTextInput
-        ref={commentRef}
-        style={styles.input}
-        value={commentText}
-        onChangeText={setComment}
-        returnKeyType="send"
-        returnKeyLabel="Post"
-        onSubmitEditing={handlePost}
-        placeholder="Add a comment..."
-      />
-    </>
+
+        <BottomSheetTextInput
+          ref={commentRef}
+          style={styles.input}
+          value={commentText}
+          onChangeText={setComment}
+          returnKeyType="send"
+          returnKeyLabel="Post"
+          onSubmitEditing={handlePost}
+          placeholder="Add a comment..."
+          />
+    </BottomSheetView>
   )
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 200,
+  },
+  contentCommentsContainer: {
+    flexGrow: 1,
+    backgroundColor: 'white',
   },
   contentContainer: {
     flexGrow: 1,

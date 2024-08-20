@@ -1,4 +1,4 @@
-import { FlatList, Dimensions, ActivityIndicator } from 'react-native'
+import { FlatList, Dimensions, ActivityIndicator, Platform } from 'react-native'
 import { Image, ScrollView, Text, View, YStack } from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
 import { Storage } from 'src/state/cache'
@@ -115,7 +115,6 @@ export default function Page() {
     queryKey: ['getStatusById', id],
     queryFn: getStatusById,
   })
-
   if (isPending) {
     return (
       <View flexGrow={1} mt="$5">
@@ -141,6 +140,8 @@ export default function Page() {
         index={1}
         snapPoints={snapPoints}
         backdropComponent={renderBackdrop}
+        keyboardBehavior={ Platform.OS === 'ios' ? 'extend' : 'interactive' }
+        android_keyboardInputMode="adjustResize"
       >
         <CommentFeed
           id={id}
