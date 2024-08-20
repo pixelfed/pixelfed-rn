@@ -23,7 +23,13 @@ const parseText = (text) => {
   return matches
 }
 
-export default (AutolinkText = ({ username, text, onMentionPress, onHashtagPress, onUsernamePress }) => {
+export default (AutolinkText = ({
+  username,
+  text,
+  onMentionPress,
+  onHashtagPress,
+  onUsernamePress,
+}) => {
   const theme = useTheme()
   const matches = useMemo(() => parseText(text), [text])
 
@@ -51,11 +57,7 @@ export default (AutolinkText = ({ username, text, onMentionPress, onHashtagPress
   return (
     <Text fontSize="$5">
       {username ? (
-        <Text 
-          fontSize="$5" 
-          fontWeight="bold" 
-          onPress={() => onUsernamePress()}
-        >
+        <Text fontSize="$5" fontWeight="bold" onPress={() => onUsernamePress()}>
           {username}{' '}
         </Text>
       ) : null}

@@ -318,16 +318,16 @@ export default function CommentFeed({
         contentContainerStyle={styles.contentCommentsContainer}
       />
 
-        <BottomSheetTextInput
-          ref={commentRef}
-          style={styles.input}
-          value={commentText}
-          onChangeText={setComment}
-          returnKeyType="send"
-          returnKeyLabel="Post"
-          onSubmitEditing={handlePost}
-          placeholder="Add a comment..."
-          />
+      <BottomSheetTextInput
+        ref={commentRef}
+        style={styles.input}
+        value={commentText}
+        onChangeText={setComment}
+        returnKeyType="send"
+        returnKeyLabel="Post"
+        onSubmitEditing={handlePost}
+        placeholder="Add a comment..."
+      />
     </BottomSheetView>
   )
 }

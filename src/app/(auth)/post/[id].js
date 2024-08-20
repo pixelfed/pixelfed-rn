@@ -140,7 +140,7 @@ export default function Page() {
         index={1}
         snapPoints={snapPoints}
         backdropComponent={renderBackdrop}
-        keyboardBehavior={ Platform.OS === 'ios' ? 'extend' : 'interactive' }
+        keyboardBehavior={Platform.OS === 'ios' ? 'extend' : 'interactive'}
         android_keyboardInputMode="adjustResize"
       >
         <CommentFeed

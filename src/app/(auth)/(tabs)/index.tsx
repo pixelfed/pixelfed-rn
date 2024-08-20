@@ -24,10 +24,7 @@ import {
 import FeedHeader from 'src/components/common/FeedHeader'
 import EmptyFeed from 'src/components/common/EmptyFeed'
 import { Storage } from 'src/state/cache'
-import {
-  BottomSheetModal,
-  BottomSheetBackdrop,
-} from '@gorhom/bottom-sheet'
+import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet'
 import CommentFeed from 'src/components/post/CommentFeed'
 import { useShareIntentContext } from 'expo-share-intent'
 import { useVideo } from 'src/hooks/useVideoProvider'
@@ -94,7 +91,10 @@ export default function HomeScreen() {
 
   const [replyId, setReplyId] = useState(null)
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
-  const snapPoints = useMemo(() => Platform.OS === 'ios' ? ['50%', '70%'] : ['64%', '65%', '66%'], [])
+  const snapPoints = useMemo(
+    () => (Platform.OS === 'ios' ? ['50%', '70%'] : ['64%', '65%', '66%']),
+    []
+  )
 
   const handleSheetChanges = useCallback((index: number) => {}, [])
   const renderBackdrop = useCallback(
@@ -185,7 +185,7 @@ export default function HomeScreen() {
     try {
       shareMutation.mutate({ type: state == true ? 'unreblog' : 'reblog', id: id })
     } catch (error) {
-      console.error("Error occurred during share:", error);
+      console.error('Error occurred during share:', error)
     }
   }
 
@@ -196,12 +196,12 @@ export default function HomeScreen() {
           ? await reblogStatus(handleShare)
           : await unreblogStatus(handleShare)
       } catch (error) {
-        console.error("Error within mutationFn:", error);
-        throw error;
+        console.error('Error within mutationFn:', error)
+        throw error
       }
     },
     onError: (error) => {
-      console.error("Error handled by share useMutation:", error);
+      console.error('Error handled by share useMutation:', error)
     },
   })
 
@@ -212,12 +212,12 @@ export default function HomeScreen() {
           ? await likeStatus(handleLike)
           : await unlikeStatus(handleLike)
       } catch (error) {
-        console.error("Error within mutationFn:", error);
-        throw error;
+        console.error('Error within mutationFn:', error)
+        throw error
       }
     },
     onError: (error) => {
-      console.error("Error handled by like useMutation:", error);
+      console.error('Error handled by like useMutation:', error)
     },
   })
 
@@ -225,7 +225,7 @@ export default function HomeScreen() {
     try {
       likeMutation.mutate({ type: state ? 'unlike' : 'like', id: id })
     } catch (error) {
-      console.error("Error occurred during share:", error);
+      console.error('Error occurred during share:', error)
     }
   }
 
@@ -317,21 +317,21 @@ export default function HomeScreen() {
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={Platform.OS === 'ios' ? 1 : 0}
-        keyboardBehavior={ Platform.OS === 'ios' ? 'extend' : 'interactive' }
+        keyboardBehavior={Platform.OS === 'ios' ? 'extend' : 'interactive'}
         android_keyboardInputMode="adjustResize"
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         backdropComponent={renderBackdrop}
       >
-          <CommentFeed
-            id={replyId}
-            showLikes={handleShowLikes}
-            gotoProfile={handleGotoProfile}
-            gotoUsernameProfile={handleGotoUsernameProfile}
-            gotoHashtag={gotoHashtag}
-            user={user}
-            handleReport={handleCommentReport}
-          />
+        <CommentFeed
+          id={replyId}
+          showLikes={handleShowLikes}
+          gotoProfile={handleGotoProfile}
+          gotoUsernameProfile={handleGotoUsernameProfile}
+          gotoHashtag={gotoHashtag}
+          user={user}
+          handleReport={handleCommentReport}
+        />
       </BottomSheetModal>
       <FlatList
         ref={flatListRef}
