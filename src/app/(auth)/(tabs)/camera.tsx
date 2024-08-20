@@ -484,7 +484,7 @@ export default function Camera() {
         </View>
       ) : (
         <>
-          <ScrollView onScroll={handleOnScroll} scrollEventThrottle={16}>
+          <ScrollView onScroll={handleOnScroll}>
             <YStack px="$3" pt="$3" pb="$1">
               <XStack gap="$3" justifyContent="space-between" alignItems="center">
                 <XStack gap="$3" alignItems="center">
