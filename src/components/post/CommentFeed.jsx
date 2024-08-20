@@ -138,6 +138,7 @@ export default function CommentFeed({
                         text={captionText}
                         onMentionPress={gotoUsernameProfile}
                         onHashtagPress={gotoHashtag}
+                        onUsernamePress={gotoUsernameProfile}
                       />
                     </ReadMore>
                   ) : (
@@ -146,6 +147,7 @@ export default function CommentFeed({
                         text={captionText}
                         onMentionPress={gotoUsernameProfile}
                         onHashtagPress={gotoHashtag}
+                        onUsernamePress={gotoUsernameProfile}
                       />
                     </ReadMoreAndroid>
                   )}

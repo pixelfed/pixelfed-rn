@@ -379,6 +379,7 @@ const PostCaption = React.memo(
     onOpenComments,
     onHashtagPress,
     onMentionPress,
+    onUsernamePress,
     disableReadMore,
     editedAt,
     isLikeFeed,
@@ -396,6 +397,7 @@ const PostCaption = React.memo(
                 username={username}
                 onHashtagPress={onHashtagPress}
                 onMentionPress={onMentionPress}
+                onUsernamePress={onUsernamePress}
               />
             ) : Platform.OS === 'ios' ? (
               <ReadMore numberOfLines={3} renderRevealedFooter={() => <></>}>
@@ -404,6 +406,7 @@ const PostCaption = React.memo(
                   username={username}
                   onHashtagPress={onHashtagPress}
                   onMentionPress={onMentionPress}
+                  onUsernamePress={onUsernamePress}
                 />
               </ReadMore>
             ) : (
@@ -413,6 +416,7 @@ const PostCaption = React.memo(
                   username={username}
                   onHashtagPress={onHashtagPress}
                   onMentionPress={onMentionPress}
+                  onUsernamePress={onUsernamePress}
                 />
               </ReadMoreAndroid>
             )}
@@ -618,6 +622,7 @@ export default function FeedPost({
             onOpenComments={() => onOpenComments(post.id)}
             onHashtagPress={(tag) => onGotoHashtag(tag)}
             onMentionPress={(tag) => onGotoMention(tag)}
+            onUsernamePress={() => goToProfile()}
             editedAt={post.edited_at}
             isLikeFeed={isLikeFeed}
             likedAt={likedAt}
