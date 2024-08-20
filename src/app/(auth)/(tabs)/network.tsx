@@ -166,27 +166,51 @@ export default function HomeScreen() {
   }
 
   const onShare = (id, state) => {
-    shareMutation.mutate({ type: state == true ? 'unreblog' : 'reblog', id: id })
+    try {
+      shareMutation.mutate({ type: state == true ? 'unreblog' : 'reblog', id: id })
+    } catch (error) {
+      console.error("Error occurred during share:", error);
+    }
   }
 
   const shareMutation = useMutation({
     mutationFn: async (handleShare) => {
-      return handleShare.type === 'reblog'
-        ? await reblogStatus(handleShare)
-        : await unreblogStatus(handleShare)
+      try {
+        return handleShare.type === 'reblog'
+          ? await reblogStatus(handleShare)
+          : await unreblogStatus(handleShare)
+      } catch (error) {
+        console.error("Error within mutationFn:", error);
+        throw error;
+      }
+    },
+    onError: (error) => {
+      console.error("Error handled by share useMutation:", error);
     },
   })
 
   const likeMutation = useMutation({
     mutationFn: async (handleLike) => {
-      return handleLike.type === 'like'
-        ? await likeStatus(handleLike)
-        : await unlikeStatus(handleLike)
+      try {
+        return handleLike.type === 'like'
+          ? await likeStatus(handleLike)
+          : await unlikeStatus(handleLike)
+      } catch (error) {
+        console.error("Error within mutationFn:", error);
+        throw error;
+      }
+    },
+    onError: (error) => {
+      console.error("Error handled by like useMutation:", error);
     },
   })
 
   const handleLike = async (id, state) => {
-    likeMutation.mutate({ type: state ? 'unlike' : 'like', id: id })
+    try {
+      likeMutation.mutate({ type: state ? 'unlike' : 'like', id: id })
+    } catch (error) {
+      console.error("Error occurred during share:", error);
+    }
   }
 
   const handleShowLikes = (id) => {
@@ -236,7 +260,7 @@ export default function HomeScreen() {
   } = useInfiniteQuery({
     queryKey: ['fetchNetworkFeed'],
     queryFn: fetchNetworkFeed,
-    initialPageParam: -1,
+    initialPageParam: 0,
     enabled: !!userId,
     refetchOnWindowFocus: false,
     getNextPageParam: (lastPage) => lastPage.nextPage,
