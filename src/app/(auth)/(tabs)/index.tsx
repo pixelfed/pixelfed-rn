@@ -92,7 +92,7 @@ export default function HomeScreen() {
   const [replyId, setReplyId] = useState(null)
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const snapPoints = useMemo(
-    () => (Platform.OS === 'ios' ? ['50%', '70%'] : ['64%', '65%', '66%']),
+    () => (Platform.OS === 'ios' ? ['50%', '85%'] : ['64%', '65%', '66%']),
     []
   )
 
