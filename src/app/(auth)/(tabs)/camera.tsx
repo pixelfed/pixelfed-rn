@@ -660,12 +660,14 @@ export default function Camera() {
             snapPoints={snapPoints}
             onChange={handleSheetChanges}
             backdropComponent={renderBackdrop}
-            keyboardBehavior="extend"
+            keyboardBehavior={ Platform.OS === 'ios' ? 'extend' : 'interactive' }
+            android_keyboardInputMode="adjustResize"
           >
             <BottomSheetScrollView style={styles.contentContainer}>
               <Text fontSize="$9" fontWeight="bold" px="$3" mb="$3">
                 Alt Text
               </Text>
+              { Platform.OS === 'ios' ? <>
               <Separator />
               <XStack justifyContent="center" my="$3">
                 <FastImage
@@ -674,6 +676,7 @@ export default function Camera() {
                   resizeMode={FastImage.resizeMode.contain}
                 />
               </XStack>
+              </> : null }
               <BottomSheetTextInput
                 style={styles.input}
                 multiline={true}
@@ -696,6 +699,7 @@ export default function Camera() {
                 color="white"
                 size="$6"
                 fontWeight="bold"
+                mb="$3"
                 onPress={() => saveAltText()}
               >
                 Save
@@ -718,12 +722,11 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   input: {
-    height: 130,
+    minHeight: 100,
     borderRadius: 10,
-    fontSize: 22,
-    lineHeight: 30,
+    fontSize: 20,
     paddingHorizontal: 15,
-    paddingVertical: 30,
+    paddingVertical: 10,
     borderWidth: 0.33,
     borderColor: '#ccc',
     backgroundColor: 'white',
