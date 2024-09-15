@@ -1,4 +1,11 @@
-import { FlatList, Dimensions, ActivityIndicator, Alert, Share, Platform } from 'react-native'
+import {
+  FlatList,
+  Dimensions,
+  ActivityIndicator,
+  Alert,
+  Share,
+  Platform,
+} from 'react-native'
 import { Button, Image, Separator, Text, View, YStack, ZStack } from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
 import { Feather } from '@expo/vector-icons'
@@ -553,7 +560,7 @@ export default function ProfileScreen() {
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         backdropComponent={renderBackdrop}
-        keyboardBehavior={ Platform.OS === 'ios' ? 'extend' : 'interactive' }
+        keyboardBehavior={Platform.OS === 'ios' ? 'extend' : 'interactive'}
       >
         <BottomSheetScrollView>
           <Button

@@ -169,6 +169,20 @@ export default function Page() {
     },
   })
 
+  const {
+    data: related,
+    isFetching: relatedIsFetching,
+    isError: relatedIsError,
+    error: relatedError,
+  } = useQuery({
+    queryKey: ['getHashtagRelated', id],
+    queryFn: async ({ pageParam }) => {
+      const data = await getHashtagRelated(id)
+      return data?.data
+    },
+    enabled: !!feed && !!hashtag,
+  })
+
   const Header = useCallback(
     ({ hashtag, feed, onUnfollow, onFollow }) => {
       return (
@@ -254,20 +268,6 @@ export default function Page() {
     },
     [hashtag, feed, related]
   )
-
-  const {
-    data: related,
-    isFetching: relatedIsFetching,
-    isError: relatedIsError,
-    error: relatedError,
-  } = useQuery({
-    queryKey: ['getHashtagRelated', id],
-    queryFn: async ({ pageParam }) => {
-      const data = await getHashtagRelated(id)
-      return data?.data
-    },
-    enabled: !!feed && !!hashtag,
-  })
 
   if (isPending || (isFetching && !isFetchingNextPage)) {
     return (

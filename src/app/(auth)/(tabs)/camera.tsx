@@ -660,23 +660,25 @@ export default function Camera() {
             snapPoints={snapPoints}
             onChange={handleSheetChanges}
             backdropComponent={renderBackdrop}
-            keyboardBehavior={ Platform.OS === 'ios' ? 'extend' : 'interactive' }
+            keyboardBehavior={Platform.OS === 'ios' ? 'extend' : 'interactive'}
             android_keyboardInputMode="adjustResize"
           >
             <BottomSheetScrollView style={styles.contentContainer}>
               <Text fontSize="$9" fontWeight="bold" px="$3" mb="$3">
                 Alt Text
               </Text>
-              { Platform.OS === 'ios' ? <>
-              <Separator />
-              <XStack justifyContent="center" my="$3">
-                <FastImage
-                  source={{ uri: activeIndex }}
-                  style={{ width: '100%', height: Keyboard.isVisible() ? 140 : 240 }}
-                  resizeMode={FastImage.resizeMode.contain}
-                />
-              </XStack>
-              </> : null }
+              {Platform.OS === 'ios' ? (
+                <>
+                  <Separator />
+                  <XStack justifyContent="center" my="$3">
+                    <FastImage
+                      source={{ uri: activeIndex }}
+                      style={{ width: '100%', height: Keyboard.isVisible() ? 140 : 240 }}
+                      resizeMode={FastImage.resizeMode.contain}
+                    />
+                  </XStack>
+                </>
+              ) : null}
               <BottomSheetTextInput
                 style={styles.input}
                 multiline={true}
