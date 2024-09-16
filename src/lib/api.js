@@ -495,13 +495,15 @@ export async function getAccountRelationship({ queryKey }) {
   return res[0]
 }
 
-export async function postComment({ postId, commentText }) {
+export async function postComment({ postId, commentText, scope = 'public', cw = false }) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
 
   const params = new URLSearchParams({
     in_reply_to_id: postId,
     status: commentText,
+    visibility: scope,
+    sensitive: cw
   })
   const url = `https://${instance}/api/v1/statuses?${params}`
   const response = await fetch(url, {
