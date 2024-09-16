@@ -67,7 +67,7 @@ export default function HomeScreen() {
   const [replyId, setReplyId] = useState(null)
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const snapPoints = useMemo(
-    () => (Platform.OS === 'ios' ? ['50%', '70%'] : ['64%', '65%', '66%']),
+    () => (Platform.OS === 'ios' ? ['50%', '70%', '90%'] : ['64%', '65%', '66%']),
     []
   )
 
@@ -288,7 +288,7 @@ export default function HomeScreen() {
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         backdropComponent={renderBackdrop}
-        index={Platform.OS === 'ios' ? 1 : 0}
+        index={Platform.OS === 'ios' ? 2 : 0}
         keyboardBehavior={Platform.OS === 'ios' ? 'extend' : 'interactive'}
         android_keyboardInputMode="adjustResize"
       >

@@ -34,7 +34,7 @@ export default function Page() {
   const user = JSON.parse(Storage.getString('user.profile'))
   const queryClient = useQueryClient()
   const bottomSheetModalRef = useRef(null)
-  const snapPoints = useMemo(() => ['45%', '70%'], [])
+  const snapPoints = useMemo(() => ['45%', '70%', '90%'], [])
   const renderBackdrop = useCallback(
     (props) => (
       <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
@@ -137,7 +137,7 @@ export default function Page() {
       />
       <BottomSheetModal
         ref={bottomSheetModalRef}
-        index={1}
+        index={2}
         snapPoints={snapPoints}
         backdropComponent={renderBackdrop}
         keyboardBehavior={Platform.OS === 'ios' ? 'extend' : 'interactive'}
