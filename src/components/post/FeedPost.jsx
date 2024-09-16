@@ -9,6 +9,7 @@ import {
   formatTimestamp,
   htmlToTextWithLineBreaks,
   openBrowserAsync,
+  prettyCount,
 } from 'src/utils'
 import { Link, router } from 'expo-router'
 import {
@@ -274,6 +275,7 @@ const PostActions = React.memo(
     progress,
     handleLike,
     showAltText,
+    commentsCount,
     onBookmark,
     hasBookmarked,
     onShare,
@@ -289,26 +291,55 @@ const PostActions = React.memo(
           'Media was not tagged with any alt text.'
       )
     }
+
+    const [likeCountCache, setLikeCount] = useState(likesCount);
+    const [hasLikedCache, setLiked] = useState(hasLiked);
+
+    const handleLikeCached = () => {
+      if(hasLikedCache) {
+        if(likesCount) {
+          setLikeCount(likesCount - 1)
+        } else {
+          setLikeCount(0)
+        }
+        setLiked(false)
+      } else {
+        setLikeCount(likesCount + 1)
+        setLiked(true)
+      }
+      handleLike()
+    }
+
     return (
       <BorderlessSection>
         <YStack pt="$3" pb="$2" px="$2" gap={10}>
           <XStack gap="$4" justifyContent="space-between">
             <XStack gap="$4">
-              <LikeButton hasLiked={hasLiked} handleLike={handleLike} />
-              <Pressable onPress={() => onOpenComments()}>
-                <Feather name="message-circle" size={30} />
-              </Pressable>
-              {post.visibility === 'public' ? (
-                <PressableOpacity onPress={() => onShare()}>
-                  <Feather
-                    name="refresh-cw"
-                    size={27}
-                    color={post.reblogged ? 'gold' : 'black'}
-                  />
-                </PressableOpacity>
-              ) : null}
+              <XStack justifyContent='center' alignItems='center' gap="$1">
+                <LikeButton hasLiked={hasLiked} handleLike={handleLikeCached} />
+                { likeCountCache ? <Text fontWeight={'bold'} allowFontScaling={false}>{ prettyCount(likeCountCache) }</Text> : null}
+              </XStack>
+              <XStack justifyContent='center' alignItems='center' gap="$1">
+                <Pressable onPress={() => onOpenComments()}>
+                  <Feather name="message-circle" size={30} />
+                </Pressable>
+                { commentsCount ? <Text fontWeight={'bold'} allowFontScaling={false}>{ prettyCount(commentsCount) }</Text> : null }
+              </XStack>
             </XStack>
             <XStack gap="$2">
+              {post.visibility === 'public' ? 
+                <XStack justifyContent='center' alignItems='center' gap="$1">
+                  <PressableOpacity onPress={() => onShare()} style={{marginRight: 5}}>
+                    <Feather
+                      name="refresh-cw"
+                      size={28}
+                      color={post.reblogged ? 'gold' : 'black'}
+                    />
+                  </PressableOpacity>
+                  { sharesCount ? 
+                  <Text fontWeight={'bold'} allowFontScaling={false}>{ prettyCount(sharesCount) }</Text>
+                  : null}
+                </XStack> : null}
               {/* <PressableOpacity onPress={() => onBookmark()}>
                 <XStack gap="$4">
                   { hasBookmarked ?
@@ -328,39 +359,6 @@ const PostActions = React.memo(
               ) : null}
             </XStack>
           </XStack>
-          {likesCount || sharesCount ? (
-            <XStack justifyContent="space-between" alignItems="flex-end">
-              {likesCount ? (
-                likedBy && likesCount > 1 ? (
-                  <Link href={`/post/likes/${post.id}`}>
-                    <Text fontSize="$3">Liked by </Text>
-                    <Text fontWeight="bold" fontSize="$3">
-                      {enforceLen(likedBy.username, 12, true)}
-                    </Text>
-                    <Text fontSize="$3"> and </Text>
-                    <Text fontWeight="bold" fontSize="$3">
-                      {likesCount - 1} {likesCount - 1 > 1 ? 'others' : 'other'}
-                    </Text>
-                  </Link>
-                ) : (
-                  <Link href={`/post/likes/${post.id}`}>
-                    <Text fontWeight="bold" fontSize="$3">
-                      {likesCount} {likesCount > 1 ? 'Likes' : 'Like'}
-                    </Text>
-                  </Link>
-                )
-              ) : (
-                <View flexGrow={1}></View>
-              )}
-              {likesCount && sharesCount ? (
-                <Link href={`/post/shares/${post.id}`}>
-                  <Text fontWeight="bold" fontSize="$3">
-                    {sharesCount} {sharesCount > 1 ? 'Shares' : 'Share'}
-                  </Text>
-                </Link>
-              ) : null}
-            </XStack>
-          ) : null}
         </YStack>
       </BorderlessSection>
     )
@@ -604,6 +602,7 @@ export default function FeedPost({
             likedBy={post?.liked_by}
             sharesCount={post?.reblogs_count}
             showAltText={showAltText}
+            commentsCount={post.reply_count}
             handleLike={() => onLike(post?.id, post?.favourited)}
             onOpenComments={() => onOpenComments(post?.id)}
             onBookmark={() => onBookmark(post?.id)}
