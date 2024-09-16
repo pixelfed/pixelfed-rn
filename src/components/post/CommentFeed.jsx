@@ -81,7 +81,12 @@ export default function CommentFeed({
   }
 
   const handleReplyPost = (nativeEvent) => {
-    commentMutation.mutate({ postId: inReplyToId ? inReplyToId : id, commentText: commentText, scope: replyScope, cw: hasCW })
+    commentMutation.mutate({
+      postId: inReplyToId ? inReplyToId : id,
+      commentText: commentText,
+      scope: replyScope,
+      cw: hasCW,
+    })
     setComment()
     setInReplyToId()
     setReply()
@@ -107,15 +112,15 @@ export default function CommentFeed({
     switch (replyScope) {
       case 'public':
         setReplyScope('unlisted')
-        break;
+        break
 
       case 'unlisted':
         setReplyScope('private')
-        break;
+        break
 
       case 'private':
         setReplyScope('public')
-        break;
+        break
     }
   }
 
@@ -242,19 +247,22 @@ export default function CommentFeed({
                   </XStack>
                   {item.reply_count ? (
                     <YStack mt="$3">
-                      { fetchingChildren && fetchingChildren == item.id ? (
-                        <XStack gap="$2" alignItems='center'>
+                      {fetchingChildren && fetchingChildren == item.id ? (
+                        <XStack gap="$2" alignItems="center">
                           <View w={20} h={1} bg="$gray8"></View>
                           <ActivityIndicator />
-                        </XStack> ) : (
-                          <Pressable onPress={() => fetchChildren(item.id)}>
-                            <XStack gap="$2" alignItems='center'>
-                              <View w={20} h={1} bg="$gray8"></View>
-                              <Text fontSize="$3" color="$gray9" fontWeight="bold">View {item.reply_count} {item.reply_count == 1 ? 'reply' : 'more replies'}</Text>
-                            </XStack>
-                          </Pressable>
-                        )
-                    }
+                        </XStack>
+                      ) : (
+                        <Pressable onPress={() => fetchChildren(item.id)}>
+                          <XStack gap="$2" alignItems="center">
+                            <View w={20} h={1} bg="$gray8"></View>
+                            <Text fontSize="$3" color="$gray9" fontWeight="bold">
+                              View {item.reply_count}{' '}
+                              {item.reply_count == 1 ? 'reply' : 'more replies'}
+                            </Text>
+                          </XStack>
+                        </Pressable>
+                      )}
                     </YStack>
                   ) : null}
                 </YStack>
@@ -481,7 +489,7 @@ export default function CommentFeed({
     )
   }
   return (
-    <View style={{flexGrow: 1}}>
+    <View style={{ flexGrow: 1 }}>
       <BottomSheetFlatList
         data={data?.pages.flatMap((page) => page.data)}
         keyExtractor={(i) => i?.id}
@@ -542,17 +550,37 @@ export default function CommentFeed({
           </XStack>
           <XStack alignItems="center" gap={5}>
             <Pressable onPress={() => toggleScope()}>
-              <Text allowFontScaling={false} color="$gray10" fontWeight="bold" fontSize={12} textTransform='uppercase'>
-                { replyScope }
+              <Text
+                allowFontScaling={false}
+                color="$gray10"
+                fontWeight="bold"
+                fontSize={12}
+                textTransform="uppercase"
+              >
+                {replyScope}
               </Text>
             </Pressable>
-            <Feather name={ replyScope === 'public' ? "globe" : (replyScope === 'private' ? 'lock' : 'eye-off')} color="#ccc" />
+            <Feather
+              name={
+                replyScope === 'public'
+                  ? 'globe'
+                  : replyScope === 'private'
+                    ? 'lock'
+                    : 'eye-off'
+              }
+              color="#ccc"
+            />
           </XStack>
           <XStack alignItems="center" gap={5}>
             <Text allowFontScaling={false} fontSize={12} color="#ccc" fontWeight={'bold'}>
               CW
             </Text>
-            <Switch width={40} height={20} defaultChecked={hasCW} onCheckedChange={(checked) => setCW(checked)}>
+            <Switch
+              width={40}
+              height={20}
+              defaultChecked={hasCW}
+              onCheckedChange={(checked) => setCW(checked)}
+            >
               <Switch.Thumb width={20} height={20} animation="quicker" />
             </Switch>
           </XStack>

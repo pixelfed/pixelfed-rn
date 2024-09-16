@@ -292,12 +292,12 @@ const PostActions = React.memo(
       )
     }
 
-    const [likeCountCache, setLikeCount] = useState(likesCount);
-    const [hasLikedCache, setLiked] = useState(hasLiked);
+    const [likeCountCache, setLikeCount] = useState(likesCount)
+    const [hasLikedCache, setLiked] = useState(hasLiked)
 
     const handleLikeCached = () => {
-      if(hasLikedCache) {
-        if(likesCount) {
+      if (hasLikedCache) {
+        if (likesCount) {
           setLikeCount(likesCount - 1)
         } else {
           setLikeCount(0)
@@ -315,31 +315,42 @@ const PostActions = React.memo(
         <YStack pt="$3" pb="$2" px="$2" gap={10}>
           <XStack gap="$4" justifyContent="space-between">
             <XStack gap="$4">
-              <XStack justifyContent='center' alignItems='center' gap="$1">
+              <XStack justifyContent="center" alignItems="center" gap="$1">
                 <LikeButton hasLiked={hasLiked} handleLike={handleLikeCached} />
-                { likeCountCache ? <Text fontWeight={'bold'} allowFontScaling={false}>{ prettyCount(likeCountCache) }</Text> : null}
+                {likeCountCache ? (
+                  <Text fontWeight={'bold'} allowFontScaling={false}>
+                    {prettyCount(likeCountCache)}
+                  </Text>
+                ) : null}
               </XStack>
-              <XStack justifyContent='center' alignItems='center' gap="$1">
+              <XStack justifyContent="center" alignItems="center" gap="$1">
                 <Pressable onPress={() => onOpenComments()}>
                   <Feather name="message-circle" size={30} />
                 </Pressable>
-                { commentsCount ? <Text fontWeight={'bold'} allowFontScaling={false}>{ prettyCount(commentsCount) }</Text> : null }
+                {commentsCount ? (
+                  <Text fontWeight={'bold'} allowFontScaling={false}>
+                    {prettyCount(commentsCount)}
+                  </Text>
+                ) : null}
               </XStack>
             </XStack>
             <XStack gap="$2">
-              {post.visibility === 'public' ? 
-                <XStack justifyContent='center' alignItems='center' gap="$1">
-                  <PressableOpacity onPress={() => onShare()} style={{marginRight: 5}}>
+              {post.visibility === 'public' ? (
+                <XStack justifyContent="center" alignItems="center" gap="$1">
+                  <PressableOpacity onPress={() => onShare()} style={{ marginRight: 5 }}>
                     <Feather
                       name="refresh-cw"
                       size={28}
                       color={post.reblogged ? 'gold' : 'black'}
                     />
                   </PressableOpacity>
-                  { sharesCount ? 
-                  <Text fontWeight={'bold'} allowFontScaling={false}>{ prettyCount(sharesCount) }</Text>
-                  : null}
-                </XStack> : null}
+                  {sharesCount ? (
+                    <Text fontWeight={'bold'} allowFontScaling={false}>
+                      {prettyCount(sharesCount)}
+                    </Text>
+                  ) : null}
+                </XStack>
+              ) : null}
               {/* <PressableOpacity onPress={() => onBookmark()}>
                 <XStack gap="$4">
                   { hasBookmarked ?

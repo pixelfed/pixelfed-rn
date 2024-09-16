@@ -503,7 +503,7 @@ export async function postComment({ postId, commentText, scope = 'public', cw = 
     in_reply_to_id: postId,
     status: commentText,
     visibility: scope,
-    sensitive: cw
+    sensitive: cw,
   })
   const url = `https://${instance}/api/v1/statuses?${params}`
   const response = await fetch(url, {
