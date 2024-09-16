@@ -7,6 +7,7 @@ import {
   Dimensions,
   Alert,
   Platform,
+  Keyboard,
 } from 'react-native'
 import { Text, View, XStack, Select, Adapt, Sheet, YStack, Separator } from 'tamagui'
 import { StatusBar } from 'expo-status-bar'
@@ -47,6 +48,7 @@ import ReadMoreAndroid from '../common/ReadMoreAndroid'
 import ReadMore from '../common/ReadMore'
 import AutolinkText from '../common/AutolinkText'
 import FastImage from 'react-native-fast-image'
+import { Switch } from '../form/Switch'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
@@ -60,12 +62,29 @@ export default function CommentFeed({
   gotoHashtag,
 }) {
   const [commentText, setComment] = useState()
+  const [inReplyToId, setInReplyToId] = useState()
+  const [replySet, setReply] = useState()
+  const [replyScope, setReplyScope] = useState('public')
+  const [hasCW, setCW] = useState(false)
+  const [fetchingChildren, setFetchingChildren] = useState(false)
   const queryClient = useQueryClient()
   const commentRef = useRef()
 
   const handlePost = (nativeEvent) => {
+    commentMutation.mutate({
+      postId: inReplyToId ? inReplyToId : id,
+      commentText: commentText,
+    })
     setComment()
-    commentMutation.mutate({ postId: id, commentText: commentText })
+    setInReplyToId()
+    setReply()
+  }
+
+  const handleReplyPost = (nativeEvent) => {
+    commentMutation.mutate({ postId: inReplyToId ? inReplyToId : id, commentText: commentText, scope: replyScope, cw: hasCW })
+    setComment()
+    setInReplyToId()
+    setReply()
   }
 
   const handleShowLikes = (id) => {
@@ -84,6 +103,22 @@ export default function CommentFeed({
     handleReport(id)
   }
 
+  const toggleScope = () => {
+    switch (replyScope) {
+      case 'public':
+        setReplyScope('unlisted')
+        break;
+
+      case 'unlisted':
+        setReplyScope('private')
+        break;
+
+      case 'private':
+        setReplyScope('public')
+        break;
+    }
+  }
+
   const handleCommentDelete = (id) => {
     Alert.alert('Confirm Delete', 'Are you sure you want to delete your comment?', [
       {
@@ -95,6 +130,33 @@ export default function CommentFeed({
         onPress: () => commentDeleteMutation({ id: id }),
       },
     ])
+  }
+
+  const handleReplyTo = (item) => {
+    commentRef?.current.focus()
+    if (item && item?.id && item?.account?.id) {
+      setReply({
+        id: item.id,
+        username: item.account.username,
+        content: item.content_text && item.content_text.slice(8, 55) + '...',
+        acct: item.account.acct,
+      })
+      setInReplyToId(item.id)
+      setComment('@' + item.account.acct + ' ')
+    }
+  }
+
+  const clearReply = () => {
+    setReply()
+    setInReplyToId()
+    setComment()
+    commentRef?.current.blur()
+    Keyboard.dismiss()
+  }
+
+  const fetchChildren = (id) => {
+    setFetchingChildren(id)
+    setTimeout(() => setFetchingChildren(), 1000)
   }
 
   const renderItem = useCallback(
@@ -152,7 +214,127 @@ export default function CommentFeed({
                     </ReadMoreAndroid>
                   )}
                   <XStack mt="$2" gap="$4">
-                    <Pressable onPress={() => commentRef?.current.focus()}>
+                    <Pressable onPress={() => handleReplyTo(item)}>
+                      <Text fontWeight="bold" fontSize="$3" color="$gray9">
+                        Reply
+                      </Text>
+                    </Pressable>
+                    {item.favourites_count ? (
+                      <Pressable onPress={() => handleShowLikes(item.id)}>
+                        <Text fontSize="$3" color="$gray9">
+                          {likeCountLabel(item?.favourites_count)}
+                        </Text>
+                      </Pressable>
+                    ) : null}
+                    {item.account.id != user?.id ? (
+                      <Pressable onPress={() => handleCommentReport(item?.id)}>
+                        <Text fontSize="$3" color="$gray9">
+                          Report
+                        </Text>
+                      </Pressable>
+                    ) : (
+                      <Pressable onPress={() => handleCommentDelete(item.id)}>
+                        <Text fontSize="$3" color="$gray9">
+                          Delete
+                        </Text>
+                      </Pressable>
+                    )}
+                  </XStack>
+                  {item.reply_count ? (
+                    <YStack mt="$3">
+                      { fetchingChildren && fetchingChildren == item.id ? (
+                        <XStack gap="$2" alignItems='center'>
+                          <View w={20} h={1} bg="$gray8"></View>
+                          <ActivityIndicator />
+                        </XStack> ) : (
+                          <Pressable onPress={() => fetchChildren(item.id)}>
+                            <XStack gap="$2" alignItems='center'>
+                              <View w={20} h={1} bg="$gray8"></View>
+                              <Text fontSize="$3" color="$gray9" fontWeight="bold">View {item.reply_count} {item.reply_count == 1 ? 'reply' : 'more replies'}</Text>
+                            </XStack>
+                          </Pressable>
+                        )
+                    }
+                    </YStack>
+                  ) : null}
+                </YStack>
+              </XStack>
+              <Pressable onPress={() => handleCommentLike(item)}>
+                <YStack justifyContent="center" alignItems="center" gap="$1">
+                  {item.favourited ? (
+                    <Ionicons name="heart" color="red" size={20} />
+                  ) : (
+                    <Ionicons name="heart-outline" color="black" size={20} />
+                  )}
+                  {item.favourites_count ? (
+                    <Text fontSize="$3">{prettyCount(item.favourites_count)}</Text>
+                  ) : null}
+                </YStack>
+              </Pressable>
+            </XStack>
+          </YStack>
+        </View>
+      )
+    },
+    [gotoUsernameProfile, gotoHashtag, fetchingChildren]
+  )
+
+  const renderComment = useCallback(
+    ({ item }) => {
+      const captionText = htmlToTextWithLineBreaks(item.content)
+      const postType = item.pf_type
+      return (
+        <View style={styles.itemContainer}>
+          <YStack flexShrink={1}>
+            <XStack flexShrink={1}>
+              <XStack gap="$3" flexGrow={1}>
+                <Pressable onPress={() => gotoProfile(item.account.id)}>
+                  <UserAvatar url={item.account.avatar} width={30} height={30} />
+                </Pressable>
+
+                <YStack flexGrow={1} maxWidth={SCREEN_WIDTH - 150} gap={4}>
+                  <XStack gap="$2">
+                    <Pressable onPress={() => gotoProfile(item?.account.id)}>
+                      <Text fontSize="$3" fontWeight="bold">
+                        {item.account.acct}
+                      </Text>
+                    </Pressable>
+                    <Text fontSize="$3" color="$gray9">
+                      {_timeAgo(item.created_at)}
+                    </Text>
+                  </XStack>
+                  {postType === 'photo' ? (
+                    <FastImage
+                      source={{
+                        uri: item?.media_attachments[0].url,
+                        width: 200,
+                        height: 200,
+                      }}
+                      style={{ width: 200, height: 200, borderRadius: 10 }}
+                      resizeMode={FastImage.resizeMode.cover}
+                    />
+                  ) : null}
+                  {Platform.OS === 'ios' ? (
+                    <ReadMore numberOfLines={3} renderRevealedFooter={() => <></>}>
+                      <AutolinkText
+                        text={captionText}
+                        onMentionPress={gotoUsernameProfile}
+                        onHashtagPress={gotoHashtag}
+                        onUsernamePress={gotoUsernameProfile}
+                      />
+                    </ReadMore>
+                  ) : (
+                    <ReadMoreAndroid numberOfLines={3} renderRevealedFooter={() => <></>}>
+                      <AutolinkText
+                        text={captionText}
+                        onMentionPress={gotoUsernameProfile}
+                        onHashtagPress={gotoHashtag}
+                        onUsernamePress={gotoUsernameProfile}
+                      />
+                    </ReadMoreAndroid>
+                  )}
+                  <XStack mt="$2" gap="$4">
+                    <Pressable onPress={() => handleReplyTo(item)}>
                       <Text fontWeight="bold" fontSize="$3" color="$gray9">
                         Reply
                       </Text>
@@ -193,14 +375,6 @@ export default function CommentFeed({
                 </YStack>
               </Pressable>
             </XStack>
-            {item.replies_count ? (
-              <Pressable>
-                <XStack>
-                  <Text>———</Text>
-                  <Text>View {item.replies_count} more replies</Text>
-                </XStack>
-              </Pressable>
-            ) : null}
           </YStack>
         </View>
       )
@@ -307,7 +481,7 @@ export default function CommentFeed({
     )
   }
   return (
-    <BottomSheetView style={styles.contentContainer}>
+    <View style={{flexGrow: 1}}>
       <BottomSheetFlatList
         data={data?.pages.flatMap((page) => page.data)}
         keyExtractor={(i) => i?.id}
@@ -317,47 +491,108 @@ export default function CommentFeed({
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.contentCommentsContainer}
       />
-
-      <BottomSheetTextInput
-        ref={commentRef}
-        style={styles.input}
-        value={commentText}
-        onChangeText={setComment}
-        returnKeyType="send"
-        returnKeyLabel="Post"
-        onSubmitEditing={handlePost}
-        placeholder="Add a comment..."
-      />
-    </BottomSheetView>
+      {inReplyToId && replySet ? (
+        <View px="$4">
+          <XStack justifyContent="space-between">
+            <YStack>
+              <Text color="$gray8">
+                @
+                <Text fontWeight={'600'} fontFamily={'system'} color="$gray8">
+                  {replySet.acct}
+                </Text>
+              </Text>
+              <Text color="$gray11">{replySet.content}</Text>
+            </YStack>
+            <Text color="$gray8" onPress={() => clearReply()}>
+              Clear
+            </Text>
+          </XStack>
+        </View>
+      ) : null}
+      <YStack style={styles.inputGroup}>
+        <BottomSheetTextInput
+          ref={commentRef}
+          style={styles.input}
+          value={commentText}
+          onChangeText={setComment}
+          // returnKeyType="send"
+          multiline={true}
+          maxLength={500}
+          // returnKeyLabel="Post"
+          // onSubmitEditing={handlePost}
+          placeholder="Add a comment..."
+        />
+        <XStack
+          px="$5"
+          pb="$4"
+          mt={-25}
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <XStack>
+            <Text allowFontScaling={false} fontWeight="bold" fontSize={12} color="$gray9">
+              {commentText && commentText.length ? commentText.length : 0}
+            </Text>
+            <Text allowFontScaling={false} fontWeight="bold" fontSize={12} color="$gray9">
+              /
+            </Text>
+            <Text allowFontScaling={false} fontWeight="bold" fontSize={12} color="$gray9">
+              500
+            </Text>
+          </XStack>
+          <XStack alignItems="center" gap={5}>
+            <Pressable onPress={() => toggleScope()}>
+              <Text allowFontScaling={false} color="$gray10" fontWeight="bold" fontSize={12} textTransform='uppercase'>
+                { replyScope }
+              </Text>
+            </Pressable>
+            <Feather name={ replyScope === 'public' ? "globe" : (replyScope === 'private' ? 'lock' : 'eye-off')} color="#ccc" />
+          </XStack>
+          <XStack alignItems="center" gap={5}>
+            <Text allowFontScaling={false} fontSize={12} color="#ccc" fontWeight={'bold'}>
+              CW
+            </Text>
+            <Switch width={40} height={20} defaultChecked={hasCW} onCheckedChange={(checked) => setCW(checked)}>
+              <Switch.Thumb width={20} height={20} animation="quicker" />
+            </Switch>
+          </XStack>
+          <Text
+            allowFontScaling={false}
+            color="$blue9"
+            fontWeight="bold"
+            letterSpacing={-0.41}
+            onPress={() => handleReplyPost()}
+          >
+            POST
+          </Text>
+        </XStack>
+      </YStack>
+    </View>
   )
 }
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 200,
-  },
   contentCommentsContainer: {
-    flexGrow: 1,
-    backgroundColor: 'white',
-  },
-  contentContainer: {
-    flexGrow: 1,
     backgroundColor: 'white',
   },
   itemContainer: {
+    flex: 1,
     width: SCREEN_WIDTH,
     padding: 15,
     marginBottom: 0,
     backgroundColor: '#fff',
   },
+  inputGroup: {
+    minHeight: 100,
+    maxHeight: 150,
+  },
   input: {
-    flexShrink: 1,
-    alignItems: 'center',
+    minHeight: 50,
+    maxHeight: 150,
     marginTop: 5,
     marginHorizontal: 15,
     marginBottom: 30,
     borderRadius: 10,
-    fontSize: 20,
+    fontSize: 18,
     padding: 10,
     borderWidth: 1,
     borderColor: 'rgba(151, 151, 151, 0.25)',
