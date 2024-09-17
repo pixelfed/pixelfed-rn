@@ -1,4 +1,4 @@
-import { Link, Stack } from 'expo-router'
+import { Link, Stack, useNavigation } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ScrollView, Text, View, XStack, YStack, Button } from 'tamagui'
 import { useInfiniteQuery } from '@tanstack/react-query'
@@ -7,8 +7,13 @@ import { ActivityIndicator, FlatList } from 'react-native'
 import FastImage from 'react-native-fast-image'
 import { formatTimestamp } from 'src/utils'
 import Feather from '@expo/vector-icons/Feather'
+import { useLayoutEffect } from 'react'
 
 export default function Screen() {
+  const navigation = useNavigation()
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: 'My Collections', headerBackTitle: 'Back' })
+  }, [navigation])
   const RenderItem = ({ item }) => (
     <YStack px="$5" mb="$5">
       <YStack pt="$5" pb="$3" borderTopLeftRadius={20} borderTopRightRadius={20} gap="$1">
