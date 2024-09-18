@@ -1,10 +1,10 @@
-import { Link, Stack } from 'expo-router'
+import { Link, router, Stack } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ScrollView, Text, View, Group, Button, XStack, YStack, Separator } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getSelfAccount, updateCredentials } from 'src/lib/api'
-import { ActivityIndicator, FlatList } from 'react-native'
+import { ActivityIndicator, Alert, FlatList } from 'react-native'
 import FastImage from 'react-native-fast-image'
 import { Storage } from 'src/state/cache'
 import { Switch } from 'src/components/form/Switch'
@@ -41,6 +41,26 @@ export default function Page() {
       queryClient.invalidateQueries({ queryKey: ['getSelfAccount'] })
     },
   })
+
+  const privateAccountSwitch = (checked) => {
+    const warningMessage = !checked ? 'Are you sure you want to make your account public?' : 'Are you sure you want to make your account private?';
+    Alert.alert(
+      'Confirm',
+      warningMessage,
+      [
+        {
+          text: 'Cancel',
+          onPress: () => { router.back() },
+          style: 'cancel',
+        },
+        {
+          text: 'Confirm',
+          onPress: () => { mutation.mutate({ locked: checked }) },
+          style: 'destructive',
+        }
+      ]
+    )
+  }
 
   const {
     isPending,
@@ -92,7 +112,7 @@ export default function Page() {
             <Switch
               size="$3"
               defaultChecked={profile.locked}
-              onCheckedChange={(checked) => mutation.mutate({ locked: checked })}
+              onCheckedChange={(checked) => privateAccountSwitch(checked)}
             >
               <Switch.Thumb animation="quicker" />
             </Switch>
