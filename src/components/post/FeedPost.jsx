@@ -314,27 +314,27 @@ const PostActions = React.memo(
     const [hasSharedCache, setShared] = useState(hasShared)
 
     const handleOnShare = () => {
-      const labelText = hasSharedCache ? 'Unshare' : 'Share';
+      const labelText = hasSharedCache ? 'Unshare' : 'Share'
       Alert.alert(
-        `Confirm ${labelText}`, 
+        `Confirm ${labelText}`,
         `Are you sure you want to ${labelText.toLowerCase()} this post to your followers?`,
         [
           {
-            text: 'Cancel'
-          }, 
+            text: 'Cancel',
+          },
           {
             text: labelText,
             style: 'destructive',
-            onPress: () => { 
-              if(hasSharedCache) {
-                if(shareCountCache) {
+            onPress: () => {
+              if (hasSharedCache) {
+                if (shareCountCache) {
                   setShareCount(shareCountCache - 1)
                 } else {
                   setShareCount(0)
                 }
                 setShared(false)
               } else {
-                if(shareCountCache) {
+                if (shareCountCache) {
                   setShareCount(shareCountCache + 1)
                 } else {
                   setShareCount(1)
@@ -342,8 +342,8 @@ const PostActions = React.memo(
                 setShared(true)
               }
               onShare()
-            }
-          }
+            },
+          },
         ]
       )
     }
@@ -377,7 +377,10 @@ const PostActions = React.memo(
             <XStack gap="$2">
               {post.visibility === 'public' ? (
                 <XStack justifyContent="center" alignItems="center" gap="$2">
-                  <PressableOpacity onPress={() => handleOnShare()} style={{ marginRight: 5 }}>
+                  <PressableOpacity
+                    onPress={() => handleOnShare()}
+                    style={{ marginRight: 5 }}
+                  >
                     <Feather
                       name="refresh-cw"
                       size={28}
@@ -693,12 +696,14 @@ export default function FeedPost({
             Share
           </Button>
           <Separator />
-          {!isPermalink ? (<>
-            <Button size="$6" chromeless onPress={() => goToPost()}>
-              View Post
-            </Button>
-            <Separator />
-          </>) : null }
+          {!isPermalink ? (
+            <>
+              <Button size="$6" chromeless onPress={() => goToPost()}>
+                View Post
+              </Button>
+              <Separator />
+            </>
+          ) : null}
           <Button size="$6" chromeless onPress={() => goToProfile()}>
             View Profile
           </Button>
@@ -711,12 +716,14 @@ export default function FeedPost({
             Open in browser
           </Button>
           <Separator />
-          { user && user?.id != post?.account?.id ? (<>
-          <Button size="$6" chromeless color="red" onPress={() => goToReport()}>
-            Report
-          </Button>
-          <Separator />
-          </>) : null }
+          {user && user?.id != post?.account?.id ? (
+            <>
+              <Button size="$6" chromeless color="red" onPress={() => goToReport()}>
+                Report
+              </Button>
+              <Separator />
+            </>
+          ) : null}
           <Button
             size="$6"
             chromeless

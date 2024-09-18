@@ -43,23 +43,25 @@ export default function Page() {
   })
 
   const privateAccountSwitch = (checked) => {
-    const warningMessage = !checked ? 'Are you sure you want to make your account public?' : 'Are you sure you want to make your account private?';
-    Alert.alert(
-      'Confirm',
-      warningMessage,
-      [
-        {
-          text: 'Cancel',
-          onPress: () => { router.back() },
-          style: 'cancel',
+    const warningMessage = !checked
+      ? 'Are you sure you want to make your account public?'
+      : 'Are you sure you want to make your account private?'
+    Alert.alert('Confirm', warningMessage, [
+      {
+        text: 'Cancel',
+        onPress: () => {
+          router.back()
         },
-        {
-          text: 'Confirm',
-          onPress: () => { mutation.mutate({ locked: checked }) },
-          style: 'destructive',
-        }
-      ]
-    )
+        style: 'cancel',
+      },
+      {
+        text: 'Confirm',
+        onPress: () => {
+          mutation.mutate({ locked: checked })
+        },
+        style: 'destructive',
+      },
+    ])
   }
 
   const {
