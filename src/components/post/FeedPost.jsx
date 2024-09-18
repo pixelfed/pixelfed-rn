@@ -310,25 +310,65 @@ const PostActions = React.memo(
       handleLike()
     }
 
+    const [shareCountCache, setShareCount] = useState(sharesCount)
+    const [hasSharedCache, setShared] = useState(hasShared)
+
+    const handleOnShare = () => {
+      const labelText = hasSharedCache ? 'Unshare' : 'Share';
+      Alert.alert(
+        `Confirm ${labelText}`, 
+        `Are you sure you want to ${labelText.toLowerCase()} this post to your followers?`,
+        [
+          {
+            text: 'Cancel'
+          }, 
+          {
+            text: labelText,
+            style: 'destructive',
+            onPress: () => { 
+              if(hasSharedCache) {
+                if(shareCountCache) {
+                  setShareCount(shareCountCache - 1)
+                } else {
+                  setShareCount(0)
+                }
+                setShared(false)
+              } else {
+                if(shareCountCache) {
+                  setShareCount(shareCountCache + 1)
+                } else {
+                  setShareCount(1)
+                }
+                setShared(true)
+              }
+              onShare()
+            }
+          }
+        ]
+      )
+    }
+
     return (
       <BorderlessSection>
         <YStack pt="$3" pb="$2" px="$2" gap={10}>
           <XStack gap="$4" justifyContent="space-between">
-            <XStack gap="$4">
-              <XStack justifyContent="center" alignItems="center" gap="$1">
+            <XStack gap="$5">
+              <XStack justifyContent="center" alignItems="center" gap="$2">
                 <LikeButton hasLiked={hasLiked} handleLike={handleLikeCached} />
                 {likeCountCache ? (
-                  <Text fontWeight={'bold'} allowFontScaling={false}>
-                    {prettyCount(likeCountCache)}
-                  </Text>
+                  <Link href={`/post/likes/${post.id}`}>
+                    <Text fontWeight={'bold'} allowFontScaling={false}>
+                      {prettyCount(likeCountCache)}
+                    </Text>
+                  </Link>
                 ) : null}
               </XStack>
-              <XStack justifyContent="center" alignItems="center" gap="$1">
+              <XStack justifyContent="center" alignItems="center" gap="$2">
                 <Pressable onPress={() => onOpenComments()}>
                   <Feather name="message-circle" size={30} />
                 </Pressable>
                 {commentsCount ? (
-                  <Text fontWeight={'bold'} allowFontScaling={false}>
+                  <Text fontWeight={'bold'} allowFontScaling={false} fontSize="$2">
                     {prettyCount(commentsCount)}
                   </Text>
                 ) : null}
@@ -336,18 +376,20 @@ const PostActions = React.memo(
             </XStack>
             <XStack gap="$2">
               {post.visibility === 'public' ? (
-                <XStack justifyContent="center" alignItems="center" gap="$1">
-                  <PressableOpacity onPress={() => onShare()} style={{ marginRight: 5 }}>
+                <XStack justifyContent="center" alignItems="center" gap="$2">
+                  <PressableOpacity onPress={() => handleOnShare()} style={{ marginRight: 5 }}>
                     <Feather
                       name="refresh-cw"
                       size={28}
-                      color={post.reblogged ? 'gold' : 'black'}
+                      color={hasSharedCache ? 'gold' : 'black'}
                     />
                   </PressableOpacity>
                   {sharesCount ? (
-                    <Text fontWeight={'bold'} allowFontScaling={false}>
-                      {prettyCount(sharesCount)}
-                    </Text>
+                    <Link href={`/post/shares/${post.id}`}>
+                      <Text fontWeight={'bold'} allowFontScaling={false}>
+                        {prettyCount(shareCountCache)}
+                      </Text>
+                    </Link>
                   ) : null}
                 </XStack>
               ) : null}
@@ -605,7 +647,7 @@ export default function FeedPost({
         <>
           <PostActions
             hasLiked={post?.favourited}
-            hasShared={false}
+            hasShared={post?.reblogged}
             post={post}
             progress={progress}
             hasBookmarked={post?.bookmarked}
@@ -647,111 +689,42 @@ export default function FeedPost({
         backdropComponent={renderBackdrop}
       >
         <BottomSheetScrollView>
-          <YStack p="$5" gap="$3">
-            <XStack justifyContent="space-between" gap="$2"></XStack>
-
-            <Group separator={<Separator />}>
-              <Group.Item>
-                <Button size="$5" justifyContent="start" onPress={() => onGotoShare()}>
-                  <XStack alignItems="center" gap="$3">
-                    <Feather name="share" size={20} color="#aaa" />
-                    <Text fontSize="$5" allowFontScaling={false}>
-                      Share
-                    </Text>
-                  </XStack>
-                </Button>
-              </Group.Item>
-              <Group.Item>
-                <Button size="$5" justifyContent="start" onPress={() => openInBrowser()}>
-                  <XStack alignItems="center" gap="$3">
-                    <Feather name="globe" size={20} color="#aaa" />
-                    <Text fontSize="$5" allowFontScaling={false}>
-                      Open in browser
-                    </Text>
-                  </XStack>
-                </Button>
-              </Group.Item>
-              <Group.Item>
-                <Button size="$5" justifyContent="start" onPress={() => onGotoAbout()}>
-                  <XStack alignItems="center" gap="$3">
-                    <Feather name="info" size={20} color="#aaa" />
-                    <Text fontSize="$5" allowFontScaling={false}>
-                      About this account
-                    </Text>
-                  </XStack>
-                </Button>
-              </Group.Item>
-            </Group>
-            <Group separator={<Separator />}>
-              {!isPermalink ? (
-                <Group.Item>
-                  <Button size="$5" justifyContent="start" onPress={() => goToPost()}>
-                    <XStack alignItems="center" gap="$3">
-                      <Feather name="arrow-right-circle" size={20} color="#aaa" />
-                      <Text fontSize="$5" allowFontScaling={false}>
-                        View Post
-                      </Text>
-                    </XStack>
-                  </Button>
-                </Group.Item>
-              ) : null}
-              <Group.Item>
-                <Button size="$5" justifyContent="start" onPress={() => goToProfile()}>
-                  <XStack alignItems="center" gap="$3">
-                    <Feather name="user" size={20} color="#aaa" />
-                    <Text fontSize="$5" allowFontScaling={false}>
-                      View Profile
-                    </Text>
-                  </XStack>
-                </Button>
-              </Group.Item>
-
-              {user && user?.id != post?.account?.id ? (
-                <Group.Item>
-                  <Button size="$5" justifyContent="start" onPress={() => goToReport()}>
-                    <XStack alignItems="center" gap="$3">
-                      <Feather name="alert-circle" size={20} color="red" />
-                      <Text fontSize="$5" color="$red9" allowFontScaling={false}>
-                        Report
-                      </Text>
-                    </XStack>
-                  </Button>
-                </Group.Item>
-              ) : null}
-              {user && user?.id === post?.account?.id ? (
-                <Group.Item>
-                  <Button
-                    size="$5"
-                    justifyContent="start"
-                    onPress={() => _onEditPost(post.id)}
-                  >
-                    <XStack alignItems="center" gap="$3">
-                      <Feather name="edit" size={20} color="#aaa" />
-                      <Text fontSize="$5" allowFontScaling={false}>
-                        Edit Post
-                      </Text>
-                    </XStack>
-                  </Button>
-                </Group.Item>
-              ) : null}
-              {user && user?.id === post?.account?.id ? (
-                <Group.Item>
-                  <Button
-                    size="$5"
-                    justifyContent="start"
-                    onPress={() => _onDeletePost(post.id)}
-                  >
-                    <XStack alignItems="center" gap="$3">
-                      <Feather name="trash" size={20} color="red" />
-                      <Text fontSize="$5" color="$red9" allowFontScaling={false}>
-                        Delete Post
-                      </Text>
-                    </XStack>
-                  </Button>
-                </Group.Item>
-              ) : null}
-            </Group>
-          </YStack>
+          <Button size="$6" chromeless onPress={() => onGotoShare()}>
+            Share
+          </Button>
+          <Separator />
+          {!isPermalink ? (<>
+            <Button size="$6" chromeless onPress={() => goToPost()}>
+              View Post
+            </Button>
+            <Separator />
+          </>) : null }
+          <Button size="$6" chromeless onPress={() => goToProfile()}>
+            View Profile
+          </Button>
+          <Separator />
+          <Button size="$6" chromeless onPress={() => onGotoAbout()}>
+            About this account
+          </Button>
+          <Separator />
+          <Button size="$6" chromeless onPress={() => openInBrowser()}>
+            Open in browser
+          </Button>
+          <Separator />
+          { user && user?.id != post?.account?.id ? (<>
+          <Button size="$6" chromeless color="red" onPress={() => goToReport()}>
+            Report
+          </Button>
+          <Separator />
+          </>) : null }
+          <Button
+            size="$6"
+            chromeless
+            color="$gray8"
+            onPress={() => bottomSheetModalRef.current?.close()}
+          >
+            Cancel
+          </Button>
         </BottomSheetScrollView>
       </BottomSheetModal>
     </View>
