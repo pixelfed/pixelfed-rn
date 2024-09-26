@@ -14,7 +14,11 @@ PODS:
   - EXImageLoader (4.6.0):
     - ExpoModulesCore
     - React-Core
+  - EXNotifications (0.27.8):
+    - ExpoModulesCore
   - Expo (50.0.19):
+    - ExpoModulesCore
+  - ExpoDevice (5.9.4):
     - ExpoModulesCore
   - ExpoFileSystem (16.0.9):
     - ExpoModulesCore
@@ -1191,7 +1195,9 @@ DEPENDENCIES:
   - EXConstants (from `../node_modules/expo-constants/ios`)
   - EXFont (from `../node_modules/expo-font/ios`)
   - EXImageLoader (from `../node_modules/expo-image-loader/ios`)
+  - EXNotifications (from `../node_modules/expo-notifications/ios`)
   - Expo (from `../node_modules/expo`)
+  - ExpoDevice (from `../node_modules/expo-device/ios`)
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
   - ExpoHaptics (from `../node_modules/expo-haptics/ios`)
   - ExpoHead (from `../node_modules/expo-router/ios`)
@@ -1296,8 +1302,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-font/ios"
   EXImageLoader:
     :path: "../node_modules/expo-image-loader/ios"
+  EXNotifications:
+    :path: "../node_modules/expo-notifications/ios"
   Expo:
     :path: "../node_modules/expo"
+  ExpoDevice:
+    :path: "../node_modules/expo-device/ios"
   ExpoFileSystem:
     :path: "../node_modules/expo-file-system/ios"
   ExpoHaptics:
@@ -1452,7 +1462,9 @@ SPEC CHECKSUMS:
   EXConstants: a5f6276e565d98f9eb4280f81241fc342d641590
   EXFont: f20669cb266ef48b004f1eb1f2b20db96cd1df9f
   EXImageLoader: 55080616b2fe9da19ef8c7f706afd9814e279b6b
+  EXNotifications: e254c0fa11337e15b30c200e91437b521f682bad
   Expo: ad8bce0c0fc557cae703cc8dbce73d61a90ab5c5
+  ExpoDevice: 97307196d8cab694e245752b8a7afacc35c14e03
   ExpoFileSystem: 74cc0fae916f9f044248433971dcfc8c3befd057
   ExpoHaptics: 28a771b630353cd6e8dcf1b1e3e693e38ad7c3c3
   ExpoHead: 89ffd324e60520751c2c285233fe45e875c91874
