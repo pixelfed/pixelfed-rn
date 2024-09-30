@@ -98,7 +98,8 @@ export default function ProfileHeader({
   }
 
   const RenderGuestHeader = () => (
-    <XStack w="100%" justifyContent="space-between" alignItems="center" gap="$10">
+
+    Platform.OS === 'ios' ?  <XStack w="100%" justifyContent="space-between" alignItems="center" gap="$10">
       <View>
         <Pressable onPress={() => router.back()}>
           <XStack alignItems="center" gap="$5">
@@ -147,11 +148,11 @@ export default function ProfileHeader({
           )}
         </XStack>
       </View>
-    </XStack>
+    </XStack>  : null
   )
 
   const RenderSelfHeader = () => (
-    <XStack w="100%" justifyContent="space-between" alignItems="center" gap="$10">
+    <XStack w="100%" justifyContent="space-between" alignItems="center" gap="$10" my={Platform.OS === 'android' ? "$4" : "$2"}>
       <Text
         flexShrink={1}
         fontWeight="bold"
@@ -250,10 +251,10 @@ export default function ProfileHeader({
 
   return (
     <View flex={1}>
-      <View mx="$4" mt="$3">
+      <View mx="$4" mt={Platform.OS === 'ios' ? "$3" : 0}>
         {isSelf ? <RenderSelfHeader /> : <RenderGuestHeader />}
 
-        <XStack w="100%" justifyContent="space-between" alignItems="center" mt="$3">
+        <XStack w="100%" justifyContent="space-between" alignItems="center" mt={Platform.OS === 'ios' ? "$3" : 0}>
           <View style={{ borderRadius: 100, overflow: 'hidden' }}>
             <Avatar
               circular

@@ -13,7 +13,7 @@ import { Storage } from 'src/state/cache'
 import { queryApi } from 'src/requests'
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, Link, router } from 'expo-router'
+import { Stack, useLocalSearchParams, Link, router, useNavigation } from 'expo-router'
 import {
   useQuery,
   useInfiniteQuery,
@@ -50,6 +50,7 @@ import { Blurhash } from 'react-native-blurhash'
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileScreen() {
+  const navigation = useNavigation();
   const { id, byUsername } = useLocalSearchParams()
   const selfUser = JSON.parse(Storage.getString('user.profile'))
   const queryClient = useQueryClient()
@@ -220,7 +221,7 @@ export default function ProfileScreen() {
 
   const EmptyFeed = () => (
     <View flexGrow={1}>
-      {!isFetching && !user.id ? (
+      {!isFetching && !user?.id ? (
         <YStack flexGrow={1} justifyContent="center" alignItems="center" gap="$5">
           <View p="$6" borderWidth={2} borderColor="$gray5" borderRadius={100}>
             <Feather name="alert-triangle" size={40} color="#aaa" />
@@ -252,35 +253,6 @@ export default function ProfileScreen() {
       )}
     </View>
   )
-
-  const { data: user, error: userError } = useQuery({
-    queryKey:
-      byUsername !== undefined && id == 0
-        ? ['getAccountByUsername', byUsername]
-        : ['getAccountById', id],
-    queryFn: byUsername !== undefined && id == 0 ? getAccountByUsername : getAccountById,
-  })
-
-  if (userError) {
-    return (
-      <View>
-        <Text>{userError}</Text>
-      </View>
-    )
-  }
-  const userId = user?.id
-
-  const { data: relationship, isError: relationshipError } = useQuery({
-    queryKey: ['getAccountRelationship', userId],
-    queryFn: getAccountRelationship,
-    enabled: !!userId && !userError,
-  })
-
-  const { data: mutuals, isError: mutualsError } = useQuery({
-    queryKey: ['getMutualFollowing', userId],
-    queryFn: getMutualFollowing,
-    enabled: !!relationship,
-  })
 
   const blockMutation = useMutation({
     mutationFn: () => {
@@ -499,8 +471,46 @@ export default function ProfileScreen() {
         mutuals={mutuals}
       />
     ),
-    [mutuals]
+    [mutuals, user, relationship, selfUser]
   )
+
+  const { data: user, error: userError } = useQuery({
+    queryKey:
+      byUsername !== undefined && id == 0
+        ? ['getAccountByUsername', byUsername]
+        : ['getAccountById', id],
+    queryFn: byUsername !== undefined && id == 0 ?getAccountByUsername : getAccountById
+  })
+
+  useEffect(() => {
+    if(user && Platform.OS == 'android') {
+      navigation.setOptions({ 
+        headerTitle: user?.username,
+        headerRight: () => (
+          <Button chromeless p="$0" onPress={() => onOpenMenu()}>
+            <Feather
+              name={'more-vertical'}
+              size={26}
+            />
+          </Button>
+      )
+      });
+    }
+  }, [navigation, user]);
+
+  const userId = user?.id
+
+  const { data: relationship, isError: relationshipError } = useQuery({
+    queryKey: ['getAccountRelationship', userId],
+    queryFn: getAccountRelationship,
+    enabled: !!userId && !userError,
+  })
+
+  const { data: mutuals, isError: mutualsError } = useQuery({
+    queryKey: ['getMutualFollowing', userId],
+    queryFn: getMutualFollowing,
+    enabled: !!relationship,
+  })
 
   const {
     status,
@@ -515,9 +525,9 @@ export default function ProfileScreen() {
     isError,
     error,
   } = useInfiniteQuery({
-    queryKey: ['statusesById', userId],
+    queryKey: ['statusesById', user?.id],
     queryFn: async ({ pageParam }) => {
-      const data = await getAccountStatusesById(userId, pageParam)
+      const data = await getAccountStatusesById(user?.id, pageParam)
       const res = data.filter((p) => {
         return (
           ['photo', 'photo:album', 'video'].includes(p.pf_type) &&
@@ -539,21 +549,47 @@ export default function ProfileScreen() {
       }, lastPage[0].id)
       return lowestId
     },
-    enabled: !!userId || !userError || !relationshipError,
+    enabled: !!userId,
   })
 
-  // if (isFetching && !isFetchingNextPage) {
-  //   return (
-  //     <SafeAreaView edges={['top']}>
-  //       <Stack.Screen options={{ headerShown: false }} />
-  //       <ActivityIndicator color={'#000'} />
-  //     </SafeAreaView>
-  //   )
-  // }
+  if (status !== 'success' || isFetching && !isFetchingNextPage) {
+    return (
+      <SafeAreaView edges={['top']} flex={1}>
+        <Stack.Screen options={{ headerShown: false }} />
+        <View style={{flexGrow: 1,justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator color={'#000'} />
+        </View>
+      </SafeAreaView>
+    )
+  }
 
   return (
     <SafeAreaView flex={1} edges={['top']} style={{ backgroundColor: 'white' }}>
-      <Stack.Screen options={{ headerShown: false }} />
+      <Stack.Screen 
+      options={{ 
+        headerShown: Platform.OS === 'android' ? true : false
+      }} />
+      <FlatList
+        data={feed?.pages.flat()}
+        keyExtractor={(item, index) => item?.id.toString()}
+        ListHeaderComponent={RenderHeader}
+        renderItem={RenderItem}
+        numColumns={3}
+        showsVerticalScrollIndicator={false}
+        onEndReached={() => {
+          if (!userError && !isFetching && hasNextPage) fetchNextPage()
+        }}
+        onEndReachedThreshold={0.1}
+        ListEmptyComponent={EmptyFeed}
+        contentContainerStyle={{ flexGrow: 1 }}
+        ListFooterComponent={() =>
+          !userError && isFetched && isFetchingNextPage ? (
+            <View p="$5">
+              <ActivityIndicator />
+            </View>
+          ) : null
+        }
+      />
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={1}
@@ -607,27 +643,6 @@ export default function ProfileScreen() {
           </Button>
         </BottomSheetScrollView>
       </BottomSheetModal>
-      <FlatList
-        data={feed?.pages.flat()}
-        keyExtractor={(item, index) => item?.id.toString()}
-        ListHeaderComponent={RenderHeader}
-        renderItem={RenderItem}
-        numColumns={3}
-        showsVerticalScrollIndicator={false}
-        onEndReached={() => {
-          if (!userError && !isFetching && hasNextPage) fetchNextPage()
-        }}
-        onEndReachedThreshold={0.1}
-        ListEmptyComponent={EmptyFeed}
-        contentContainerStyle={{ flexGrow: 1 }}
-        ListFooterComponent={() =>
-          !userError && isFetched && isFetchingNextPage ? (
-            <View p="$5">
-              <ActivityIndicator />
-            </View>
-          ) : null
-        }
-      />
     </SafeAreaView>
   )
 }
