@@ -56,10 +56,7 @@ const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMe
     >
       <View flexGrow={1}>
         <Link
-          href={{
-            pathname: '/profile/[id]',
-            params: { id: userId },
-          }}
+          href={`/profile/${userId}`}
           asChild
         >
           <Pressable flexGrow={1}>
