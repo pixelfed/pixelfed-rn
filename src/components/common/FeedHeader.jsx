@@ -1,4 +1,4 @@
-import { Pressable } from 'react-native'
+import { Platform, Pressable } from 'react-native'
 import { Text, XStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { Link } from 'expo-router'
@@ -8,6 +8,7 @@ export default (FeedHeader = ({ title = 'Home', user }) => {
     <XStack
       px="$3"
       pb="$3"
+      pt={Platform.OS === 'android' ? "$3" : 0}
       bg="white"
       justifyContent="space-between"
       alignItems="center"
