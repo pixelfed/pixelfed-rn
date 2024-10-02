@@ -186,7 +186,7 @@ export default function Page() {
           </Switch>
         </XStack>
 
-        <YStack m="$3" bg="white" borderRadius={10} overflow="hidden" zIndex="2">
+        <YStack m="$3" bg="white" borderRadius={10} overflow="hidden">
           <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
             <YStack maxWidth="75%" gap="$2">
               <Text fontSize="$5" fontWeight={'bold'}>
