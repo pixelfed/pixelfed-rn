@@ -18,7 +18,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { ShareIntentProvider } from 'expo-share-intent'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { VideoProvider } from 'src/hooks/useVideoProvider'
-import * as Notifications from 'expo-notifications';
+import * as Notifications from 'expo-notifications'
 import Constants from 'expo-constants'
 
 export const unstable_settings = {
@@ -32,7 +32,7 @@ Notifications.setNotificationHandler({
     shouldPlaySound: false,
     shouldSetBadge: false,
   }),
-});
+})
 
 LogBox.ignoreAllLogs()
 

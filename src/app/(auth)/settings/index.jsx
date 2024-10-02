@@ -120,8 +120,12 @@ export default function Page() {
               path="/settings/accessibility/"
             />
             <GroupButton icon="droplet" title="Appearance" path="/settings/appearance/" />
-            { Platform.OS === 'ios' ? (
-              <GroupButton icon="alert-triangle" title="Push Notifications" path="/settings/notifications/" />
+            {Platform.OS === 'ios' ? (
+              <GroupButton
+                icon="alert-triangle"
+                title="Push Notifications"
+                path="/settings/notifications/"
+              />
             ) : null}
           </Group>
 

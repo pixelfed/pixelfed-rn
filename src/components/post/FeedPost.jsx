@@ -55,10 +55,7 @@ const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMe
       py="$2"
     >
       <View flexGrow={1}>
-        <Link
-          href={`/profile/${userId}`}
-          asChild
-        >
+        <Link href={`/profile/${userId}`} asChild>
           <Pressable flexGrow={1}>
             <XStack gap="$3" alignItems="center" flexGrow={1}>
               <FastImage
@@ -723,20 +720,16 @@ export default function FeedPost({
           ) : null}
           {user && user?.id === post?.account?.id ? (
             <>
-              <Button
-                size="$6"
-                chromeless 
-                onPress={() => _onEditPost(post.id)}
-                >
+              <Button size="$6" chromeless onPress={() => _onEditPost(post.id)}>
                 Edit Post
               </Button>
               <Separator />
               <Button
                 size="$6"
-                chromeless 
+                chromeless
                 color="red"
                 onPress={() => _onDeletePost(post.id)}
-                >
+              >
                 Delete Post
               </Button>
               <Separator />

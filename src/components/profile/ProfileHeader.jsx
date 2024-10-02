@@ -97,62 +97,68 @@ export default function ProfileHeader({
     await openBrowserAsync(profile?.website)
   }
 
-  const RenderGuestHeader = () => (
-
-    Platform.OS === 'ios' ?  <XStack w="100%" justifyContent="space-between" alignItems="center" gap="$10">
-      <View>
-        <Pressable onPress={() => router.back()}>
-          <XStack alignItems="center" gap="$5">
-            <Feather name="chevron-left" size={26} />
-          </XStack>
-        </Pressable>
-      </View>
-
-      <View flexShrink={1}>
-        {usernameTruncated ? (
-          <Pressable onPress={() => setUsernameTruncated(false)}>
-            <Text
-              flexShrink={1}
-              fontWeight="bold"
-              fontSize={profile?.acct.length > 40 ? 15 : 18}
-              flexWrap="wrap"
-            >
-              {enforceLen(profile?.acct, 30, true, 'middle')}
-            </Text>
+  const RenderGuestHeader = () =>
+    Platform.OS === 'ios' ? (
+      <XStack w="100%" justifyContent="space-between" alignItems="center" gap="$10">
+        <View>
+          <Pressable onPress={() => router.back()}>
+            <XStack alignItems="center" gap="$5">
+              <Feather name="chevron-left" size={26} />
+            </XStack>
           </Pressable>
-        ) : (
-          <Text
-            fontWeight="bold"
-            fontSize={Platform.OS === 'ios' ? 18 : 15}
-            flexWrap="wrap"
-            adjustsFontSizeToFit={true}
-            allowFontScaling={false}
-          >
-            {enforceLen(profile?.acct ?? 'User', 15, true)}
-          </Text>
-        )}
-      </View>
-      <View>
-        <XStack alignItems="center" gap="$5">
-          {selfUser?.id == profile?.id ? (
-            <Button chromeless p="$0" size="$2" onPress={() => onShare()}>
-              <Feather name="share" size={23} />
-            </Button>
+        </View>
+
+        <View flexShrink={1}>
+          {usernameTruncated ? (
+            <Pressable onPress={() => setUsernameTruncated(false)}>
+              <Text
+                flexShrink={1}
+                fontWeight="bold"
+                fontSize={profile?.acct.length > 40 ? 15 : 18}
+                flexWrap="wrap"
+              >
+                {enforceLen(profile?.acct, 30, true, 'middle')}
+              </Text>
+            </Pressable>
           ) : (
-            <Button chromeless p="$0" onPress={() => openMenu()}>
-              <Feather
-                name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
-                size={26}
-              />
-            </Button>
+            <Text
+              fontWeight="bold"
+              fontSize={Platform.OS === 'ios' ? 18 : 15}
+              flexWrap="wrap"
+              adjustsFontSizeToFit={true}
+              allowFontScaling={false}
+            >
+              {enforceLen(profile?.acct ?? 'User', 15, true)}
+            </Text>
           )}
-        </XStack>
-      </View>
-    </XStack>  : null
-  )
+        </View>
+        <View>
+          <XStack alignItems="center" gap="$5">
+            {selfUser?.id == profile?.id ? (
+              <Button chromeless p="$0" size="$2" onPress={() => onShare()}>
+                <Feather name="share" size={23} />
+              </Button>
+            ) : (
+              <Button chromeless p="$0" onPress={() => openMenu()}>
+                <Feather
+                  name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
+                  size={26}
+                />
+              </Button>
+            )}
+          </XStack>
+        </View>
+      </XStack>
+    ) : null
 
   const RenderSelfHeader = () => (
-    <XStack w="100%" justifyContent="space-between" alignItems="center" gap="$10" my={Platform.OS === 'android' ? "$4" : "$2"}>
+    <XStack
+      w="100%"
+      justifyContent="space-between"
+      alignItems="center"
+      gap="$10"
+      my={Platform.OS === 'android' ? '$4' : '$2'}
+    >
       <Text
         flexShrink={1}
         fontWeight="bold"
@@ -251,10 +257,15 @@ export default function ProfileHeader({
 
   return (
     <View flex={1}>
-      <View mx="$4" mt={Platform.OS === 'ios' ? "$3" : 0}>
+      <View mx="$4" mt={Platform.OS === 'ios' ? '$3' : 0}>
         {isSelf ? <RenderSelfHeader /> : <RenderGuestHeader />}
 
-        <XStack w="100%" justifyContent="space-between" alignItems="center" mt={Platform.OS === 'ios' ? "$3" : 0}>
+        <XStack
+          w="100%"
+          justifyContent="space-between"
+          alignItems="center"
+          mt={Platform.OS === 'ios' ? '$3' : 0}
+        >
           <View style={{ borderRadius: 100, overflow: 'hidden' }}>
             <Avatar
               circular

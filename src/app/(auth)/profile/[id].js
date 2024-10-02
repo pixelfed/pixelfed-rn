@@ -50,7 +50,7 @@ import { Blurhash } from 'react-native-blurhash'
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation()
   const { id, byUsername } = useLocalSearchParams()
   const selfUser = JSON.parse(Storage.getString('user.profile'))
   const queryClient = useQueryClient()
@@ -479,24 +479,21 @@ export default function ProfileScreen() {
       byUsername !== undefined && id == 0
         ? ['getAccountByUsername', byUsername]
         : ['getAccountById', id],
-    queryFn: byUsername !== undefined && id == 0 ?getAccountByUsername : getAccountById
+    queryFn: byUsername !== undefined && id == 0 ? getAccountByUsername : getAccountById,
   })
 
   useEffect(() => {
-    if(user && Platform.OS == 'android') {
-      navigation.setOptions({ 
+    if (user && Platform.OS == 'android') {
+      navigation.setOptions({
         headerTitle: user?.username,
         headerRight: () => (
           <Button chromeless p="$0" onPress={() => onOpenMenu()}>
-            <Feather
-              name={'more-vertical'}
-              size={26}
-            />
+            <Feather name={'more-vertical'} size={26} />
           </Button>
-      )
-      });
+        ),
+      })
     }
-  }, [navigation, user]);
+  }, [navigation, user])
 
   const userId = user?.id
 
@@ -552,11 +549,11 @@ export default function ProfileScreen() {
     enabled: !!userId,
   })
 
-  if (status !== 'success' || isFetching && !isFetchingNextPage) {
+  if (status !== 'success' || (isFetching && !isFetchingNextPage)) {
     return (
       <SafeAreaView edges={['top']} flex={1}>
         <Stack.Screen options={{ headerShown: false }} />
-        <View style={{flexGrow: 1,justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator color={'#000'} />
         </View>
       </SafeAreaView>
@@ -565,10 +562,11 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView flex={1} edges={['top']} style={{ backgroundColor: 'white' }}>
-      <Stack.Screen 
-      options={{ 
-        headerShown: Platform.OS === 'android' ? true : false
-      }} />
+      <Stack.Screen
+        options={{
+          headerShown: Platform.OS === 'android' ? true : false,
+        }}
+      />
       <FlatList
         data={feed?.pages.flat()}
         keyExtractor={(item, index) => item?.id.toString()}

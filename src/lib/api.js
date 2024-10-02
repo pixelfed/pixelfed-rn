@@ -94,8 +94,8 @@ export async function selfPost(
     headers['Idempotency-Key'] = randomKey(40)
   }
 
-  if(appHeader) {
-    headers['X-PIXELFED-APP'] = 1;
+  if (appHeader) {
+    headers['X-PIXELFED-APP'] = 1
   }
 
   const resp = await fetch(url, {
@@ -159,7 +159,13 @@ export async function selfDelete(path, params = {}, rawRes = false, idempotency 
   return rawRes ? resp : resp.json()
 }
 
-export async function selfGet(path, params = {}, rawRes = false, idempotency = false, appHeader = false) {
+export async function selfGet(
+  path,
+  params = {},
+  rawRes = false,
+  idempotency = false,
+  appHeader = false
+) {
   let headers = {}
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
@@ -173,8 +179,8 @@ export async function selfGet(path, params = {}, rawRes = false, idempotency = f
     headers['Idempotency-Key'] = randomKey(40)
   }
 
-  if(appHeader) {
-    headers['X-PIXELFED-APP'] = 1;
+  if (appHeader) {
+    headers['X-PIXELFED-APP'] = 1
   }
 
   const resp = await fetch(url, {

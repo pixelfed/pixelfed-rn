@@ -8,7 +8,7 @@ export default (FeedHeader = ({ title = 'Home', user }) => {
     <XStack
       px="$3"
       pb="$3"
-      pt={Platform.OS === 'android' ? "$3" : 0}
+      pt={Platform.OS === 'android' ? '$3' : 0}
       bg="white"
       justifyContent="space-between"
       alignItems="center"
