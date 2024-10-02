@@ -1,4 +1,4 @@
-import { FlatList, Dimensions, ActivityIndicator, Alert } from 'react-native'
+import { FlatList, Dimensions, ActivityIndicator, Alert, Platform } from 'react-native'
 import {
   Group,
   Image,
@@ -28,7 +28,7 @@ export default function Page() {
   }, [navigation])
   const [user, setUser] = useState()
   const instance = Storage.getString('app.instance')
-  const buildVersion = 68
+  const buildVersion = 69
   const version = Application.nativeApplicationVersion + '.' + buildVersion
 
   useEffect(() => {
@@ -100,14 +100,12 @@ export default function Page() {
                 path="/profile/follow-requests/"
               />
             ) : null}
-            {/* <GroupButton icon="archive" title="Archives" path="/settings/security" /> */}
             <GroupButton icon="grid" title="Collections" path="/collections/" />
             <GroupButton
               icon="tag"
               title="Followed Hashtags"
               path="/hashtag/followedTags"
             />
-            {/* <GroupButton icon='shield' title='Security' path='/settings/security' /> */}
             <GroupButton
               icon="lock"
               title="Privacy & Relationships"
@@ -122,16 +120,12 @@ export default function Page() {
               path="/settings/accessibility/"
             />
             <GroupButton icon="droplet" title="Appearance" path="/settings/appearance/" />
-            {/* <GroupButton icon="camera" title="Media" path="/settings/media" /> */}
-            {/* <GroupButton icon="shield" title="Security" path="/settings/security" /> */}
+            { Platform.OS === 'ios' ? (
+              <GroupButton icon="alert-triangle" title="Push Notifications" path="/settings/notifications/" />
+            ) : null}
           </Group>
 
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
-            {/* <GroupButton
-              icon="user-plus"
-              title="Invite friends"
-              path="/settings/invites/"
-            /> */}
             <GroupButton icon="server" title={instance} path="/settings/instance/" />
             <GroupButton icon="align-left" title="Legal" path="/settings/legal/" />
             <Group.Item>
