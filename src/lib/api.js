@@ -78,7 +78,8 @@ export async function selfPost(
   params = {},
   asForm = false,
   rawRes = false,
-  idempotency = false
+  idempotency = false,
+  appHeader = false
 ) {
   let headers = {}
   const instance = Storage.getString('app.instance')
@@ -91,6 +92,10 @@ export async function selfPost(
 
   if (idempotency) {
     headers['Idempotency-Key'] = randomKey(40)
+  }
+
+  if(appHeader) {
+    headers['X-PIXELFED-APP'] = 1;
   }
 
   const resp = await fetch(url, {
@@ -154,7 +159,7 @@ export async function selfDelete(path, params = {}, rawRes = false, idempotency 
   return rawRes ? resp : resp.json()
 }
 
-export async function selfGet(path, params = {}, rawRes = false, idempotency = false) {
+export async function selfGet(path, params = {}, rawRes = false, idempotency = false, appHeader = false) {
   let headers = {}
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
@@ -166,6 +171,10 @@ export async function selfGet(path, params = {}, rawRes = false, idempotency = f
 
   if (idempotency) {
     headers['Idempotency-Key'] = randomKey(40)
+  }
+
+  if(appHeader) {
+    headers['X-PIXELFED-APP'] = 1;
   }
 
   const resp = await fetch(url, {
@@ -893,4 +902,24 @@ export async function putEditPost(id, params) {
 
 export async function getStoryCarousel() {
   return await selfGet(`api/v1.1/stories/carousel`)
+}
+
+export async function pushNotificationSupported() {
+  return await selfGet(`api/v1.1/nag/state`)
+}
+
+export async function pushState() {
+  return await selfGet(`api/v1.1/push/state`, null, false, false, true)
+}
+
+export async function pushStateDisable() {
+  return await selfPost(`api/v1.1/push/disable`, null, false, false, false, true)
+}
+
+export async function pushStateCompare(params) {
+  return await selfPost(`api/v1.1/push/compare`, params, false, false, false, true)
+}
+
+export async function pushStateUpdate(params) {
+  return await selfPost(`api/v1.1/push/update`, params, false, false, false, true)
 }

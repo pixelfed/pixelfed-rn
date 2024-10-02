@@ -721,6 +721,27 @@ export default function FeedPost({
               <Separator />
             </>
           ) : null}
+          {user && user?.id === post?.account?.id ? (
+            <>
+              <Button
+                size="$6"
+                chromeless 
+                onPress={() => _onEditPost(post.id)}
+                >
+                Edit Post
+              </Button>
+              <Separator />
+              <Button
+                size="$6"
+                chromeless 
+                color="red"
+                onPress={() => _onDeletePost(post.id)}
+                >
+                Delete Post
+              </Button>
+              <Separator />
+            </>
+          ) : null}
           <Button
             size="$6"
             chromeless
