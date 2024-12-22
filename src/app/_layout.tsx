@@ -4,7 +4,7 @@ import { TamaguiProvider } from 'tamagui'
 import { config } from '../../tamagui.config'
 import { ToastProvider, ToastViewport } from '@tamagui/toast'
 import { useFonts } from 'expo-font'
-import { Stack, useRouter, ErrorBoundary } from 'expo-router'
+import { Stack, useRouter, ErrorBoundary, Slot } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import React, { useEffect } from 'react'
 import AuthProvider from '../state/AuthProvider'
@@ -103,16 +103,7 @@ function RootLayoutNav() {
               <ToastProvider native={true}>
                 <ThemeProvider value={DefaultTheme}>
                   <VideoProvider>
-                    <Stack>
-                      <Stack.Screen
-                        name="(auth)/(tabs)"
-                        options={{ headerShown: false, backBehavior: 'order' }}
-                      />
-                      <Stack.Screen
-                        name="(public)/login"
-                        options={{ headerShown: false }}
-                      />
-                    </Stack>
+                    <Slot />
                     <ToastViewport />
                   </VideoProvider>
                 </ThemeProvider>
