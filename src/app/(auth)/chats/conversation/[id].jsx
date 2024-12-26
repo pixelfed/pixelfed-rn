@@ -170,6 +170,11 @@ export default function Page() {
             chat.text = msg.text
           }
         }
+
+        if(msg.type === 'link') {
+          chat.text = msg.text
+        }
+
         return chat
       })
 
