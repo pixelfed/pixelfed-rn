@@ -28,7 +28,7 @@ export default function Page() {
   }, [navigation])
   const [user, setUser] = useState()
   const instance = Storage.getString('app.instance')
-  const buildVersion = 70
+  const buildVersion = 71
   const version = Application.nativeApplicationVersion + '.' + buildVersion
 
   useEffect(() => {
