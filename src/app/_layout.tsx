@@ -103,7 +103,16 @@ function RootLayoutNav() {
               <ToastProvider native={true}>
                 <ThemeProvider value={DefaultTheme}>
                   <VideoProvider>
-                    <Slot />
+                    <Stack>
+                      <Stack.Screen
+                        name="(auth)/(tabs)"
+                        options={{ headerShown: false, backBehavior: 'order' }}
+                      />
+                      <Stack.Screen
+                        name="(public)/login"
+                        options={{ headerShown: false }}
+                      />
+                    </Stack>
                     <ToastViewport />
                   </VideoProvider>
                 </ThemeProvider>
