@@ -1,4 +1,4 @@
-rootProject.name = 'pixelfed'
+rootProject.name = 'Pixelfed'
 
 dependencyResolutionManagement {
   versionCatalogs {
