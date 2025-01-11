@@ -148,7 +148,7 @@ export async function loginPreflightCheck(server) {
       return false
     }
 
-    const validVersion = compareSemver(json.software.version, '0.12.1')
+    const validVersion = compareSemver(json.software.version, '0.12.3')
     if (validVersion === -1) {
       Alert.alert(
         'Error',
