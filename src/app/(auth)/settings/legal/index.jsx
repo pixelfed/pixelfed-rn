@@ -65,38 +65,6 @@ export default function Screen() {
             <GroupButton icon="align-left" title="Privacy Policy" path="e/privacy" />
             <GroupButton icon="align-left" title="Terms of Service" path="e/terms" />
           </Group>
-
-          <Button
-            onPress={() => openExternalLink('github.com/pixelfed/pixelfed')}
-            bg="$gray1"
-            justifyContent="start"
-            size="$5"
-            px="$3"
-          >
-            <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
-              <XStack alignItems="center" ml="$1" gap="$3">
-                <Feather name="code" size={17} color="#666" />
-                <Text fontSize="$6">Backend source code</Text>
-              </XStack>
-              <Feather name="chevron-right" size={20} color="#ccc" />
-            </XStack>
-          </Button>
-
-          <Button
-            onPress={() => openExternalLink('github.com/pixelfed/pixelfed-rn')}
-            bg="$gray1"
-            justifyContent="start"
-            size="$5"
-            px="$3"
-          >
-            <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
-              <XStack alignItems="center" ml="$1" gap="$3">
-                <Feather name="code" size={17} color="#666" />
-                <Text fontSize="$6">App source code</Text>
-              </XStack>
-              <Feather name="chevron-right" size={20} color="#ccc" />
-            </XStack>
-          </Button>
         </YStack>
       </ScrollView>
     </SafeAreaView>
