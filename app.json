@@ -31,13 +31,15 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#000000"
       },
+      "icon": "./assets/icon.png",
       "package": "com.pixelfed",
       "permissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.CAMERA"
-      ]
+      ],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -69,15 +71,17 @@
       [
         "react-native-vision-camera",
         {
-          "cameraPermissionText": "$(PRODUCT_NAME) needs access to your Camera.",
+          "cameraPermissionText": "Pixelfed needs camera access so you can take photos and share them on your Pixelfed timeline. This allows you to capture and post new pictures directly through the app.",
           "enableMicrophonePermission": true,
-          "microphonePermissionText": "$(PRODUCT_NAME) needs access to your Microphone."
+          "microphonePermissionText": "Pixelfed needs microphone access to allow you to record and add sound to your video posts on Pixelfed. This enables you to capture videos with audio when sharing moments with your followers."
         }
       ],
       [
         "expo-notifications",
         {
-          "mode": "production"
+          "mode": "production",
+          "icon": "./assets/notification-icon.png",
+          "color": "#ffffff" 
         }
       ]
     ],
