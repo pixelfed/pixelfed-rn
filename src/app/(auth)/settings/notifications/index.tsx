@@ -67,7 +67,7 @@ export default function Page() {
   )
 
   const RenderSettings = () => {
-    if (!checkData || !checkData['active'] || Platform.OS === 'android') {
+    if (!checkData || !checkData['active']) {
       return <RenderUnsupportedPanel />
     }
     return <PushNotificationSettings />
