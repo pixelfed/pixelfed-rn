@@ -950,11 +950,11 @@ PODS:
   - React-Mapbuffer (0.73.6):
     - glog
     - React-debug
-  - react-native-blur (4.4.0):
+  - react-native-blur (4.4.1):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - react-native-blurhash (2.0.3):
+  - react-native-blurhash (2.1.0):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
@@ -1179,11 +1179,11 @@ PODS:
   - SocketRocket (0.6.1)
   - SPAlert (4.2.0)
   - SPIndicator (1.6.4)
-  - VisionCamera (4.5.1):
-    - VisionCamera/Core (= 4.5.1)
-    - VisionCamera/React (= 4.5.1)
-  - VisionCamera/Core (4.5.1)
-  - VisionCamera/React (4.5.1):
+  - VisionCamera (4.6.3):
+    - VisionCamera/Core (= 4.6.3)
+    - VisionCamera/React (= 4.6.3)
+  - VisionCamera/Core (4.6.3)
+  - VisionCamera/React (4.6.3):
     - React-Core
   - Yoga (1.14.0)
 
@@ -1506,8 +1506,8 @@ SPEC CHECKSUMS:
   React-jsinspector: 85583ef014ce53d731a98c66a0e24496f7a83066
   React-logger: 3eb80a977f0d9669468ef641a5e1fabbc50a09ec
   React-Mapbuffer: 84ea43c6c6232049135b1550b8c60b2faac19fab
-  react-native-blur: 799045500f56146afc46245148080e7b7623cb75
-  react-native-blurhash: 1cd8ddf345cea6bd6a4ebb79c9ad8ac3cddd9cd4
+  react-native-blur: b2b140d3d65077a1d5d26be62d9415f895592344
+  react-native-blurhash: 213854df61712e9b4dfe6725d47b581f61a578be
   react-native-mmkv: 1fdc81aa70c1aba09370718e6a63a09cbbbac8d2
   react-native-netinfo: 3aa5637c18834966e0c932de8ae1ae56fea20a97
   react-native-safe-area-context: 0ee144a6170530ccc37a0fd9388e28d06f516a89
@@ -1545,7 +1545,7 @@ SPEC CHECKSUMS:
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   SPAlert: 735da1f16a887e294719217572ce1f936d8c8782
   SPIndicator: 93e0a4fb23de51294ac48e874c0f081a5e293e4f
-  VisionCamera: 104de00dce2e04dec51bfb6027eff0312fa3174e
+  VisionCamera: 598ab83c6bf4d65f5c32ec54361eed866505d388
   Yoga: d17d2cc8105eed528474683b42e2ea310e1daf61
 
 PODFILE CHECKSUM: 90492b79e93223cbd6fe622756ee11dab72acbef
