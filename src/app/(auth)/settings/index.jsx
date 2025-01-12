@@ -28,7 +28,7 @@ export default function Page() {
   }, [navigation])
   const [user, setUser] = useState()
   const instance = Storage.getString('app.instance')
-  const buildVersion = 71
+  const buildVersion = 74
   const version = Application.nativeApplicationVersion + '.' + buildVersion
 
   useEffect(() => {
@@ -46,6 +46,10 @@ export default function Page() {
     openBrowserAsync('https://github.com/pixelfed/pixelfed-rn/discussions')
   }
 
+  const openLink = async (path) => {
+    openBrowserAsync('https://' + instance + '/' + path)
+  }
+
   const GroupButton = ({ icon, title, path }) => (
     <Group.Item>
       <Link href={path} asChild>
@@ -59,6 +63,20 @@ export default function Page() {
           </XStack>
         </Button>
       </Link>
+    </Group.Item>
+  )
+
+  const GroupUrlButton = ({ icon, title, path }) => (
+    <Group.Item>
+        <Button bg="$gray1" justifyContent="start" size="$5" px="$3" onPress={() => openLink(path)}>
+          <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
+            <XStack alignItems="center" ml="$1" gap="$3">
+              <Feather name={icon} size={17} color="red" />
+              <Text fontSize="$6" color="red">{title}</Text>
+            </XStack>
+            <Feather name="chevron-right" size={20} color="#ccc" />
+          </XStack>
+        </Button>
     </Group.Item>
   )
 
@@ -120,35 +138,17 @@ export default function Page() {
               path="/settings/accessibility/"
             />
             <GroupButton icon="droplet" title="Appearance" path="/settings/appearance/" />
-            {Platform.OS === 'ios' ? (
               <GroupButton
                 icon="alert-triangle"
                 title="Push Notifications"
                 path="/settings/notifications/"
               />
-            ) : null}
           </Group>
 
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
             <GroupButton icon="server" title={instance} path="/settings/instance/" />
             <GroupButton icon="align-left" title="Legal" path="/settings/legal/" />
-            <Group.Item>
-              <Button
-                onPress={() => onFeedback()}
-                bg="$gray1"
-                justifyContent="start"
-                size="$5"
-                px="$3"
-              >
-                <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
-                  <XStack alignItems="center" ml="$1" gap="$3">
-                    <Feather name="help-circle" size={17} color="#666" />
-                    <Text fontSize="$6">Report an issue or feedback</Text>
-                  </XStack>
-                  <Feather name="chevron-right" size={20} color="#ccc" />
-                </XStack>
-              </Button>
-            </Group.Item>
+            <GroupUrlButton icon="trash" title="Delete Account" path="settings/remove/request/permanent" />
           </Group>
 
           <Button bg="$gray1" justifyContent="start" size="$5" px="$3">
