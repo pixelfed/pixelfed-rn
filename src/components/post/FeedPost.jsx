@@ -1,8 +1,8 @@
-import { Alert, Dimensions, Share, StyleSheet, Pressable, Platform } from 'react-native'
-import { Button, Group, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
-import { Feather, Ionicons } from '@expo/vector-icons'
+import { Alert, Dimensions, Share, Pressable, Platform } from 'react-native'
+import { Button, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
+import { Feather } from '@expo/vector-icons'
 import FastImage from 'react-native-fast-image'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import {
   _timeAgo,
   enforceLen,
@@ -17,18 +17,84 @@ import {
   BottomSheetScrollView,
   BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet'
-import Carousel, { ICarouselInstance, Pagination } from 'react-native-reanimated-carousel'
-import { useSharedValue } from 'react-native-reanimated'
+import Carousel, { Pagination } from 'react-native-reanimated-carousel'
 import ReadMore from '../common/ReadMore'
 import LikeButton from 'src/components/common/LikeButton'
 import AutolinkText from 'src/components/common/AutolinkText'
 import { Blurhash } from 'react-native-blurhash'
-import Video, { VideoRef } from 'react-native-video'
 import { PressableOpacity } from 'react-native-pressable-opacity'
-import { BlurView } from '@react-native-community/blur'
 import VideoPlayer from './VideoPlayer'
 import ReadMoreAndroid from '../common/ReadMoreAndroid'
 import { Storage } from 'src/state/cache'
+import { State, PinchGestureHandler } from 'react-native-gesture-handler'
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated'
+
+const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
+
+const ZoomableImage = ({ source, style }) => {
+  const scale = useSharedValue(1)
+  const savedScale = useSharedValue(1)
+  const translateX = useSharedValue(0)
+  const translateY = useSharedValue(0)
+  const originX = useSharedValue(0)
+  const originY = useSharedValue(0)
+
+  const onGestureEvent = (event) => {
+    const pinchScale = event.nativeEvent.scale
+    const nextScale = savedScale.value * pinchScale
+    const touchX = event.nativeEvent.focalX
+    const touchY = event.nativeEvent.focalY
+
+    if (scale.value === savedScale.value) {
+      originX.value = touchX
+      originY.value = touchY
+    }
+
+    const focalDeltaX = (touchX - originX.value) * (pinchScale - 1)
+    const focalDeltaY = (touchY - originY.value) * (pinchScale - 1)
+    
+    scale.value = nextScale
+    translateX.value = focalDeltaX
+    translateY.value = focalDeltaY
+  }
+
+  const onHandlerStateChange = (event) => {
+    if (event.nativeEvent.oldState === State.ACTIVE) {
+      savedScale.value = scale.value
+      scale.value = withSpring(1)
+      savedScale.value = 1
+      translateX.value = withSpring(0)
+      translateY.value = withSpring(0)
+    }
+  }
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+      { scale: scale.value },
+    ],
+  }))
+
+  return (
+    <PinchGestureHandler
+      onGestureEvent={onGestureEvent}
+      onHandlerStateChange={onHandlerStateChange}
+    >
+      <Animated.View>
+        <AnimatedFastImage
+          source={source}
+          style={[style, animatedStyle]}
+          resizeMode={FastImage.resizeMode.contain}
+        />
+      </Animated.View>
+    </PinchGestureHandler>
+  )
+}
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 const AVATAR_WIDTH = 45
@@ -149,11 +215,10 @@ const PostMedia = React.memo(({ media, post }) => {
   }
 
   return (
-    <View flex={1} borderBottomWidth={1} borderBottomColor="$gray5">
-      <FastImage
-        style={{ width: SCREEN_WIDTH, height: height, backgroundColor: '#000' }}
+    <View flex={1} borderBottomWidth={1} borderBottomColor="$gray5" zIndex={100}>
+      <ZoomableImage
         source={{ uri: mediaUrl }}
-        resizeMode={FastImage.resizeMode.contain}
+        style={{ width: SCREEN_WIDTH, height: height, backgroundColor: '#000' }}
       />
     </View>
   )
