@@ -5,7 +5,6 @@ export const openBrowserAsync = async (url) => {
     toolbarColor: '#000000',
     enableBarCollapsing: true,
     dismissButtonStyle: 'close',
-    presentationStyle: 'popover',
   })
 }
 
