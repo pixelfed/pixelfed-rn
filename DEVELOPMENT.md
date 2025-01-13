@@ -47,3 +47,22 @@ yarn android
 yarn ios
 ```
 
+## Troubleshooting
+
+### node not fount
+If iOS build complains about not being able to find `node`, but you can use node just fine, then run:
+```
+echo export NODE_BINARY=$(command -v node) > ios/.xcode.env.local
+```
+
+### missing .mm file in pods
+when you get an error like this one:
+```
+error: Build input file cannot be found: '/Users/me/Coding/pixelfed/pixelfed-rn/node_modules/react-native/React/Fabric/RCTThirdPartyFabricComponentsProvider.mm'. Did you forget to declare this file as an output of a script phase or custom build rule which produces it? (in target 'React-RCTFabric' from project 'Pods')
+```
+then you might be able to fix it by:
+```sh
+cd ios
+pod install
+```
+
