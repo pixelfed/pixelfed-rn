@@ -35,7 +35,7 @@ export default function Page() {
     queryKey: ['profileById', userCache.id],
     queryFn: getAccountById,
   })
-  const [website, setWebsite] = useState(user.website.replace('https://', ''))
+  const [website, setWebsite] = useState(user.website?.replace('https://', ''))
   const [isSubmitting, setSubmitting] = useState(false)
 
   const mutation = useMutation({
@@ -80,7 +80,7 @@ export default function Page() {
           <Text color="$gray8">Website</Text>
 
           <View alignItems="flex-end" justifyContent="flex-end">
-            <Text color="$gray9">{website?.length}/120</Text>
+            <Text color="$gray9">{website?.length||0}/120</Text>
           </View>
         </XStack>
         <Input
@@ -90,7 +90,7 @@ export default function Page() {
           borderTopWidth={0}
           bg="white"
           maxLength={120}
-          placeholder="Add your full name, or nickname"
+          placeholder="example.com"
           p="0"
           m="0"
           size="$6"
