@@ -134,10 +134,16 @@ export default function Page() {
           borderBottomWidth={border ? 1 : 0}
           borderBottomColor="$gray4"
         >
-          <Link href={path}>
-            <Text fontSize="$6" flexWrap="wrap">
-              {value}
-            </Text>
+          <Link href={path} asChild>
+            <View
+              w="100%"
+              alignSelf="stretch"
+              pressStyle={{ backgroundColor: 'rgba(0,0,0,0.2)' }}
+            >
+              <Text fontSize="$6" flexWrap="wrap">
+                {value}
+              </Text>
+            </View>
           </Link>
         </View>
       ) : (
