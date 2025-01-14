@@ -1,3 +1,4 @@
+//@ts-check
 import { FlatList, Dimensions, ActivityIndicator, Platform } from 'react-native'
 import { Image, ScrollView, Text, View, YStack } from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
@@ -10,8 +11,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   getStatusById,
   getAccountStatusesById,
-  likeStatus,
-  unlikeStatus,
   deleteStatusV1,
   reblogStatus,
   unreblogStatus,
@@ -23,6 +22,8 @@ import {
   BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet'
 import CommentFeed from 'src/components/post/CommentFeed'
+import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
+
 
 export default function Page() {
   const { id } = useLocalSearchParams()
@@ -54,12 +55,7 @@ export default function Page() {
     bottomSheetModalRef.current?.present()
   }, [])
 
-  const likeMutation = useMutation({
-    mutationFn: async (handleLike) => {
-      return handleLike.type === 'like'
-        ? await likeStatus(handleLike)
-        : await unlikeStatus(handleLike)
-    },
+  const { handleLike } = useLikeMutation({
     onSuccess: () => {
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ['getStatusById'] })
@@ -78,10 +74,6 @@ export default function Page() {
         : await unreblogStatus(handleShare)
     },
   })
-
-  const handleLike = async (id, state) => {
-    likeMutation.mutate({ type: state ? 'unlike' : 'like', id: id })
-  }
 
   const handleGotoUsernameProfile = (id) => {
     bottomSheetModalRef.current?.close()

@@ -7,6 +7,7 @@ import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-q
 import FeedPost from 'src/components/post/FeedPost'
 import { useCallback, useLayoutEffect } from 'react'
 import { Storage } from 'src/state/cache'
+import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 
 export default function LikesScreen() {
   const router = useRouter()
@@ -14,6 +15,7 @@ export default function LikesScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'My Likes', headerBackTitle: 'Back' })
   }, [navigation])
+  const { handleLike } = useLikeMutation()
   const userJson = Storage.getString('user.profile')
   const user = JSON.parse(userJson)
   const renderItem = useCallback(
