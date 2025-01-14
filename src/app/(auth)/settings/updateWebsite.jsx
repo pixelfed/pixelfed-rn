@@ -35,7 +35,7 @@ export default function Page() {
     queryKey: ['profileById', userCache.id],
     queryFn: getAccountById,
   })
-  const [website, setWebsite] = useState(user.website.replace('https://', ''))
+  const [website, setWebsite] = useState(user.website?.replace('https://', ''))
   const [isSubmitting, setSubmitting] = useState(false)
 
   const mutation = useMutation({
