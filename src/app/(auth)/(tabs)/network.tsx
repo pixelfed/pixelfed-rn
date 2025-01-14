@@ -28,6 +28,7 @@ import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet'
 import CommentFeed from 'src/components/post/CommentFeed'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
+import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   return (
@@ -183,29 +184,7 @@ export default function HomeScreen() {
     },
   })
 
-  const likeMutation = useMutation({
-    mutationFn: async (handleLike) => {
-      try {
-        return handleLike.type === 'like'
-          ? await likeStatus(handleLike)
-          : await unlikeStatus(handleLike)
-      } catch (error) {
-        console.error('Error within mutationFn:', error)
-        throw error
-      }
-    },
-    onError: (error) => {
-      console.error('Error handled by like useMutation:', error)
-    },
-  })
-
-  const handleLike = async (id, state) => {
-    try {
-      likeMutation.mutate({ type: state ? 'unlike' : 'like', id: id })
-    } catch (error) {
-      console.error('Error occurred during share:', error)
-    }
-  }
+  const { handleLike } = useLikeMutation()
 
   const handleShowLikes = (id) => {
     bottomSheetModalRef.current?.close()
