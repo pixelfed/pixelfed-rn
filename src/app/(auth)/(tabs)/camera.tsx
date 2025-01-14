@@ -35,7 +35,7 @@ import {
   SCREEN_WIDTH,
 } from '@gorhom/bottom-sheet'
 import { Switch } from 'src/components/form/Switch'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   getInstanceV1,
   getComposeSettings,
@@ -65,6 +65,7 @@ export default function Camera() {
   const [curAltext, setCurAltext] = useState('')
   const [canPost, setCanPost] = useState(false)
   const [isPosting, setIsPosting] = useState(false)
+  const queryClient = useQueryClient()
   const scopeLabel = {
     public: 'Anyone can view',
     unlisted: 'Unlisted from feeds',
@@ -402,6 +403,7 @@ export default function Camera() {
       .then((res) => {
         resetForm()
         router.replace('/?ref30=1')
+        queryClient.invalidateQueries({ queryKey: ['statusesById', userSelf?.id] })}
       })
   }
 
