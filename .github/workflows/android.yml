@@ -23,4 +23,4 @@ jobs:
         run: npm install
 
       - name: 🚀 Build app
-        run: npx expo prebuild && npx react-native build-android
+        run: npx expo prebuild --platform android && npx react-native build-android
