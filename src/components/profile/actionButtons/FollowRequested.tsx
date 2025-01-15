@@ -1,6 +1,6 @@
 import { Button, XStack } from 'tamagui'
 
-export default function FollowProfile({ onPress }) {
+export default function FollowProfile({ onPress }: { onPress: () => void }) {
   return (
     <XStack w="100%" my="$3" gap="$2">
       <Button
