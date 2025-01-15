@@ -18,14 +18,14 @@ export default class ReadMore extends React.Component<PropsWithChildren<ReadMore
     shouldShowReadMore: false,
     showAllText: false,
   }
-  protected isMounted: boolean = false
+  protected isReadMoreMounted: boolean = false
   protected text: Text | null = null
 
   async componentDidMount() {
-    this.isMounted = true
+    this.isReadMoreMounted = true
     await nextFrameAsync()
 
-    if (!this.isMounted) {
+    if (!this.isReadMoreMounted) {
       return
     }
 
@@ -38,7 +38,7 @@ export default class ReadMore extends React.Component<PropsWithChildren<ReadMore
     this.setState({ measured: true })
     await nextFrameAsync()
 
-    if (!this.isMounted) {
+    if (!this.isReadMoreMounted) {
       return
     }
 
@@ -54,7 +54,7 @@ export default class ReadMore extends React.Component<PropsWithChildren<ReadMore
   }
 
   componentWillUnmount() {
-    this.isMounted = false
+    this.isReadMoreMounted = false
   }
 
   render() {
