@@ -1,6 +1,4 @@
 import {
-  FlatList,
-  Dimensions,
   ActivityIndicator,
   Alert,
   Pressable,
@@ -8,36 +6,27 @@ import {
 } from 'react-native'
 import {
   Group,
-  Image,
   ScrollView,
   Separator,
   Text,
   View,
-  XGroup,
   XStack,
   YStack,
   Button,
-  Theme,
 } from 'tamagui'
 import { Storage } from 'src/state/cache'
 import { getAdminUser } from 'src/lib/api'
-import { useState, useEffect, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, Link, useRouter } from 'expo-router'
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
 import {
-  openBrowserAsync,
   prettyCount,
   _timeAgo,
   enforceLen,
   formatTimestamp,
 } from 'src/utils'
-import { Switch } from 'src/components/form/Switch'
 import {
   useQuery,
-  useInfiniteQuery,
-  useQueryClient,
-  useMutation,
 } from '@tanstack/react-query'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { PressableOpacity } from 'react-native-pressable-opacity'
@@ -46,7 +35,6 @@ export default function Screen() {
   const { id } = useLocalSearchParams()
   const router = useRouter()
   const instance = Storage.getString('app.instance')
-  const queryClient = useQueryClient()
 
   const gotoProfile = () => {
     const pid = account?.data.profile_id

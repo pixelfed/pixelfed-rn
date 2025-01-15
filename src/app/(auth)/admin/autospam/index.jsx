@@ -1,4 +1,4 @@
-import { Link, router, Stack, useRouter } from 'expo-router'
+import { Stack, useRouter } from 'expo-router'
 import { ActivityIndicator, Alert, FlatList, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Separator, Text, XStack, YStack, View, Group, Button } from 'tamagui'

@@ -1,19 +1,15 @@
-import { Stack, useRouter, Link } from 'expo-router'
+import { Stack, useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {
-  Group,
-  Image,
-  ScrollView,
   Separator,
   Text,
   View,
   XStack,
   YStack,
-  Button,
 } from 'tamagui'
 import { Storage } from 'src/state/cache'
 import { Feather } from '@expo/vector-icons'
-import { useQuery, useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { adminInstances } from 'src/lib/api'
 import { ActivityIndicator, FlatList } from 'react-native'
 import { enforceLen, prettyCount, _timeAgo } from 'src/utils'

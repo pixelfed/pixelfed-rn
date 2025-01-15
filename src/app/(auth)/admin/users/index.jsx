@@ -1,39 +1,24 @@
-import { FlatList, Dimensions, ActivityIndicator, Alert } from 'react-native'
+import { FlatList, ActivityIndicator } from 'react-native'
 import {
-  Group,
-  Image,
-  ScrollView,
   Separator,
   Text,
   View,
-  XGroup,
   XStack,
   YStack,
-  Button,
-  Theme,
 } from 'tamagui'
-import ProfileHeader from '@components/profile/ProfileHeader'
-import { Storage } from 'src/state/cache'
 import { getAdminUsers } from 'src/lib/api'
-import { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, Link } from 'expo-router'
+import { Stack, Link } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
-import { openBrowserAsync, prettyCount, _timeAgo, enforceLen } from 'src/utils'
-import { Switch } from 'src/components/form/Switch'
+import { prettyCount, _timeAgo, enforceLen } from 'src/utils'
 import {
-  useQuery,
   useInfiniteQuery,
-  useQueryClient,
-  useMutation,
 } from '@tanstack/react-query'
 import UserAvatar from 'src/components/common/UserAvatar'
 
 const keyExtractor = (_, index) => `user-${_.id}`
 
 export default function Screen() {
-  const instance = Storage.getString('app.instance')
-  const queryClient = useQueryClient()
 
   const RenderItem = ({ item }) => (
     <Link href={`/admin/users/show/${item.id}`} asChild>

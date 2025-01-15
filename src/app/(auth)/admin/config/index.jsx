@@ -1,25 +1,15 @@
-import { FlatList, Dimensions, ActivityIndicator, Alert } from 'react-native'
+import { FlatList, ActivityIndicator, Alert } from 'react-native'
 import {
-  Group,
-  Image,
-  ScrollView,
   Separator,
   Text,
   View,
-  XGroup,
   XStack,
   YStack,
-  Button,
-  Theme,
 } from 'tamagui'
-import ProfileHeader from '@components/profile/ProfileHeader'
 import { Storage } from 'src/state/cache'
 import { getAdminConfig, updateAdminConfig } from 'src/lib/api'
-import { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, Link } from 'expo-router'
-import { Feather } from '@expo/vector-icons'
-import { openBrowserAsync, prettyCount } from 'src/utils'
+import { Stack } from 'expo-router'
 import { Switch } from 'src/components/form/Switch'
 import {
   useQuery,

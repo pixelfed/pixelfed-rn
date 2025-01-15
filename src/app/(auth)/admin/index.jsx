@@ -2,7 +2,6 @@ import { Stack, useRouter, Link } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {
   Group,
-  Image,
   ScrollView,
   Separator,
   Text,
