@@ -559,7 +559,7 @@ export default function ProfileScreen() {
     <SafeAreaView edges={['top']} style={{ backgroundColor: 'white' }}>
       <Stack.Screen
         options={{
-          headerShown: Platform.OS === 'android' ? true : false,
+          headerShown: Platform.OS === 'android',
         }}
       />
       <FlatList
