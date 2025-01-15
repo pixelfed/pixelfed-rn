@@ -283,7 +283,7 @@ export default function Page() {
   if (error) {
     return (
       <View flexGrow={1}>
-        <YStack justifyContent="center" alignItems="center" flexGrow="1" p="$4">
+        <YStack justifyContent="center" alignItems="center" p="$4">
           <Text fontSize="$7">Oops! An Error Occured.</Text>
           <Text>{error?.message}</Text>
         </YStack>
@@ -292,7 +292,7 @@ export default function Page() {
   }
 
   return (
-    <SafeAreaView flexGrow={1} edges={['left']}>
+    <SafeAreaView edges={['left']}>
       <Stack.Screen
         options={{
           title: `#${id}`,
