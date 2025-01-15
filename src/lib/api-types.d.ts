@@ -12,10 +12,7 @@ export type Relationship = {
   showing_reblogs;
 };
 
-export type User = {};
-
-/** this is saved */
-export type LoginUserResponse = {
+export type Account = {
   /** value is username */
   acct: string;
   avatar: string;
@@ -37,13 +34,17 @@ export type LoginUserResponse = {
   /** bio */
   note_text: string;
   pronouns: string[];
-  settings: LoginUserSettings;
   source: LoginUserSource;
-  statuses_count: number;
   /** url of profile, for pixelfed: https://<instance>/<username> */
   url: string;
   username: string;
   website: string;
+};
+
+/** this is saved */
+export interface LoginUserResponse extends Account{
+  statuses_count: number;
+  settings: LoginUserSettings;
 };
 
 export type LoginUserSettings = {

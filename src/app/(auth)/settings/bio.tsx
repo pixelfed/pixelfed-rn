@@ -12,16 +12,13 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack } from 'expo-router'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import {
-  getAccountById,
   getConfig,
   updateCredentials,
 } from 'src/lib/api'
 import { router } from 'expo-router'
-import { useUserCache } from 'src/state/AuthProvider'
+import { useQuerySelfProfile, useUserCache } from 'src/state/AuthProvider'
 
 export default function Page() {
-  const userCache = useUserCache()
-
   const { data: config } = useQuery({
     queryKey: ['getConfig'],
     queryFn: getConfig,
@@ -29,11 +26,8 @@ export default function Page() {
 
   const maxLen = config ? Math.floor(config?.account.max_bio_length) : 0
 
-  const { data: user } = useQuery({
-    queryKey: ['profileById', userCache.id],
-    queryFn: getAccountById,
-  })
-  const [bio, setBio] = useState(user.note_text)
+  const {user} = useQuerySelfProfile()
+  const [bio, setBio] = useState(user?.note_text)
   const [isSubmitting, setSubmitting] = useState(false)
 
   const mutation = useMutation({

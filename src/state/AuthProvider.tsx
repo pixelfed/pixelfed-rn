@@ -1,4 +1,4 @@
-import { createContext, useEffect } from 'react'
+import { createContext, useCallback, useEffect } from 'react'
 import { useContext, useState } from 'react'
 import { router, useSegments } from 'expo-router'
 import { loginPreflightCheck, postForm, get, verifyCredentials } from 'src/requests'
@@ -8,7 +8,9 @@ import * as WebBrowser from 'expo-web-browser'
 import { Platform, Alert } from 'react-native'
 
 import type { ReactNode } from 'react'
-import { LoginUserResponse } from 'src/lib/api-types'
+import { Account, LoginUserResponse } from 'src/lib/api-types'
+import { useQuery } from '@tanstack/react-query'
+import { getAccountById } from 'src/lib/api'
 
 type User = {
   server: string
@@ -22,6 +24,7 @@ type AuthProvider = {
   logout: () => void
   // setUser: (newValue: User | null) => void,
   userCache: LoginUserResponse | null
+  loadUserCacheFromStorage: ()=>void
 }
 
 function useProtectedRoute(user: User | null, setUser: any, setIsLoading: any) {
@@ -69,7 +72,8 @@ export const AuthContext = createContext<AuthProvider>({
   login: () => Promise.resolve(false),
   logout: () => {},
   // setUser: (newValue: User|null) => {},
-  userCache: null
+  userCache: null,
+  loadUserCacheFromStorage: () => {}
 })
 
 export function useAuth() {
@@ -85,10 +89,14 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [userCache, setUserCache] = useState<LoginUserResponse|null>(null)
 
-  useEffect(()=>{
+  const loadUserCacheFromStorage = useCallback(() => {
     let saved = Storage.getString('user.profile')
     setUserCache(saved ? JSON.parse(saved) : null) 
-  }, [] /** only run when component is constructed */)
+  }, [])
+
+  useEffect(() => {
+    loadUserCacheFromStorage()
+  }, [loadUserCacheFromStorage] /** only run when component is constructed */)
 
   const login = async (server: string) => {
     const precheck = await loginPreflightCheck(server)
@@ -197,7 +205,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   useProtectedRoute(user, setUser, setIsLoading)
 
   return (
-    <AuthContext.Provider value={{ isLoading, user, login, logout, userCache }}>
+    <AuthContext.Provider value={{ isLoading, user, login, logout, userCache, loadUserCacheFromStorage }}>
       {children}
     </AuthContext.Provider>
   )
@@ -211,4 +219,28 @@ export function useUserCache(){
     throw new Error("Error: user info not available")
   }
   return userCache
+}
+
+// this query is preffiled with cached info and will update cache if sth changes
+export function useQuerySelfProfile(){
+  const { userCache, loadUserCacheFromStorage } = useAuth() // user id will be static, so ideally static stuff should be in seperate context (that react only updates it on logout/login)
+  if(!userCache) {
+    throw new Error("userCache not set");
+  }
+
+  const { data: user, isFetching, isFetchedAfterMount } = useQuery<Account>({
+    queryKey: ['profileById', userCache.id],
+    queryFn: getAccountById,
+    placeholderData: userCache,
+  })
+
+  useEffect(()=>{
+    if (user && isFetchedAfterMount) {
+      // if data is new replace it
+      Storage.set('user.profile', JSON.stringify({...userCache, ...user}))
+      loadUserCacheFromStorage()
+    }
+  }, [user, isFetchedAfterMount])
+
+  return {user, isFetching}
 }

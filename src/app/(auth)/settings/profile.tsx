@@ -12,39 +12,22 @@ import {
 import { useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, Link, useNavigation } from 'expo-router'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import {
-  getAccountById,
   updateAvatar,
   deleteAvatar,
 } from 'src/lib/api'
 import * as ImagePicker from 'expo-image-picker'
 import mime from 'mime'
-import { useUserCache } from 'src/state/AuthProvider'
-
+import { useQuerySelfProfile } from 'src/state/AuthProvider'
 export default function Page() {
   const navigation = useNavigation()
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Edit Profile', headerBackTitle: 'Back' })
   }, [navigation])
-  const {id: userId} = useUserCache() // user id will be static, so ideally static stuff should be in seperate context (that react only updates it on logout/login)
+ 
   const queryClient = useQueryClient()
-
-  const { data: user, isFetching } = useQuery({
-    queryKey: ['profileById', userId],
-    queryFn: getAccountById,
-  })
-
-  console.log("profileById", user);
-  
-
-  if (isFetching) {
-    return (
-      <View>
-        <ActivityIndicator />
-      </View>
-    )
-  }
+  const {user, isFetching} = useQuerySelfProfile()
 
   const updateProfilePhoto = () => {
     const isDefault = user?.avatar.includes('default.')
@@ -171,6 +154,7 @@ export default function Page() {
           headerBackTitle: 'Back',
         }}
       />
+      {isFetching && <ActivityIndicator color={'#000'} />}
       <ScrollView flexShrink={1}>
         <YStack pt="$3" gap="$2" justifyContent="center" alignItems="center">
           <Avatar circular size="$10" borderWidth={1} borderColor="$gray6">
