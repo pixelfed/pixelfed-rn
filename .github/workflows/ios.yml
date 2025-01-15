@@ -23,7 +23,7 @@ jobs:
           cache: yarn
 
       - name: 📦 Install dependencies
-        run: yarn install
+        run: npm install
 
       - name: 🚀 Build app
         run: npx expo prebuild --platform ios && npx react-native build-ios

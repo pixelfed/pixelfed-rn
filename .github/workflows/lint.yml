@@ -23,7 +23,7 @@ jobs:
           cache: yarn
 
       - name: 📦 Install dependencies
-        run: yarn install
+        run: npm install
 
       - name: 🧹 Run biomejs
-        run: yarn lint-check
+        run: npm lint-check
