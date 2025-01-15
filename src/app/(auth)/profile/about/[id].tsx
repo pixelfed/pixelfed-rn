@@ -12,7 +12,7 @@ export default function ProfileScreen() {
   const { id } = useLocalSearchParams()
   const router = useRouter()
 
-  const getDomain = (url) => {
+  const getDomain = (url:string) => {
     let domain = new URL(url)
     return domain.hostname
   }

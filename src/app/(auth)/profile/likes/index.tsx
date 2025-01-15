@@ -72,7 +72,7 @@ export default function LikesScreen() {
     )
   }
   return (
-    <SafeAreaView flex={1} edges={['left']}>
+    <SafeAreaView edges={['left']}>
       <Stack.Screen
         options={{
           title: 'My Likes',

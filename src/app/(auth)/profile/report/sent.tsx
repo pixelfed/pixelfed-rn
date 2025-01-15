@@ -7,7 +7,7 @@ export default function Page() {
   const router = useRouter()
 
   return (
-    <SafeAreaView flex={1} style={{ backgroundColor: 'white' }}>
+    <SafeAreaView style={{ backgroundColor: 'white' }}>
       <Stack.Screen
         options={{
           title: 'Report Sent',

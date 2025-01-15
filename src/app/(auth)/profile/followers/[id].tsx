@@ -98,7 +98,7 @@ export default function FollowersScreen() {
   }
 
   return (
-    <SafeAreaView flex={1} edges={['bottom']}>
+    <SafeAreaView edges={['bottom']}>
       <Stack.Screen
         options={{
           title: 'Followers',

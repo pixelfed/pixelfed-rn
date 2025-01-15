@@ -53,7 +53,7 @@ export default function Page() {
   })
 
   return (
-    <SafeAreaView flex={1} edges={['bottom']}>
+    <SafeAreaView edges={['bottom']}>
       <Stack.Screen
         options={{
           title: 'Report Profile',
