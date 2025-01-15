@@ -28,10 +28,10 @@ export default function SearchScreen() {
   }
 
   if (isError) {
-    return <Text>Error: {error.message}</Text>
+    return <Text>Error: {error?.message}</Text>
   }
 
-  const getDomain = (url) => {
+  const getDomain = (url:string) => {
     let domain = new URL(url)
     return domain.hostname
   }
