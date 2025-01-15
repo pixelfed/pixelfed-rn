@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { View, TouchableOpacity, StyleSheet } from 'react-native'
+import React, { useRef } from 'react'
+import { View, StyleSheet } from 'react-native'
 import Video from 'react-native-video'
 import Feather from '@expo/vector-icons/Feather'
 import { BlurView } from '@react-native-community/blur'
