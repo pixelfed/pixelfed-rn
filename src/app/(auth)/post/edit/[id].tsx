@@ -14,7 +14,6 @@ import {
   YStack,
   TextArea,
 } from 'tamagui'
-import { Storage } from 'src/state/cache'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
@@ -24,6 +23,7 @@ import UserAvatar from 'src/components/common/UserAvatar'
 import { Switch } from 'src/components/form/Switch'
 import FastImage from 'react-native-fast-image'
 import { PressableOpacity } from 'react-native-pressable-opacity'
+import { useUserCache } from 'src/state/AuthProvider'
 
 const SCREEN_HEIGHT = Dimensions.get('screen').height
 
@@ -83,7 +83,7 @@ export default function Page() {
     navigation.setOptions({ title: 'Edit Post', headerBackTitle: 'Back' })
   }, [navigation])
 
-  const user = JSON.parse(Storage.getString('user.profile'))
+  const user = useUserCache()
 
   const HeaderRight = () => (
     <PressableOpacity onPress={() => _onUpdate()}>

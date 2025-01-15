@@ -7,7 +7,6 @@ import {
   TextArea,
   Button,
 } from 'tamagui'
-import { Storage } from 'src/state/cache'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack } from 'expo-router'
@@ -18,9 +17,10 @@ import {
   updateCredentials,
 } from 'src/lib/api'
 import { router } from 'expo-router'
+import { useUserCache } from 'src/state/AuthProvider'
 
 export default function Page() {
-  const userCache = JSON.parse(Storage.getString('user.profile'))
+  const userCache = useUserCache()
 
   const { data: config } = useQuery({
     queryKey: ['getConfig'],

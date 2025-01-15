@@ -8,6 +8,7 @@ import * as WebBrowser from 'expo-web-browser'
 import { Platform, Alert } from 'react-native'
 
 import type { ReactNode } from 'react'
+import { LoginUserResponse } from 'src/lib/api-types'
 
 type User = {
   server: string
@@ -17,9 +18,10 @@ type User = {
 type AuthProvider = {
   isLoading: boolean
   user: User | null
-  login: (server: string) => boolean
+  login: (server: string) => Promise<boolean>
   logout: () => void
-  setUser: User | null
+  // setUser: (newValue: User | null) => void,
+  userCache: LoginUserResponse | null
 }
 
 function useProtectedRoute(user: User | null, setUser: any, setIsLoading: any) {
@@ -30,7 +32,7 @@ function useProtectedRoute(user: User | null, setUser: any, setIsLoading: any) {
       try {
         const token = Storage.getString('app.token')
         const server = Storage.getString('app.instance')
-        if (token && !user) {
+        if (token && server && !user) {
           const userInfo = await verifyCredentials(server, token)
           if (userInfo) {
             setUser({
@@ -64,13 +66,14 @@ function useProtectedRoute(user: User | null, setUser: any, setIsLoading: any) {
 export const AuthContext = createContext<AuthProvider>({
   isLoading: true,
   user: null,
-  login: () => false,
+  login: () => Promise.resolve(false),
   logout: () => {},
-  setUser: () => {},
+  // setUser: (newValue: User|null) => {},
+  userCache: null
 })
 
 export function useAuth() {
-  if (!useContext(AuthContext)) {
+  if (!useContext(AuthContext)) { // This does not work, because default is an object which js will inteprete as true here
     throw new Error('useAuth must be used within a <AuthProvider />')
   }
 
@@ -79,13 +82,19 @@ export function useAuth() {
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState<Boolean>(true)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [userCache, setUserCache] = useState<LoginUserResponse|null>(null)
+
+  useEffect(()=>{
+    let saved = Storage.getString('user.profile')
+    setUserCache(saved ? JSON.parse(saved) : null) 
+  }, [] /** only run when component is constructed */)
 
   const login = async (server: string) => {
     const precheck = await loginPreflightCheck(server)
     const url = 'https://' + server
     if (!precheck) {
-      return
+      return false
     }
 
     const REDIRECT_URI = Linking.createURL('login')
@@ -129,12 +138,15 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     const { path, queryParams } = Linking.parse(url)
     const REDIRECT_URI = Linking.createURL('login')
 
-    if (queryParams.error) {
+    if (queryParams?.error) {
       Alert.alert('Error', 'An error occured when attempting to log in.')
       return
     }
 
     const instance = Storage.getString('app.instance')
+    if (!instance) {
+      throw new Error("instance missing"); 
+    }
     const api = `https://${instance}`
     const clientId = Storage.getString('app.client_id')
     const clientSecret = Storage.getString('app.client_secret')
@@ -144,7 +156,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       client_secret: clientSecret,
       redirect_uri: REDIRECT_URI,
       grant_type: 'authorization_code',
-      code: queryParams.code,
+      code: queryParams?.code,
       scope: 'read write follow push admin:read admin:write',
     }
 
@@ -157,13 +169,14 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     Storage.set('app.token_created_at', token.created_at)
     Storage.set('app.expires_in', token.expires_in)
 
-    const profile = await get(
+    const profile: LoginUserResponse = await get(
       `${api}/api/v1/accounts/verify_credentials`,
       token.access_token,
       { _pe: 1 }
     ).then((resp: any) => resp.json())
-
+    
     Storage.set('user.profile', JSON.stringify(profile))
+    setUserCache(profile)
 
     setUser({
       server: instance,
@@ -177,14 +190,25 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true)
     Storage.clearAll()
     setUser(null)
+    setUserCache(null)
     setIsLoading(false)
   }
 
   useProtectedRoute(user, setUser, setIsLoading)
 
   return (
-    <AuthContext.Provider value={{ isLoading, user, login, logout }}>
+    <AuthContext.Provider value={{ isLoading, user, login, logout, userCache }}>
       {children}
     </AuthContext.Provider>
   )
+}
+
+export function useUserCache(){
+  // TODO think about this, aren't there cases where this cache needs to be updated
+  // currently it only gets updated when the user logs out and logs in again
+  const {userCache} = useContext(AuthContext)
+  if (!userCache){
+    throw new Error("Error: user info not available")
+  }
+  return userCache
 }

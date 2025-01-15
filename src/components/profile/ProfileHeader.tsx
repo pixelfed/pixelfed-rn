@@ -18,8 +18,8 @@ import { useCallback, useState } from 'react'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import UserAvatar from 'src/components/common/UserAvatar'
 const SCREEN_WIDTH = Dimensions.get('screen').width
-import { Storage } from 'src/state/cache'
 import { Relationship } from 'src/lib/api-types'
+import { useUserCache } from 'src/state/AuthProvider'
 
 type todo = any
 
@@ -51,8 +51,7 @@ export default function ProfileHeader({
   const router = useRouter()
   const [usernameTruncated, setUsernameTruncated] = useState(profile?.acct?.length > 40)
 
-  // TODO move to state react context
-  const selfUser = JSON.parse(Storage.getString('user.profile'))
+  const {id: selfId} = useUserCache()
 
   const onHashtagPress = (tag: string) => {
     router.push(`/hashtag/${tag}`)
@@ -79,7 +78,7 @@ export default function ProfileHeader({
   }
 
   const ActionButton = () => {
-    if (isSelf || selfUser?.id == profile?.id) {
+    if (isSelf || selfId == profile?.id) {
       return <EditProfile onPress={() => onGotoSettings()} />
     }
 
@@ -144,7 +143,7 @@ export default function ProfileHeader({
         </View>
         <View>
           <XStack alignItems="center" gap="$5">
-            {selfUser?.id == profile?.id ? (
+            {selfId == profile?.id ? (
               <Button chromeless p="$0" size="$2" onPress={() => onShare()}>
                 <Feather name="share" size={23} />
               </Button>

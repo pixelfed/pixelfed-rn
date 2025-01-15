@@ -1,18 +1,18 @@
 import { FlatList, Dimensions, ActivityIndicator, Share, Alert } from 'react-native'
 import { Image, View } from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
-import { Storage } from 'src/state/cache'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link } from 'expo-router'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { getAccountById, getAccountStatusesById } from 'src/lib/api'
 import Feather from '@expo/vector-icons/Feather'
 import { Blurhash } from 'react-native-blurhash'
+import { useUserCache } from 'src/state/AuthProvider'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileScreen() {
-  const userCache = JSON.parse(Storage.getString('user.profile'))
+  const userCache = useUserCache()
 
   const { data: user, isFetching } = useQuery({
     queryKey: ['profileById', userCache.id],
@@ -26,8 +26,8 @@ export default function ProfileScreen() {
       const result = await Share.share({
         message: user.url,
       })
-    } catch (error) {
-      Alert.alert(error?.message)
+    } catch (error: any) {
+      Alert.alert(error?.message || 'onshare error: error message missing')
     }
   }
 

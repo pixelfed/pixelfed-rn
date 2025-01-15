@@ -10,14 +10,14 @@ import {
   YStack,
   Button,
 } from 'tamagui'
-import { Storage } from 'src/state/cache'
 import { Feather } from '@expo/vector-icons'
 import { useQuery } from '@tanstack/react-query'
 import { getAdminStats } from 'src/lib/api'
+import { useUserCache } from 'src/state/AuthProvider'
 
 export default function Page() {
   const router = useRouter()
-  const userJson = JSON.parse(Storage.getString('user.profile'))
+  const userJson = useUserCache()
 
   if (!userJson.is_admin) {
     router.back()

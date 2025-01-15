@@ -12,7 +12,6 @@ import type { PropsWithChildren } from 'hoist-non-react-statics/node_modules/@ty
 
 export default function Page() {
   const instance = Storage.getString('app.instance').toLowerCase()
-  // const profile = JSON.parse(Storage.getString('user.profile'))
   const queryClient = useQueryClient()
 
   type RenderSwitchProps = PropsWithChildren<{ title: string, description: string}>

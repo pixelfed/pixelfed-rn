@@ -1,4 +1,4 @@
-import { Stack, useNavigation, useRouter } from 'expo-router'
+import { Stack, useNavigation } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Text, View } from 'tamagui'
 import { getSelfLikes } from 'src/lib/api'
@@ -6,18 +6,16 @@ import { ActivityIndicator, FlatList } from 'react-native'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import FeedPost from 'src/components/post/FeedPost'
 import { useCallback, useLayoutEffect } from 'react'
-import { Storage } from 'src/state/cache'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
+import { useUserCache } from 'src/state/AuthProvider'
 
 export default function LikesScreen() {
-  const router = useRouter()
   const navigation = useNavigation()
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'My Likes', headerBackTitle: 'Back' })
   }, [navigation])
   const { handleLike } = useLikeMutation()
-  const userJson = Storage.getString('user.profile')
-  const user = JSON.parse(userJson)
+  const user = useUserCache()
   const renderItem = useCallback(
     ({ item }) => (
       <FeedPost

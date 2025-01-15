@@ -10,10 +10,10 @@ import { _timeAgo } from 'src/utils'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import Feather from '@expo/vector-icons/Feather'
+import { useUserCache } from 'src/state/AuthProvider'
 
 export default function Page() {
-  // TODO move to state react context
-  const selfUser = JSON.parse(Storage.getString('user.profile'))
+  const selfUser = useUserCache()
   const navigation = useNavigation()
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Direct Messages', headerBackTitle: 'Back' })
@@ -33,7 +33,7 @@ export default function Page() {
   }
 
   if (isError) {
-    return <Text>Error: {error.message}</Text>
+    return <Text>Error: {error?.message}</Text>
   }
 
   const HeaderRight = () => (

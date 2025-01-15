@@ -6,11 +6,11 @@ import { ActivityIndicator } from 'react-native'
 import { useQuery } from '@tanstack/react-query'
 import { pushNotificationSupported } from 'src/lib/api'
 import PushNotificationSettings from 'src/components/notifications/PushNotificationSettings'
-import { Storage } from 'src/state/cache'
 import { openBrowserAsync } from 'src/utils'
+import { useUserCache } from 'src/state/AuthProvider'
 
 export default function Page() {
-  const userCache = JSON.parse(Storage.getString('user.profile'))
+  const userCache = useUserCache()
 
   const {
     data: checkData,

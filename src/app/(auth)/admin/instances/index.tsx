@@ -7,7 +7,6 @@ import {
   XStack,
   YStack,
 } from 'tamagui'
-import { Storage } from 'src/state/cache'
 import { Feather } from '@expo/vector-icons'
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { adminInstances } from 'src/lib/api'
@@ -15,18 +14,19 @@ import { ActivityIndicator, FlatList } from 'react-native'
 import { enforceLen, prettyCount, _timeAgo } from 'src/utils'
 import { useState } from 'react'
 import { PressableOpacity } from 'react-native-pressable-opacity'
+import { useUserCache } from 'src/state/AuthProvider'
 
 const keyExtractor = (_, index) => `instance-${_.id}-${index}`
 
 export default function Page() {
   const router = useRouter()
-  const userJson = JSON.parse(Storage.getString('user.profile'))
+  const {is_admin} = useUserCache()
   const [sort, setSort] = useState('desc')
   const [sortBy, setSortBy] = useState('id')
   const queryClient = useQueryClient()
 
-  if (!userJson.is_admin) {
-    router.goBack()
+  if (!is_admin) {
+    router.back()
   }
 
   const RenderItem = ({ item }) => {

@@ -1,6 +1,5 @@
 import { ActivityIndicator, Alert, AlertButton, Pressable } from 'react-native'
 import { View } from 'tamagui'
-import { Storage } from 'src/state/cache'
 import { useState, useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
@@ -13,6 +12,7 @@ import { fetchChatThread, sendChatMessage, deleteChatMessage } from 'src/lib/api
 import { _timeAgo, enforceLen } from 'src/utils'
 import { GiftedChat, Bubble, Send, BubbleProps, IMessage } from 'react-native-gifted-chat'
 import { Feather } from '@expo/vector-icons'
+import { useUserCache } from 'src/state/AuthProvider'
 
 function renderBubble<TMessage extends IMessage>(props: BubbleProps<TMessage>) {
   return (
@@ -35,7 +35,7 @@ export default function Page() {
   const [messages, setMessages] = useState([])
   const [isReloading, setReloading] = useState(false)
   const [isTyping, setTyping] = useState(false)
-  const selfUser = JSON.parse(Storage.getString('user.profile'))
+  const selfUser = useUserCache()
 
   const onSend = (messages) => {
     sendMutation.mutate(messages)

@@ -9,7 +9,6 @@ import {
   Button,
   Avatar,
 } from 'tamagui'
-import { Storage } from 'src/state/cache'
 import { useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, Link, useNavigation } from 'expo-router'
@@ -21,19 +20,23 @@ import {
 } from 'src/lib/api'
 import * as ImagePicker from 'expo-image-picker'
 import mime from 'mime'
+import { useUserCache } from 'src/state/AuthProvider'
 
 export default function Page() {
   const navigation = useNavigation()
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Edit Profile', headerBackTitle: 'Back' })
   }, [navigation])
-  const userCache = JSON.parse(Storage.getString('user.profile'))
+  const {id: userId} = useUserCache() // user id will be static, so ideally static stuff should be in seperate context (that react only updates it on logout/login)
   const queryClient = useQueryClient()
 
   const { data: user, isFetching } = useQuery({
-    queryKey: ['profileById', userCache.id],
+    queryKey: ['profileById', userId],
     queryFn: getAccountById,
   })
+
+  console.log("profileById", user);
+  
 
   if (isFetching) {
     return (

@@ -12,7 +12,7 @@ import { Storage } from 'src/state/cache'
 import React, { useState, useEffect, useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, Link, useNavigation } from 'expo-router'
-import { useAuth } from '@state/AuthProvider'
+import { useAuth, useUserCache } from '@state/AuthProvider'
 import { openBrowserAsync } from 'src/utils'
 import * as Application from 'expo-application'
 import { GroupButtonContent, GroupButtonContentProps } from 'src/components/common/GroupButtonContent'
@@ -22,15 +22,10 @@ export default function Page() {
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Settings' })
   }, [navigation])
-  const [user, setUser] = useState()
+  const {username, locked} = useUserCache()
   const instance = Storage.getString('app.instance')
   const buildVersion = 74
   const version = Application.nativeApplicationVersion + '.' + buildVersion
-
-  useEffect(() => {
-    const userJson = JSON.parse(Storage.getString('user.profile'))
-    setUser(userJson)
-  }, [])
 
   const { logout } = useAuth()
 
@@ -101,7 +96,7 @@ export default function Page() {
           </Group>
 
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
-            {user?.locked ? (
+            {locked ? (
               <GroupButton
                 icon="user-plus"
                 title="Follow Requests"
@@ -136,7 +131,7 @@ export default function Page() {
           </Group>
 
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
-            <GroupButton icon="server" title={instance} path="/settings/instance/" />
+            <GroupButton icon="server" title={instance||''} path="/settings/instance/" />
             <GroupButton icon="align-left" title="Legal" path="/settings/legal/" />
             <GroupUrlButton icon="trash" title="Delete Account" path="settings/remove/request/permanent" />
           </Group>
@@ -153,7 +148,7 @@ export default function Page() {
           </Button>
 
           <Button bg="$red4" mt="$2" onPress={() => handleLogOut()}>
-            <Text>Log out {'@' + user?.username}</Text>
+            <Text>Log out {'@' + username}</Text>
           </Button>
         </YStack>
       </ScrollView>

@@ -13,19 +13,18 @@ import { getDomain, prettyCount } from 'src/utils'
 import Feather from '@expo/vector-icons/Feather'
 import ReadMore from 'src/components/common/ReadMore'
 import { formatTimestampMonthYear, postCountLabel } from 'src/utils'
-import { Storage } from 'src/state/cache'
+import { useUserCache } from 'src/state/AuthProvider'
 
 export default function SearchScreen() {
   const [query, setQuery] = useState('')
-  const userJson = Storage.getString('user.profile')
-  const user = JSON.parse(userJson)
+  const {acct} = useUserCache()
 
   const { data, isLoading, isError, error, isFetching } = useQuery({
     queryKey: ['search', query],
     queryFn: async () => {
       const res = await searchQuery(query)
       const filtered = res.filter((r) => {
-        return r._type === 'account' && r.acct != user.acct
+        return r._type === 'account' && r.acct != acct
       })
       return filtered
     },

@@ -1,7 +1,6 @@
 //@ts-check
 import { ActivityIndicator, Platform } from 'react-native'
 import { ScrollView, Text, View } from 'tamagui'
-import { Storage } from 'src/state/cache'
 import { useRef, useMemo, useCallback, useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, router, useNavigation } from 'expo-router'
@@ -19,6 +18,7 @@ import {
 } from '@gorhom/bottom-sheet'
 import CommentFeed from 'src/components/post/CommentFeed'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
+import { useUserCache } from 'src/state/AuthProvider'
 
 
 export default function Page() {
@@ -28,7 +28,7 @@ export default function Page() {
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Post', headerBackTitle: 'Back' })
   }, [navigation])
-  const user = JSON.parse(Storage.getString('user.profile'))
+  const user = useUserCache()
   const queryClient = useQueryClient()
   const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
   const snapPoints = useMemo(() => ['45%', '70%', '90%'], [])
@@ -47,7 +47,7 @@ export default function Page() {
     bottomSheetModalRef.current?.close()
     router.push(`/hashtag/${id}`)
   }
-  const onOpenComments = useCallback((id) => {
+  const onOpenComments = useCallback((id: string) => {
     bottomSheetModalRef.current?.present()
   }, [])
 
