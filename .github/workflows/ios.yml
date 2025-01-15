@@ -2,13 +2,13 @@ name: iOS build
 
 on:
   push:
-    branches: [ main, @kwasow/CI ]
+    branches: [ main, '@kwasow/CI' ]
   pull_request:
     branches: [ main ]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: 🏗 Setup repo
         uses: actions/checkout@v3
