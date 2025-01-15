@@ -1,6 +1,7 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "noEmit": true,
     "strict": true,
     "baseUrl": ".",
     "paths": {
@@ -9,8 +10,8 @@
       "@state/*": ["./src/state/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@components/*": ["./src/components/*"],
-      "@requests": ["./src/requests.js"]
+      "@requests": ["src/requests.ts"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts", "src/app/(auth)/profile/bookmarks/index.js"]
 }
