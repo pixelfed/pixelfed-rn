@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, Pressable } from 'react-native'
+import { ActivityIndicator, Alert, AlertButton, Pressable } from 'react-native'
 import { View } from 'tamagui'
 import { Storage } from 'src/state/cache'
 import { useState, useLayoutEffect } from 'react'
@@ -11,10 +11,10 @@ import {
 } from '@tanstack/react-query'
 import { fetchChatThread, sendChatMessage, deleteChatMessage } from 'src/lib/api'
 import { _timeAgo, enforceLen } from 'src/utils'
-import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat'
+import { GiftedChat, Bubble, Send, BubbleProps, IMessage } from 'react-native-gifted-chat'
 import { Feather } from '@expo/vector-icons'
 
-const renderBubble = (props) => {
+function renderBubble<TMessage extends IMessage>(props: BubbleProps<TMessage>) {
   return (
     <Bubble
       {...props}
@@ -61,15 +61,15 @@ export default function Page() {
   })
 
   const deleteMutation = useMutation({
-    mutationFn: async (message) => {
+    mutationFn: async (message: IMessage) => {
       setMessages(messages.filter((a) => a['_id'] !== message['_id']))
       return await deleteChatMessage(message['reportId'])
     },
   })
 
-  const onLongPress = (ctx, message) => {
+  const onLongPress = (ctx: unknown, message: IMessage) => {
     const isSelf = message.user['_id'] == selfUser.id
-    let opts = []
+    let opts:AlertButton[] = []
 
     if (message?.text) {
       opts = [
@@ -82,7 +82,7 @@ export default function Page() {
     if (isSelf) {
       opts.push({
         text: 'Delete',
-        onPress: () => _confirmDelete(message),
+        onPress: () => confirmDelete(message),
         style: 'destructive',
       })
     } else {
@@ -100,7 +100,7 @@ export default function Page() {
     ])
   }
 
-  const _confirmDelete = (message) => {
+  const confirmDelete = (message: IMessage) => {
     Alert.alert('Confirm', 'Are you sure you want to delete this direct message?', [
       {
         text: 'Delete',
