@@ -10,7 +10,7 @@ import {
   Avatar,
 } from 'tamagui'
 import { Storage } from 'src/state/cache'
-import { useState, useLayoutEffect } from 'react'
+import { useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, Link, useNavigation } from 'expo-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
