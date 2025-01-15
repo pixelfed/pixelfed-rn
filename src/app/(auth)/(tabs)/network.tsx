@@ -4,7 +4,7 @@ import { Text, View } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useNavigation, useRouter } from 'expo-router'
+import { ErrorBoundaryProps, Stack, useNavigation, useRouter } from 'expo-router'
 import {
   useInfiniteQuery,
   useMutation,
@@ -13,8 +13,6 @@ import {
 } from '@tanstack/react-query'
 import {
   fetchNetworkFeed,
-  likeStatus,
-  unlikeStatus,
   deleteStatusV1,
   postBookmark,
   getSelfAccount,
