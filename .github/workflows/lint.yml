@@ -17,10 +17,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-          cache: npm
+          cache: yarn
 
       - name: 📦 Install dependencies
-        run: yarn install
+        run: corepack enable && yarn install
 
       - name: 🧹 Run biomejs
         run: yarn lint-check

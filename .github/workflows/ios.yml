@@ -17,10 +17,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-          cache: npm
+          cache: yarn
 
       - name: 📦 Install dependencies
-        run: npm install
+        run: corepack enable && yarn install
 
       - name: 🚀 Build app
-        run: eas build --platform ios --local
+        run: npx expo prebuild --platform ios && npx react-native build-ios
