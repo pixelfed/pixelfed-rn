@@ -24,7 +24,6 @@ import {
 import CommentFeed from 'src/components/post/CommentFeed'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 
-
 export default function Page() {
   const { id } = useLocalSearchParams()
   const navigation = useNavigation()

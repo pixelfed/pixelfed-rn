@@ -80,7 +80,7 @@ export default function Page() {
           <Text color="$gray8">Website</Text>
 
           <View alignItems="flex-end" justifyContent="flex-end">
-            <Text color="$gray9">{website?.length||0}/120</Text>
+            <Text color="$gray9">{website?.length || 0}/120</Text>
           </View>
         </XStack>
         <Input

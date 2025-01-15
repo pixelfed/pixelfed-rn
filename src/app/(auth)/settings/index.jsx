@@ -68,15 +68,23 @@ export default function Page() {
 
   const GroupUrlButton = ({ icon, title, path }) => (
     <Group.Item>
-        <Button bg="$gray1" justifyContent="start" size="$5" px="$3" onPress={() => openLink(path)}>
-          <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
-            <XStack alignItems="center" ml="$1" gap="$3">
-              <Feather name={icon} size={17} color="red" />
-              <Text fontSize="$6" color="red">{title}</Text>
-            </XStack>
-            <Feather name="chevron-right" size={20} color="#ccc" />
+      <Button
+        bg="$gray1"
+        justifyContent="start"
+        size="$5"
+        px="$3"
+        onPress={() => openLink(path)}
+      >
+        <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
+          <XStack alignItems="center" ml="$1" gap="$3">
+            <Feather name={icon} size={17} color="red" />
+            <Text fontSize="$6" color="red">
+              {title}
+            </Text>
           </XStack>
-        </Button>
+          <Feather name="chevron-right" size={20} color="#ccc" />
+        </XStack>
+      </Button>
     </Group.Item>
   )
 
@@ -138,17 +146,21 @@ export default function Page() {
               path="/settings/accessibility/"
             />
             <GroupButton icon="droplet" title="Appearance" path="/settings/appearance/" />
-              <GroupButton
-                icon="alert-triangle"
-                title="Push Notifications"
-                path="/settings/notifications/"
-              />
+            <GroupButton
+              icon="alert-triangle"
+              title="Push Notifications"
+              path="/settings/notifications/"
+            />
           </Group>
 
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
             <GroupButton icon="server" title={instance} path="/settings/instance/" />
             <GroupButton icon="align-left" title="Legal" path="/settings/legal/" />
-            <GroupUrlButton icon="trash" title="Delete Account" path="settings/remove/request/permanent" />
+            <GroupUrlButton
+              icon="trash"
+              title="Delete Account"
+              path="settings/remove/request/permanent"
+            />
           </Group>
 
           <Button bg="$gray1" justifyContent="start" size="$5" px="$3">

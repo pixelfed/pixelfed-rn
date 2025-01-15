@@ -56,7 +56,7 @@ const ZoomableImage = ({ source, style }) => {
 
     const focalDeltaX = (touchX - originX.value) * (pinchScale - 1)
     const focalDeltaY = (touchY - originY.value) * (pinchScale - 1)
-    
+
     scale.value = nextScale
     translateX.value = focalDeltaX
     translateY.value = focalDeltaY
