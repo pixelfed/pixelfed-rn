@@ -1,6 +1,6 @@
 import Feather from '@expo/vector-icons/Feather'
-import { useEffect, useMemo, useState } from 'react'
-import type { FontSizeTokens, SelectProps } from 'tamagui'
+import { useMemo, useState } from 'react'
+import type { SelectProps } from 'tamagui'
 import {
   Adapt,
   Label,
@@ -9,11 +9,8 @@ import {
   Sheet,
   XStack,
   YStack,
-  getFontSize,
-  Text,
   View,
 } from 'tamagui'
-import { Animated } from 'react-native'
 
 export function FormSelect(props: any) {
   return (
