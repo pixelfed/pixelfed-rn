@@ -85,7 +85,7 @@ export default function Page() {
   }
 
   return (
-    <SafeAreaView flex={1} edges={['left']}>
+    <SafeAreaView edges={['left']}>
       <Stack.Screen
         options={{
           title: status ? 'Shares (' + status.reblogs_count + ')' : 'Shares',

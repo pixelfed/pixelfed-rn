@@ -30,7 +30,7 @@ export default function Page() {
   }, [navigation])
   const user = JSON.parse(Storage.getString('user.profile'))
   const queryClient = useQueryClient()
-  const bottomSheetModalRef = useRef(null)
+  const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
   const snapPoints = useMemo(() => ['45%', '70%', '90%'], [])
   const renderBackdrop = useCallback(
     (props) => (
@@ -38,12 +38,12 @@ export default function Page() {
     ),
     []
   )
-  const handleGotoProfile = (id) => {
+  const handleGotoProfile = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/profile/${id}`)
   }
 
-  const handleGotoHashtag = (id) => {
+  const handleGotoHashtag = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/hashtag/${id}`)
   }
@@ -59,7 +59,7 @@ export default function Page() {
     },
   })
 
-  const onShare = (id, state) => {
+  const onShare = (id: string, state) => {
     shareMutation.mutate({ type: state == true ? 'unreblog' : 'reblog', id: id })
   }
 
@@ -71,27 +71,27 @@ export default function Page() {
     },
   })
 
-  const handleGotoUsernameProfile = (id) => {
+  const handleGotoUsernameProfile = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/profile/0?byUsername=${id.slice(1)}`)
   }
 
-  const handleShowLikes = (id) => {
+  const handleShowLikes = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/post/likes/${id}`)
   }
 
-  const handleCommentReport = (id) => {
+  const handleCommentReport = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/post/report/${id}`)
   }
 
-  const onDeletePost = (id) => {
+  const onDeletePost = (id: string) => {
     deletePostMutation.mutate(id)
   }
 
   const deletePostMutation = useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async (id: string) => {
       return await deleteStatusV1(id)
     },
     onSuccess: (data, variables) => {
@@ -112,7 +112,7 @@ export default function Page() {
   }
 
   if (isError) {
-    return <Text>Error: {error.message}</Text>
+    return <Text>Error: {error?.message}</Text>
   }
 
   return (

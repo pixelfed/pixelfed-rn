@@ -24,7 +24,7 @@ export default function Page() {
     },
   })
 
-  const getDiff = (oldContent, newContent) => {
+  const getDiff = (oldContent: string, newContent: string) => {
     const oldWords = oldContent.split(/\s+/)
     const newWords = newContent.split(/\s+/)
     const diff = []
@@ -56,25 +56,26 @@ export default function Page() {
     return diff
   }
 
-  const HighlightedDiff = ({ oldContent, newContent }) => {
+  const HighlightedDiff = ({ oldContent, newContent }: { oldContent: string, newContent: string }) => {
     const diff = getDiff(oldContent, newContent)
 
-    return diff.map((part, index) => (
-      <Text
-        key={index}
-        flexWrap="wrap"
-        fontSize="$3"
-        allowFontScaling={false}
-        style={[
-          styles.text,
-          part.type === 'added' && styles.added,
-          part.type === 'removed' && styles.removed,
-        ]}
-      >
-        {part.text}
-        <Text> </Text>
-      </Text>
-    ))
+    return <>
+      {diff.map((part, index) => (
+        <Text
+          key={index}
+          flexWrap="wrap"
+          fontSize="$3"
+          allowFontScaling={false}
+          style={[
+            part.type === 'added' && styles.added,
+            part.type === 'removed' && styles.removed,
+          ]}
+        >
+          {part.text}
+          <Text> </Text>
+        </Text>
+      ))}
+    </>
   }
   const RenderItem = useCallback(
     ({ item, index }) => {
@@ -115,7 +116,7 @@ export default function Page() {
   }
 
   if (isError) {
-    return <Text>Error: {error.message}</Text>
+    return <Text>Error: {error?.message}</Text>
   }
 
   return (
