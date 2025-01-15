@@ -1,11 +1,19 @@
 import { useAuth } from '@state/AuthProvider'
-import { Link, Tabs, Redirect } from 'expo-router'
-import { Pressable } from 'react-native'
-import { Text, View } from 'tamagui'
+import { Tabs, Redirect } from 'expo-router'
+import { View } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 
+// enum here to prevent typos in id when used in multiple places (typescript checkable)
+const enum TabName {
+  Index = 'index',
+  Network = 'network',
+  Camera = 'camera',
+  Discover = 'discover',
+  Profile = 'profile'
+}
+
 export default function AppLayout() {
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
 
   // Only require authentication within the (app) group's layout as users
   // need to be able to access the (auth) group and sign in again.
@@ -13,9 +21,9 @@ export default function AppLayout() {
     return <Redirect href="/login" />
   }
   return (
-    <Tabs screenOptions={{ initialRouteName: 'index', backBehavior: 'order' }}>
+    <Tabs initialRouteName={TabName.Index} backBehavior='order'>
       <Tabs.Screen
-        name="index"
+        name={TabName.Index}
         options={{
           tabBarShowLabel: false,
           headerShown: false,
@@ -24,7 +32,7 @@ export default function AppLayout() {
       />
 
       <Tabs.Screen
-        name="network"
+        name={TabName.Network}
         options={{
           tabBarShowLabel: false,
           headerShown: false,
@@ -33,7 +41,7 @@ export default function AppLayout() {
       />
 
       <Tabs.Screen
-        name="camera"
+        name={TabName.Camera}
         options={{
           tabBarShowLabel: false,
           headerShown: true,
@@ -46,7 +54,7 @@ export default function AppLayout() {
       />
 
       <Tabs.Screen
-        name="discover"
+        name={TabName.Discover}
         options={{
           tabBarShowLabel: false,
           headerShown: false,
@@ -55,7 +63,7 @@ export default function AppLayout() {
       />
 
       <Tabs.Screen
-        name="profile"
+        name={TabName.Profile}
         options={{
           tabBarShowLabel: false,
           headerShown: false,
