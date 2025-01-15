@@ -457,23 +457,6 @@ export default function ProfileScreen() {
     }
   }
 
-  const RenderHeader = useCallback(
-    () => (
-      <ProfileHeader
-        profile={user}
-        selfUser={selfUser}
-        relationship={relationship}
-        openMenu={onOpenMenu}
-        onFollow={() => _handleFollow()}
-        onUnfollow={() => _handleUnfollow()}
-        onCancelFollowRequest={() => _handleCancelFollowRequest()}
-        onShare={() => _handleOnShare()}
-        mutuals={mutuals}
-      />
-    ),
-    [mutuals, user, relationship, selfUser]
-  )
-
   const { data: user, error: userError } = useQuery({
     queryKey:
       byUsername !== undefined && id == 0
@@ -508,6 +491,23 @@ export default function ProfileScreen() {
     queryFn: getMutualFollowing,
     enabled: !!relationship,
   })
+
+  const RenderHeader = useCallback(
+    () => (
+      <ProfileHeader
+        profile={user}
+        selfUser={selfUser}
+        relationship={relationship}
+        openMenu={onOpenMenu}
+        onFollow={() => _handleFollow()}
+        onUnfollow={() => _handleUnfollow()}
+        onCancelFollowRequest={() => _handleCancelFollowRequest()}
+        onShare={() => _handleOnShare()}
+        mutuals={mutuals}
+      />
+    ),
+    [mutuals, user, relationship, selfUser]
+  )
 
   const {
     status,
@@ -564,7 +564,7 @@ export default function ProfileScreen() {
     <SafeAreaView flex={1} edges={['top']} style={{ backgroundColor: 'white' }}>
       <Stack.Screen
         options={{
-          headerShown: Platform.OS === 'android' ? true : false,
+          headerShown: Platform.OS === 'android',
         }}
       />
       <FlatList
