@@ -6,10 +6,10 @@ import type { StyleProp, TextStyle, } from 'react-native'
 
 export type ReadMoreProps = {
   numberOfLines: number,
-  textStyle: StyleProp<TextStyle>,
-  onReady: () => void,
-  renderTruncatedFooter: (toggleShowAllText: () => void)=>void,
-  renderRevealedFooter: (toggleShowAllText: () => void)=>void,
+  textStyle?: StyleProp<TextStyle>,
+  onReady?: () => void,
+  renderTruncatedFooter?: (toggleShowAllText: () => void)=>void,
+  renderRevealedFooter?: (toggleShowAllText: () => void)=>void,
 }
 
 export default class ReadMore extends React.Component<PropsWithChildren<ReadMoreProps>> {
@@ -64,6 +64,7 @@ export default class ReadMore extends React.Component<PropsWithChildren<ReadMore
 
     return (
       <View>
+        <>
         <Text
           numberOfLines={measured && !showAllText ? numberOfLines : 0}
           style={this.props.textStyle}
@@ -75,6 +76,7 @@ export default class ReadMore extends React.Component<PropsWithChildren<ReadMore
         </Text>
 
         {this._maybeRenderReadMore()}
+        </>
       </View>
     )
   }
