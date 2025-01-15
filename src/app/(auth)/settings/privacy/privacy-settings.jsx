@@ -1,11 +1,10 @@
-import { Link, router, Stack } from 'expo-router'
+import { router, Stack } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { ScrollView, Text, View, Group, Button, XStack, YStack, Separator } from 'tamagui'
-import { Feather } from '@expo/vector-icons'
+import { ScrollView, Text, View, XStack, YStack, Separator } from 'tamagui'
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getSelfAccount, updateCredentials } from 'src/lib/api'
-import { ActivityIndicator, Alert, FlatList } from 'react-native'
-import FastImage from 'react-native-fast-image'
+import { ActivityIndicator, Alert } from 'react-native'
 import { Storage } from 'src/state/cache'
 import { Switch } from 'src/components/form/Switch'
 

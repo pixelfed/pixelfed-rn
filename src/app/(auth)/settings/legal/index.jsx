@@ -1,34 +1,23 @@
-import { FlatList, Dimensions, ActivityIndicator, Alert } from 'react-native'
 import {
   Group,
-  Image,
   ScrollView,
   Separator,
   Text,
-  View,
-  XGroup,
   XStack,
   YStack,
   Button,
 } from 'tamagui'
-import ProfileHeader from '@components/profile/ProfileHeader'
 import { Storage } from 'src/state/cache'
-import { getInstanceV1 } from 'src/lib/api'
-import { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, Link } from 'expo-router'
+import { Stack } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
-import { openBrowserAsync, prettyCount } from '../../../../utils'
+import { openBrowserAsync } from '../../../../utils'
 
 export default function Screen() {
   const instance = Storage.getString('app.instance')
 
   const openLink = async (path) => {
     await openBrowserAsync(`https://${instance}/${path}`)
-  }
-
-  const openExternalLink = async (url) => {
-    await openBrowserAsync(`https://${url}`)
   }
 
   const GroupButton = ({ icon, title, path }) => (

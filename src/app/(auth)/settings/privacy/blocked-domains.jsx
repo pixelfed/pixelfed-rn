@@ -1,11 +1,10 @@
-import { Link, Stack } from 'expo-router'
+import { Stack } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { ScrollView, Text, View, Group, Button, XStack, YStack, Separator } from 'tamagui'
+import { Text, View, XStack, YStack, Separator } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { useQuery } from '@tanstack/react-query'
 import { getDomainBlocks } from 'src/lib/api'
 import { FlatList } from 'react-native'
-import FastImage from 'react-native-fast-image'
 
 export default function Page() {
   const RenderItem = ({ item }) => {

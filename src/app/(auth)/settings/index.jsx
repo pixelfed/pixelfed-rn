@@ -1,21 +1,17 @@
-import { FlatList, Dimensions, ActivityIndicator, Alert, Platform } from 'react-native'
+import { Alert } from 'react-native'
 import {
   Group,
-  Image,
   ScrollView,
   Separator,
   Text,
-  View,
   XStack,
   YStack,
   Button,
 } from 'tamagui'
-import ProfileHeader from '@components/profile/ProfileHeader'
 import { Storage } from 'src/state/cache'
-import { queryApi } from 'src/requests'
 import { useState, useEffect, useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, Link, useNavigation } from 'expo-router'
+import { Stack, Link, useNavigation } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
 import { useAuth } from '@state/AuthProvider'
 import { openBrowserAsync } from 'src/utils'
@@ -36,7 +32,7 @@ export default function Page() {
     setUser(userJson)
   }, [])
 
-  const { logout, isLoading } = useAuth()
+  const { logout } = useAuth()
 
   const cacheClear = () => {
     logout()

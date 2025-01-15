@@ -1,26 +1,19 @@
 import { Stack } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { getAppSettings } from 'src/lib/api'
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
-import FastImage from 'react-native-fast-image'
-import { openBrowserAsync, prettyCount } from '../../../../utils'
-import { FlatList, Dimensions, ActivityIndicator, Alert } from 'react-native'
+import { useQuery } from '@tanstack/react-query'
+import { ActivityIndicator } from 'react-native'
 import {
-  Group,
-  Image,
   ScrollView,
   Separator,
   Text,
   View,
-  XGroup,
   XStack,
   YStack,
-  Button,
 } from 'tamagui'
 import { Storage } from 'src/state/cache'
 import { Switch } from 'src/components/form/Switch'
 export default function Screen() {
-  const instance = Storage.getString('app.instance')
   const showAltText = Storage.getBoolean('ui.showAltText') == true
   const requireSelfAltText = Storage.getBoolean('ui.requireSelfAltText') == true
 

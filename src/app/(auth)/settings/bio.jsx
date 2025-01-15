@@ -1,29 +1,18 @@
-import { FlatList, Dimensions, ActivityIndicator, Alert } from 'react-native'
+import { ActivityIndicator } from 'react-native'
 import {
-  Group,
-  Image,
   ScrollView,
-  Separator,
   Text,
   View,
   XStack,
-  YStack,
-  Button,
-  Avatar,
-  Input,
   TextArea,
 } from 'tamagui'
-import ProfileHeader from '@components/profile/ProfileHeader'
 import { Storage } from 'src/state/cache'
-import { queryApi } from 'src/requests'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, Link } from 'expo-router'
-import { Feather } from '@expo/vector-icons'
-import { useQuery, useInfiniteQuery, useMutation } from '@tanstack/react-query'
+import { Stack } from 'expo-router'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import {
   getAccountById,
-  getAccountStatusesById,
   getConfig,
   updateCredentials,
 } from 'src/lib/api'

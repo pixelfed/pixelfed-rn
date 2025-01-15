@@ -1,7 +1,5 @@
-import { FlatList, Dimensions, ActivityIndicator, Alert, Platform } from 'react-native'
+import { ActivityIndicator, Alert, Platform } from 'react-native'
 import {
-  Group,
-  Image,
   ScrollView,
   Separator,
   Text,
@@ -11,17 +9,13 @@ import {
   Button,
   Avatar,
 } from 'tamagui'
-import ProfileHeader from '@components/profile/ProfileHeader'
 import { Storage } from 'src/state/cache'
-import { queryApi } from 'src/requests'
-import { useState, useEffect, useLayoutEffect } from 'react'
+import { useState, useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, Link, useNavigation } from 'expo-router'
-import { Feather } from '@expo/vector-icons'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   getAccountById,
-  getAccountStatusesById,
   updateAvatar,
   deleteAvatar,
 } from 'src/lib/api'
@@ -36,7 +30,6 @@ export default function Page() {
   const userCache = JSON.parse(Storage.getString('user.profile'))
   const queryClient = useQueryClient()
 
-  const [newProfilePhoto, setProfilePhoto] = useState()
   const { data: user, isFetching } = useQuery({
     queryKey: ['profileById', userCache.id],
     queryFn: getAccountById,

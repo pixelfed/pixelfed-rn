@@ -1,6 +1,6 @@
-import { Link, Stack } from 'expo-router'
+import { Stack } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { ScrollView, Text, View, Group, Button, XStack, YStack, Separator } from 'tamagui'
+import { Text, View, XStack, YStack, Separator } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { useQuery } from '@tanstack/react-query'
 import { getBlocks } from 'src/lib/api'
