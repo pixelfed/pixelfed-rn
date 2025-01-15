@@ -2,7 +2,7 @@ import { Alert } from 'react-native'
 import { Storage } from './state/cache'
 import { compareSemver } from './utils'
 
-export function objectToForm(obj) {
+export function objectToForm(obj:{[key:string|number]:any}) {
   let form = new FormData()
 
   Object.keys(obj).forEach((key) => form.append(key, obj[key]))
@@ -10,9 +10,9 @@ export function objectToForm(obj) {
   return form
 }
 
-export async function postForm(url, data = false, token = false, contentType = false) {
+export async function postForm(url:string, data?: {[key: string | number]: any}, token?: string, contentType?: string) {
   // Send a POST request with data formatted with FormData returning JSON
-  let headers = {}
+  let headers: {[key: string]: string} = {}
 
   if (token) headers['Authorization'] = `Bearer ${token}`
   if (contentType) headers['Content-Type'] = contentType
@@ -26,9 +26,9 @@ export async function postForm(url, data = false, token = false, contentType = f
   return resp
 }
 
-export async function postJson(url, data = false, token = false, customHeaders = false) {
+export async function postJson(url: string, data?: any, token?:string, customHeaders?: {[key: string]: string}) {
   // Send a POST request with data formatted with FormData returning JSON
-  let headers = customHeaders ? customHeaders : {}
+  let headers: {[key: string]: string} = customHeaders ? customHeaders : {}
 
   if (token) {
     headers['Authorization'] = `Bearer ${token}`
@@ -46,7 +46,7 @@ export async function postJson(url, data = false, token = false, customHeaders =
   return resp
 }
 
-export async function post(url, token = false) {
+export async function post(url: string, token?:string) {
   const resp = await fetch(url, {
     method: 'POST',
     headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -55,7 +55,7 @@ export async function post(url, token = false) {
   return resp
 }
 
-export async function get(url, token = false, data = false) {
+export async function get(url: string, token?: string, data?: any) {
   let completeURL
   if (data) {
     let params = new URLSearchParams(data)
@@ -73,7 +73,7 @@ export async function get(url, token = false, data = false) {
   return resp
 }
 
-export async function getJSON(url, token = false, data = false, customHeaders = false) {
+export async function getJSON(url: string, token?: string, data?: any, customHeaders?: {[key: string]: string}) {
   let completeURL
   if (data) {
     let params = new URLSearchParams(data)
@@ -82,7 +82,7 @@ export async function getJSON(url, token = false, data = false, customHeaders = 
     completeURL = url
   }
 
-  let reqHeaders = token ? { Authorization: `Bearer ${token}` } : {}
+  let reqHeaders: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {}
 
   if (customHeaders) {
     reqHeaders = { ...reqHeaders, ...customHeaders }
@@ -98,12 +98,12 @@ export async function getJSON(url, token = false, data = false, customHeaders = 
 }
 
 export function getJsonWithTimeout(
-  url,
-  token = false,
-  data = false,
-  customHeaders = false,
+  url: string,
+  token?: string,
+  data?: any,
+  customHeaders?:{[key: string]: string},
   timeout = 5000
-) {
+):Promise<Response> {
   let completeURL
   if (data) {
     let params = new URLSearchParams(data)
@@ -112,7 +112,7 @@ export function getJsonWithTimeout(
     completeURL = url
   }
 
-  let reqHeaders = token ? { Authorization: `Bearer ${token}` } : {}
+  let reqHeaders: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {}
 
   if (customHeaders) {
     reqHeaders = { ...reqHeaders, ...customHeaders }
@@ -124,7 +124,7 @@ export function getJsonWithTimeout(
       redirect: 'follow',
       headers: reqHeaders,
     }),
-    new Promise((_, reject) => {
+    new Promise<Response>((_, reject) => {
       setTimeout(() => {
         reject(new Error(`Request for ${url} timed out after ${timeout} milliseconds`))
       }, timeout)
@@ -132,11 +132,11 @@ export function getJsonWithTimeout(
   ])
 }
 
-export async function loginPreflightCheck(server) {
+export async function loginPreflightCheck(server: string) {
   let url = 'https://' + server + '/api/nodeinfo/2.0.json'
 
   try {
-    let res = await getJsonWithTimeout(url, false, false, false, 5000)
+    let res = await getJsonWithTimeout(url, undefined, false, undefined, 5000)
     let json = await res.json()
     if (!json) {
       Alert.alert('Error', 'This server is not compatible or is unavailable.')
@@ -172,7 +172,7 @@ export async function loginPreflightCheck(server) {
   return true
 }
 
-export async function verifyCredentials(domain, token) {
+export async function verifyCredentials(domain: string, token: string) {
   const resp = await get(
     `https://${domain}/api/v1/accounts/verify_credentials?_pe=1`,
     token
@@ -181,7 +181,7 @@ export async function verifyCredentials(domain, token) {
   return resp.json()
 }
 
-export async function queryApi(endpoint, params = null) {
+export async function queryApi(endpoint: string, params = null) {
   let server = Storage.getString('app.instance')
   let token = Storage.getString('app.token')
 
