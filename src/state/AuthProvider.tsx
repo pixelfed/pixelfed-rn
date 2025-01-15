@@ -1,12 +1,14 @@
-import { type ReactNode, createContext, useEffect } from 'react'
+import { createContext, useEffect } from 'react'
 import { useContext, useState } from 'react'
 import { router, useSegments } from 'expo-router'
 import { loginPreflightCheck, postForm, get } from '@requests'
 import * as Linking from 'expo-linking'
-import { Storage } from './cache.js'
+import { Storage } from './cache'
 import * as WebBrowser from 'expo-web-browser'
 import { Platform, Alert } from 'react-native'
-import { verifyCredentials } from 'src/requests.js'
+import { verifyCredentials } from 'src/requests'
+
+import type { ReactNode } from 'react'
 
 type User = {
   server: string
