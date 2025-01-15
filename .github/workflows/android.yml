@@ -21,9 +21,11 @@ jobs:
 
       - name: 🏗 Setup EAS
         uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
 
       - name: 📦 Install dependencies
         run: npm install
 
       - name: 🚀 Build app
-        run: npx eas build --non-interactive --local --platform android
+        run: eas build --non-interactive --local --platform android
