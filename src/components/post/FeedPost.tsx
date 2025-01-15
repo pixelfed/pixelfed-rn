@@ -33,6 +33,9 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated'
 
+import type { GestureEvent, HandlerStateChangeEvent, PinchGestureHandlerEventPayload } from 'react-native-gesture-handler'
+
+
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
 
 const ZoomableImage = ({ source, style }) => {
@@ -43,7 +46,7 @@ const ZoomableImage = ({ source, style }) => {
   const originX = useSharedValue(0)
   const originY = useSharedValue(0)
 
-  const onGestureEvent = (event) => {
+  const onGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
     const pinchScale = event.nativeEvent.scale
     const nextScale = savedScale.value * pinchScale
     const touchX = event.nativeEvent.focalX
@@ -62,7 +65,7 @@ const ZoomableImage = ({ source, style }) => {
     translateY.value = focalDeltaY
   }
 
-  const onHandlerStateChange = (event) => {
+  const onHandlerStateChange = (event: HandlerStateChangeEvent<PinchGestureHandlerEventPayload>) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
       savedScale.value = scale.value
       scale.value = withSpring(1)
@@ -115,14 +118,14 @@ const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMe
   <Section>
     <XStack
       flexGrow={1}
-      justifyContent="flex-between"
+      justifyContent="space-between"
       alignSelf="stretch"
       alignItems="center"
       py="$2"
     >
       <View flexGrow={1}>
         <Link href={`/profile/${userId}`} asChild>
-          <Pressable flexGrow={1}>
+          <Pressable>
             <XStack gap="$3" alignItems="center" flexGrow={1}>
               <FastImage
                 source={{ uri: avatar }}
@@ -611,7 +614,7 @@ export default function FeedPost({
   likedAt,
   onShare,
 }) {
-  const bottomSheetModalRef = useRef(null)
+  const bottomSheetModalRef = useRef<BottomSheetModal|null>(null)
   const progress = useSharedValue(0)
   const snapPoints = useMemo(() => ['45%', '65%'], [])
   const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
@@ -620,7 +623,7 @@ export default function FeedPost({
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
   }, [])
-  const handleSheetChanges = useCallback((index) => {}, [])
+  const handleSheetChanges = useCallback((index: number) => {}, [])
   const renderBackdrop = useCallback(
     (props) => (
       <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
@@ -628,7 +631,7 @@ export default function FeedPost({
     []
   )
 
-  const _onDeletePost = (id) => {
+  const _onDeletePost = (id: string) => {
     bottomSheetModalRef.current?.close()
     Alert.alert('Delete Post', 'Are you sure you want to delete this post?', [
       {
@@ -663,12 +666,12 @@ export default function FeedPost({
     await openBrowserAsync(post.url)
   }
 
-  const onGotoHashtag = (tag) => {
+  const onGotoHashtag = (tag: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/hashtag/${tag}`)
   }
 
-  const onGotoMention = (tag) => {
+  const onGotoMention = (tag: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/profile/0?byUsername=${tag}`)
   }
@@ -678,7 +681,7 @@ export default function FeedPost({
     router.push(`/profile/about/${post.account.id}`)
   }
 
-  const _onEditPost = (id) => {
+  const _onEditPost = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/post/edit/${id}`)
   }
