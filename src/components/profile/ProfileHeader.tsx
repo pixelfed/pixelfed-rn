@@ -18,36 +18,47 @@ import { useCallback, useState } from 'react'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import UserAvatar from 'src/components/common/UserAvatar'
 const SCREEN_WIDTH = Dimensions.get('screen').width
+import { Storage } from 'src/state/cache'
+import { Relationship } from 'src/lib/api-types'
 
+type todo = any
+
+interface ProfileHeaderProps{
+  profile: todo,
+  isSelf?: boolean,
+  relationship?: Relationship,
+  openMenu: () => void,
+  onFollow: () => void,
+  onShare: () => void,
+  onUnfollow: () => void,
+  onCancelFollowRequest: () => void,
+  mutuals: todo[],
+}
+
+// TODO split self profile and other user profile
+// Why? because they have different required properties
 export default function ProfileHeader({
   profile,
   isSelf = false,
-  selfUser,
-  relationship = false,
+  relationship,
   openMenu,
   onFollow,
   onShare,
   onUnfollow,
   onCancelFollowRequest,
   mutuals,
-}) {
+}: ProfileHeaderProps) {
   const router = useRouter()
   const [usernameTruncated, setUsernameTruncated] = useState(profile?.acct?.length > 40)
-  const _prettyCount = (num) => {
-    if (!num) {
-      return 0
-    }
-    if (typeof num == 'string') {
-      num = Number(num)
-    }
-    return num.toLocaleString('en-CA', { compactDisplay: 'short', notation: 'compact' })
-  }
 
-  const onHashtagPress = (tag) => {
+  // TODO move to state react context
+  const selfUser = JSON.parse(Storage.getString('user.profile'))
+
+  const onHashtagPress = (tag: string) => {
     router.push(`/hashtag/${tag}`)
   }
 
-  const onMentionPress = (tag) => {
+  const onMentionPress = (tag: string) => {
     router.push(`/profile/0?byUsername=${tag.slice(1)}`)
   }
 
@@ -89,6 +100,7 @@ export default function ProfileHeader({
     if (relationship && !relationship.following) {
       return <FollowProfile onPress={() => onFollow()} />
     }
+    return null
   }
 
   const _openWebsite = async () => {
@@ -178,7 +190,7 @@ export default function ProfileHeader({
     </XStack>
   )
 
-  const RenderMutualSeparator = ({ index }) => {
+  const renderMutualSeparator = (index: number) => {
     const top3 = mutuals.slice(0, 3)
     const totalLen = mutuals.length
 
@@ -219,7 +231,7 @@ export default function ProfileHeader({
                   {t.username}
                 </Text>
                 <Text fontSize="$3" allowFontScaling={false}>
-                  <RenderMutualSeparator index={index} />
+                  {renderMutualSeparator(index)}
                 </Text>
               </XStack>
             </Link>
@@ -244,7 +256,6 @@ export default function ProfileHeader({
             ?.replaceAll('&amp;', '&')
             .replaceAll('\n\n', '\n')
             .replaceAll(/(<([^>]+)>)/gi, '')}
-          username={false}
           onHashtagPress={onHashtagPress}
           onMentionPress={onMentionPress}
         />

@@ -6,12 +6,11 @@ import {
   Share,
   Platform,
 } from 'react-native'
-import { Button, Image, Separator, Text, View, YStack, ZStack } from 'tamagui'
+import { Button, Separator, Text, View, YStack, ZStack } from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
 import { Feather } from '@expo/vector-icons'
 import { Storage } from 'src/state/cache'
-import { queryApi } from 'src/requests'
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
+import { useEffect, useCallback, useRef, useMemo } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, Link, router, useNavigation } from 'expo-router'
 import {
@@ -36,34 +35,27 @@ import {
 } from 'src/lib/api'
 import {
   BottomSheetModal,
-  BottomSheetView,
   BottomSheetBackdrop,
-  BottomSheetFooter,
-  BottomSheetTextInput,
   BottomSheetScrollView,
-  BottomSheetFlatList,
 } from '@gorhom/bottom-sheet'
 import Clipboard from '@react-native-clipboard/clipboard'
-import { useToast, useToastController } from '@tamagui/toast'
+import { useToastController } from '@tamagui/toast'
 import { Blurhash } from 'react-native-blurhash'
+
+import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileScreen() {
   const navigation = useNavigation()
   const { id, byUsername } = useLocalSearchParams()
-  const selfUser = JSON.parse(Storage.getString('user.profile'))
   const queryClient = useQueryClient()
-  const bottomSheetModalRef = useRef(null)
+  const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
   const snapPoints = useMemo(() => ['50%', '55%'], [])
   // const toast = useToastController();
   const toastController = useToastController()
 
-  const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present()
-  }, [])
-  const handleSheetChanges = useCallback((index) => {}, [])
-  const renderBackdrop = useCallback(
+  const renderBackdrop:React.FC<BottomSheetBackdropProps> = useCallback(
     (props) => (
       <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
     ),
@@ -409,8 +401,8 @@ export default function ProfileScreen() {
         const result = await Share.share({
           message: user.url,
         })
-      } catch (error) {
-        Alert.alert(error.message)
+      } catch (error: any) {
+        Alert.alert(error?.message ||"share sheet failed to open and error had no message")
       }
     }
 
@@ -452,27 +444,10 @@ export default function ProfileScreen() {
       const result = await Share.share({
         message: user.url,
       })
-    } catch (error) {
-      Alert.alert(error.message)
+    } catch (error: any) {
+      Alert.alert(error?.message || "sharing: error occured, but error message is missing")
     }
   }
-
-  const RenderHeader = useCallback(
-    () => (
-      <ProfileHeader
-        profile={user}
-        selfUser={selfUser}
-        relationship={relationship}
-        openMenu={onOpenMenu}
-        onFollow={() => _handleFollow()}
-        onUnfollow={() => _handleUnfollow()}
-        onCancelFollowRequest={() => _handleCancelFollowRequest()}
-        onShare={() => _handleOnShare()}
-        mutuals={mutuals}
-      />
-    ),
-    [mutuals, user, relationship, selfUser]
-  )
 
   const { data: user, error: userError } = useQuery({
     queryKey:
@@ -508,6 +483,22 @@ export default function ProfileScreen() {
     queryFn: getMutualFollowing,
     enabled: !!relationship,
   })
+
+  const RenderHeader = useCallback(
+    () => (
+      <ProfileHeader
+        profile={user}
+        relationship={relationship}
+        openMenu={onOpenMenu}
+        onFollow={() => _handleFollow()}
+        onUnfollow={() => _handleUnfollow()}
+        onCancelFollowRequest={() => _handleCancelFollowRequest()}
+        onShare={() => _handleOnShare()}
+        mutuals={mutuals}
+      />
+    ),
+    [mutuals, user, relationship]
+  )
 
   const {
     status,
@@ -551,7 +542,7 @@ export default function ProfileScreen() {
 
   if (status !== 'success' || (isFetching && !isFetchingNextPage)) {
     return (
-      <SafeAreaView edges={['top']} flex={1}>
+      <SafeAreaView edges={['top']}>
         <Stack.Screen options={{ headerShown: false }} />
         <View style={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator color={'#000'} />
@@ -561,7 +552,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView flex={1} edges={['top']} style={{ backgroundColor: 'white' }}>
+    <SafeAreaView edges={['top']} style={{ backgroundColor: 'white' }}>
       <Stack.Screen
         options={{
           headerShown: Platform.OS === 'android' ? true : false,
@@ -592,7 +583,6 @@ export default function ProfileScreen() {
         ref={bottomSheetModalRef}
         index={1}
         snapPoints={snapPoints}
-        onChange={handleSheetChanges}
         backdropComponent={renderBackdrop}
         keyboardBehavior={Platform.OS === 'ios' ? 'extend' : 'interactive'}
       >
