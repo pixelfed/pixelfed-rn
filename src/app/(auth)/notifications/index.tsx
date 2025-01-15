@@ -114,7 +114,7 @@ export default function NotificationsScreen() {
 
       <FlatList
         data={data?.pages.flatMap((page) => page.data)}
-        ItemSeparatorComponent={<Separator borderColor="$gray5" />}
+        ItemSeparatorComponent={() => <Separator borderColor="$gray5" />}
         renderItem={({ item }) => <RenderNotificationItem item={item} />}
         onEndReached={() => {
           if (hasNextPage) fetchNextPage()

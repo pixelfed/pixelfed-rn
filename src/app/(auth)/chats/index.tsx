@@ -108,7 +108,7 @@ export default function Page() {
       <FlatList
         data={data}
         renderItem={RenderItem}
-        ItemSeparatorComponent={<Separator borderColor="$gray7" />}
+        ItemSeparatorComponent={() => <Separator borderColor="$gray7" />}
       />
     </SafeAreaView>
   )

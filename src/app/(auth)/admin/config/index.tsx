@@ -88,7 +88,7 @@ export default function Screen() {
         data={data}
         extraData={data}
         renderItem={RenderItem}
-        ItemSeparatorComponent={<Separator />}
+        ItemSeparatorComponent={Separator}
       />
     </SafeAreaView>
   )

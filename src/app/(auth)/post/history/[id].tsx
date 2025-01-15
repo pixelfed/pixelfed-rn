@@ -132,11 +132,7 @@ export default function Page() {
           headerBackTitle: 'Back',
         }}
       />
-      <FlatList
-        data={data}
-        renderItem={RenderItem}
-        ItemSeparatorComponent={<Separator />}
-      />
+      <FlatList data={data} renderItem={RenderItem} ItemSeparatorComponent={Separator} />
     </SafeAreaView>
   )
 }

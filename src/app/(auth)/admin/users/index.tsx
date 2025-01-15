@@ -86,7 +86,7 @@ export default function Screen() {
         data={data?.pages.flatMap((page) => page.data)}
         renderItem={RenderItem}
         contentContainerStyle={{ flexGrow: 1 }}
-        ItemSeparatorComponent={<Separator />}
+        ItemSeparatorComponent={Separator}
         onEndReached={() => {
           if (!isFetching && hasNextPage && !isFetchingNextPage) fetchNextPage()
         }}

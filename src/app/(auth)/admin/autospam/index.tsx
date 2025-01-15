@@ -148,7 +148,7 @@ export default function Screen() {
         data={data}
         renderItem={RenderItem}
         contentContainerStyle={{ flex: 1 }}
-        ItemSeparatorComponent={<Separator />}
+        ItemSeparatorComponent={Separator}
         ListEmptyComponent={RenderEmpty}
       />
 

@@ -138,7 +138,7 @@ export default function Page() {
         keyExtractor={keyExtractor}
         data={data?.pages.flatMap((page) => page.data)}
         renderItem={RenderItem}
-        ItemSeparatorComponent={<Separator />}
+        ItemSeparatorComponent={Separator}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) fetchNextPage()
         }}
