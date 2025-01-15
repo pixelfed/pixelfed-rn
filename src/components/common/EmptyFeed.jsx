@@ -1,4 +1,4 @@
-import { Text, View, XStack, Select, Adapt, Sheet, Button, YStack } from 'tamagui'
+import { Text, View, YStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 
 export default function EmptyFeed() {

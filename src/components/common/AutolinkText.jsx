@@ -1,7 +1,5 @@
-import { Link } from 'expo-router'
 import React, { useMemo } from 'react'
-import { StyleSheet, TouchableOpacity, Alert, Pressable } from 'react-native'
-import { Text, View, useTheme } from 'tamagui'
+import { Text, useTheme } from 'tamagui'
 
 const mentionRegex = /@\w+(?:@\w+\.\w+(?:\.\w+)*)?/g
 const hashtagRegex = /#[\p{L}\p{N}]+(?:[\p{L}\p{N}_-]*[\p{L}\p{N}])?/gu

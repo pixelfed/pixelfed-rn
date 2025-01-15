@@ -6,7 +6,7 @@ import Animated, {
   Extrapolate,
   interpolate,
 } from 'react-native-reanimated'
-import { Pressable, View, Button, StyleSheet } from 'react-native'
+import { Pressable, StyleSheet } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
 
