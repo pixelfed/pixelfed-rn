@@ -6,12 +6,11 @@
     "paths": {
       "src/*": ["./src/*"],
       "state/*": ["./src/state/*"],
+      "@state/*": ["./src/state/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@components/*": ["./src/components/*"],
+      "@requests": ["./src/requests.js"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts", 
-  ]
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
 }
