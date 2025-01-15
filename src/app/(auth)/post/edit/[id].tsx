@@ -6,14 +6,7 @@ import {
   Dimensions,
   Platform,
 } from 'react-native'
-import {
-  ScrollView,
-  Text,
-  View,
-  XStack,
-  YStack,
-  TextArea,
-} from 'tamagui'
+import { ScrollView, Text, View, XStack, YStack, TextArea } from 'tamagui'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'

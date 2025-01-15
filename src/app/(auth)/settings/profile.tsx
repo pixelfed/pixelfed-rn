@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, AlertButton, Platform } from 'react-native'
+import { ActivityIndicator, Alert, type AlertButton, Platform } from 'react-native'
 import {
   ScrollView,
   Separator,
@@ -13,10 +13,7 @@ import { useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, Link, useNavigation } from 'expo-router'
 import { useQueryClient } from '@tanstack/react-query'
-import {
-  updateAvatar,
-  deleteAvatar,
-} from 'src/lib/api'
+import { updateAvatar, deleteAvatar } from 'src/lib/api'
 import * as ImagePicker from 'expo-image-picker'
 import mime from 'mime'
 import { useQuerySelfProfile } from 'src/state/AuthProvider'
@@ -25,9 +22,9 @@ export default function Page() {
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Edit Profile', headerBackTitle: 'Back' })
   }, [navigation])
- 
+
   const queryClient = useQueryClient()
-  const {user, isFetching} = useQuerySelfProfile()
+  const { user, isFetching } = useQuerySelfProfile()
 
   const updateProfilePhoto = () => {
     const isDefault = user?.avatar.includes('default.')
@@ -99,7 +96,10 @@ export default function Page() {
   }
 
   type LinkFieldProps = {
-    label: string, value: string, path: string, border: boolean
+    label: string
+    value: string
+    path: string
+    border: boolean
   }
   const LinkField = ({ label, value, path, border }: LinkFieldProps) => (
     <XStack px="$3" py="$3" alignItems="flex-start" justifyContent="center">
@@ -184,12 +184,7 @@ export default function Page() {
             path="/settings/updateName"
             border={true}
           />
-          <LinkField
-            label="Username"
-            value={user?.username}
-            path=""
-            border={true}
-          />
+          <LinkField label="Username" value={user?.username} path="" border={true} />
           {/* <LinkField
             label="Pronouns"
             value={user?.pronouns.join(', ')}

@@ -1,15 +1,12 @@
-import {
-  Group,
-  ScrollView,
-  Separator,
-  YStack,
-  Button,
-} from 'tamagui'
+import { Group, ScrollView, Separator, YStack, Button } from 'tamagui'
 import { Storage } from 'src/state/cache'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack } from 'expo-router'
 import { openBrowserAsync } from '../../../../utils'
-import { GroupButtonContent, GroupButtonContentProps } from 'src/components/common/GroupButtonContent'
+import {
+  GroupButtonContent,
+  type GroupButtonContentProps,
+} from 'src/components/common/GroupButtonContent'
 import React from 'react'
 
 export default function Screen() {
@@ -19,7 +16,11 @@ export default function Screen() {
     await openBrowserAsync(`https://${instance}/${path}`)
   }
 
-  const GroupButton = ({ icon, title, path }: Pick<GroupButtonContentProps, 'icon' | 'title'> & {path: string}) => (
+  const GroupButton = ({
+    icon,
+    title,
+    path,
+  }: Pick<GroupButtonContentProps, 'icon' | 'title'> & { path: string }) => (
     <Group.Item>
       <Button
         onPress={() => openLink(path)}
@@ -28,10 +29,7 @@ export default function Screen() {
         size="$5"
         px="$3"
       >
-        <GroupButtonContent
-          icon={icon}
-          title={title}
-          iconColor="#666" />
+        <GroupButtonContent icon={icon} title={title} iconColor="#666" />
       </Button>
     </Group.Item>
   )

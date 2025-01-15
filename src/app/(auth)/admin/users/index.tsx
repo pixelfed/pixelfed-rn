@@ -1,25 +1,16 @@
 import { FlatList, ActivityIndicator } from 'react-native'
-import {
-  Separator,
-  Text,
-  View,
-  XStack,
-  YStack,
-} from 'tamagui'
+import { Separator, Text, View, XStack, YStack } from 'tamagui'
 import { getAdminUsers } from 'src/lib/api'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, Link } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
 import { prettyCount, _timeAgo, enforceLen } from 'src/utils'
-import {
-  useInfiniteQuery,
-} from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import UserAvatar from 'src/components/common/UserAvatar'
 
 const keyExtractor = (_, index) => `user-${_.id}`
 
 export default function Screen() {
-
   const RenderItem = ({ item }) => (
     <Link href={`/admin/users/show/${item.id}`} asChild>
       <View px="$5" py="$3" bg="white">

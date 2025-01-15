@@ -1,10 +1,4 @@
-import {
-  ScrollView,
-  Separator,
-  Text,
-  XStack,
-  YStack,
-} from 'tamagui'
+import { ScrollView, Separator, Text, XStack, YStack } from 'tamagui'
 import { Storage } from 'src/state/cache'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack } from 'expo-router'

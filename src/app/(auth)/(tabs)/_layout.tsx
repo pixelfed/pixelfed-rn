@@ -4,12 +4,12 @@ import { View } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 
 // enum here to prevent typos in id when used in multiple places (typescript checkable)
-const enum TabName {
+enum TabName {
   Index = 'index',
   Network = 'network',
   Camera = 'camera',
   Discover = 'discover',
-  Profile = 'profile'
+  Profile = 'profile',
 }
 
 export default function AppLayout() {
@@ -21,7 +21,7 @@ export default function AppLayout() {
     return <Redirect href="/login" />
   }
   return (
-    <Tabs initialRouteName={TabName.Index} backBehavior='order'>
+    <Tabs initialRouteName={TabName.Index} backBehavior="order">
       <Tabs.Screen
         name={TabName.Index}
         options={{

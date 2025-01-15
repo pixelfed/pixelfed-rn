@@ -1,13 +1,5 @@
 import { FlatList, Dimensions, ActivityIndicator } from 'react-native'
-import {
-  ScrollView,
-  Text,
-  View,
-  XStack,
-  YStack,
-  Button,
-  Separator,
-} from 'tamagui'
+import { ScrollView, Text, View, XStack, YStack, Button, Separator } from 'tamagui'
 import { useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, Link } from 'expo-router'

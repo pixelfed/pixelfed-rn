@@ -1,12 +1,6 @@
 import { Stack, useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import {
-  Separator,
-  Text,
-  View,
-  XStack,
-  YStack,
-} from 'tamagui'
+import { Separator, Text, View, XStack, YStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { adminInstances } from 'src/lib/api'
@@ -20,7 +14,7 @@ const keyExtractor = (_, index) => `instance-${_.id}-${index}`
 
 export default function Page() {
   const router = useRouter()
-  const {is_admin} = useUserCache()
+  const { is_admin } = useUserCache()
   const [sort, setSort] = useState('desc')
   const [sortBy, setSortBy] = useState('id')
   const queryClient = useQueryClient()
@@ -104,22 +98,16 @@ export default function Page() {
     queryClient.invalidateQueries({ queryKey: ['instances'] })
   }
 
-  const {
-    data,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetching,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
-    queryKey: ['instances'],
-    queryFn: async (queryKey) => {
-      return await adminInstances(queryKey, sort, sortBy)
-    },
-    initialPageParam: null,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-    getPreviousPageParam: (lastPage) => lastPage.prevPage,
-  })
+  const { data, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ['instances'],
+      queryFn: async (queryKey) => {
+        return await adminInstances(queryKey, sort, sortBy)
+      },
+      initialPageParam: null,
+      getNextPageParam: (lastPage) => lastPage.nextPage,
+      getPreviousPageParam: (lastPage) => lastPage.prevPage,
+    })
 
   if (isFetching && !isFetchingNextPage) {
     return (

@@ -3,14 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { getAppSettings } from 'src/lib/api'
 import { useQuery } from '@tanstack/react-query'
 import { ActivityIndicator } from 'react-native'
-import {
-  ScrollView,
-  Separator,
-  Text,
-  View,
-  XStack,
-  YStack,
-} from 'tamagui'
+import { ScrollView, Separator, Text, View, XStack, YStack } from 'tamagui'
 import { Storage } from 'src/state/cache'
 import { Switch } from 'src/components/form/Switch'
 export default function Screen() {

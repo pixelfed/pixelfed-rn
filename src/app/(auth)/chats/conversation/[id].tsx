@@ -1,16 +1,18 @@
-import { ActivityIndicator, Alert, AlertButton, Pressable } from 'react-native'
+import { ActivityIndicator, Alert, type AlertButton, Pressable } from 'react-native'
 import { View } from 'tamagui'
 import { useState, useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { fetchChatThread, sendChatMessage, deleteChatMessage } from 'src/lib/api'
 import { _timeAgo, enforceLen } from 'src/utils'
-import { GiftedChat, Bubble, Send, BubbleProps, IMessage } from 'react-native-gifted-chat'
+import {
+  GiftedChat,
+  Bubble,
+  Send,
+  type BubbleProps,
+  type IMessage,
+} from 'react-native-gifted-chat'
 import { Feather } from '@expo/vector-icons'
 import { useUserCache } from 'src/state/AuthProvider'
 
@@ -69,7 +71,7 @@ export default function Page() {
 
   const onLongPress = (ctx: unknown, message: IMessage) => {
     const isSelf = message.user['_id'] == selfUser.id
-    let opts:AlertButton[] = []
+    let opts: AlertButton[] = []
 
     if (message?.text) {
       opts = [
@@ -168,7 +170,7 @@ export default function Page() {
           }
         }
 
-        if(msg.type === 'link') {
+        if (msg.type === 'link') {
           chat.text = msg.text
         }
 

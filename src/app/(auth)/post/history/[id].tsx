@@ -56,26 +56,31 @@ export default function Page() {
     return diff
   }
 
-  const HighlightedDiff = ({ oldContent, newContent }: { oldContent: string, newContent: string }) => {
+  const HighlightedDiff = ({
+    oldContent,
+    newContent,
+  }: { oldContent: string; newContent: string }) => {
     const diff = getDiff(oldContent, newContent)
 
-    return <>
-      {diff.map((part, index) => (
-        <Text
-          key={index}
-          flexWrap="wrap"
-          fontSize="$3"
-          allowFontScaling={false}
-          style={[
-            part.type === 'added' && styles.added,
-            part.type === 'removed' && styles.removed,
-          ]}
-        >
-          {part.text}
-          <Text> </Text>
-        </Text>
-      ))}
-    </>
+    return (
+      <>
+        {diff.map((part, index) => (
+          <Text
+            key={index}
+            flexWrap="wrap"
+            fontSize="$3"
+            allowFontScaling={false}
+            style={[
+              part.type === 'added' && styles.added,
+              part.type === 'removed' && styles.removed,
+            ]}
+          >
+            {part.text}
+            <Text> </Text>
+          </Text>
+        ))}
+      </>
+    )
   }
   const RenderItem = useCallback(
     ({ item, index }) => {

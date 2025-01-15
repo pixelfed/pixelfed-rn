@@ -2,9 +2,7 @@ import { Link, Stack } from 'expo-router'
 import { FlatList, ActivityIndicator, Keyboard, Pressable } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Text, View, YStack, Input, XStack } from 'tamagui'
-import {
-  useQuery,
-} from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 
 import { searchQuery } from 'src/lib/api'
 import { useCallback, useState } from 'react'

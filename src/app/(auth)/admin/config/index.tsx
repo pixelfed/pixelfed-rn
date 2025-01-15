@@ -1,21 +1,11 @@
 import { FlatList, ActivityIndicator, Alert } from 'react-native'
-import {
-  Separator,
-  Text,
-  View,
-  XStack,
-  YStack,
-} from 'tamagui'
+import { Separator, Text, View, XStack, YStack } from 'tamagui'
 import { Storage } from 'src/state/cache'
 import { getAdminConfig, updateAdminConfig } from 'src/lib/api'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack } from 'expo-router'
 import { Switch } from 'src/components/form/Switch'
-import {
-  useQuery,
-  useQueryClient,
-  useMutation,
-} from '@tanstack/react-query'
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 
 export default function Screen() {
   const instance = Storage.getString('app.instance')

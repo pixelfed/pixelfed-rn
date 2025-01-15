@@ -14,7 +14,7 @@ export default function Page() {
   const instance = Storage.getString('app.instance').toLowerCase()
   const queryClient = useQueryClient()
 
-  type RenderSwitchProps = PropsWithChildren<{ title: string, description: string}>
+  type RenderSwitchProps = PropsWithChildren<{ title: string; description: string }>
 
   const RenderSwitch = ({ title, description, children }: RenderSwitchProps) => {
     return (

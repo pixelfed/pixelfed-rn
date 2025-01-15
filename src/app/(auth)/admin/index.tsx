@@ -1,15 +1,6 @@
 import { Stack, useRouter, Link } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import {
-  Group,
-  ScrollView,
-  Separator,
-  Text,
-  View,
-  XStack,
-  YStack,
-  Button,
-} from 'tamagui'
+import { Group, ScrollView, Separator, Text, View, XStack, YStack, Button } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { useQuery } from '@tanstack/react-query'
 import { getAdminStats } from 'src/lib/api'
@@ -128,37 +119,39 @@ export default function Page() {
 }
 
 type GroupButtonProps = {
- icon: React.ComponentProps<typeof Feather>['name'],
- title: string,
- path: string,
- count?: number,
- countDanger?: boolean 
+  icon: React.ComponentProps<typeof Feather>['name']
+  title: string
+  path: string
+  count?: number
+  countDanger?: boolean
 }
 
-function GroupButton({ icon, title, path, count, countDanger }: GroupButtonProps){
-  return <Group.Item>
-    <Link href={path} asChild>
-      <Button bg="$gray1" justifyContent="flex-start" size="$5" px="$3">
-        <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
-          <XStack alignItems="center" ml="$1" gap="$3">
-            <Feather name={icon} size={17} color="#ccc" />
-            <Text fontSize="$6">{title}</Text>
-            {count ? (
-              <View
-                bg={countDanger ? '$red9' : '$gray3'}
-                px={6}
-                py={4}
-                borderRadius={5}
-              >
-                <Text fontSize="$4" color={countDanger ? '$red1' : 'black'}>
-                  {count}
-                </Text>
-              </View>
-            ) : null}
+function GroupButton({ icon, title, path, count, countDanger }: GroupButtonProps) {
+  return (
+    <Group.Item>
+      <Link href={path} asChild>
+        <Button bg="$gray1" justifyContent="flex-start" size="$5" px="$3">
+          <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
+            <XStack alignItems="center" ml="$1" gap="$3">
+              <Feather name={icon} size={17} color="#ccc" />
+              <Text fontSize="$6">{title}</Text>
+              {count ? (
+                <View
+                  bg={countDanger ? '$red9' : '$gray3'}
+                  px={6}
+                  py={4}
+                  borderRadius={5}
+                >
+                  <Text fontSize="$4" color={countDanger ? '$red1' : 'black'}>
+                    {count}
+                  </Text>
+                </View>
+              ) : null}
+            </XStack>
+            <Feather name="chevron-right" size={20} color="#ccc" />
           </XStack>
-          <Feather name="chevron-right" size={20} color="#ccc" />
-        </XStack>
-      </Button>
-    </Link>
-  </Group.Item>
+        </Button>
+      </Link>
+    </Group.Item>
+  )
 }

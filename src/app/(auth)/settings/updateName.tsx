@@ -1,29 +1,20 @@
 import { ActivityIndicator } from 'react-native'
-import {
-  ScrollView,
-  Text,
-  View,
-  XStack,
-  Button,
-  Input,
-} from 'tamagui'
+import { ScrollView, Text, View, XStack, Button, Input } from 'tamagui'
 import { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack } from 'expo-router'
 import { useMutation } from '@tanstack/react-query'
-import {
-  updateCredentials,
-} from 'src/lib/api'
+import { updateCredentials } from 'src/lib/api'
 import { router } from 'expo-router'
 import { useQuerySelfProfile } from 'src/state/AuthProvider'
 
 export default function Page() {
-  const {user} = useQuerySelfProfile()
+  const { user } = useQuerySelfProfile()
   const [name, setName] = useState(user?.display_name)
   const [isSubmitting, setSubmitting] = useState(false)
 
   const mutation = useMutation({
-    mutationFn: async (data: {display_name: string}) => {
+    mutationFn: async (data: { display_name: string }) => {
       setSubmitting(true)
       return await updateCredentials(data)
     },
@@ -33,8 +24,8 @@ export default function Page() {
   })
 
   const onSubmit = () => {
-    if (typeof name === "undefined") {
-      return;
+    if (typeof name === 'undefined') {
+      return
     }
     mutation.mutate({ display_name: name })
   }

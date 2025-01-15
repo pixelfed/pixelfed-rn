@@ -33,8 +33,11 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated'
 
-import type { GestureEvent, HandlerStateChangeEvent, PinchGestureHandlerEventPayload } from 'react-native-gesture-handler'
-
+import type {
+  GestureEvent,
+  HandlerStateChangeEvent,
+  PinchGestureHandlerEventPayload,
+} from 'react-native-gesture-handler'
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
 
@@ -59,13 +62,15 @@ const ZoomableImage = ({ source, style }) => {
 
     const focalDeltaX = (touchX - originX.value) * (pinchScale - 1)
     const focalDeltaY = (touchY - originY.value) * (pinchScale - 1)
-    
+
     scale.value = nextScale
     translateX.value = focalDeltaX
     translateY.value = focalDeltaY
   }
 
-  const onHandlerStateChange = (event: HandlerStateChangeEvent<PinchGestureHandlerEventPayload>) => {
+  const onHandlerStateChange = (
+    event: HandlerStateChangeEvent<PinchGestureHandlerEventPayload>
+  ) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
       savedScale.value = scale.value
       scale.value = withSpring(1)
@@ -614,7 +619,7 @@ export default function FeedPost({
   likedAt,
   onShare,
 }) {
-  const bottomSheetModalRef = useRef<BottomSheetModal|null>(null)
+  const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
   const progress = useSharedValue(0)
   const snapPoints = useMemo(() => ['45%', '65%'], [])
   const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true

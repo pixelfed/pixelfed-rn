@@ -11,7 +11,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
 
 type LikeButtonProps = {
-  hasLiked: boolean,
+  hasLiked: boolean
   handleLike: () => void
 }
 

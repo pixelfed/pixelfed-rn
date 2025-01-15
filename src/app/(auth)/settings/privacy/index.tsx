@@ -1,10 +1,16 @@
 import { Link, Stack } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ScrollView, Group, YStack, Separator, Button } from 'tamagui'
-import { GroupButtonContent, GroupButtonContentProps } from 'src/components/common/GroupButtonContent'
+import {
+  GroupButtonContent,
+  type GroupButtonContentProps,
+} from 'src/components/common/GroupButtonContent'
 
 export default function Page() {
-  type GroupButtonProps = Pick<GroupButtonContentProps, 'icon' | 'title' | 'iconColor'> & {path: string}
+  type GroupButtonProps = Pick<
+    GroupButtonContentProps,
+    'icon' | 'title' | 'iconColor'
+  > & { path: string }
 
   const GroupButton = ({ icon, title, path, iconColor = '#000' }: GroupButtonProps) => (
     <Group.Item>
@@ -14,7 +20,8 @@ export default function Page() {
             icon={icon}
             title={title}
             iconColor={iconColor}
-            spacing='privacy' />
+            spacing="privacy"
+          />
         </Button>
       </Link>
     </Group.Item>

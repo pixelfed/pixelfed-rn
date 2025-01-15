@@ -1,33 +1,12 @@
-import {
-  ActivityIndicator,
-  Alert,
-  Pressable,
-  Linking,
-} from 'react-native'
-import {
-  Group,
-  ScrollView,
-  Separator,
-  Text,
-  View,
-  XStack,
-  YStack,
-  Button,
-} from 'tamagui'
+import { ActivityIndicator, Alert, Pressable, Linking } from 'react-native'
+import { Group, ScrollView, Separator, Text, View, XStack, YStack, Button } from 'tamagui'
 import { Storage } from 'src/state/cache'
 import { getAdminUser } from 'src/lib/api'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
-import {
-  prettyCount,
-  _timeAgo,
-  enforceLen,
-  formatTimestamp,
-} from 'src/utils'
-import {
-  useQuery,
-} from '@tanstack/react-query'
+import { prettyCount, _timeAgo, enforceLen, formatTimestamp } from 'src/utils'
+import { useQuery } from '@tanstack/react-query'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 

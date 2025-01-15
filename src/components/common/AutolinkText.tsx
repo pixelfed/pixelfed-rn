@@ -5,12 +5,12 @@ const mentionRegex = /@\w+(?:@\w+\.\w+(?:\.\w+)*)?/g
 const hashtagRegex = /#[\p{L}\p{N}]+(?:[\p{L}\p{N}_-]*[\p{L}\p{N}])?/gu
 
 interface Part {
-  type: 'text' | 'mention' | 'hashtag',
-  value: string,
+  type: 'text' | 'mention' | 'hashtag'
+  value: string
 }
 
 interface Match extends Part {
-  type: 'mention' | 'hashtag',
+  type: 'mention' | 'hashtag'
   index: number
 }
 
@@ -32,22 +32,20 @@ const parseText = (text: string) => {
 }
 
 interface AutolinkTextProps {
-  text: string,
-  onMentionPress: (mention: string) => void,
-  onHashtagPress: (hashtag: string) => void,
+  text: string
+  onMentionPress: (mention: string) => void
+  onHashtagPress: (hashtag: string) => void
 }
 
-interface AutolinkTextPropsWithUsername extends AutolinkTextProps{
-  username: string,
-  onUsernamePress: () => void,
+interface AutolinkTextPropsWithUsername extends AutolinkTextProps {
+  username: string
+  onUsernamePress: () => void
 }
 
-export default function AutolinkText(props: AutolinkTextProps | AutolinkTextPropsWithUsername){
-  const {
-    text,
-    onMentionPress,
-    onHashtagPress,
-  } = props
+export default function AutolinkText(
+  props: AutolinkTextProps | AutolinkTextPropsWithUsername
+) {
+  const { text, onMentionPress, onHashtagPress } = props
 
   const { username, onUsernamePress } = props as AutolinkTextPropsWithUsername
 
@@ -119,4 +117,3 @@ export default function AutolinkText(props: AutolinkTextProps | AutolinkTextProp
     </Text>
   )
 }
-

@@ -1,13 +1,5 @@
 import { Alert } from 'react-native'
-import {
-  Group,
-  ScrollView,
-  Separator,
-  Text,
-  XStack,
-  YStack,
-  Button,
-} from 'tamagui'
+import { Group, ScrollView, Separator, Text, XStack, YStack, Button } from 'tamagui'
 import { Storage } from 'src/state/cache'
 import React, { useState, useEffect, useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -15,14 +7,17 @@ import { Stack, Link, useNavigation } from 'expo-router'
 import { useAuth, useUserCache } from '@state/AuthProvider'
 import { openBrowserAsync } from 'src/utils'
 import * as Application from 'expo-application'
-import { GroupButtonContent, GroupButtonContentProps } from 'src/components/common/GroupButtonContent'
+import {
+  GroupButtonContent,
+  type GroupButtonContentProps,
+} from 'src/components/common/GroupButtonContent'
 
 export default function Page() {
   const navigation = useNavigation()
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Settings' })
   }, [navigation])
-  const {username, locked} = useUserCache()
+  const { username, locked } = useUserCache()
   const instance = Storage.getString('app.instance')
   const buildVersion = 74
   const version = Application.nativeApplicationVersion + '.' + buildVersion
@@ -41,27 +36,35 @@ export default function Page() {
     openBrowserAsync('https://' + instance + '/' + path)
   }
 
-  const GroupButton = ({ icon, title, path }: GroupButtonContentProps & {path:string}) => (
+  const GroupButton = ({
+    icon,
+    title,
+    path,
+  }: GroupButtonContentProps & { path: string }) => (
     <Group.Item>
       <Link href={path} asChild>
         <Button bg="$gray1" justifyContent="flex-start" size="$5" px="$3">
-        <GroupButtonContent
-            icon={icon}
-            title={title}
-            iconColor="#666" />
+          <GroupButtonContent icon={icon} title={title} iconColor="#666" />
         </Button>
       </Link>
     </Group.Item>
   )
 
-  const GroupUrlButton = ({ icon, title, path }: GroupButtonContentProps & {path: string}) => (
+  const GroupUrlButton = ({
+    icon,
+    title,
+    path,
+  }: GroupButtonContentProps & { path: string }) => (
     <Group.Item>
-        <Button bg="$gray1" justifyContent="flex-start" size="$5" px="$3" onPress={() => openLink(path)}>
-        <GroupButtonContent
-            icon={icon}
-            title={title}
-            iconColor="red" />
-        </Button>
+      <Button
+        bg="$gray1"
+        justifyContent="flex-start"
+        size="$5"
+        px="$3"
+        onPress={() => openLink(path)}
+      >
+        <GroupButtonContent icon={icon} title={title} iconColor="red" />
+      </Button>
     </Group.Item>
   )
 
@@ -123,17 +126,25 @@ export default function Page() {
               path="/settings/accessibility/"
             />
             <GroupButton icon="droplet" title="Appearance" path="/settings/appearance/" />
-              <GroupButton
-                icon="alert-triangle"
-                title="Push Notifications"
-                path="/settings/notifications/"
-              />
+            <GroupButton
+              icon="alert-triangle"
+              title="Push Notifications"
+              path="/settings/notifications/"
+            />
           </Group>
 
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
-            <GroupButton icon="server" title={instance||''} path="/settings/instance/" />
+            <GroupButton
+              icon="server"
+              title={instance || ''}
+              path="/settings/instance/"
+            />
             <GroupButton icon="align-left" title="Legal" path="/settings/legal/" />
-            <GroupUrlButton icon="trash" title="Delete Account" path="settings/remove/request/permanent" />
+            <GroupUrlButton
+              icon="trash"
+              title="Delete Account"
+              path="settings/remove/request/permanent"
+            />
           </Group>
 
           <Button bg="$gray1" justifyContent="flex-start" size="$5" px="$3">

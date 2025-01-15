@@ -5,21 +5,12 @@ import { useRef, useMemo, useCallback, useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, router, useNavigation } from 'expo-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import {
-  getStatusById,
-  deleteStatusV1,
-  reblogStatus,
-  unreblogStatus,
-} from 'src/lib/api'
+import { getStatusById, deleteStatusV1, reblogStatus, unreblogStatus } from 'src/lib/api'
 import FeedPost from 'src/components/post/FeedPost'
-import {
-  BottomSheetModal,
-  BottomSheetBackdrop,
-} from '@gorhom/bottom-sheet'
+import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet'
 import CommentFeed from 'src/components/post/CommentFeed'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 import { useUserCache } from 'src/state/AuthProvider'
-
 
 export default function Page() {
   const { id } = useLocalSearchParams()

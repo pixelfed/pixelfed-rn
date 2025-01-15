@@ -1,10 +1,6 @@
 import { View, Text, XStack, YStack, Button, Separator, Avatar } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
-import {
-  enforceLen,
-  openBrowserAsync,
-  prettyCount,
-} from 'src/utils'
+import { enforceLen, openBrowserAsync, prettyCount } from 'src/utils'
 import { Link, useRouter } from 'expo-router'
 import { Dimensions, Pressable, Platform } from 'react-native'
 import EditProfile from './actionButtons/EditProfile'
@@ -18,21 +14,21 @@ import { useCallback, useState } from 'react'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import UserAvatar from 'src/components/common/UserAvatar'
 const SCREEN_WIDTH = Dimensions.get('screen').width
-import { Relationship } from 'src/lib/api-types'
+import type { Relationship } from 'src/lib/api-types'
 import { useUserCache } from 'src/state/AuthProvider'
 
 type todo = any
 
-interface ProfileHeaderProps{
-  profile: todo,
-  isSelf?: boolean,
-  relationship?: Relationship,
-  openMenu: () => void,
-  onFollow: () => void,
-  onShare: () => void,
-  onUnfollow: () => void,
-  onCancelFollowRequest: () => void,
-  mutuals: todo[],
+interface ProfileHeaderProps {
+  profile: todo
+  isSelf?: boolean
+  relationship?: Relationship
+  openMenu: () => void
+  onFollow: () => void
+  onShare: () => void
+  onUnfollow: () => void
+  onCancelFollowRequest: () => void
+  mutuals: todo[]
 }
 
 // TODO split self profile and other user profile
@@ -51,7 +47,7 @@ export default function ProfileHeader({
   const router = useRouter()
   const [usernameTruncated, setUsernameTruncated] = useState(profile?.acct?.length > 40)
 
-  const {id: selfId} = useUserCache()
+  const { id: selfId } = useUserCache()
 
   const onHashtagPress = (tag: string) => {
     router.push(`/hashtag/${tag}`)

@@ -55,7 +55,7 @@ export default function ProfileScreen() {
   // const toast = useToastController();
   const toastController = useToastController()
 
-  const renderBackdrop:React.FC<BottomSheetBackdropProps> = useCallback(
+  const renderBackdrop: React.FC<BottomSheetBackdropProps> = useCallback(
     (props) => (
       <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
     ),
@@ -402,7 +402,9 @@ export default function ProfileScreen() {
           message: user.url,
         })
       } catch (error: any) {
-        Alert.alert(error?.message ||"share sheet failed to open and error had no message")
+        Alert.alert(
+          error?.message || 'share sheet failed to open and error had no message'
+        )
       }
     }
 
@@ -445,7 +447,9 @@ export default function ProfileScreen() {
         message: user.url,
       })
     } catch (error: any) {
-      Alert.alert(error?.message || "sharing: error occured, but error message is missing")
+      Alert.alert(
+        error?.message || 'sharing: error occured, but error message is missing'
+      )
     }
   }
 

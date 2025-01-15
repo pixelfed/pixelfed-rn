@@ -1,15 +1,15 @@
-import { PropsWithChildren } from 'hoist-non-react-statics/node_modules/@types/react'
+import type { PropsWithChildren } from 'hoist-non-react-statics/node_modules/@types/react'
 import React from 'react'
-import {  StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
-import type { StyleProp, TextStyle, } from 'react-native'
+import type { StyleProp, TextStyle } from 'react-native'
 
 export type ReadMoreProps = {
-  numberOfLines: number,
-  textStyle?: StyleProp<TextStyle>,
-  onReady?: () => void,
-  renderTruncatedFooter?: (toggleShowAllText: () => void)=>void,
-  renderRevealedFooter?: (toggleShowAllText: () => void)=>void,
+  numberOfLines: number
+  textStyle?: StyleProp<TextStyle>
+  onReady?: () => void
+  renderTruncatedFooter?: (toggleShowAllText: () => void) => void
+  renderRevealedFooter?: (toggleShowAllText: () => void) => void
 }
 
 export default class ReadMore extends React.Component<PropsWithChildren<ReadMoreProps>> {
@@ -18,7 +18,7 @@ export default class ReadMore extends React.Component<PropsWithChildren<ReadMore
     shouldShowReadMore: false,
     showAllText: false,
   }
-  protected isReadMoreMounted: boolean = false
+  protected isReadMoreMounted = false
   protected text: Text | null = null
 
   async componentDidMount() {
@@ -30,7 +30,7 @@ export default class ReadMore extends React.Component<PropsWithChildren<ReadMore
     }
 
     if (!this.text) {
-      throw new Error("_text is not defined");
+      throw new Error('_text is not defined')
     }
 
     // Get the height of the text with no restriction on number of lines
@@ -65,17 +65,17 @@ export default class ReadMore extends React.Component<PropsWithChildren<ReadMore
     return (
       <View>
         <>
-        <Text
-          numberOfLines={measured && !showAllText ? numberOfLines : 0}
-          style={this.props.textStyle}
-          ref={(text) => {
-            this.text = text
-          }}
-        >
-          {this.props.children}
-        </Text>
+          <Text
+            numberOfLines={measured && !showAllText ? numberOfLines : 0}
+            style={this.props.textStyle}
+            ref={(text) => {
+              this.text = text
+            }}
+          >
+            {this.props.children}
+          </Text>
 
-        {this._maybeRenderReadMore()}
+          {this._maybeRenderReadMore()}
         </>
       </View>
     )

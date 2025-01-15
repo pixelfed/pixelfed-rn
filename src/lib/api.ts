@@ -1,7 +1,7 @@
 import { objectToForm } from 'src/requests'
 import { Storage } from 'src/state/cache'
 import { parseLinkHeader } from 'src/utils'
-import { Relationship } from './api-types'
+import type { Relationship } from './api-types'
 
 export function randomKey(length: number) {
   let result = ''
@@ -47,7 +47,7 @@ export async function selfPost(
   }
 
   if (appHeader) {
-    headers['X-PIXELFED-APP'] = "1"
+    headers['X-PIXELFED-APP'] = '1'
   }
 
   const resp = await fetch(url, {
@@ -88,7 +88,12 @@ export async function selfPut(
   return rawRes ? resp : resp.json()
 }
 
-export async function selfDelete(path: string, params = {}, rawRes = false, idempotency = false) {
+export async function selfDelete(
+  path: string,
+  params = {},
+  rawRes = false,
+  idempotency = false
+) {
   let headers: Record<string, string> = {}
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
@@ -117,7 +122,7 @@ export async function selfGet(
   idempotency = false,
   appHeader = false
 ) {
-  let headers:Record<string, string> = {}
+  let headers: Record<string, string> = {}
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
   const url = `https://${instance}/${path}`
@@ -131,7 +136,7 @@ export async function selfGet(
   }
 
   if (appHeader) {
-    headers['X-PIXELFED-APP'] = "1"
+    headers['X-PIXELFED-APP'] = '1'
   }
 
   const resp = await fetch(url, {
@@ -480,7 +485,7 @@ export async function postComment({ postId, commentText, scope = 'public', cw = 
   return await response.json()
 }
 
-export async function likeStatus({ id }:{ id: string}) {
+export async function likeStatus({ id }: { id: string }) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
 
@@ -496,7 +501,7 @@ export async function likeStatus({ id }:{ id: string}) {
   return await response.json()
 }
 
-export async function unlikeStatus({ id }:{ id: string}) {
+export async function unlikeStatus({ id }: { id: string }) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
 
@@ -512,11 +517,11 @@ export async function unlikeStatus({ id }:{ id: string}) {
   return await response.json()
 }
 
-export async function reblogStatus({ id }:{ id: string}) {
+export async function reblogStatus({ id }: { id: string }) {
   return await selfPost(`api/v1/statuses/${id}/reblog`)
 }
 
-export async function unreblogStatus({ id }:{ id: string}) {
+export async function unreblogStatus({ id }: { id: string }) {
   return await selfPost(`api/v1/statuses/${id}/unreblog`)
 }
 
@@ -541,7 +546,7 @@ export async function reportStatus({ id, type }) {
   return await response.json()
 }
 
-export async function deleteStatus({ id }:{ id: string}) {
+export async function deleteStatus({ id }: { id: string }) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
 
@@ -642,11 +647,13 @@ export async function updateCredentials(data) {
 }
 
 export async function updateAvatar(data: {
-  avatar: {payload: {
-    uri: string;
-    type: string | null;
-    name: string;
-}}
+  avatar: {
+    payload: {
+      uri: string
+      type: string | null
+      name: string
+    }
+  }
 }) {
   let path = `api/v1/accounts/update_credentials`
   return await selfPost(path, data, true)
@@ -711,7 +718,7 @@ export async function getAdminStats() {
   return await selfGet(path)
 }
 
-export async function adminInstances(queryKey?:{pageParam?:string}, sort, sortBy) {
+export async function adminInstances(queryKey?: { pageParam?: string }, sort, sortBy) {
   const instance = Storage.getString('app.instance')
   let path = queryKey?.pageParam
     ? queryKey.pageParam

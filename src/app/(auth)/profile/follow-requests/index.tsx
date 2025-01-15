@@ -13,7 +13,6 @@ import UserAvatar from 'src/components/common/UserAvatar'
 import { enforceLen } from 'src/utils'
 import { Switch } from 'src/components/form/Switch'
 
-
 export default function FollowersScreen() {
   const queryClient = useQueryClient()
   const [showAlert, setAlert] = useState(true)

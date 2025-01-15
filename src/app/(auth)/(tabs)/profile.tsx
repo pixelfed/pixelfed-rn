@@ -12,7 +12,7 @@ import { useQuerySelfProfile } from 'src/state/AuthProvider'
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileScreen() {
-  const {user, isFetching} = useQuerySelfProfile()
+  const { user, isFetching } = useQuerySelfProfile()
 
   const userId = user?.id
 

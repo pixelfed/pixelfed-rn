@@ -2,7 +2,7 @@ import { Alert } from 'react-native'
 import { Storage } from './state/cache'
 import { compareSemver } from './utils'
 
-export function objectToForm(obj:{[key:string|number]:any}) {
+export function objectToForm(obj: { [key: string | number]: any }) {
   let form = new FormData()
 
   Object.keys(obj).forEach((key) => form.append(key, obj[key]))
@@ -10,9 +10,14 @@ export function objectToForm(obj:{[key:string|number]:any}) {
   return form
 }
 
-export async function postForm(url:string, data?: {[key: string | number]: any}, token?: string, contentType?: string) {
+export async function postForm(
+  url: string,
+  data?: { [key: string | number]: any },
+  token?: string,
+  contentType?: string
+) {
   // Send a POST request with data formatted with FormData returning JSON
-  let headers: {[key: string]: string} = {}
+  let headers: { [key: string]: string } = {}
 
   if (token) headers['Authorization'] = `Bearer ${token}`
   if (contentType) headers['Content-Type'] = contentType
@@ -26,9 +31,14 @@ export async function postForm(url:string, data?: {[key: string | number]: any},
   return resp
 }
 
-export async function postJson(url: string, data?: any, token?:string, customHeaders?: {[key: string]: string}) {
+export async function postJson(
+  url: string,
+  data?: any,
+  token?: string,
+  customHeaders?: { [key: string]: string }
+) {
   // Send a POST request with data formatted with FormData returning JSON
-  let headers: {[key: string]: string} = customHeaders ? customHeaders : {}
+  let headers: { [key: string]: string } = customHeaders ? customHeaders : {}
 
   if (token) {
     headers['Authorization'] = `Bearer ${token}`
@@ -46,7 +56,7 @@ export async function postJson(url: string, data?: any, token?:string, customHea
   return resp
 }
 
-export async function post(url: string, token?:string) {
+export async function post(url: string, token?: string) {
   const resp = await fetch(url, {
     method: 'POST',
     headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -73,7 +83,12 @@ export async function get(url: string, token?: string, data?: any) {
   return resp
 }
 
-export async function getJSON(url: string, token?: string, data?: any, customHeaders?: {[key: string]: string}) {
+export async function getJSON(
+  url: string,
+  token?: string,
+  data?: any,
+  customHeaders?: { [key: string]: string }
+) {
   let completeURL
   if (data) {
     let params = new URLSearchParams(data)
@@ -101,9 +116,9 @@ export function getJsonWithTimeout(
   url: string,
   token?: string,
   data?: any,
-  customHeaders?:{[key: string]: string},
+  customHeaders?: { [key: string]: string },
   timeout = 5000
-):Promise<Response> {
+): Promise<Response> {
   let completeURL
   if (data) {
     let params = new URLSearchParams(data)

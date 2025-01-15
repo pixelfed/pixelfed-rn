@@ -4,7 +4,7 @@ import { Text, View } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { ErrorBoundaryProps, Stack, useNavigation, useRouter } from 'expo-router'
+import { type ErrorBoundaryProps, Stack, useNavigation, useRouter } from 'expo-router'
 import {
   useInfiniteQuery,
   useMutation,
@@ -89,7 +89,7 @@ export default function HomeScreen() {
     [replyId]
   )
 
-  const user =  useUserCache()
+  const user = useUserCache()
   const { playVideo, currentVideoId } = useVideo()
 
   const onViewRef = useCallback(

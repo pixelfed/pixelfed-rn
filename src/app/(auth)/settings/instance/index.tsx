@@ -1,14 +1,5 @@
 import { ActivityIndicator } from 'react-native'
-import {
-  Group,
-  ScrollView,
-  Separator,
-  Text,
-  View,
-  XStack,
-  YStack,
-  Button,
-} from 'tamagui'
+import { Group, ScrollView, Separator, Text, View, XStack, YStack, Button } from 'tamagui'
 import { Storage } from 'src/state/cache'
 import { getInstanceV1 } from 'src/lib/api'
 import { SafeAreaView } from 'react-native-safe-area-context'

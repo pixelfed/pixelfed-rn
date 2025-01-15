@@ -1,16 +1,7 @@
 import Feather from '@expo/vector-icons/Feather'
 import { useMemo, useState } from 'react'
 import type { SelectProps } from 'tamagui'
-import {
-  Adapt,
-  Label,
-  Select,
-  Separator,
-  Sheet,
-  XStack,
-  YStack,
-  View,
-} from 'tamagui'
+import { Adapt, Label, Select, Separator, Sheet, XStack, YStack, View } from 'tamagui'
 
 export function FormSelect(props: any) {
   return (

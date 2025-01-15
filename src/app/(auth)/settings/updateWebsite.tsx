@@ -1,46 +1,41 @@
-import { ActivityIndicator } from "react-native";
-import { ScrollView, Text, View, XStack, Button, Input } from "tamagui";
-import { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack } from "expo-router";
-import { useMutation } from "@tanstack/react-query";
-import { updateCredentials } from "src/lib/api";
-import { router } from "expo-router";
-import { useQuerySelfProfile } from "src/state/AuthProvider";
+import { ActivityIndicator } from 'react-native'
+import { ScrollView, Text, View, XStack, Button, Input } from 'tamagui'
+import { useState } from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { Stack } from 'expo-router'
+import { useMutation } from '@tanstack/react-query'
+import { updateCredentials } from 'src/lib/api'
+import { router } from 'expo-router'
+import { useQuerySelfProfile } from 'src/state/AuthProvider'
 
 export default function Page() {
-  const { user } = useQuerySelfProfile();
-  const [website, setWebsite] = useState(
-    user?.website?.replace("https://", "")
-  );
-  const [isSubmitting, setSubmitting] = useState(false);
+  const { user } = useQuerySelfProfile()
+  const [website, setWebsite] = useState(user?.website?.replace('https://', ''))
+  const [isSubmitting, setSubmitting] = useState(false)
 
   const mutation = useMutation({
     mutationFn: async (data: { website: string }) => {
-      setSubmitting(true);
-      return await updateCredentials(data);
+      setSubmitting(true)
+      return await updateCredentials(data)
     },
     onSuccess: () => {
-      router.replace("/profile");
+      router.replace('/profile')
     },
-  });
+  })
 
   const onSubmit = () => {
-    if (typeof website === "undefined") {
-      return;
+    if (typeof website === 'undefined') {
+      return
     }
-    mutation.mutate({ website: website });
-  };
+    mutation.mutate({ website: website })
+  }
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: "#fff" }}
-      edges={["bottom"]}
-    >
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['bottom']}>
       <Stack.Screen
         options={{
-          title: "Website",
-          headerBackTitle: "Back",
+          title: 'Website',
+          headerBackTitle: 'Back',
           headerRight: () =>
             isSubmitting ? (
               <ActivityIndicator />
@@ -48,7 +43,7 @@ export default function Page() {
               <Button
                 fontSize="$7"
                 p="0"
-                fontWeight={"600"}
+                fontWeight={'600'}
                 color="$blue9"
                 chromeless
                 onPress={() => onSubmit()}
@@ -85,5 +80,5 @@ export default function Page() {
         </Text>
       </ScrollView>
     </SafeAreaView>
-  );
+  )
 }

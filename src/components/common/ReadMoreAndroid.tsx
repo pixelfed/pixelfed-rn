@@ -1,9 +1,13 @@
-import { PropsWithChildren } from 'hoist-non-react-statics/node_modules/@types/react'
+import type { PropsWithChildren } from 'hoist-non-react-statics/node_modules/@types/react'
 import React, { useState, useCallback } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-import type { NativeSyntheticEvent, TextLayoutEventData, LayoutChangeEvent } from 'react-native'
-import { ReadMoreProps } from './ReadMore'
+import type {
+  NativeSyntheticEvent,
+  TextLayoutEventData,
+  LayoutChangeEvent,
+} from 'react-native'
+import type { ReadMoreProps } from './ReadMore'
 
 const ReadMoreAndroid = ({
   numberOfLines,
@@ -11,7 +15,7 @@ const ReadMoreAndroid = ({
   children,
   renderTruncatedFooter,
   renderRevealedFooter,
-}:PropsWithChildren<ReadMoreProps>) => {
+}: PropsWithChildren<ReadMoreProps>) => {
   const [textHeight, setTextHeight] = useState(0)
   const [measuredHeight, setMeasuredHeight] = useState(0)
   const [showAllText, setShowAllText] = useState(false)
@@ -68,15 +72,15 @@ const ReadMoreAndroid = ({
   return (
     <View>
       <>
-      <Text
-        numberOfLines={showAllText ? undefined : numberOfLines}
-        style={textStyle}
-        onTextLayout={onTextLayout}
-        onLayout={onMeasuredTextLayout}
-      >
-        {children}
-      </Text>
-      {maybeRenderReadMore()}
+        <Text
+          numberOfLines={showAllText ? undefined : numberOfLines}
+          style={textStyle}
+          onTextLayout={onTextLayout}
+          onLayout={onMeasuredTextLayout}
+        >
+          {children}
+        </Text>
+        {maybeRenderReadMore()}
       </>
     </View>
   )

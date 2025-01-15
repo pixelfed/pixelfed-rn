@@ -20,7 +20,7 @@ export default function Screen() {
   const [activeReport, setActiveReport] = useState()
   const router = useRouter()
 
-  const bottomSheetModalRef = useRef<BottomSheetModal|null>(null)
+  const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
   const snapPoints = useMemo(() => ['25%', '70%'], [])
   const handlePresentModalPress = useCallback((item) => {
     setActiveReport(item)
