@@ -1,4 +1,3 @@
-import { Link } from 'expo-router'
 import { Alert } from 'react-native'
 import { Button, XStack } from 'tamagui'
 
