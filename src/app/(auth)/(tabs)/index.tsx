@@ -4,7 +4,7 @@ import { Text, View, XStack, Spinner } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
+import { ErrorBoundaryProps, Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import {
   useInfiniteQuery,
   useMutation,
