@@ -11,6 +11,7 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "npx @biomejs/biome check --write ./src",
+    "lint-check": "npx @biomejs/biome check ./src",
     "postinstall": "patch-package"
   },
   "jest": {

@@ -1,0 +1,23 @@
+name: biomejs
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: nodejs
+
+    - name: Install dependencies
+      run: npm install
+    - name: Run biomejs
+      run: npm run lint-check
