@@ -13,6 +13,9 @@ jobs:
       - name: 🏗 Setup repo
         uses: actions/checkout@v3
 
+      - name: 🏗 Enable corepack
+        run: corepack enable
+
       - name: 🏗 Setup Node
         uses: actions/setup-node@v3
         with:
@@ -20,7 +23,7 @@ jobs:
           cache: yarn
 
       - name: 📦 Install dependencies
-        run: corepack enable && yarn install
+        run: yarn install
       
       - name: 🔑 Inject secrets
         run: echo $GOOGLE_SERVICES_JSON > google-services.json
