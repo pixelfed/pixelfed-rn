@@ -4,10 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Text, View, YStack, Input, XStack } from 'tamagui'
 import {
   useQuery,
-  useQueryClient,
-  useMutation,
-  QueryClient,
-  QueryClientProvider,
 } from '@tanstack/react-query'
 
 import { searchQuery } from 'src/lib/api'

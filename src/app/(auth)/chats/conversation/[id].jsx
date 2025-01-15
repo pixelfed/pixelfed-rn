@@ -1,14 +1,11 @@
-import { FlatList, Dimensions, ActivityIndicator, Alert, Pressable } from 'react-native'
-import { Avatar, Image, ScrollView, Text, View, YStack, XStack, Separator } from 'tamagui'
-import ProfileHeader from '@components/profile/ProfileHeader'
+import { ActivityIndicator, Alert, Pressable } from 'react-native'
+import { View } from 'tamagui'
 import { Storage } from 'src/state/cache'
-import { queryApi } from 'src/requests'
-import { useState, useEffect, useCallback, useLayoutEffect } from 'react'
+import { useState, useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import {
   useQuery,
-  useInfiniteQuery,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query'

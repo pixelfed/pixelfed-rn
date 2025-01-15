@@ -12,6 +12,7 @@ import { PressableOpacity } from 'react-native-pressable-opacity'
 import Feather from '@expo/vector-icons/Feather'
 
 export default function Page() {
+  // TODO move to state react context
   const selfUser = JSON.parse(Storage.getString('user.profile'))
   const navigation = useNavigation()
   useLayoutEffect(() => {
