@@ -26,4 +26,4 @@ jobs:
         run: npm install
 
       - name: 🧹 Run biomejs
-        run: npm lint-check
+        run: npm run lint-check

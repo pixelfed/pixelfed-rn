@@ -21,6 +21,12 @@ jobs:
         with:
           node-version: 18.x
           cache: npm
+      
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📦 Install dependencies
         run: npm install
@@ -31,4 +37,4 @@ jobs:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
 
       - name: 🚀 Build app
-        run: npx expo prebuild --platform android && npx react-native build-android
+        run: eas build --platform android --local --non-interactive
