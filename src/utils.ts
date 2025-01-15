@@ -1,6 +1,6 @@
 import * as WebBrowser from 'expo-web-browser'
 
-export const openBrowserAsync = async (url) => {
+export const openBrowserAsync = async (url: string) => {
   await WebBrowser.openBrowserAsync(url, {
     toolbarColor: '#000000',
     enableBarCollapsing: true,
@@ -8,7 +8,7 @@ export const openBrowserAsync = async (url) => {
   })
 }
 
-export function formatTimestamp(iso8601String) {
+export function formatTimestamp(iso8601String: string) {
   const now = new Date()
   const timestamp = new Date(iso8601String)
   const diffInSeconds = Math.floor((now - timestamp) / 1000)
@@ -47,8 +47,7 @@ export function formatTimestamp(iso8601String) {
   return `${month} ${day}, ${year}`
 }
 
-export function formatTimestampMonthYear(iso8601String) {
-  const now = new Date()
+export function formatTimestampMonthYear(iso8601String: string) {
   const timestamp = new Date(iso8601String)
 
   const monthNames = [
@@ -71,9 +70,9 @@ export function formatTimestampMonthYear(iso8601String) {
   return `${month} ${year}`
 }
 
-export function _timeAgo(ts) {
+export function _timeAgo(ts: string) {
   let date = Date.parse(ts)
-  let seconds = Math.floor((new Date() - date) / 1000)
+  let seconds = Math.floor((Date.now() - date) / 1000)
   let interval = Math.floor(seconds / 63072000)
   if (interval < 0) {
     return '0s'
@@ -100,13 +99,13 @@ export function _timeAgo(ts) {
   return Math.floor(seconds) + 's'
 }
 
-export function parseLinkHeader(header) {
+export function parseLinkHeader(header: string) {
   if (!header || header.length === 0) {
     return null
   }
 
   const parts = header.split(',')
-  const links = {}
+  const links: Record<string, string> = {}
   parts.forEach((p) => {
     const section = p.split(';')
     const url = section[0].replace(/<(.*)>/, '$1').trim()
@@ -117,7 +116,7 @@ export function parseLinkHeader(header) {
   return links
 }
 
-export function prettyCount(number) {
+export function prettyCount(number: number) {
   if (!number) {
     return 0
   }
@@ -131,7 +130,7 @@ export function prettyCount(number) {
   return (number / 1000000000).toFixed(number % 1000000000 === 0 ? 0 : 1) + 'B'
 }
 
-export function likeCountLabel(number) {
+export function likeCountLabel(number: number) {
   if (!number) {
     return ''
   }
@@ -143,7 +142,7 @@ export function likeCountLabel(number) {
   return `${prettyCount(number)} Likes`
 }
 
-export function postCountLabel(number) {
+export function postCountLabel(number: number) {
   if (!number) {
     return '0 Posts'
   }
@@ -155,7 +154,7 @@ export function postCountLabel(number) {
   return `${prettyCount(number)} Posts`
 }
 
-export function enforceLen(str, len, ellipsis = false, mode = 'end') {
+export function enforceLen(str: string, len: number, ellipsis = false, mode = 'end') {
   str = str || ''
   if (str.length > len) {
     if (ellipsis && mode === 'end') {
@@ -170,7 +169,7 @@ export function enforceLen(str, len, ellipsis = false, mode = 'end') {
   return str
 }
 
-export function htmlToTextWithLineBreaks(html) {
+export function htmlToTextWithLineBreaks(html: string) {
   if (!html || !html.length) {
     return html
   }
@@ -182,7 +181,7 @@ export function htmlToTextWithLineBreaks(html) {
   return html.trim()
 }
 
-export function extractMainVersion(version) {
+export function extractMainVersion(version: string) {
   const regex = /^(\d+\.\d+\.\d+)/
   const match = version.match(regex)
   if (match) {
@@ -191,8 +190,8 @@ export function extractMainVersion(version) {
   return null
 }
 
-export function compareSemver(version1, version2) {
-  const parseVersion = (version) => {
+export function compareSemver(version1: string, version2: string) {
+  const parseVersion = (version: string) => {
     const mainVersion = extractMainVersion(version)
     return mainVersion ? mainVersion.split('.').map(Number) : [0, 0, 0]
   }
