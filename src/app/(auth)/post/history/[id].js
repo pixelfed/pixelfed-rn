@@ -1,6 +1,5 @@
 import { FlatList, ActivityIndicator, StyleSheet } from 'react-native'
 import { Separator, Text, View, XStack, YStack } from 'tamagui'
-import { Storage } from 'src/state/cache'
 import { useCallback, useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, useNavigation } from 'expo-router'
@@ -16,7 +15,6 @@ export default function Page() {
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Post History', headerBackTitle: 'Back' })
   }, [navigation])
-  const user = JSON.parse(Storage.getString('user.profile'))
 
   const { isPending, isError, data, error } = useQuery({
     queryKey: ['getStatusHistory', id],

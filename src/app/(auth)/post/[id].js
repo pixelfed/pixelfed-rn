@@ -1,16 +1,13 @@
 //@ts-check
-import { FlatList, Dimensions, ActivityIndicator, Platform } from 'react-native'
-import { Image, ScrollView, Text, View, YStack } from 'tamagui'
-import ProfileHeader from '@components/profile/ProfileHeader'
+import { ActivityIndicator, Platform } from 'react-native'
+import { ScrollView, Text, View } from 'tamagui'
 import { Storage } from 'src/state/cache'
-import { queryApi } from 'src/requests'
-import { useState, useEffect, useRef, useMemo, useCallback, useLayoutEffect } from 'react'
+import { useRef, useMemo, useCallback, useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, router, useNavigation } from 'expo-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   getStatusById,
-  getAccountStatusesById,
   deleteStatusV1,
   reblogStatus,
   unreblogStatus,
@@ -18,7 +15,6 @@ import {
 import FeedPost from 'src/components/post/FeedPost'
 import {
   BottomSheetModal,
-  BottomSheetView,
   BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet'
 import CommentFeed from 'src/components/post/CommentFeed'

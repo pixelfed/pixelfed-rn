@@ -1,6 +1,5 @@
 import React, { useCallback, useLayoutEffect, useState, useMemo } from 'react'
 import {
-  FlatList,
   ActivityIndicator,
   StyleSheet,
   Keyboard,
@@ -9,21 +8,18 @@ import {
 } from 'react-native'
 import {
   ScrollView,
-  Separator,
   Text,
   View,
   XStack,
   YStack,
   TextArea,
-  Button,
 } from 'tamagui'
 import { Storage } from 'src/state/cache'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
 import { getStatusById, getInstanceV1, editPostMedia, putEditPost } from 'src/lib/api'
-import { _timeAgo, htmlToTextWithLineBreaks } from 'src/utils'
-import ReadMore from 'src/components/common/ReadMore'
+import { _timeAgo } from 'src/utils'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { Switch } from 'src/components/form/Switch'
 import FastImage from 'react-native-fast-image'

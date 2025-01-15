@@ -1,6 +1,6 @@
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { ScrollView, Text, View, XStack, YStack } from 'tamagui'
+import { ScrollView, Text, XStack, YStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { useMutation } from '@tanstack/react-query'
 import { reportStatus } from 'src/lib/api'
