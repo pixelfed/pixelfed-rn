@@ -154,7 +154,7 @@ export default function Page() {
   if (status === 'error') {
     return (
       <View>
-        <Text>{error.message}</Text>
+        <Text>{error?.message}</Text>
       </View>
     )
   }

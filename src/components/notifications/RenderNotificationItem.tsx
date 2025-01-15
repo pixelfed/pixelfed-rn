@@ -7,7 +7,11 @@ import { _timeAgo } from 'src/utils'
 import FastImage from 'react-native-fast-image'
 import { enforceLen } from 'src/utils'
 
-class RenderItem extends PureComponent {
+interface RenderItemProps {
+  item
+}
+
+class RenderItem extends PureComponent<RenderItemProps> {
   render() {
     const { item } = this.props
     const _msgText = (type) => {
