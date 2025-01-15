@@ -6,16 +6,11 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
 import { getAccountById, getAccountRelationship } from 'src/lib/api'
-import { formatTimestampMonthYear, formatTimestamp } from 'src/utils'
+import { formatTimestampMonthYear, formatTimestamp, getDomain } from 'src/utils'
 
 export default function ProfileScreen() {
   const { id } = useLocalSearchParams()
   const router = useRouter()
-
-  const getDomain = (url:string) => {
-    let domain = new URL(url)
-    return domain.hostname
-  }
 
   const {
     data: user,

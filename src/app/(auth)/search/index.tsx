@@ -9,7 +9,7 @@ import {
 import { searchQuery } from 'src/lib/api'
 import { useCallback, useState } from 'react'
 import UserAvatar from 'src/components/common/UserAvatar'
-import { prettyCount } from 'src/utils'
+import { getDomain, prettyCount } from 'src/utils'
 import Feather from '@expo/vector-icons/Feather'
 import ReadMore from '../../../components/common/ReadMore'
 import { formatTimestampMonthYear, postCountLabel } from '../../../utils'
@@ -29,11 +29,6 @@ export default function SearchScreen() {
 
   if (isError) {
     return <Text>Error: {error?.message}</Text>
-  }
-
-  const getDomain = (url:string) => {
-    let domain = new URL(url)
-    return domain.hostname
   }
 
   const EmptyResults = () =>

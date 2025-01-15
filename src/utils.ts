@@ -210,3 +210,8 @@ export function compareSemver(version1: string, version2: string) {
 
   return 0
 }
+
+export function getDomain(url:string) {
+  let domain = new URL(url)
+  return domain.hostname
+}
