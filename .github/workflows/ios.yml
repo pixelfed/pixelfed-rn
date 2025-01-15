@@ -26,4 +26,4 @@ jobs:
         run: npm install
 
       - name: 🚀 Build app
-        run: eas build --non-interactive --local --platform ios
+        run: npx eas build --non-interactive --local --platform ios
