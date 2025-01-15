@@ -21,20 +21,16 @@ jobs:
         with:
           node-version: 18.x
           cache: npm
-      
-      - name: 🏗 Setup EAS
-        uses: expo/expo-github-action@v8
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📦 Install dependencies
         run: npm install
       
       - name: 🔑 Inject secrets
-        run: echo $GOOGLE_SERVICES_JSON > google-services.json
+        run: echo $GOOGLE_SERVICES_JSON > android/app/google-services.json
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
 
       - name: 🚀 Build app
-        run: eas build --platform android --local --non-interactive
+        run: |
+          cd android
+          ./gradlew assembleDebug

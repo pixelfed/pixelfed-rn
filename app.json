@@ -22,7 +22,6 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.pixelfed",
-      "deploymentTarget": "13.4",
       "infoPlist": {
         "NSCameraUsageDescription": "$(PRODUCT_NAME) needs access to your Camera.",
         "NSMicrophoneUsageDescription": "$(PRODUCT_NAME) needs access to your Microphone."
@@ -81,7 +80,7 @@
         {
           "mode": "production",
           "icon": "./assets/notification-icon.png",
-          "color": "#ffffff" 
+          "color": "#ffffff"
         }
       ]
     ],

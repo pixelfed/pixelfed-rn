@@ -21,17 +21,18 @@ jobs:
         with:
           node-version: 18.x
           cache: npm
-      
-      - name: 🏗 Setup EAS
-        uses: expo/expo-github-action@v8
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📦 Install dependencies
         run: npm install
       
-      # TODO: GoogleServices.Plist
+      - name: 🔑 Inject secrets
+        run: echo $GOOGLE_SERVICES_PLIST > ios/GoogleService-Info.plist.json
+        env:
+          GOOGLE_SERVICES_PLIST: ${{ secrets.GOOGLE_SERVICES_PLIST }}
 
       - name: 🚀 Build app
-        run: eas build --platform android --local --non-interactive
+        run: |
+          sudo xcode-select --switch /Applications/Xcode_16.1.app/Contents/Developer
+          cd ios
+          pod install
+          set -o pipefail && xcodebuild -workspace pixelfed.xcworkspace -scheme pixelfed -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" | xcbeautify --renderer github-actions
