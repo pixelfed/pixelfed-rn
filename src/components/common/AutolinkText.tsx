@@ -32,20 +32,25 @@ const parseText = (text: string) => {
 }
 
 interface AutolinkTextProps {
-  username: string,
   text: string,
   onMentionPress: (mention: string) => void,
   onHashtagPress: (hashtag: string) => void,
+}
+
+interface AutolinkTextPropsWithUsername extends AutolinkTextProps{
+  username: string,
   onUsernamePress: () => void,
 }
 
-export default function AutolinkText({
-  username,
-  text,
-  onMentionPress,
-  onHashtagPress,
-  onUsernamePress,
-}:AutolinkTextProps){
+export default function AutolinkText(props: AutolinkTextProps | AutolinkTextPropsWithUsername){
+  const {
+    text,
+    onMentionPress,
+    onHashtagPress,
+  } = props
+
+  const { username, onUsernamePress } = props as AutolinkTextPropsWithUsername
+
   const theme = useTheme()
   const matches = useMemo(() => parseText(text), [text])
 

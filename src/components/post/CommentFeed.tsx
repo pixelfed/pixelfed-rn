@@ -108,7 +108,6 @@ const CommentItem = ({
                       text={captionText}
                       onMentionPress={gotoUsernameProfile}
                       onHashtagPress={gotoHashtag}
-                      onUsernamePress={gotoUsernameProfile}
                     />
                   </ReadMore>
                 ) : (
@@ -117,7 +116,6 @@ const CommentItem = ({
                       text={captionText}
                       onMentionPress={gotoUsernameProfile}
                       onHashtagPress={gotoHashtag}
-                      onUsernamePress={gotoUsernameProfile}
                     />
                   </ReadMoreAndroid>
                 )}

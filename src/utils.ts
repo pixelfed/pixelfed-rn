@@ -99,7 +99,7 @@ export function _timeAgo(ts: string) {
   return Math.floor(seconds) + 's'
 }
 
-export function parseLinkHeader(header: string) {
+export function parseLinkHeader(header: string | null) {
   if (!header || header.length === 0) {
     return null
   }
