@@ -1,20 +1,23 @@
+import { PropsWithChildren } from 'hoist-non-react-statics/node_modules/@types/react'
 import React, { useState, useCallback } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+
+import type { NativeSyntheticEvent, TextLayoutEventData, LayoutChangeEvent } from 'react-native'
+import { ReadMoreProps } from './ReadMore'
 
 const ReadMoreAndroid = ({
   numberOfLines,
   textStyle,
   children,
-  onReady,
   renderTruncatedFooter,
   renderRevealedFooter,
-}) => {
+}:PropsWithChildren<ReadMoreProps>) => {
   const [textHeight, setTextHeight] = useState(0)
   const [measuredHeight, setMeasuredHeight] = useState(0)
   const [showAllText, setShowAllText] = useState(false)
 
   const onTextLayout = useCallback(
-    (e) => {
+    (e: NativeSyntheticEvent<TextLayoutEventData>) => {
       if (textHeight !== 0) return
 
       setTextHeight(
@@ -28,7 +31,7 @@ const ReadMoreAndroid = ({
     [textHeight, numberOfLines]
   )
 
-  const onMeasuredTextLayout = useCallback((e) => {
+  const onMeasuredTextLayout = useCallback((e: LayoutChangeEvent) => {
     setMeasuredHeight(e.nativeEvent.layout.height)
   }, [])
 
@@ -64,6 +67,7 @@ const ReadMoreAndroid = ({
 
   return (
     <View>
+      <>
       <Text
         numberOfLines={showAllText ? undefined : numberOfLines}
         style={textStyle}
@@ -73,6 +77,7 @@ const ReadMoreAndroid = ({
         {children}
       </Text>
       {maybeRenderReadMore()}
+      </>
     </View>
   )
 }

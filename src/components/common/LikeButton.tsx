@@ -10,7 +10,12 @@ import { Pressable, StyleSheet } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
 
-export default function LikeButton(props) {
+type LikeButtonProps = {
+  hasLiked: boolean,
+  handleLike: () => void
+}
+
+export default function LikeButton(props: LikeButtonProps) {
   const liked = useSharedValue(props.hasLiked ? 1 : 0)
 
   const outlineStyle = useAnimatedStyle(() => {

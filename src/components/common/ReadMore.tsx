@@ -1,31 +1,48 @@
+import { PropsWithChildren } from 'hoist-non-react-statics/node_modules/@types/react'
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import {  StyleSheet, Text, View } from 'react-native'
 
-export default class ReadMoreApple extends React.Component {
+import type { StyleProp, TextStyle, } from 'react-native'
+
+export type ReadMoreProps = {
+  numberOfLines: number,
+  textStyle: StyleProp<TextStyle>,
+  onReady: () => void,
+  renderTruncatedFooter: (toggleShowAllText: () => void)=>void,
+  renderRevealedFooter: (toggleShowAllText: () => void)=>void,
+}
+
+export default class ReadMore extends React.Component<PropsWithChildren<ReadMoreProps>> {
   state = {
     measured: false,
     shouldShowReadMore: false,
     showAllText: false,
   }
+  protected isMounted: boolean = false
+  protected text: Text | null = null
 
   async componentDidMount() {
-    this._isMounted = true
+    this.isMounted = true
     await nextFrameAsync()
 
-    if (!this._isMounted) {
+    if (!this.isMounted) {
       return
+    }
+
+    if (!this.text) {
+      throw new Error("_text is not defined");
     }
 
     // Get the height of the text with no restriction on number of lines
-    const fullHeight = await measureHeightAsync(this._text)
+    const fullHeight = await measureHeightAsync(this.text)
     this.setState({ measured: true })
     await nextFrameAsync()
 
-    if (!this._isMounted) {
+    if (!this.isMounted) {
       return
     }
 
-    const limitedHeight = await measureHeightAsync(this._text)
+    const limitedHeight = await measureHeightAsync(this.text)
 
     if (fullHeight > limitedHeight) {
       this.setState({ shouldShowReadMore: true }, () => {
@@ -37,7 +54,7 @@ export default class ReadMoreApple extends React.Component {
   }
 
   componentWillUnmount() {
-    this._isMounted = false
+    this.isMounted = false
   }
 
   render() {
@@ -51,7 +68,7 @@ export default class ReadMoreApple extends React.Component {
           numberOfLines={measured && !showAllText ? numberOfLines : 0}
           style={this.props.textStyle}
           ref={(text) => {
-            this._text = text
+            this.text = text
           }}
         >
           {this.props.children}
@@ -99,7 +116,7 @@ export default class ReadMoreApple extends React.Component {
   }
 }
 
-function measureHeightAsync(component) {
+function measureHeightAsync(component: Text): Promise<number> {
   return new Promise((resolve) => {
     component.measure((x, y, w, h) => {
       resolve(h)
@@ -107,7 +124,7 @@ function measureHeightAsync(component) {
   })
 }
 
-function nextFrameAsync() {
+function nextFrameAsync(): Promise<void> {
   return new Promise((resolve) => requestAnimationFrame(() => resolve()))
 }
 

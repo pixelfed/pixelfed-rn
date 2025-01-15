@@ -4,8 +4,18 @@ import { Text, useTheme } from 'tamagui'
 const mentionRegex = /@\w+(?:@\w+\.\w+(?:\.\w+)*)?/g
 const hashtagRegex = /#[\p{L}\p{N}]+(?:[\p{L}\p{N}_-]*[\p{L}\p{N}])?/gu
 
-const parseText = (text) => {
-  const matches = []
+interface Part {
+  type: 'text' | 'mention' | 'hashtag',
+  value: string,
+}
+
+interface Match extends Part {
+  type: 'mention' | 'hashtag',
+  index: number
+}
+
+const parseText = (text: string) => {
+  const matches: Match[] = []
   let match
 
   while ((match = mentionRegex.exec(text)) !== null) {
@@ -21,21 +31,29 @@ const parseText = (text) => {
   return matches
 }
 
-export default (AutolinkText = ({
+interface AutolinkTextProps {
+  username: string,
+  text: string,
+  onMentionPress: (mention: string) => void,
+  onHashtagPress: (hashtag: string) => void,
+  onUsernamePress: () => void,
+}
+
+export default function AutolinkText({
   username,
   text,
   onMentionPress,
   onHashtagPress,
   onUsernamePress,
-}) => {
+}:AutolinkTextProps){
   const theme = useTheme()
   const matches = useMemo(() => parseText(text), [text])
 
-  const getTextParts = (text, matches) => {
+  const getTextParts = (text: string, matches: Match[]) => {
     let lastIndex = 0
-    const parts = []
+    const parts: Part[] = []
 
-    matches.forEach((match, i) => {
+    matches.forEach((match) => {
       if (lastIndex < match.index) {
         parts.push({ type: 'text', value: text.slice(lastIndex, match.index) })
       }
@@ -95,4 +113,5 @@ export default (AutolinkText = ({
         })}
     </Text>
   )
-})
+}
+

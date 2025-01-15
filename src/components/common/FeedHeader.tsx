@@ -3,7 +3,7 @@ import { Text, XStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { Link } from 'expo-router'
 
-export default (FeedHeader = ({ title = 'Home', user }) => {
+export default function FeedHeader({ title = 'Home', user }) {
   return (
     <XStack
       px="$3"
@@ -52,4 +52,4 @@ export default (FeedHeader = ({ title = 'Home', user }) => {
       </XStack>
     </XStack>
   )
-})
+}
