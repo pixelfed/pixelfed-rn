@@ -1,4 +1,4 @@
-name: Lint
+name: Android build
 
 on:
   push:
@@ -19,8 +19,11 @@ jobs:
           node-version: 18.x
           cache: npm
 
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+
       - name: 📦 Install dependencies
         run: npm install
 
-      - name: 🧹 Run biomejs
-        run: npm run lint-check
+      - name: 🚀 Build app
+        run: eas build --non-interactive --local --platform android
