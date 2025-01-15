@@ -4,8 +4,6 @@
       "paths": {
         "src/*": ["./src/*"],
         "state/*": ["./src/state/*"],
-        "components": ["./src/components.js"],
-        "requests": ["./src/requests.js"],
       }
     }
   }

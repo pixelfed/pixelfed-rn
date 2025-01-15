@@ -1,12 +1,11 @@
 import { createContext, useEffect } from 'react'
 import { useContext, useState } from 'react'
 import { router, useSegments } from 'expo-router'
-import { loginPreflightCheck, postForm, get } from '@requests'
+import { loginPreflightCheck, postForm, get, verifyCredentials } from 'src/requests'
 import * as Linking from 'expo-linking'
 import { Storage } from './cache'
 import * as WebBrowser from 'expo-web-browser'
 import { Platform, Alert } from 'react-native'
-import { verifyCredentials } from 'src/requests'
 
 import type { ReactNode } from 'react'
 
