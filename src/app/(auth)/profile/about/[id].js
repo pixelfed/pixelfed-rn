@@ -1,4 +1,4 @@
-import { Dimensions, ActivityIndicator } from 'react-native'
+import { ActivityIndicator } from 'react-native'
 import { Button, Text, View, XStack, YStack, ScrollView } from 'tamagui'
 import UserAvatar from '@components/common/UserAvatar'
 import { Feather } from '@expo/vector-icons'
@@ -7,8 +7,6 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
 import { getAccountById, getAccountRelationship } from 'src/lib/api'
 import { formatTimestampMonthYear, formatTimestamp } from 'src/utils'
-
-const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileScreen() {
   const { id } = useLocalSearchParams()

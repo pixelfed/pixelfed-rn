@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Text, View } from 'tamagui'
 import { getSelfBookmarks } from 'src/lib/api'
 import { ActivityIndicator, FlatList } from 'react-native'
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import FeedPost from 'src/components/post/FeedPost'
 import { useCallback, useLayoutEffect } from 'react'
 import { Storage } from 'src/state/cache'
@@ -71,7 +71,7 @@ export default function LikesScreen() {
     )
   }
   return (
-    <SafeAreaView flex={1} edges={['left']}>
+    <SafeAreaView edges={['left']}>
       <Stack.Screen
         options={{
           title: 'My Bookmarks',

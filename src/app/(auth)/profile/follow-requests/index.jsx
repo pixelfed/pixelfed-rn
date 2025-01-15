@@ -1,11 +1,8 @@
-import { FlatList, Dimensions, ActivityIndicator, Alert } from 'react-native'
-import { Image, Text, View, YStack, XStack, Button } from 'tamagui'
-import ProfileHeader from '@components/profile/ProfileHeader'
-import { Storage } from 'src/state/cache'
-import { queryApi } from 'src/requests'
-import { useState, useEffect } from 'react'
+import { FlatList, ActivityIndicator, Alert } from 'react-native'
+import { Text, View, YStack, XStack, Button } from 'tamagui'
+import { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link, Stack, useLocalSearchParams } from 'expo-router'
+import { Link, Stack } from 'expo-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   getFollowRequests,
@@ -16,7 +13,6 @@ import UserAvatar from 'src/components/common/UserAvatar'
 import { enforceLen } from 'src/utils'
 import { Switch } from 'src/components/form/Switch'
 
-const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function FollowersScreen() {
   const queryClient = useQueryClient()

@@ -1,17 +1,12 @@
-import { FlatList, Dimensions, ActivityIndicator } from 'react-native'
-import { Image, Text, View, YStack, XStack } from 'tamagui'
-import ProfileHeader from '@components/profile/ProfileHeader'
-import { Storage } from 'src/state/cache'
-import { queryApi } from 'src/requests'
-import { useState, useEffect, useLayoutEffect } from 'react'
+import { FlatList, ActivityIndicator } from 'react-native'
+import { Text, View, YStack, XStack } from 'tamagui'
+import { useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, Stack, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
 import { getAccountById, getAccountFollowing } from 'src/lib/api'
 import UserAvatar from 'src/components/common/UserAvatar'
 import Feather from '@expo/vector-icons/Feather'
-
-const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function FollowingScreen() {
   const { id } = useLocalSearchParams()
