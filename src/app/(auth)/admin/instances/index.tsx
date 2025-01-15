@@ -111,7 +111,6 @@ export default function Page() {
     hasNextPage,
     isFetching,
     isFetchingNextPage,
-    status,
   } = useInfiniteQuery({
     queryKey: ['instances'],
     queryFn: async (queryKey) => {

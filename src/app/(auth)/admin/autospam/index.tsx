@@ -21,7 +21,7 @@ export default function Screen() {
   const [activeReport, setActiveReport] = useState()
   const router = useRouter()
 
-  const bottomSheetModalRef = useRef(null)
+  const bottomSheetModalRef = useRef<BottomSheetModal|null>(null)
   const snapPoints = useMemo(() => ['25%', '70%'], [])
   const handlePresentModalPress = useCallback((item) => {
     setActiveReport(item)
@@ -72,12 +72,12 @@ export default function Screen() {
     })
   }
 
-  const gotoProfile = (id) => {
+  const gotoProfile = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/profile/${id}`)
   }
 
-  const gotoPost = (id) => {
+  const gotoPost = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/post/${id}`)
   }

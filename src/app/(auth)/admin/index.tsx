@@ -20,36 +20,8 @@ export default function Page() {
   const userJson = JSON.parse(Storage.getString('user.profile'))
 
   if (!userJson.is_admin) {
-    router.goBack()
+    router.back()
   }
-
-  const GroupButton = ({ icon, title, path, count = false, countDanger = false }) => (
-    <Group.Item>
-      <Link href={path} asChild>
-        <Button bg="$gray1" justifyContent="start" size="$5" px="$3">
-          <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
-            <XStack alignItems="center" ml="$1" gap="$3">
-              <Feather name={icon} size={17} color="#ccc" />
-              <Text fontSize="$6">{title}</Text>
-              {count ? (
-                <View
-                  bg={countDanger ? '$red9' : '$gray3'}
-                  px={6}
-                  py={4}
-                  borderRadius={5}
-                >
-                  <Text fontSize="$4" color={countDanger ? '$red1' : 'black'}>
-                    {count}
-                  </Text>
-                </View>
-              ) : null}
-            </XStack>
-            <Feather name="chevron-right" size={20} color="#ccc" />
-          </XStack>
-        </Button>
-      </Link>
-    </Group.Item>
-  )
 
   const getTimeBasedGreeting = () => {
     const userName = userJson.username
@@ -153,4 +125,40 @@ export default function Page() {
       </ScrollView>
     </SafeAreaView>
   )
+}
+
+type GroupButtonProps = {
+ icon: React.ComponentProps<typeof Feather>['name'],
+ title: string,
+ path: string,
+ count?: number,
+ countDanger?: boolean 
+}
+
+function GroupButton({ icon, title, path, count, countDanger }: GroupButtonProps){
+  return <Group.Item>
+    <Link href={path} asChild>
+      <Button bg="$gray1" justifyContent="flex-start" size="$5" px="$3">
+        <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
+          <XStack alignItems="center" ml="$1" gap="$3">
+            <Feather name={icon} size={17} color="#ccc" />
+            <Text fontSize="$6">{title}</Text>
+            {count ? (
+              <View
+                bg={countDanger ? '$red9' : '$gray3'}
+                px={6}
+                py={4}
+                borderRadius={5}
+              >
+                <Text fontSize="$4" color={countDanger ? '$red1' : 'black'}>
+                  {count}
+                </Text>
+              </View>
+            ) : null}
+          </XStack>
+          <Feather name="chevron-right" size={20} color="#ccc" />
+        </XStack>
+      </Button>
+    </Link>
+  </Group.Item>
 }

@@ -79,7 +79,7 @@ export default function Screen() {
   )
 
   const RenderListItem = ({ title, value }) => (
-    <Group.Item flexGrow={1}>
+    <Group.Item>
       <XStack flexGrow={1} p="$3" justifyContent="space-between">
         <Text color="$gray10">{title}</Text>
         <Text fontWeight="bold">{value}</Text>
@@ -88,7 +88,7 @@ export default function Screen() {
   )
 
   const RenderListItemCheck = ({ title, value, checked, onPressValue }) => (
-    <Group.Item flexGrow={1}>
+    <Group.Item>
       <XStack flexGrow={1} p="$3" justifyContent="space-between" alignItems="center">
         <Text color="$gray10">{title}</Text>
         <Pressable onPress={() => Alert.alert(title, onPressValue)}>
@@ -117,11 +117,11 @@ export default function Screen() {
   }
 
   if (status === 'error') {
-    return <Text>{error.message}</Text>
+    return <Text>{error?.message}</Text>
   }
 
   return (
-    <SafeAreaView flex={1} edges={['bottom']}>
+    <SafeAreaView edges={['bottom']}>
       <Stack.Screen
         options={{
           title: 'User',
@@ -130,7 +130,7 @@ export default function Screen() {
       />
       <ScrollView>
         <YStack p="$3" gap="$2">
-          <RenderUserCard account={account} />
+          <RenderUserCard />
 
           <YStack bg="white" borderRadius={10} overflow="hidden">
             <Group

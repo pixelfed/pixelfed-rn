@@ -79,11 +79,11 @@ export default function Screen() {
   }
 
   if (status === 'error') {
-    return <Text>{error.message}</Text>
+    return <Text>{error?.message}</Text>
   }
 
   return (
-    <SafeAreaView flex={1} edges={['bottom']}>
+    <SafeAreaView edges={['bottom']}>
       <Stack.Screen
         options={{
           title: 'Users',

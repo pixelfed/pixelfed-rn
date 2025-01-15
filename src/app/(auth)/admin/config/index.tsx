@@ -13,7 +13,6 @@ import { Stack } from 'expo-router'
 import { Switch } from 'src/components/form/Switch'
 import {
   useQuery,
-  useInfiniteQuery,
   useQueryClient,
   useMutation,
 } from '@tanstack/react-query'
@@ -83,7 +82,7 @@ export default function Screen() {
   }
 
   return (
-    <SafeAreaView flex={1} edges={['bottom']}>
+    <SafeAreaView edges={['bottom']}>
       <Stack.Screen
         options={{
           title: 'Server Config',
