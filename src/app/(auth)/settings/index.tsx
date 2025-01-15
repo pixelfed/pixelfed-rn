@@ -9,13 +9,13 @@ import {
   Button,
 } from 'tamagui'
 import { Storage } from 'src/state/cache'
-import { useState, useEffect, useLayoutEffect } from 'react'
+import React, { useState, useEffect, useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, Link, useNavigation } from 'expo-router'
-import { Feather } from '@expo/vector-icons'
 import { useAuth } from '@state/AuthProvider'
 import { openBrowserAsync } from 'src/utils'
 import * as Application from 'expo-application'
+import { GroupButtonContent, GroupButtonContentProps } from 'src/components/common/GroupButtonContent'
 
 export default function Page() {
   const navigation = useNavigation()
@@ -42,36 +42,30 @@ export default function Page() {
     openBrowserAsync('https://github.com/pixelfed/pixelfed-rn/discussions')
   }
 
-  const openLink = async (path) => {
+  const openLink = async (path: string) => {
     openBrowserAsync('https://' + instance + '/' + path)
   }
 
-  const GroupButton = ({ icon, title, path }) => (
+  const GroupButton = ({ icon, title, path }: GroupButtonContentProps & {path:string}) => (
     <Group.Item>
       <Link href={path} asChild>
-        <Button bg="$gray1" justifyContent="start" size="$5" px="$3">
-          <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
-            <XStack alignItems="center" ml="$1" gap="$3">
-              <Feather name={icon} size={17} color="#666" />
-              <Text fontSize="$6">{title}</Text>
-            </XStack>
-            <Feather name="chevron-right" size={20} color="#ccc" />
-          </XStack>
+        <Button bg="$gray1" justifyContent="flex-start" size="$5" px="$3">
+        <GroupButtonContent
+            icon={icon}
+            title={title}
+            iconColor="#666" />
         </Button>
       </Link>
     </Group.Item>
   )
 
-  const GroupUrlButton = ({ icon, title, path }) => (
+  const GroupUrlButton = ({ icon, title, path }: GroupButtonContentProps & {path: string}) => (
     <Group.Item>
-        <Button bg="$gray1" justifyContent="start" size="$5" px="$3" onPress={() => openLink(path)}>
-          <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
-            <XStack alignItems="center" ml="$1" gap="$3">
-              <Feather name={icon} size={17} color="red" />
-              <Text fontSize="$6" color="red">{title}</Text>
-            </XStack>
-            <Feather name="chevron-right" size={20} color="#ccc" />
-          </XStack>
+        <Button bg="$gray1" justifyContent="flex-start" size="$5" px="$3" onPress={() => openLink(path)}>
+        <GroupButtonContent
+            icon={icon}
+            title={title}
+            iconColor="red" />
         </Button>
     </Group.Item>
   )
@@ -147,7 +141,7 @@ export default function Page() {
             <GroupUrlButton icon="trash" title="Delete Account" path="settings/remove/request/permanent" />
           </Group>
 
-          <Button bg="$gray1" justifyContent="start" size="$5" px="$3">
+          <Button bg="$gray1" justifyContent="flex-start" size="$5" px="$3">
             <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
               <XStack alignItems="center" ml="$1" gap="$3">
                 <Text fontSize="$6">Version</Text>

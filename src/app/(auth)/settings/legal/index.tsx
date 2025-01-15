@@ -2,45 +2,42 @@ import {
   Group,
   ScrollView,
   Separator,
-  Text,
-  XStack,
   YStack,
   Button,
 } from 'tamagui'
 import { Storage } from 'src/state/cache'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack } from 'expo-router'
-import { Feather } from '@expo/vector-icons'
 import { openBrowserAsync } from '../../../../utils'
+import { GroupButtonContent, GroupButtonContentProps } from 'src/components/common/GroupButtonContent'
+import React from 'react'
 
 export default function Screen() {
   const instance = Storage.getString('app.instance')
 
-  const openLink = async (path) => {
+  const openLink = async (path: string) => {
     await openBrowserAsync(`https://${instance}/${path}`)
   }
 
-  const GroupButton = ({ icon, title, path }) => (
+  const GroupButton = ({ icon, title, path }: Pick<GroupButtonContentProps, 'icon' | 'title'> & {path: string}) => (
     <Group.Item>
       <Button
         onPress={() => openLink(path)}
         bg="$gray1"
-        justifyContent="start"
+        justifyContent="flex-start"
         size="$5"
         px="$3"
       >
-        <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
-          <XStack alignItems="center" ml="$1" gap="$3">
-            <Feather name={icon} size={17} color="#666" />
-            <Text fontSize="$6">{title}</Text>
-          </XStack>
-          <Feather name="chevron-right" size={20} color="#ccc" />
-        </XStack>
+        <GroupButtonContent
+          icon={icon}
+          title={title}
+          iconColor="#666" />
       </Button>
     </Group.Item>
   )
+
   return (
-    <SafeAreaView flex={1} edges={['bottom']}>
+    <SafeAreaView edges={['bottom']}>
       <Stack.Screen
         options={{
           title: 'Legal',

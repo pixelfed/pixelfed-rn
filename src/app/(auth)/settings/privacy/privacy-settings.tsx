@@ -8,12 +8,16 @@ import { ActivityIndicator, Alert } from 'react-native'
 import { Storage } from 'src/state/cache'
 import { Switch } from 'src/components/form/Switch'
 
+import type { PropsWithChildren } from 'hoist-non-react-statics/node_modules/@types/react'
+
 export default function Page() {
   const instance = Storage.getString('app.instance').toLowerCase()
   // const profile = JSON.parse(Storage.getString('user.profile'))
   const queryClient = useQueryClient()
 
-  const RenderSwitch = ({ title, description, children }) => {
+  type RenderSwitchProps = PropsWithChildren<{ title: string, description: string}>
+
+  const RenderSwitch = ({ title, description, children }: RenderSwitchProps) => {
     return (
       <>
         <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
@@ -41,7 +45,7 @@ export default function Page() {
     },
   })
 
-  const privateAccountSwitch = (checked) => {
+  const privateAccountSwitch = (checked: boolean) => {
     const warningMessage = !checked
       ? 'Are you sure you want to make your account public?'
       : 'Are you sure you want to make your account private?'
@@ -85,7 +89,7 @@ export default function Page() {
   if (isError) {
     return (
       <View p="$4">
-        <Text>Error: {error.message}</Text>
+        <Text>Error: {error?.message}</Text>
       </View>
     )
   }

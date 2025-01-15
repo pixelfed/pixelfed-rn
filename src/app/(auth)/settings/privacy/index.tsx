@@ -1,20 +1,20 @@
 import { Link, Stack } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { ScrollView, Text, Group, Button, XStack, YStack, Separator } from 'tamagui'
-import { Feather } from '@expo/vector-icons'
+import { ScrollView, Group, YStack, Separator, Button } from 'tamagui'
+import { GroupButtonContent, GroupButtonContentProps } from 'src/components/common/GroupButtonContent'
 
 export default function Page() {
-  const GroupButton = ({ icon, title, path, iconColor = '#000' }) => (
+  type GroupButtonProps = Pick<GroupButtonContentProps, 'icon' | 'title' | 'iconColor'> & {path: string}
+
+  const GroupButton = ({ icon, title, path, iconColor = '#000' }: GroupButtonProps) => (
     <Group.Item>
       <Link href={path} asChild>
-        <Button bg="$gray1" justifyContent="start" size="$5" px="$0">
-          <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
-            <XStack alignItems="center" gap="$3" pl="$5">
-              <Feather name={icon} color={iconColor} size={17} />
-              <Text fontSize="$6">{title}</Text>
-            </XStack>
-            <Feather name="chevron-right" size={20} color="#ccc" />
-          </XStack>
+        <Button bg="$gray1" justifyContent="flex-start" size="$5" px="$0">
+          <GroupButtonContent
+            icon={icon}
+            title={title}
+            iconColor={iconColor}
+            spacing='privacy' />
         </Button>
       </Link>
     </Group.Item>

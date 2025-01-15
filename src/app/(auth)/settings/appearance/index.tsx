@@ -16,7 +16,7 @@ export default function Screen() {
   const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
 
   return (
-    <SafeAreaView flex={1} edges={['bottom']}>
+    <SafeAreaView edges={['bottom']}>
       <Stack.Screen
         options={{
           title: 'Appearance',
