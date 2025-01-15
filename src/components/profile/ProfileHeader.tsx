@@ -1,12 +1,11 @@
-import { View, Text, XStack, Image, YStack, Button, Separator, Avatar } from 'tamagui'
+import { View, Text, XStack, YStack, Button, Separator, Avatar } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import {
   enforceLen,
-  formatTimestampMonthYear,
   openBrowserAsync,
   prettyCount,
 } from 'src/utils'
-import { Link, router, useRouter } from 'expo-router'
+import { Link, useRouter } from 'expo-router'
 import { Dimensions, Pressable, Platform } from 'react-native'
 import EditProfile from './actionButtons/EditProfile'
 import FollowingProfile from './actionButtons/FollowingProfile'
@@ -15,9 +14,8 @@ import BlockingProfile from './actionButtons/BlockingProfile'
 import FollowRequested from './actionButtons/FollowRequested'
 import ReadMore from 'src/components/common/ReadMore'
 import AutolinkText from 'src/components/common/AutolinkText'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { PressableOpacity } from 'react-native-pressable-opacity'
-import FastImage from 'react-native-fast-image'
 import UserAvatar from 'src/components/common/UserAvatar'
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
