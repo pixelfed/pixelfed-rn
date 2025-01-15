@@ -403,7 +403,7 @@ export default function Camera() {
       .then((res) => {
         resetForm()
         router.replace('/?ref30=1')
-        queryClient.invalidateQueries({ queryKey: ['statusesById', userSelf?.id] })}
+        queryClient.invalidateQueries({ queryKey: ['statusesById', userSelf?.id] })
       })
   }
 
