@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, Platform } from 'react-native'
+import { ActivityIndicator, Alert, AlertButton, Platform } from 'react-native'
 import {
   ScrollView,
   Separator,
@@ -45,7 +45,7 @@ export default function Page() {
 
   const updateProfilePhoto = () => {
     const isDefault = user?.avatar.includes('default.')
-    const opts = isDefault
+    const buttons: AlertButton[] = isDefault
       ? [
           {
             text: 'Add',
@@ -76,7 +76,7 @@ export default function Page() {
       isDefault
         ? 'Select a photo from your camera roll for your profile photo.'
         : 'Upload a new photo or delete your existing photo.\n\nIt may take a few minutes to update.',
-      opts
+      buttons
     )
   }
 
@@ -112,8 +112,11 @@ export default function Page() {
     }
   }
 
-  const LinkField = ({ label, value, placeholder, path, border }) => (
-    <XStack px="$3" py="$3" alignItems="start" justifyContent="center">
+  type LinkFieldProps = {
+    label: string, value: string, path: string, border: boolean
+  }
+  const LinkField = ({ label, value, path, border }: LinkFieldProps) => (
+    <XStack px="$3" py="$3" alignItems="flex-start" justifyContent="center">
       <Text w="30%" fontSize="$6" color="$gray9">
         {label}
       </Text>
@@ -191,28 +194,24 @@ export default function Page() {
           <LinkField
             label="Name"
             value={user?.display_name}
-            placeholder="Your name"
             path="/settings/updateName"
             border={true}
           />
           <LinkField
             label="Username"
             value={user?.username}
-            placeholder="Your username"
             path=""
             border={true}
           />
           {/* <LinkField
             label="Pronouns"
             value={user?.pronouns.join(', ')}
-            placeholder="Your pronouns"
             path=""
             border={true}
           /> */}
           <LinkField
             label="Bio"
             value={user?.note_text ? user?.note_text.slice(0, 30) : null}
-            placeholder="Your bio"
             path="settings/bio"
             border={true}
           />
@@ -220,7 +219,6 @@ export default function Page() {
           <LinkField
             label="Website"
             value={user?.website}
-            placeholder="Add your website"
             path="settings/updateWebsite"
             border={false}
           />

@@ -29,7 +29,7 @@ export default function Page() {
   const [isSubmitting, setSubmitting] = useState(false)
 
   const mutation = useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async (data: {display_name: string}) => {
       setSubmitting(true)
       return await updateCredentials(data)
     },
