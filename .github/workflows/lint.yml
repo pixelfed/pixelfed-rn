@@ -2,7 +2,7 @@ name: Lint
 
 on:
   push:
-    branches: [ main, '@kwasow/CI' ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
