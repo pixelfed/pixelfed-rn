@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: 🏗 Setup repo
         uses: actions/checkout@v3
+        with:
+          lfs: true
 
       # - name: 🏗 Enable corepack
       #   run: corepack enable
@@ -23,15 +25,10 @@ jobs:
 
       - name: 📦 Install dependencies
         run: npm install
-      
-      - name: 🔑 Inject secrets
-        run: echo $GOOGLE_SERVICES_PLIST > ios/GoogleService-Info.plist.json
-        env:
-          GOOGLE_SERVICES_PLIST: ${{ secrets.GOOGLE_SERVICES_PLIST }}
 
       - name: 🚀 Build app
         run: |
           sudo xcode-select --switch /Applications/Xcode_16.1.app/Contents/Developer
+          npx expo prebuild --platform ios
           cd ios
-          pod install
           set -o pipefail && xcodebuild -workspace pixelfed.xcworkspace -scheme pixelfed -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" | xcbeautify --renderer github-actions
