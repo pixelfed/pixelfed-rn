@@ -36,4 +36,6 @@ jobs:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
 
       - name: 🚀 Build app
-        run: cd android && ./gradlew --stacktrace
+        run: |
+          cd android
+          ./gradlew assembleDebug
