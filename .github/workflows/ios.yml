@@ -31,4 +31,4 @@ jobs:
           sudo xcode-select --switch /Applications/Xcode_16.1.app/Contents/Developer
           npx expo prebuild --platform ios
           cd ios
-          fastlane gym
+          set -o pipefail && xcodebuild -workspace pixelfed.xcworkspace -scheme Pixelfed -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" | xcbeautify --renderer github-actions

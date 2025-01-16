@@ -41,4 +41,4 @@ jobs:
         run: |
           npx expo prebuild --platform android
           cd android
-          ./gradlew assembleDebug
+          ./gradlew bundleDebug
