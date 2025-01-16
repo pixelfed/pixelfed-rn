@@ -8,6 +8,9 @@ node_modules/
 dist/
 web-build/
 
+# Platform (this is managed by expo)
+android/
+
 # Native
 *.orig.*
 *.jks
