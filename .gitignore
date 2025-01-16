@@ -10,6 +10,7 @@ web-build/
 
 # Platform (this is managed by expo)
 android/
+ios/
 
 # Native
 *.orig.*
