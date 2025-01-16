@@ -21,13 +21,11 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
       - name: 🏗 Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-          cache: npm
 
       - name: 📦 Install dependencies
         run: npm install
