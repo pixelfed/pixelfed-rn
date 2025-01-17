@@ -35,6 +35,10 @@ read through the [Code Of Conduct](CODE_OF_CONDUCT.md).
 * Mastodon: [@pixelfed@mastodon.social](https://mastodon.social/@pixelfed)
 * E-mail: [hello@pixelfed.org](mailto:hello@pixelfed.org)
 
+## Development
+
+If you want to contribute to the project, please read the [development guide](https://github.com/pixelfed/pixelfed-rn/blob/main/DEVELOPMENT.md) to get you started.
+
 ## Pixelfed Sponsors
 
 We would like to extend our thanks to the following sponsors for funding Pixelfed development. If you are interested in becoming a sponsor, please visit the Pixelfed [Patreon Page](https://www.patreon.com/dansup/overview)

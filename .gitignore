@@ -2,6 +2,9 @@
 node_modules/
 .yarn/
 
+# This project uses yarn, don't use npm
+package-lock.json
+
 # Expo
 .expo/
 dist/
