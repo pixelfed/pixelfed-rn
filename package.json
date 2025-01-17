@@ -63,7 +63,7 @@
     "react-native-static-safe-area-insets": "^2.2.0",
     "react-native-svg": "^15.4.0",
     "react-native-video": "^6.2.0",
-    "react-native-vision-camera": "^4.6.3",
+    "react-native-vision-camera": "4.6.1",
     "react-native-web": "~0.19.6",
     "semver": ">=7.5.2",
     "tamagui": "^1.94.4",
