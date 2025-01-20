@@ -2,9 +2,9 @@ name: Lint
 
 on:
   push:
-    branches: [ main ]
+    branches: [ ]
   pull_request:
-    branches: [ main ]
+    branches: [ ]
 
 jobs:
   build:
@@ -13,8 +13,8 @@ jobs:
       - name: 🏗 Setup repo
         uses: actions/checkout@v3
       
-      # - name: 🏗 Enable corepack
-      #   run: corepack enable
+      - name: 🏗 Enable corepack
+        run: corepack enable
 
       - name: 🏗 Setup Node
         uses: actions/setup-node@v3
@@ -25,4 +25,4 @@ jobs:
         run: npm install
 
       - name: 🧹 Run biomejs
-        run: npm run lint-check
+        run: npm run check

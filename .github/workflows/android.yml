@@ -15,8 +15,8 @@ jobs:
         with:
           lfs: true
 
-      # - name: 🏗 Enable corepack
-      #   run: corepack enable
+      - name: 🏗 Enable corepack
+        run: corepack enable
 
       - name: 🏗 Setup JDK 17
         uses: actions/setup-java@v4

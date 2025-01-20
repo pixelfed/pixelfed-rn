@@ -15,8 +15,8 @@ jobs:
         with:
           lfs: true
 
-      # - name: 🏗 Enable corepack
-      #   run: corepack enable
+      - name: 🏗 Enable corepack
+        run: corepack enable
 
       - name: 🏗 Setup Node
         uses: actions/setup-node@v3
