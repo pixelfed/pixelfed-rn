@@ -27,7 +27,6 @@ import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 import { useUserCache } from 'src/state/AuthProvider'
-import { InfiniteStatus, Status } from 'src/lib/api-types'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   return (
@@ -228,7 +227,7 @@ export default function HomeScreen() {
     isFetching,
     isError,
     error,
-  } = useInfiniteQuery<InfiniteStatus>({
+  } = useInfiniteQuery({
     queryKey: ['fetchNetworkFeed'],
     queryFn: fetchNetworkFeed,
     initialPageParam: 0,

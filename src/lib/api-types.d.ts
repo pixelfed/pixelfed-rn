@@ -74,7 +74,7 @@ export type LoginUserSource = {
   fields: any[]
 }
 
-export interface InfiniteStatus extends InfiniteData {
+export type QueryStatus = {
   data: Status,
   nextPage: string | undefined,
   prevPage: string | undefined
