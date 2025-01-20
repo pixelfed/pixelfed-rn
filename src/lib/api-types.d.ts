@@ -74,8 +74,8 @@ export type LoginUserSource = {
   fields: any[]
 }
 
-export type QueryStatus = {
-  data: Status,
+export type PaginatedStatus = {
+  data: Array<Status>,
   nextPage: string | undefined,
   prevPage: string | undefined
 }
@@ -86,7 +86,7 @@ export type Status = {
   url: string,
   in_reply_to_id: string?,
   in_reply_to_account_id: string?,
-  reblog: StatusEntity?,
+  reblog: Status?,
   content,
   created_at,
   emojis,

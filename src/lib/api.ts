@@ -1,7 +1,7 @@
 import { objectToForm } from 'src/requests'
 import { Storage } from 'src/state/cache'
 import { parseLinkHeader } from 'src/utils'
-import type { QueryStatus, Relationship, Status } from './api-types'
+import type { Relationship, PaginatedStatus } from './api-types'
 
 export function randomKey(length: number) {
   let result = ''
@@ -264,9 +264,9 @@ export async function fetchHomeFeed({ pageParam = false }) {
   return await fetchPaginatedData(url)
 }
 
-export async function fetchNetworkFeed({ pageParam = false }) {
+export async function fetchNetworkFeed({ pageParam = false }): Promise<PaginatedStatus> {
   let url
-  if (!pageParam) {
+  if (!pageParam) {Status
     const instance = Storage.getString('app.instance')
     url = `https://${instance}/api/v1/timelines/public?_pe=1&limit=20`
   } else {
