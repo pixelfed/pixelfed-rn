@@ -1,3 +1,7 @@
+/** Date string like 2025-01-01T10:34:12.000000Z */
+export type Timestamp = string
+export type Visibility = 'public' | 'unlisted' | 'private' | 'direct' | 'draft'
+
 export type Relationship = {
   blocking: boolean
   domain_blocking
@@ -16,8 +20,7 @@ export type Account = {
   /** value is username */
   acct: string
   avatar: string
-  /** Date string like 2025-01-01T10:34:12.000000Z */
-  created_at: string
+  created_at: Timestamp
   discoverable: boolean
   display_name: string
   followers_count: number
@@ -63,7 +66,7 @@ export type LoginUserSettings = {
 }
 
 export type LoginUserSource = {
-  privacy: 'public' | string // TODO
+  privacy: Visibility
   sensitive: boolean
   /** language code like 'en' */
   language: string
@@ -86,7 +89,7 @@ export type Status = {
   in_reply_to_account_id: string,
   reblog: Status,
   content: string,
-  created_at: number,
+  created_at: Timestamp,
   emojis: Array,
   reblogs_count: number,
   reblogged: boolean,
@@ -94,14 +97,15 @@ export type Status = {
   muted: boolean,
   sensitive: boolean,
   spoiler_text: string,
-  visibility: "public" | "unlisted" | "private" | "direct" | "draft",
+  visibility: Visibility,
   application,
   language: string,
   mentions: Array<Account>,
   account: Account,
   tags: Array<string>,
   poll: boolean,
-  edited_at: number,
+  edited_at: Timestamp,
+  favourites_count: number,
   replies_count: number,
   media_attachments: Array,
   bookmarked: boolean

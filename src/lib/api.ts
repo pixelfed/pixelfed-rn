@@ -253,7 +253,7 @@ export async function fetchNotifications({ queryKey, pageParam = false }) {
   return await fetchPaginatedData(url)
 }
 
-export async function fetchHomeFeed({ pageParam = false }) {
+export async function fetchHomeFeed({ pageParam = false }): Promise<PaginatedStatus> {
   let url
   if (!pageParam) {
     const instance = Storage.getString('app.instance')
@@ -266,7 +266,7 @@ export async function fetchHomeFeed({ pageParam = false }) {
 
 export async function fetchNetworkFeed({ pageParam = false }): Promise<PaginatedStatus> {
   let url
-  if (!pageParam) {Status
+  if (!pageParam) {
     const instance = Storage.getString('app.instance')
     url = `https://${instance}/api/v1/timelines/public?_pe=1&limit=20`
   } else {
