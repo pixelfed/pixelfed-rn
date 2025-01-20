@@ -69,7 +69,7 @@ export default function Camera() {
   const [isSensitive, setSensitive] = useState(false)
   const [media, setMedia] = useState<Array<MediaAsset>>([])
   const [mediaEdit, setMediaEdit] = useState(false)
-  const [activeIndex, setActiveIndex] = useState(0)
+  const [activeIndex, setActiveIndex] = useState(-1)
   const [curAltText, setCurAltText] = useState('')
   const [canPost, setCanPost] = useState(false)
   const [isPosting, setIsPosting] = useState(false)
@@ -110,17 +110,14 @@ export default function Camera() {
     Keyboard.dismiss()
   }, [])
 
-  const openAltText = useCallback(
-    (item: MediaAsset) => {
-      const idx = media.map((m) => m.path).indexOf(item.path)
-      setActiveIndex(idx)
-      setCurAltText(item.altText || '')
-      altTextRef.current?.present()
-    },
-    [activeIndex, curAltText]
-  )
+  const openAltText =(item: MediaAsset) => {
+    const idx = media.map((m) => m.path).indexOf(item.path)
+    setActiveIndex(idx)
+    setCurAltText(item.altText || '')
+    altTextRef.current?.present()
+  }
 
-  const handleSheetChanges = useCallback((index: number) => {}, [])
+  const handleSheetChanges = useCallback((_: number) => {}, [])
 
   const resetForm = () => {
     setCaption('')
@@ -543,7 +540,7 @@ export default function Camera() {
                   borderRadius={10}
                   borderColor="$yellow3"
                 >
-                  <Text color="$yellow11" fontWeight={500} fontFamily={'system'}>
+                  <Text color="$yellow11" fontWeight={'500'} fontFamily={'system'}>
                     {warningMessage()}
                   </Text>
                 </View>
@@ -684,16 +681,14 @@ export default function Camera() {
               <Text fontSize="$9" fontWeight="bold" px="$3" mb="$3">
                 Alt Text
               </Text>
-              {Platform.OS === 'ios' ? (
+              {(activeIndex >= 0) ? (
                 <>
                   <Separator />
-                  <XStack justifyContent="center" my="$3">
-                    <FastImage
-                      source={{ uri: activeIndex }}
+                  <FastImage
+                      source={{ uri: media[activeIndex].path }}
                       style={{ width: '100%', height: Keyboard.isVisible() ? 140 : 240 }}
                       resizeMode={FastImage.resizeMode.contain}
                     />
-                  </XStack>
                 </>
               ) : null}
               <BottomSheetTextInput
