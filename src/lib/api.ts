@@ -1,7 +1,7 @@
 import { objectToForm } from 'src/requests'
 import { Storage } from 'src/state/cache'
 import { parseLinkHeader } from 'src/utils'
-import type { Relationship, PaginatedStatus } from './api-types'
+import type { PaginatedStatus, Relationship } from './api-types'
 
 export function randomKey(length: number) {
   let result = ''

@@ -38,6 +38,7 @@ import type {
   HandlerStateChangeEvent,
   PinchGestureHandlerEventPayload,
 } from 'react-native-gesture-handler'
+import { LoginUserResponse, Status } from 'src/lib/api-types'
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
 
@@ -606,6 +607,20 @@ const PostCaption = React.memo(
   }
 )
 
+interface FeedPostProps {
+  post: Status,
+  user: LoginUserResponse,
+  onOpenComments: (id: string) => void,
+  onLike: (id: string) => void,
+  onDeletePost: (id: string) => void,
+  onBookmark: (id: string) => void,
+  disableReadMore: boolean,
+  isPermalink: boolean,
+  isLikeFeed: boolean,
+  likedAt: number,
+  onShare: (id: string) => void,
+}
+
 export default function FeedPost({
   post,
   user,
@@ -618,7 +633,7 @@ export default function FeedPost({
   isLikeFeed = false,
   likedAt,
   onShare,
-}) {
+}: FeedPostProps) {
   const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
   const progress = useSharedValue(0)
   const snapPoints = useMemo(() => ['45%', '65%'], [])
