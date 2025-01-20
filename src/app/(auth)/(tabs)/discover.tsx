@@ -5,13 +5,10 @@ import {
   Dimensions,
   Platform,
 } from 'react-native'
-import { Text, YStack, ZStack, Button, ScrollView, View, XStack, Image } from 'tamagui'
-import { Storage } from 'src/state/cache'
-import { useEffect } from 'react'
+import { Text, YStack, ScrollView, View, XStack, Image } from 'tamagui'
 import { useQuery } from '@tanstack/react-query'
 import {
   getTrendingHashtags,
-  getTrendingPopularAccounts,
   getTrendingPopularPosts,
   getTrendingPostsV1,
 } from 'src/lib/api'

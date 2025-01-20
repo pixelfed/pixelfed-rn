@@ -4,7 +4,13 @@ import { Text, View, XStack, Spinner } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
+import {
+  type ErrorBoundaryProps,
+  Stack,
+  useLocalSearchParams,
+  useNavigation,
+  useRouter,
+} from 'expo-router'
 import {
   useInfiniteQuery,
   useMutation,
@@ -21,13 +27,13 @@ import {
 } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
 import EmptyFeed from 'src/components/common/EmptyFeed'
-import { Storage } from 'src/state/cache'
 import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet'
 import CommentFeed from 'src/components/post/CommentFeed'
 import { useShareIntentContext } from 'expo-share-intent'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
+import { useUserCache } from 'src/state/AuthProvider'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   return (
@@ -113,8 +119,7 @@ export default function HomeScreen() {
     [replyId]
   )
 
-  const userJson = Storage.getString('user.profile')
-  const user = JSON.parse(userJson)
+  const user = useUserCache()
   const { playVideo, currentVideoId } = useVideo()
 
   const onViewRef = useCallback(

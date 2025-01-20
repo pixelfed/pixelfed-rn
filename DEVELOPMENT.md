@@ -47,6 +47,16 @@ yarn android
 yarn ios
 ```
 
+### check for ts errors and lint problems
+```sh
+yarn check
+```
+
+### fix formatting & linting
+```sh
+yarn lint
+```
+
 ## Troubleshooting
 
 ### node not fount

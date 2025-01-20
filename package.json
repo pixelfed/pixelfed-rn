@@ -10,7 +10,10 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "lint": "npx @biomejs/biome check --write ./src",
+    "lint": "biome check --write ./src",
+    "check": "yarn check:ts && yarn check:lint",
+    "check:ts": "tsc",
+    "check:lint": "biome check ./src",
     "postinstall": "patch-package"
   },
   "jest": {
@@ -73,6 +76,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@biomejs/biome": "^1.9.4",
     "@types/react": "~18.2.45",
     "babel-plugin-module-resolver": "^5.0.0"
   },
