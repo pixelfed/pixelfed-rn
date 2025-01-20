@@ -3,15 +3,15 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "upgrade:tamagui": "yarn up '*tamagui*'@latest '@tamagui/*'@latest",
-    "upgrade:tamagui:canary": "yarn up '*tamagui*'@canary '@tamagui/*'@canary",
+    "upgrade:tamagui": "npm up '*tamagui*'@latest '@tamagui/*'@latest",
+    "upgrade:tamagui:canary": "npm up '*tamagui*'@canary '@tamagui/*'@canary",
     "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "biome check --write ./src",
-    "check": "yarn check:ts && yarn check:lint",
+    "check": "npm run check:ts && npm run check:lint",
     "check:ts": "tsc",
     "check:lint": "biome check ./src",
     "postinstall": "patch-package"
