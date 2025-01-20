@@ -18,6 +18,8 @@ import {
   Platform,
   Linking,
   Keyboard,
+  ListRenderItem,
+  ListRenderItemInfo,
 } from 'react-native'
 import { Storage } from 'src/state/cache'
 import UserAvatar from 'src/components/common/UserAvatar'
@@ -46,10 +48,10 @@ import mime from 'mime'
 import { useShareIntentContext } from 'expo-share-intent'
 import { useUserCache } from 'src/state/AuthProvider'
 
-interface MediaAsset {
+type MediaAsset = {
   path: string,
-  type: "image" | "video" | undefined,
-  alttext: string | null
+  type: string | undefined,
+  altText: string | null
 }
 
 export default function Camera() {
@@ -68,7 +70,7 @@ export default function Camera() {
   const [media, setMedia] = useState<Array<MediaAsset>>([])
   const [mediaEdit, setMediaEdit] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
-  const [curAltext, setCurAltext] = useState('')
+  const [curAltText, setCurAltText] = useState('')
   const [canPost, setCanPost] = useState(false)
   const [isPosting, setIsPosting] = useState(false)
   const queryClient = useQueryClient()
@@ -86,7 +88,7 @@ export default function Camera() {
   useEffect(() => {
     if (shareIntent.files) {
       let file = shareIntent.files[0]
-      setMedia([{ path: file.path, type: 'image', alttext: null }])
+      setMedia([{ path: file.path, type: 'image', altText: null }])
       setCanPost(true)
     }
   }, [hasShareIntent])
@@ -109,13 +111,13 @@ export default function Camera() {
   }, [])
 
   const openAltText = useCallback(
-    (item) => {
+    (item: MediaAsset) => {
       const idx = media.map((m) => m.path).indexOf(item.path)
-      setActiveIndex(item.path)
-      setCurAltext(media[idx]?.alttext)
+      setActiveIndex(idx)
+      setCurAltText(item.altText || '')
       altTextRef.current?.present()
     },
-    [activeIndex, curAltext]
+    [activeIndex, curAltText]
   )
 
   const handleSheetChanges = useCallback((index: number) => {}, [])
@@ -127,7 +129,7 @@ export default function Camera() {
     setMedia([])
     setMediaEdit(false)
     setActiveIndex(0)
-    setCurAltext('')
+    setCurAltText('')
     setCanPost(false)
     setIsPosting(false)
   }
@@ -191,7 +193,7 @@ export default function Camera() {
     if (!result.canceled) {
       setMedia([
         ...media,
-        { path: result.assets[0].uri, type: result.assets[0].type, alttext: null },
+        { path: result.assets[0].uri, type: result.assets[0].type, altText: null },
       ])
       setCanPost(true)
     }
@@ -241,17 +243,17 @@ export default function Camera() {
   const saveAltText = () => {
     setMedia(
       media.map((m, idx) => {
-        if (m.path === activeIndex) {
-          return { ...m, alttext: curAltext }
+        if (idx === activeIndex) {
+          return { ...m, altText: curAltText }
         }
         return m
       })
     )
-    setCurAltext('')
+    setCurAltText('')
     altTextRef.current?.close()
   }
 
-  const RenderMediaPreview = ({ item }) => (
+  const RenderMediaPreview = ({ item }: ListRenderItemInfo<MediaAsset>) => (
     <View m="$1">
       <YStack alignItems="center">
         {item.type === 'image' ? (
@@ -267,7 +269,7 @@ export default function Camera() {
                 borderColor: '#ccc',
               }}
             />
-            {item?.alttext?.length ? (
+            {item?.altText?.length ? (
               <View
                 position="absolute"
                 opacity={0.5}
@@ -316,13 +318,13 @@ export default function Camera() {
     </View>
   )
 
-  const _removeMediaItem = (item) => {
-    const len = media?.length
+  const _removeMediaItem = (item: MediaAsset) => {
+    const len = media.length
     setMedia(media.filter((m) => m.path !== item.path))
     setCanPost(len > 1)
   }
 
-  const mediaMenu = (item) => {
+  const mediaMenu = (item: MediaAsset) => {
     Alert.alert('Manage Media', '', [
       {
         text: 'Remove',
@@ -372,7 +374,7 @@ export default function Camera() {
     if (requireSelfAltText == true) {
       const count = media
         .map((m) => {
-          return m && m.alttext && m.alttext.length
+          return m && m.altText && m.altText.length
         })
         .filter((r) => r).length
 
@@ -390,7 +392,7 @@ export default function Camera() {
       let uri = cap.path
       let name = cap.path.split('/').slice(-1)[0]
       return {
-        description: cap.alttext,
+        description: cap.altText,
         file: {
           uri: Platform.OS === 'ios' ? uri.replace('file://', '') : uri,
           type: mime.getType(uri),
@@ -699,14 +701,14 @@ export default function Camera() {
                 multiline={true}
                 numberOfLines={6}
                 maxLength={composeSettings?.max_altext_length}
-                defaultValue={curAltext}
-                onChangeText={setCurAltext}
+                defaultValue={curAltText}
+                onChangeText={setCurAltText}
                 placeholder="Add optional alt text to describe the media for visually impaired"
               />
               <YStack mt="$1" mb="$3">
                 <XStack justifyContent="flex-end">
                   <Text color="$gray8" fontWeight="bold">
-                    {curAltext && curAltext?.length ? curAltext.length : 0}/
+                    {curAltText && curAltText?.length ? curAltText.length : 0}/
                     {composeSettings?.max_altext_length}
                   </Text>
                 </XStack>
