@@ -1,21 +1,16 @@
-import { Link, Stack } from 'expo-router'
+import { Stack } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { ScrollView, Text, View, Group, Button, XStack, YStack, Separator } from 'tamagui'
+import { Text, View, Button, YStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
-import { ActivityIndicator, Platform } from 'react-native'
-import * as Notifications from 'expo-notifications'
-import Constants from 'expo-constants'
-import * as Device from 'expo-device'
-import { useEffect, useRef, useState } from 'react'
-import { Switch } from 'src/components/form/Switch'
+import { ActivityIndicator } from 'react-native'
 import { useQuery } from '@tanstack/react-query'
-import { pushNotificationSupported, pushState } from 'src/lib/api'
+import { pushNotificationSupported } from 'src/lib/api'
 import PushNotificationSettings from 'src/components/notifications/PushNotificationSettings'
-import { Storage } from 'src/state/cache'
 import { openBrowserAsync } from 'src/utils'
+import { useUserCache } from 'src/state/AuthProvider'
 
 export default function Page() {
-  const userCache = JSON.parse(Storage.getString('user.profile'))
+  const userCache = useUserCache()
 
   const {
     data: checkData,

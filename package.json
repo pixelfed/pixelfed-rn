@@ -10,8 +10,10 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "lint": "npx @biomejs/biome check --write ./src",
-    "lint-check": "npx @biomejs/biome check ./src",
+    "lint": "biome check --write ./src",
+    "check": "yarn check:ts && yarn check:lint",
+    "check:ts": "tsc",
+    "check:lint": "biome check ./src",
     "postinstall": "patch-package"
   },
   "jest": {
@@ -64,7 +66,7 @@
     "react-native-static-safe-area-insets": "^2.2.0",
     "react-native-svg": "14.1.0",
     "react-native-video": "^6.2.0",
-    "react-native-vision-camera": "^4.6.3",
+    "react-native-vision-camera": "4.6.1",
     "react-native-web": "~0.19.6",
     "semver": ">=7.5.2",
     "tamagui": "^1.94.4",
@@ -74,6 +76,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@biomejs/biome": "^1.9.4",
     "@types/react": "~18.2.45",
     "babel-plugin-module-resolver": "^5.0.0"
   },

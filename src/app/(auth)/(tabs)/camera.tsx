@@ -32,7 +32,6 @@ import {
   BottomSheetScrollView,
   BottomSheetBackdrop,
   BottomSheetTextInput,
-  SCREEN_WIDTH,
 } from '@gorhom/bottom-sheet'
 import { Switch } from 'src/components/form/Switch'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -45,6 +44,7 @@ import {
 } from 'src/lib/api'
 import mime from 'mime'
 import { useShareIntentContext } from 'expo-share-intent'
+import { useUserCache } from 'src/state/AuthProvider'
 
 export default function Camera() {
   const router = useRouter()
@@ -54,7 +54,7 @@ export default function Camera() {
     error: intentError,
     resetShareIntent,
   } = useShareIntentContext()
-  const userCache = JSON.parse(Storage.getString('user.profile'))
+  const userCache = useUserCache()
   const requireSelfAltText = Storage.getBoolean('ui.requireSelfAltText') == true
   const [captionInput, setCaption] = useState('')
   const [scope, setScope] = useState('public')
