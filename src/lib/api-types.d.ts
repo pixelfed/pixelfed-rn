@@ -1,3 +1,5 @@
+import { InfiniteData } from "@tanstack/react-query"
+
 export type Relationship = {
   blocking: boolean
   domain_blocking
@@ -72,6 +74,12 @@ export type LoginUserSource = {
   fields: any[]
 }
 
+export interface InfiniteStatus extends InfiniteData {
+  data: Status,
+  nextPage: string | undefined,
+  prevPage: string | undefined
+}
+
 export type Status = {
   id: string,
   uri: string,
@@ -83,11 +91,11 @@ export type Status = {
   created_at,
   emojis,
   reblogs_count,
-  reblogged,
-  favourited,
-  muted,
-  sensitive,
-  spoiler_text,
+  reblogged: boolean?,
+  favourited: boolean?,
+  muted: boolean?,
+  sensitive: boolean?,
+  spoiler_text: string?,
   visibility: "public" | "unlisted" | "private" | "direct" | "draft" | null,
   application,
   language,
