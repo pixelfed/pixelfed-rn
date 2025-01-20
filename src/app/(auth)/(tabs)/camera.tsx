@@ -136,7 +136,8 @@ export default function Camera() {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: mediaEdit,
+      allowsMultipleSelection: true,
+      selectionLimit: 20,
       quality: 1,
     })
 
