@@ -125,7 +125,7 @@ export default function Camera() {
     setSensitive(false)
     setMedia([])
     setMediaEdit(false)
-    setActiveIndex(0)
+    setActiveIndex(-1)
     setCurAltText('')
     setCanPost(false)
     setIsPosting(false)
