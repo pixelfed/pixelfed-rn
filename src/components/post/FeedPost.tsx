@@ -1,4 +1,4 @@
-import { Alert, Dimensions, Share, Pressable, Platform, useWindowDimensions } from 'react-native'
+import { Alert, Share, Pressable, Platform, useWindowDimensions } from 'react-native'
 import { Button, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import FastImage from 'react-native-fast-image'
