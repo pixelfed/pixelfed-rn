@@ -125,7 +125,7 @@ export default function HomeScreen() {
 
   const keyExtractor = useCallback((item) => item?.id, [])
 
-  const onDeletePost = (id) => {
+  const onDeletePost = (id: string) => {
     deletePostMutation.mutate(id)
   }
 
@@ -153,11 +153,11 @@ export default function HomeScreen() {
     },
   })
 
-  const onBookmark = (id) => {
+  const onBookmark = (id: string) => {
     bookmarkMutation.mutate(id)
   }
 
-  const onShare = (id, state) => {
+  const onShare = (id: string, state) => {
     try {
       shareMutation.mutate({ type: state == true ? 'unreblog' : 'reblog', id: id })
     } catch (error) {
@@ -183,27 +183,27 @@ export default function HomeScreen() {
 
   const { handleLike } = useLikeMutation()
 
-  const handleShowLikes = (id) => {
+  const handleShowLikes = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/post/likes/${id}`)
   }
 
-  const handleGotoProfile = (id) => {
+  const handleGotoProfile = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/profile/${id}`)
   }
 
-  const handleGotoUsernameProfile = (id) => {
+  const handleGotoUsernameProfile = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/profile/0?byUsername=${id}`)
   }
 
-  const gotoHashtag = (id) => {
+  const gotoHashtag = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/hashtag/${id}`)
   }
 
-  const handleCommentReport = (id) => {
+  const handleCommentReport = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/post/report/${id}`)
   }

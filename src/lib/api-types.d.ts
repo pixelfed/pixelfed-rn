@@ -71,3 +71,32 @@ export type LoginUserSource = {
   note: string
   fields: any[]
 }
+
+export type Status = {
+  id: string,
+  uri: string,
+  url: string,
+  in_reply_to_id: string?,
+  in_reply_to_account_id: string?,
+  reblog: StatusEntity?,
+  content,
+  created_at,
+  emojis,
+  reblogs_count,
+  reblogged,
+  favourited,
+  muted,
+  sensitive,
+  spoiler_text,
+  visibility: "public" | "unlisted" | "private" | "direct" | "draft" | null,
+  application,
+  language,
+  mentions,
+  account,
+  tags,
+  poll,
+  edited_at,
+  replies_count,
+  media_attachments,
+  bookmarked
+}
