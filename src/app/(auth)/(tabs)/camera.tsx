@@ -46,6 +46,12 @@ import mime from 'mime'
 import { useShareIntentContext } from 'expo-share-intent'
 import { useUserCache } from 'src/state/AuthProvider'
 
+interface MediaAsset {
+  path: string,
+  type: "image" | "video" | undefined,
+  alttext: string | null
+}
+
 export default function Camera() {
   const router = useRouter()
   const {
@@ -59,7 +65,7 @@ export default function Camera() {
   const [captionInput, setCaption] = useState('')
   const [scope, setScope] = useState('public')
   const [isSensitive, setSensitive] = useState(false)
-  const [media, setMedia] = useState([])
+  const [media, setMedia] = useState<Array<MediaAsset>>([])
   const [mediaEdit, setMediaEdit] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const [curAltext, setCurAltext] = useState('')
@@ -142,9 +148,15 @@ export default function Camera() {
     })
 
     if (!result.canceled) {
+      const newMedia: Array<MediaAsset> = result.assets.map((asset) => ({
+        path: asset.uri,
+        type: asset.type,
+        alttext: null
+      }))
+
       setMedia([
         ...media,
-        { path: result.assets[0].uri, type: result.assets[0].type, alttext: null },
+        ...newMedia,
       ])
       setCanPost(true)
     }
