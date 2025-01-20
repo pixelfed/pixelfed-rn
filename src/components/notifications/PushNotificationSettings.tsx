@@ -1,16 +1,12 @@
-import { Link, Stack } from 'expo-router'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { ScrollView, Text, View, Group, Button, XStack, YStack, Separator } from 'tamagui'
-import { Feather } from '@expo/vector-icons'
+import { ScrollView, Text, View, XStack, YStack, Separator } from 'tamagui'
 import { ActivityIndicator, Platform } from 'react-native'
 import * as Notifications from 'expo-notifications'
 import Constants from 'expo-constants'
 import * as Device from 'expo-device'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Switch } from 'src/components/form/Switch'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  pushNotificationSupported,
   pushState,
   pushStateDisable,
   pushStateCompare,
@@ -158,7 +154,7 @@ export default function Page() {
   if (status === 'error') {
     return (
       <View>
-        <Text>{error.message}</Text>
+        <Text>{error?.message}</Text>
       </View>
     )
   }

@@ -11,7 +11,6 @@ module.exports = (api) => {
             '@state': './src/state',
             '@hooks': './src/hooks',
             '@components': './src/components',
-            '@requests': './src/requests.js',
           },
         },
         'react-native-reanimated/plugin'

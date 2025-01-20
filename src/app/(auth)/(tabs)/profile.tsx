@@ -1,25 +1,18 @@
 import { FlatList, Dimensions, ActivityIndicator, Share, Alert } from 'react-native'
-import { Image, Text, View, YStack } from 'tamagui'
+import { Image, View } from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
-import { Storage } from 'src/state/cache'
-import { getJSON } from 'src/requests'
-import { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link } from 'expo-router'
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
-import { getAccountById, getAccountStatusesById } from 'src/lib/api'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { getAccountStatusesById } from 'src/lib/api'
 import Feather from '@expo/vector-icons/Feather'
 import { Blurhash } from 'react-native-blurhash'
+import { useQuerySelfProfile } from 'src/state/AuthProvider'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileScreen() {
-  const userCache = JSON.parse(Storage.getString('user.profile'))
-
-  const { data: user, isFetching } = useQuery({
-    queryKey: ['profileById', userCache.id],
-    queryFn: getAccountById,
-  })
+  const { user, isFetching } = useQuerySelfProfile()
 
   const userId = user?.id
 
@@ -28,8 +21,8 @@ export default function ProfileScreen() {
       const result = await Share.share({
         message: user.url,
       })
-    } catch (error) {
-      Alert.alert(error?.message)
+    } catch (error: any) {
+      Alert.alert(error?.message || 'onshare error: error message missing')
     }
   }
 
@@ -103,15 +96,9 @@ export default function ProfileScreen() {
       </Link>
     ) : null
 
-  if (isFetching) {
-    return (
-      <View flexGrow={1} mt="$5">
-        <ActivityIndicator color={'#000'} />
-      </View>
-    )
-  }
   return (
     <SafeAreaView edges={['top']}>
+      {isFetching && <ActivityIndicator color={'#000'} />}
       <FlatList
         data={feed?.pages.flat()}
         keyExtractor={(item, index) => item?.id.toString()}
