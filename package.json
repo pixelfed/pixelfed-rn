@@ -3,15 +3,15 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "upgrade:tamagui": "yarn up '*tamagui*'@latest '@tamagui/*'@latest",
-    "upgrade:tamagui:canary": "yarn up '*tamagui*'@canary '@tamagui/*'@canary",
+    "upgrade:tamagui": "npm up '*tamagui*'@latest '@tamagui/*'@latest",
+    "upgrade:tamagui:canary": "npm up '*tamagui*'@canary '@tamagui/*'@canary",
     "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "biome check --write ./src",
-    "check": "yarn check:ts && yarn check:lint",
+    "check": "npm run check:ts && npm run check:lint",
     "check:ts": "tsc",
     "check:lint": "biome check ./src",
     "postinstall": "patch-package"
@@ -27,14 +27,14 @@
     "@react-native-community/hooks": "^3.0.0",
     "@react-native-community/netinfo": "11.1.0",
     "@react-navigation/native": "^6.0.2",
-    "@shopify/flash-list": "^1.6.4",
+    "@shopify/flash-list": "1.6.3",
     "@tamagui/config": "^1.94.4",
     "@tamagui/metro-plugin": "^1.94.4",
     "@tamagui/toast": "^1.94.4",
     "@tanstack/react-query": "^5.34.1",
     "babel-preset-expo": "^10.0.0",
     "burnt": "^0.12.2",
-    "expo": "^50.0.14",
+    "expo": "~50.0.20",
     "expo-application": "~5.8.4",
     "expo-constants": "~15.4.6",
     "expo-font": "~11.10.3",
@@ -64,7 +64,7 @@
     "react-native-safe-area-context": "4.8.2",
     "react-native-screens": "~3.29.0",
     "react-native-static-safe-area-insets": "^2.2.0",
-    "react-native-svg": "^15.4.0",
+    "react-native-svg": "14.1.0",
     "react-native-video": "^6.2.0",
     "react-native-vision-camera": "4.6.1",
     "react-native-web": "~0.19.6",
@@ -81,5 +81,5 @@
     "babel-plugin-module-resolver": "^5.0.0"
   },
   "private": true,
-  "packageManager": "yarn@4.0.2"
+  "packageManager": "npm@11.0.0+sha512.11dff29565d2297c74e7c594a9762581bde969f0aa5cbe6f5b3644bf008a16c065ece61094d9ffbb81125be38df8e1ba43eb8244b3d30c61eb797e9a2440e3ec"
 }
