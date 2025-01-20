@@ -1,4 +1,4 @@
-import { Alert, Dimensions, Share, Pressable, Platform } from 'react-native'
+import { Alert, Dimensions, Share, Pressable, Platform, useWindowDimensions } from 'react-native'
 import { Button, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import FastImage from 'react-native-fast-image'
@@ -104,7 +104,6 @@ const ZoomableImage = ({ source, style }) => {
   )
 }
 
-const SCREEN_WIDTH = Dimensions.get('screen').width
 const AVATAR_WIDTH = 45
 
 const Section = React.memo(({ children }) => (
@@ -169,19 +168,20 @@ const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMe
 const PostMedia = React.memo(({ media, post }) => {
   const mediaUrl = media[0].url
   const [showSensitive, setSensitive] = useState(false)
+  const {width} = useWindowDimensions()
   const forceSensitive = Storage.getBoolean('ui.forceSensitive') == true
   const height = media[0].meta?.original?.width
-    ? SCREEN_WIDTH * (media[0].meta?.original?.height / media[0].meta?.original.width)
+    ? width * (media[0].meta?.original?.height / media[0].meta?.original.width)
     : 430
 
   if (!forceSensitive && post.sensitive && !showSensitive) {
     return (
-      <ZStack w={SCREEN_WIDTH} h={height}>
+      <ZStack w={width} h={height}>
         <Blurhash
           blurhash={media[0]?.blurhash}
           style={{
             flex: 1,
-            width: SCREEN_WIDTH,
+            width: width,
             height: height,
           }}
         />
@@ -198,7 +198,7 @@ const PostMedia = React.memo(({ media, post }) => {
               This post contains sensitive or mature content
             </Text>
           </YStack>
-          <YStack w={SCREEN_WIDTH} flexShrink={1}>
+          <YStack w={width} flexShrink={1}>
             <Separator />
             <PressableOpacity onPress={() => setSensitive(true)}>
               <View p="$4" justifyContent="center" alignItems="center">
@@ -226,15 +226,15 @@ const PostMedia = React.memo(({ media, post }) => {
     <View flex={1} borderBottomWidth={1} borderBottomColor="$gray5" zIndex={100}>
       <ZoomableImage
         source={{ uri: mediaUrl }}
-        style={{ width: SCREEN_WIDTH, height: height, backgroundColor: '#000' }}
+        style={{ width: width, height: height, backgroundColor: '#000' }}
       />
     </View>
   )
 })
 
-const calculateHeight = (item) => {
+const calculateHeight = (item, width: number) => {
   if (item.meta?.original?.width) {
-    return SCREEN_WIDTH * (item.meta.original.height / item.meta.original.width)
+    return width * (item.meta.original.height / item.meta.original.width)
   }
   return 500
 }
@@ -242,8 +242,9 @@ const calculateHeight = (item) => {
 const PostAlbumMedia = React.memo(({ media, post, progress }) => {
   const mediaUrl = media[0].url
   const [showSensitive, setSensitive] = useState(false)
+  const {width} = useWindowDimensions()
   const height = media.reduce((max, item) => {
-    const height = calculateHeight(item)
+    const height = calculateHeight(item, width)
     return height > max ? height : max
   }, 0)
 
@@ -251,12 +252,12 @@ const PostAlbumMedia = React.memo(({ media, post, progress }) => {
 
   if (post.sensitive && !showSensitive) {
     return (
-      <ZStack w={SCREEN_WIDTH} h={height}>
+      <ZStack w={width} h={height}>
         <Blurhash
           blurhash={media[0]?.blurhash}
           style={{
             flex: 1,
-            width: SCREEN_WIDTH,
+            width: width,
             height: height,
           }}
         />
@@ -267,7 +268,7 @@ const PostAlbumMedia = React.memo(({ media, post, progress }) => {
               This post contains sensitive or mature content
             </Text>
           </YStack>
-          <YStack w={SCREEN_WIDTH} flexShrink={1}>
+          <YStack w={width} flexShrink={1}>
             <Separator />
 
             <PressableOpacity onPress={() => setSensitive(true)}>
@@ -292,7 +293,7 @@ const PostAlbumMedia = React.memo(({ media, post, progress }) => {
     <YStack zIndex={1}>
       <Carousel
         onConfigurePanGesture={(gestureChain) => gestureChain.activeOffsetX([-10, 10])}
-        width={SCREEN_WIDTH}
+        width={width}
         height={height}
         vertical={false}
         onProgressChange={progress}
@@ -302,7 +303,7 @@ const PostAlbumMedia = React.memo(({ media, post, progress }) => {
           return (
             <FastImage
               style={{
-                width: SCREEN_WIDTH,
+                width: width,
                 height: height,
                 backgroundColor: '#000',
               }}
@@ -622,6 +623,7 @@ export default function FeedPost({
   const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
   const progress = useSharedValue(0)
   const snapPoints = useMemo(() => ['45%', '65%'], [])
+  const {width} = useWindowDimensions()
   const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
   const showAltText = Storage.getBoolean('ui.showAltText') == true
 
@@ -700,7 +702,7 @@ export default function FeedPost({
   }
 
   return (
-    <View flex={1} style={{ width: SCREEN_WIDTH }}>
+    <View flex={1} style={{ width }}>
       <PostHeader
         avatar={post.account?.avatar}
         username={post.account?.acct}
