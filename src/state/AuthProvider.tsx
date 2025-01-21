@@ -136,7 +136,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         `&scope=read+write+follow+push+admin:read+admin:write` +
         `&redirect_uri=${REDIRECT_URI}` +
         `&response_type=code`,
-      REDIRECT_URI
+      REDIRECT_URI,
+      { showInRecents: true }
     ).then((res) => {
       if (res.type === 'success') {
         return _loginCallback(res.url)
