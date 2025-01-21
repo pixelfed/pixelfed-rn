@@ -76,3 +76,7 @@ yarn-error.*
 
 expo-env.d.ts
 # @end expo-cli
+# @end expo-cli
+credentials.json
+google-services.json
+app.json
