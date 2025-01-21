@@ -1,138 +1,166 @@
-import type { PropsWithChildren } from 'react'
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import React from 'react';
+import { Text, View, StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
 
-import type { StyleProp, TextStyle } from 'react-native'
+const styles = StyleSheet.create({
+  fullTextWrapper: {
+    opacity: 0,
+    position: 'absolute',
+    left: 0,
+    top: 0,
+  },
+  viewMoreText: {
+    color: 'gray',
+  },
+  transparent: {
+    opacity: 0,
+  },
+});
 
-export type ReadMoreProps = {
-  numberOfLines: number
-  textStyle?: StyleProp<TextStyle>
-  onReady?: () => void
-  renderTruncatedFooter?: (toggleShowAllText: () => void) => void
-  renderRevealedFooter?: (toggleShowAllText: () => void) => void
-}
+const renderViewMore = (onPress) =>  <Text onPress={onPress}>View more</Text>;
+const renderViewLess = (onPress) =>  <Text onPress={onPress}>View less</Text>;
 
-export default class ReadMore extends React.Component<PropsWithChildren<ReadMoreProps>> {
+class ReadMore extends React.Component {
+  trimmedTextHeight = null;
+  fullTextHeight = null;
+  shouldShowMore = false;
+
   state = {
-    measured: false,
-    shouldShowReadMore: false,
-    showAllText: false,
+    isFulltextShown: true,
+    numberOfLines: this.props.numberOfLines,
   }
-  protected isReadMoreMounted = false
-  protected text: Text | null = null
 
-  async componentDidMount() {
-    this.isReadMoreMounted = true
-    await nextFrameAsync()
-
-    if (!this.isReadMoreMounted) {
-      return
-    }
-
-    if (!this.text) {
-      throw new Error('_text is not defined')
-    }
-
-    // Get the height of the text with no restriction on number of lines
-    const fullHeight = await measureHeightAsync(this.text)
-    this.setState({ measured: true })
-    await nextFrameAsync()
-
-    if (!this.isReadMoreMounted) {
-      return
-    }
-
-    const limitedHeight = await measureHeightAsync(this.text)
-
-    if (fullHeight > limitedHeight) {
-      this.setState({ shouldShowReadMore: true }, () => {
-        this.props.onReady && this.props.onReady()
-      })
-    } else {
-      this.props.onReady && this.props.onReady()
+  hideFullText = () => {
+    if (
+      this.state.isFulltextShown &&
+      this.trimmedTextHeight &&
+      this.fullTextHeight
+    ) {
+      this.shouldShowMore = this.trimmedTextHeight < this.fullTextHeight;
+      this.setState({
+        isFulltextShown: false,
+      });
     }
   }
 
-  componentWillUnmount() {
-    this.isReadMoreMounted = false
+  onLayoutTrimmedText = (event) => {
+    const {
+      height,
+    } = event.nativeEvent.layout;
+
+    this.trimmedTextHeight = height;
+    this.hideFullText();
+  }
+
+  onLayoutFullText = (event) => {
+    const {
+      height,
+    } = event.nativeEvent.layout;
+
+    this.fullTextHeight = height;
+    this.hideFullText();
+  }
+
+  onPressMore = () => {
+    this.setState({
+      numberOfLines: null,
+    }, () => {
+      this.props.afterExpand();
+    });
+  }
+
+  onPressLess = () => {
+    this.setState({
+      numberOfLines: this.props.numberOfLines,
+    }, () => {
+      this.props.afterCollapse();
+    });
+  }
+
+  getWrapperStyle = () => {
+    if (this.state.isFulltextShown) {
+      return styles.transparent;
+    }
+    return {};
+  }
+
+  renderViewMore = () => (
+    <Text
+      style={styles.viewMoreText}
+      onPress={this.onPressMore}
+    >
+      View More
+    </Text>
+  )
+
+  renderViewLess = () => (
+    <Text
+      style={styles.viewMoreText}
+      onPress={this.onPressLess}
+    >
+      View Less
+    </Text>
+  )
+
+  renderFooter = () => {
+    const {
+      numberOfLines,
+    } = this.state;
+
+    if (this.shouldShowMore === true) {
+      if (numberOfLines > 0) {
+        return (this.props.renderViewMore || this.renderViewMore)(this.onPressMore);
+      }
+      return (this.props.renderViewLess || this.renderViewLess)(this.onPressLess);
+    }
+    return null;
+  }
+
+  renderFullText = () => {
+    if (this.state.isFulltextShown) {
+      return (
+        <View onLayout={this.onLayoutFullText} style={styles.fullTextWrapper}>
+          {this.props.children}
+        </View>
+      );
+    }
+    return null;
   }
 
   render() {
-    let { measured, showAllText } = this.state
-
-    let { numberOfLines } = this.props
-
     return (
-      <View>
-        <>
+      <View style={this.getWrapperStyle()}>
+        <View onLayout={this.onLayoutTrimmedText}>
           <Text
-            numberOfLines={measured && !showAllText ? numberOfLines : 0}
             style={this.props.textStyle}
-            ref={(text) => {
-              this.text = text
-            }}
+            onTextLayout={this.props.onTextLayout}
+            numberOfLines={this.state.numberOfLines}
           >
             {this.props.children}
           </Text>
+          {this.renderFooter()}
+        </View>
 
-          {this._maybeRenderReadMore()}
-        </>
+        {this.renderFullText()}
       </View>
-    )
-  }
-
-  _handlePressReadMore = () => {
-    this.setState({ showAllText: true })
-  }
-
-  _handlePressReadLess = () => {
-    this.setState({ showAllText: false })
-  }
-
-  _maybeRenderReadMore() {
-    let { shouldShowReadMore, showAllText } = this.state
-
-    if (shouldShowReadMore && !showAllText) {
-      if (this.props.renderTruncatedFooter) {
-        return this.props.renderTruncatedFooter(this._handlePressReadMore)
-      }
-
-      return (
-        <Text style={styles.button} onPress={this._handlePressReadMore}>
-          Read more
-        </Text>
-      )
-    }
-
-    if (shouldShowReadMore && showAllText) {
-      if (this.props.renderRevealedFooter) {
-        return this.props.renderRevealedFooter(this._handlePressReadLess)
-      }
-
-      return (
-        <Text style={styles.button} onPress={this._handlePressReadLess}>
-          Hide
-        </Text>
-      )
-    }
+    );
   }
 }
 
-function measureHeightAsync(component: Text): Promise<number> {
-  return new Promise((resolve) => {
-    component.measure((x, y, w, h) => {
-      resolve(h)
-    })
-  })
-}
+ReadMore.propTypes = {
+  onTextLayout: PropTypes.func,
+  renderViewMore: PropTypes.func,
+  renderViewLess: PropTypes.func,
+  afterCollapse: PropTypes.func,
+  afterExpand: PropTypes.func,
+  numberOfLines: PropTypes.number.isRequired,
+  textStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+};
 
-function nextFrameAsync(): Promise<void> {
-  return new Promise((resolve) => requestAnimationFrame(() => resolve()))
-}
+ReadMore.defaultProps = {
+  afterCollapse: () => {},
+  afterExpand: () => {},
+  textStyle: {},
+};
 
-const styles = StyleSheet.create({
-  button: {
-    color: '#888',
-    marginVertical: 5,
-  },
-})
+export default ReadMore;

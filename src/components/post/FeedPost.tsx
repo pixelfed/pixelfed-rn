@@ -507,6 +507,7 @@ const PostCaption = React.memo(
   }) => {
     const timeAgo = formatTimestamp(createdAt)
     const captionText = htmlToTextWithLineBreaks(caption)
+
     return (
       <BorderlessSection>
         <YStack gap="$3" pt="$1" pb="$3" px="$2">
@@ -520,7 +521,7 @@ const PostCaption = React.memo(
                 onUsernamePress={onUsernamePress}
               />
             ) : (
-              <ReadMore numberOfLines={3} renderRevealedFooter={() => <></>}>
+              <ReadMore numberOfLines={3}>
                 <AutolinkText
                   text={captionText}
                   username={username}

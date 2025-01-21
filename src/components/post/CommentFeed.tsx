@@ -101,7 +101,7 @@ const CommentItem = ({
                   />
                 )}
 
-                <ReadMore numberOfLines={3} renderRevealedFooter={() => <></>}>
+                <ReadMore numberOfLines={3}>
                   <AutolinkText
                     text={captionText}
                     onMentionPress={gotoUsernameProfile}
