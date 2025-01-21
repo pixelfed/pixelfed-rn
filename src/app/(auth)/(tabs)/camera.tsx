@@ -151,7 +151,7 @@ export default function Camera() {
       const newMedia: Array<MediaAsset> = result.assets.map((asset) => ({
         path: asset.uri,
         type: asset.type,
-        alttext: null
+        altText: null
       }))
 
       setMedia([
