@@ -144,6 +144,7 @@ export default function Camera() {
       allowsMultipleSelection: true,
       selectionLimit: 20,
       quality: 1,
+      orderedSelection: true
     })
 
     if (!result.canceled) {
