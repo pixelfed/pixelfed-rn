@@ -78,7 +78,7 @@ export const AuthContext = createContext<AuthProvider>({
 
 export function useAuth() {
   if (!useContext(AuthContext)) {
-    // This does not work, because default is an object which js will inteprete as true here
+    // This does not work, because default is an object which js will interpret as true here
     throw new Error('useAuth must be used within a <AuthProvider />')
   }
 
