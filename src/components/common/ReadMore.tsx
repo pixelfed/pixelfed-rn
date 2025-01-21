@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from 'hoist-non-react-statics/node_modules/@types/react'
+import type { PropsWithChildren } from 'react'
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
