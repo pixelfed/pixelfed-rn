@@ -1,5 +1,11 @@
 import { useCallback, useState, useRef, useMemo } from 'react'
-import { FlatList, StyleSheet, ActivityIndicator, Platform, ListRenderItemInfo } from 'react-native'
+import {
+  FlatList,
+  StyleSheet,
+  ActivityIndicator,
+  Platform,
+  type ListRenderItemInfo,
+} from 'react-native'
 import { Text, View } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
@@ -27,7 +33,7 @@ import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 import { useUserCache } from 'src/state/AuthProvider'
-import { Status } from 'src/lib/api-types'
+import type { Status } from 'src/lib/api-types'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   return (
