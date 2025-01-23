@@ -5,7 +5,6 @@ The pixelfed mobile app is written in [react native](https://reactnative.dev) an
 ## Requirements
 
 - [`git-lfs`](https://git-lfs.com)
-- [`yarn` package manager](https://yarnpkg.com)
 - [watchman](https://facebook.github.io/watchman/docs/install)
 - Building for android:
     - [android studio](https://developer.android.com/studio) and java
@@ -17,8 +16,7 @@ https://docs.expo.dev/get-started/set-up-your-environment/ helps you to install 
 ## First time setup
 
 ```sh
-corepack enable   # prerequisite to install yarn automatically on next step
-yarn              # install dependencies
+npm i              # install dependencies
 ```
 
 Also follow steps in https://docs.expo.dev/get-started/set-up-your-environment/
@@ -26,35 +24,35 @@ Also follow steps in https://docs.expo.dev/get-started/set-up-your-environment/
 ## Build the project
 
 ```sh
-yarn start
+npm run start
 ```
 
 ### Web
 
 ```sh
-yarn web
+npm run web
 ```
 
 ### Android
 
 ```sh
-yarn android
+npm run android
 ```
 
 ### iOS
 
 ```sh
-yarn ios
+npm run ios
 ```
 
 ### check for ts errors and lint problems
 ```sh
-yarn check
+npm run check
 ```
 
 ### fix formatting & linting
 ```sh
-yarn lint
+npm run lint
 ```
 
 ## Troubleshooting
