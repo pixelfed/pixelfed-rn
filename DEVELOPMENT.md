@@ -45,6 +45,11 @@ npm run android
 npm run ios
 ```
 
+#### Select your real device to test on
+```sh
+npm run ios -- --device
+```
+
 ### check for ts errors and lint problems
 ```sh
 npm run check
@@ -74,3 +79,20 @@ cd ios
 pod install
 ```
 
+
+### IOS: "Building workspace pixelfed with scheme pixelfed and configuration Debug"
+
+When you are not part of the pixelfed apple developer team, then you need to make the following changes to get it to build:
+
+- open `ios/pixelfed.xcworkspace` in xcode
+- then in file explorer open "Pixelfed"
+- go to target pixelfed
+- go to Signing & capabilities
+   - Change the team to your own
+   - change bundle identifier by preprending your own domain in reverse notation
+   - disable/remove app group
+   - delete push notification capability
+
+### IOS: "CommandError: ApplicationVerificationFailed"
+
+Build it with xcode. It shows the full error.
