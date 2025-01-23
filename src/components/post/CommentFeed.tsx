@@ -8,6 +8,7 @@ import {
   Platform,
   Keyboard,
 } from 'react-native'
+
 import { Text, View, XStack, YStack, Separator } from 'tamagui'
 import { Feather, Ionicons } from '@expo/vector-icons'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -31,7 +32,26 @@ import AutolinkText from '../common/AutolinkText'
 import FastImage from 'react-native-fast-image'
 import { Switch } from '../form/Switch'
 
+import type { TextInput } from 'react-native'
+
 const SCREEN_WIDTH = Dimensions.get('screen').width
+
+type CommentItemProps = {
+  item
+  level?: number
+  onReply: (item) => void
+  onLike: (item) => void
+  onReport: (itemId: string) => void
+  onDelete: (itemId: string) => void
+  onShowLikes: (itemId: string) => void
+  onLoadChildren: (itemId: string) => void
+  gotoProfile: (accountId: string) => void
+  gotoUsernameProfile: (mention: string) => void
+  gotoHashtag: (hashtag: string) => void
+  user
+  childComments
+  loadingChildId: string | null
+}
 
 const CommentItem = ({
   item,
@@ -48,7 +68,7 @@ const CommentItem = ({
   user,
   childComments,
   loadingChildId,
-}) => {
+}: CommentItemProps) => {
   const captionText = htmlToTextWithLineBreaks(item.content)
   const postType = item.pf_type
   const isChild = level > 0
@@ -134,7 +154,7 @@ const CommentItem = ({
                     </Pressable>
                   )}
                   {item.account.id !== user?.id ? (
-                    <Pressable onPress={() => onReport(item?.id)}>
+                    <Pressable onPress={() => onReport(item.id)}>
                       <Text fontSize="$3" color="$gray9">
                         Report
                       </Text>
@@ -210,6 +230,16 @@ const CommentItem = ({
   )
 }
 
+type CommentFeedProps = {
+  id: string
+  showLikes: (itemId: string) => void
+  user
+  handleReport: (itemId: string) => void
+  gotoProfile: (accountId: string) => void
+  gotoUsernameProfile: (mention: string) => void
+  gotoHashtag: (hashtag: string) => void
+}
+
 export default function CommentFeed({
   id,
   showLikes,
@@ -218,16 +248,16 @@ export default function CommentFeed({
   gotoProfile,
   gotoUsernameProfile,
   gotoHashtag,
-}) {
-  const [commentText, setComment] = useState()
-  const [inReplyToId, setInReplyToId] = useState()
+}: CommentFeedProps) {
+  const [commentText, setComment] = useState<string>('')
+  const [inReplyToId, setInReplyToId] = useState<string | null>(null)
   const [replySet, setReply] = useState()
   const [replyScope, setReplyScope] = useState('public')
   const [hasCW, setCW] = useState(false)
-  const [loadingChildId, setLoadingChildId] = useState(null)
+  const [loadingChildId, setLoadingChildId] = useState<string | null>(null)
   const [childComments, setChildComments] = useState({})
   const queryClient = useQueryClient()
-  const commentRef = useRef()
+  const commentRef = useRef<TextInput | null>(null)
 
   const handleReplyPost = () => {
     commentMutation.mutate({
@@ -236,12 +266,12 @@ export default function CommentFeed({
       scope: replyScope,
       cw: hasCW,
     })
-    setComment()
-    setInReplyToId()
+    setComment('')
+    setInReplyToId(null)
     setReply()
   }
 
-  const handleShowLikes = (id) => {
+  const handleShowLikes = (id: string) => {
     showLikes(id)
   }
 
@@ -252,7 +282,7 @@ export default function CommentFeed({
     })
   }
 
-  const handleCommentReport = (id) => {
+  const handleCommentReport = (id: string) => {
     handleReport(id)
   }
 
@@ -271,7 +301,7 @@ export default function CommentFeed({
     })
   }
 
-  const handleCommentDelete = (id) => {
+  const handleCommentDelete = (id: string) => {
     Alert.alert('Confirm Delete', 'Are you sure you want to delete your comment?', [
       {
         text: 'Cancel',
@@ -285,7 +315,7 @@ export default function CommentFeed({
   }
 
   const handleReplyTo = (item) => {
-    commentRef?.current.focus()
+    commentRef.current?.focus()
     if (item?.id && item?.account?.id) {
       setReply({
         id: item.id,
@@ -300,13 +330,13 @@ export default function CommentFeed({
 
   const clearReply = () => {
     setReply()
-    setInReplyToId()
-    setComment()
-    commentRef?.current.blur()
+    setInReplyToId(null)
+    setComment('')
+    commentRef.current?.blur()
     Keyboard.dismiss()
   }
 
-  const fetchChildren = async (parentId) => {
+  const fetchChildren = async (parentId: string) => {
     setLoadingChildId(parentId)
     try {
       const childrenData = await getStatusRepliesById(parentId, 0)
@@ -457,7 +487,9 @@ export default function CommentFeed({
       ) : null}
       <YStack style={styles.inputGroup}>
         <BottomSheetTextInput
-          ref={commentRef}
+          ref={
+            commentRef as any /* BottomSheetTextInput is forwarding ref to a normal TextInput, but the typing is wrong, so we need to cast to any here */
+          }
           style={styles.input}
           value={commentText}
           onChangeText={setComment}
@@ -474,7 +506,7 @@ export default function CommentFeed({
         >
           <XStack>
             <Text allowFontScaling={false} fontWeight="bold" fontSize={12} color="$gray9">
-              {commentText?.length || 0}
+              {commentText.length}
             </Text>
             <Text allowFontScaling={false} fontWeight="bold" fontSize={12} color="$gray9">
               /
