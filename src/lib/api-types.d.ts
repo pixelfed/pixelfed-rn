@@ -1,6 +1,21 @@
 /** Date string like 2025-01-01T10:34:12.000000Z */
 export type Timestamp = string
+
 export type Visibility = 'public' | 'unlisted' | 'private' | 'direct' | 'draft'
+
+export type Application = {}
+
+export type MediaAttachment = {}
+
+export type Mention = {}
+
+export type Tag = {}
+
+export type CustomEmoji = {}
+
+export type PreviewCard = {}
+
+export type Poll = {}
 
 export type Relationship = {
   blocking: boolean
@@ -83,30 +98,33 @@ export type PaginatedStatus = {
 
 export type Status = {
   id: string,
-  uri: string,
-  url: string,
-  in_reply_to_id: string,
-  in_reply_to_account_id: string,
-  reblog: Status,
-  content: string,
   created_at: Timestamp,
-  emojis: Array,
-  reblogs_count: number,
-  reblogged: boolean,
-  favourited: boolean,
-  muted: boolean,
+  in_reply_to_id: string | null,
+  in_reply_to_account_id: string | null,
   sensitive: boolean,
   spoiler_text: string,
   visibility: Visibility,
-  application,
-  language: string,
-  mentions: Array<Account>,
-  account: Account,
-  tags: Array<string>,
-  poll: boolean,
-  edited_at: Timestamp,
-  favourites_count: number,
+  language: string | null,
+  uri: string,
+  url: string | null,
   replies_count: number,
-  media_attachments: Array,
-  bookmarked: boolean
+  reblogs_count: number,
+  favourites_count: number,
+  edited_at: Timestamp | null,
+  favourited: boolean | undefined,
+  reblogged: boolean | undefined,
+  muted: boolean | undefined,
+  bookmarked: boolean | undefined,
+  pinned: boolean | undefined,
+  filtered: boolean | undefined,
+  content: string,
+  reblog: Status | null,
+  application: Application | undefined,
+  account: Account,
+  media_attachments: Array<MediaAttachment>,
+  mentions: Array<Mention>,
+  tags: Array<Tag>,
+  emojis: Array<CustomEmoji>,
+  card: Array<PreviewCard>,
+  poll: Poll | null
 }
