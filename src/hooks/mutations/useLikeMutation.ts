@@ -21,7 +21,7 @@ export function useLikeMutation({ onSuccess }: { onSuccess?: onSucessType } = {}
     onSuccess,
   })
 
-  const handleLike = async (id: string, state: boolean) => {
+  const handleLike = async (id: string, state: boolean | undefined) => {
     try {
       likeMutation.mutate({ type: state ? 'unlike' : 'like', id: id })
     } catch (error) {

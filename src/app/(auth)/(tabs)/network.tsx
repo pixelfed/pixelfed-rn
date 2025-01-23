@@ -1,5 +1,5 @@
 import { useCallback, useState, useRef, useMemo } from 'react'
-import { FlatList, StyleSheet, ActivityIndicator, Platform } from 'react-native'
+import { FlatList, StyleSheet, ActivityIndicator, Platform, ListRenderItemInfo } from 'react-native'
 import { Text, View } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
@@ -27,6 +27,7 @@ import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 import { useUserCache } from 'src/state/AuthProvider'
+import { Status } from 'src/lib/api-types'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   return (
@@ -109,7 +110,7 @@ export default function HomeScreen() {
   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 })
 
   const renderItem = useCallback(
-    ({ item }) => (
+    ({ item }: ListRenderItemInfo<Status>) => (
       <FeedPost
         post={item}
         user={user}
@@ -123,14 +124,14 @@ export default function HomeScreen() {
     [user]
   )
 
-  const keyExtractor = useCallback((item) => item?.id, [])
+  const keyExtractor = useCallback((item: Status) => item.id, [])
 
   const onDeletePost = (id: string) => {
     deletePostMutation.mutate(id)
   }
 
   const deletePostMutation = useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async (id) => {
       return await deleteStatusV1(id)
     },
     onSuccess: (data, variables) => {
@@ -148,7 +149,7 @@ export default function HomeScreen() {
   })
 
   const bookmarkMutation = useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async (id) => {
       return await postBookmark(id)
     },
   })

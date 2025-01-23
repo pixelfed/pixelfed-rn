@@ -1,4 +1,6 @@
-/** Date string like 2025-01-01T10:34:12.000000Z */
+/* ============================= MastoAPI Types ============================= */
+
+/* Date string like 2025-01-01T10:34:12.000000Z */
 export type Timestamp = string
 
 export type Visibility = 'public' | 'unlisted' | 'private' | 'direct' | 'draft'
@@ -90,12 +92,6 @@ export type LoginUserSource = {
   fields: any[]
 }
 
-export type PaginatedStatus = {
-  data: Array<Status>,
-  nextPage: string | undefined,
-  prevPage: string | undefined
-}
-
 export type Status = {
   id: string,
   created_at: Timestamp,
@@ -127,4 +123,12 @@ export type Status = {
   emojis: Array<CustomEmoji>,
   card: Array<PreviewCard>,
   poll: Poll | null
+}
+
+/* ========================== Infinite query types ========================== */
+
+export type PaginatedStatus = {
+  data: Array<Status>,
+  nextPage: string | undefined,
+  prevPage: string | undefined
 }
