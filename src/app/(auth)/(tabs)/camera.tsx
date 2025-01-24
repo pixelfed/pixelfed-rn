@@ -19,7 +19,7 @@ import {
   Linking,
   Keyboard,
   ListRenderItem,
-  ListRenderItemInfo,
+  type ListRenderItemInfo,
 } from 'react-native'
 import { Storage } from 'src/state/cache'
 import UserAvatar from 'src/components/common/UserAvatar'
@@ -49,8 +49,8 @@ import { useShareIntentContext } from 'expo-share-intent'
 import { useUserCache } from 'src/state/AuthProvider'
 
 type MediaAsset = {
-  path: string,
-  type: string | undefined,
+  path: string
+  type: string | undefined
   altText: string | null
 }
 
@@ -73,6 +73,7 @@ export default function Camera() {
   const [curAltText, setCurAltText] = useState('')
   const [canPost, setCanPost] = useState(false)
   const [isPosting, setIsPosting] = useState(false)
+  const [maxMediaLimit, setMaxMediaLimit] = useState(4)
   const queryClient = useQueryClient()
   const scopeLabel = {
     public: 'Anyone can view',
@@ -110,7 +111,7 @@ export default function Camera() {
     Keyboard.dismiss()
   }, [])
 
-  const openAltText =(item: MediaAsset) => {
+  const openAltText = (item: MediaAsset) => {
     const idx = media.map((m) => m.path).indexOf(item.path)
     setActiveIndex(idx)
     setCurAltText(item.altText || '')
@@ -142,22 +143,19 @@ export default function Camera() {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
-      selectionLimit: 20,
+      selectionLimit: maxMediaLimit,
       quality: 1,
-      orderedSelection: true
+      orderedSelection: true,
     })
 
     if (!result.canceled) {
       const newMedia: Array<MediaAsset> = result.assets.map((asset) => ({
         path: asset.uri,
         type: asset.type,
-        altText: null
+        altText: null,
       }))
 
-      setMedia([
-        ...media,
-        ...newMedia,
-      ])
+      setMedia([...media, ...newMedia])
       setCanPost(true)
     }
   }
@@ -467,6 +465,9 @@ export default function Camera() {
       } else {
         setScope(res.default_scope)
       }
+      if (res.max_media_attachments) {
+        setMaxMediaLimit(res.max_media_attachments)
+      }
       res.max_altext_length = Number.parseInt(res.max_altext_length)
       return res
     },
@@ -682,14 +683,14 @@ export default function Camera() {
               <Text fontSize="$9" fontWeight="bold" px="$3" mb="$3">
                 Alt Text
               </Text>
-              {(activeIndex >= 0) ? (
+              {activeIndex >= 0 ? (
                 <>
                   <Separator />
                   <FastImage
-                      source={{ uri: media[activeIndex].path }}
-                      style={{ width: '100%', height: Keyboard.isVisible() ? 140 : 240 }}
-                      resizeMode={FastImage.resizeMode.contain}
-                    />
+                    source={{ uri: media[activeIndex].path }}
+                    style={{ width: '100%', height: Keyboard.isVisible() ? 140 : 240 }}
+                    resizeMode={FastImage.resizeMode.contain}
+                  />
                 </>
               ) : null}
               <BottomSheetTextInput
