@@ -28,6 +28,7 @@ import ReadMoreAndroid from '../common/ReadMoreAndroid'
 import { Storage } from 'src/state/cache'
 import { State, PinchGestureHandler } from 'react-native-gesture-handler'
 import Animated, {
+  type SharedValue,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -38,6 +39,7 @@ import type {
   HandlerStateChangeEvent,
   PinchGestureHandlerEventPayload,
 } from 'react-native-gesture-handler'
+import type { LoginUserResponse, Status, Timestamp, Visibility } from 'src/lib/api-types'
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
 
@@ -330,6 +332,23 @@ const PostAlbumMedia = React.memo(({ media, post, progress }) => {
   )
 })
 
+interface PostActionsProps {
+  hasLiked: boolean
+  hasShared: boolean
+  likesCount: number
+  likedBy
+  sharesCount: number
+  onOpenComments: () => void
+  post: Status
+  progress: SharedValue<number>
+  handleLike: () => void
+  showAltText: boolean
+  commentsCount: number
+  onBookmark: () => void
+  hasBookmarked: boolean
+  onShare: () => void
+}
+
 const PostActions = React.memo(
   ({
     hasLiked,
@@ -346,7 +365,7 @@ const PostActions = React.memo(
     onBookmark,
     hasBookmarked,
     onShare,
-  }) => {
+  }: PostActionsProps) => {
     const hasAltText =
       post?.media_attachments?.length > 0 &&
       post?.media_attachments[0]?.description?.trim().length > 0
@@ -488,6 +507,24 @@ const PostActions = React.memo(
   }
 )
 
+interface PostCaptionProps {
+  postId: string
+  username: string
+  caption: string
+  commentsCount: number
+  createdAt: Timestamp
+  tags: Array<string>
+  visibility: Visibility
+  onOpenComments: () => void
+  onHashtagPress: (tag: string) => void
+  onMentionPress: (tag: string) => void
+  onUsernamePress: () => void
+  disableReadMore: boolean
+  editedAt: Timestamp
+  isLikeFeed: boolean
+  likedAt: Timestamp
+}
+
 const PostCaption = React.memo(
   ({
     postId,
@@ -505,7 +542,7 @@ const PostCaption = React.memo(
     editedAt,
     isLikeFeed,
     likedAt,
-  }) => {
+  }: PostCaptionProps) => {
     const timeAgo = formatTimestamp(createdAt)
     const captionText = htmlToTextWithLineBreaks(caption)
     return (
@@ -606,6 +643,20 @@ const PostCaption = React.memo(
   }
 )
 
+interface FeedPostProps {
+  post: Status
+  user: LoginUserResponse
+  onOpenComments: (id: string) => void
+  onLike: (id: string, favourited: boolean) => void
+  onDeletePost: (id: string) => void
+  onBookmark: (id: string) => void
+  disableReadMore: boolean
+  isPermalink: boolean
+  isLikeFeed: boolean
+  likedAt: Timestamp
+  onShare: (id: string) => void
+}
+
 export default function FeedPost({
   post,
   user,
@@ -618,7 +669,7 @@ export default function FeedPost({
   isLikeFeed = false,
   likedAt,
   onShare,
-}) {
+}: FeedPostProps) {
   const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
   const progress = useSharedValue(0)
   const snapPoints = useMemo(() => ['45%', '65%'], [])
@@ -725,7 +776,7 @@ export default function FeedPost({
             likedBy={post?.liked_by}
             sharesCount={post?.reblogs_count}
             showAltText={showAltText}
-            commentsCount={post.reply_count}
+            commentsCount={post.replies_count}
             handleLike={() => onLike(post?.id, post?.favourited)}
             onOpenComments={() => onOpenComments(post?.id)}
             onBookmark={() => onBookmark(post?.id)}
@@ -736,7 +787,7 @@ export default function FeedPost({
             postId={post.id}
             username={post.account?.username}
             caption={post.content}
-            commentsCount={post.reply_count}
+            commentsCount={post.replies_count}
             createdAt={post.created_at}
             tags={post.tags}
             visibility={post.visibility}

@@ -1,3 +1,101 @@
+/* ============================= MastoAPI Types ============================= */
+
+/* Date string like 2025-01-01T10:34:12.000000Z */
+export type Timestamp = string
+
+export type Visibility = 'public' | 'unlisted' | 'private' | 'direct' | 'draft'
+
+export type MediaType = 'unknown' | 'image' | 'gifv' | 'video' | 'audio'
+
+export type PreviewCardType = 'link' | 'photo' | 'video' | 'rich'
+
+export type Application = {
+  name: string
+  website: string | undefined
+  scopes: Array<string>
+  redirect_uris: Array<string>
+  // Deprecated:
+  redirect_uri: string | undefined
+  vapid_key: string | undefined
+}
+
+export type MediaAttachment = {
+  id: string
+  type: MediaType
+  url: string
+  preview_url: string | null
+  remote_url: string | null
+  meta: MediaMetadata
+  description: string | null
+  blurhash: string | null
+  // Deprecated:
+  text_url: string | undefined
+}
+
+export type MediaMetadata = any // TODO
+
+export type Mention = {
+  id: string
+  username: string
+  url: string
+  acct: string
+}
+
+export type Tag = {
+  name: string
+  url: string
+}
+
+export type CustomEmoji = {
+  shortcode: string
+  url: string
+  static_url: string
+  visible_in_picker: boolean
+  category: string | null
+}
+
+export type PreviewCard = {
+  url: string
+  title: string
+  description: string
+  type: PreviewCardType
+  authors: Array<PreviewCardAuthor>
+  author_name: string
+  author_url: string
+  provider_name: string
+  provider_url: string
+  html: string
+  width: number
+  height: number
+  image: string | null
+  embed_url: string
+  blurhash: string | null
+}
+
+export type PreviewCardAuthor = {
+  name: string
+  url: string
+  account: Account | null
+}
+
+export type Poll = {
+  id: string
+  expires_at: Timestamp | null
+  expired: boolean
+  multiple: boolean
+  votes_count: number
+  voters_count: number | null
+  options: PollOptions
+  emojis: Array<CustomEmoji>
+  voted: boolean
+  own_votes: Array<number>
+}
+
+export type PollOptions = {
+  title: string
+  votes_count: number | null
+}
+
 export type Relationship = {
   blocking: boolean
   domain_blocking
@@ -16,8 +114,7 @@ export type Account = {
   /** value is username */
   acct: string
   avatar: string
-  /** Date string like 2025-01-01T10:34:12.000000Z */
-  created_at: string
+  created_at: Timestamp
   discoverable: boolean
   display_name: string
   followers_count: number
@@ -63,11 +160,52 @@ export type LoginUserSettings = {
 }
 
 export type LoginUserSource = {
-  privacy: 'public' | string // TODO
+  privacy: Visibility
   sensitive: boolean
   /** language code like 'en' */
   language: string
   /** bio */
   note: string
   fields: any[]
+}
+
+export type Status = {
+  id: string
+  created_at: Timestamp
+  in_reply_to_id: string | null
+  in_reply_to_account_id: string | null
+  sensitive: boolean
+  spoiler_text: string
+  visibility: Visibility
+  language: string | null
+  uri: string
+  url: string | null
+  replies_count: number
+  reblogs_count: number
+  favourites_count: number
+  edited_at: Timestamp | null
+  favourited: boolean | undefined
+  reblogged: boolean | undefined
+  muted: boolean | undefined
+  bookmarked: boolean | undefined
+  pinned: boolean | undefined
+  filtered: boolean | undefined
+  content: string
+  reblog: Status | null
+  application: Application | undefined
+  account: Account
+  media_attachments: Array<MediaAttachment>
+  mentions: Array<Mention>
+  tags: Array<Tag>
+  emojis: Array<CustomEmoji>
+  card: Array<PreviewCard>
+  poll: Poll | null
+}
+
+/* ========================== Infinite query types ========================== */
+
+export type PaginatedStatus = {
+  data: Array<Status>
+  nextPage: string | undefined
+  prevPage: string | undefined
 }
