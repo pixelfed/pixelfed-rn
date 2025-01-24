@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from 'react'
-import { Text, View, Button, YStack, Image, XStack } from 'tamagui'
+import { StyleSheet } from 'react-native'
+import { Text, View, Button, YStack, XStack } from 'tamagui'
 import {
-  ActivityIndicator,
-  Alert,
   FlatList,
   Keyboard,
+  ListRenderItemInfo,
   SafeAreaView,
   TextInput,
   TouchableOpacity,
@@ -18,6 +18,7 @@ import { getOpenServers } from 'src/lib/api'
 import { enforceLen, prettyCount } from 'src/utils'
 import FastImage from 'react-native-fast-image'
 import { PressableOpacity } from 'react-native-pressable-opacity'
+import { PixelfedServer } from 'src/lib/api-types'
 
 export default function Register() {
   const { data } = useQuery({
@@ -31,7 +32,7 @@ export default function Register() {
 
   const [searchQuery, setSearchQuery] = useState('')
 
-  const handleLogin = (server) => {
+  const handleLogin = (server: string) => {
     login(server)
   }
 
@@ -46,7 +47,7 @@ export default function Register() {
     )
   }, [data, searchQuery])
 
-  const RenderItem = ({ item }) => (
+  const RenderItem = ({ item }: ListRenderItemInfo<PixelfedServer>) => (
     <Button
       onPress={() => handleLogin(item.domain)}
       px="$2"
@@ -101,7 +102,7 @@ export default function Register() {
   )
 
   return (
-    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: 'black' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
       <StatusBar style="light" />
       <Stack.Screen options={{ headerShown: false }} />
       <View justifyContent="center" alignItems="center" mb="$5">
@@ -155,7 +156,7 @@ export default function Register() {
   )
 }
 
-const styles = {
+const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -187,4 +188,4 @@ const styles = {
     right: 30,
     zIndex: 2,
   },
-}
+})
