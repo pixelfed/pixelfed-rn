@@ -8,7 +8,7 @@ import {
   Input
 } from 'tamagui'
 import { useAuth } from '@state/AuthProvider'
-import { SafeAreaView } from 'react-native'
+import { SafeAreaView, StyleSheet } from 'react-native'
 import { useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 
@@ -23,14 +23,7 @@ export default function Login() {
   }
 
   return (
-    <SafeAreaView
-      style={{
-        backgroundColor: 'black',
-        flex: 1,
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-      }}
-    >
+    <SafeAreaView style={styles.background} >
       <Stack.Screen options={{ headerShown: false }} />
       <StatusBar style="light" />
 
@@ -75,3 +68,12 @@ export default function Login() {
     </SafeAreaView>
   )
 }
+
+const styles = StyleSheet.create({
+  background: {
+    backgroundColor: 'black',
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  }
+})

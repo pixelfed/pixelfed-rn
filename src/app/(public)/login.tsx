@@ -5,19 +5,12 @@ import {
   YStack,
   Image,
 } from 'tamagui'
-import { Platform, SafeAreaView } from 'react-native'
+import { Platform, SafeAreaView, StyleSheet } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 
 export default function Login() {
   return (
-    <SafeAreaView
-      style={{
-        backgroundColor: 'black',
-        flexGrow: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
+    <SafeAreaView style={styles.background} >
       <StatusBar style="light" />
       <YStack flexGrow={1} w="100%" px="$5">
         <View flexGrow={1} justifyContent="center" alignItems="center">
@@ -46,3 +39,12 @@ export default function Login() {
     </SafeAreaView>
   )
 }
+
+const styles = StyleSheet.create({
+  background: {
+    backgroundColor: 'black',
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
+})
