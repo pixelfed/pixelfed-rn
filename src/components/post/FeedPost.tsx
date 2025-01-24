@@ -683,11 +683,18 @@ export default function FeedPost({
     handleLike(post?.id, currentHasLiked);
   }
 
+  const handleDoubleTap = () => {
+    // only allow liking with double tap, not unliking
+    if (!hasLiked) {
+      handleLikeAction();
+    }
+  }
+
   const doubleTap = Gesture.Tap()
   .maxDuration(250)
   .numberOfTaps(2)
   .onStart(() => {
-    runOnJS(handleLikeAction)();
+    runOnJS(handleDoubleTap)();
   });
 
   const _onDeletePost = (id: string) => {
