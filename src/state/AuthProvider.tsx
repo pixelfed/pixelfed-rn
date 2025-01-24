@@ -78,7 +78,7 @@ export const AuthContext = createContext<AuthProvider>({
 
 export function useAuth() {
   if (!useContext(AuthContext)) {
-    // This does not work, because default is an object which js will inteprete as true here
+    // This does not work, because default is an object which js will interpret as true here
     throw new Error('useAuth must be used within a <AuthProvider />')
   }
 
@@ -136,7 +136,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         `&scope=read+write+follow+push+admin:read+admin:write` +
         `&redirect_uri=${REDIRECT_URI}` +
         `&response_type=code`,
-      REDIRECT_URI
+      REDIRECT_URI,
+      { showInRecents: true }
     ).then((res) => {
       if (res.type === 'success') {
         return _loginCallback(res.url)
