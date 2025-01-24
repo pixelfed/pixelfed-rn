@@ -21,9 +21,16 @@ export function useLikeMutation({ onSuccess }: { onSuccess?: onSucessType } = {}
     onSuccess,
   })
 
-  const handleLike = async (id: string, state: boolean | undefined) => {
+  /**
+   * handler function for 'like' mutations that occur when a post is 
+   * liked or unliked
+   * 
+   * @param id string id of the post that has been liked/unliked
+   * @param liked value of the posts like status, true = 'like', false = 'unlike'
+   */
+  const handleLike = async (id: string, liked: boolean) => {
     try {
-      likeMutation.mutate({ type: state ? 'unlike' : 'like', id: id })
+      likeMutation.mutate({ type: liked ? 'like' : 'unlike', id: id })
     } catch (error) {
       console.error('Error occurred during like:', error)
     }

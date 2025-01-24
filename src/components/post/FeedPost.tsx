@@ -26,8 +26,9 @@ import { PressableOpacity } from 'react-native-pressable-opacity'
 import VideoPlayer from './VideoPlayer'
 import ReadMoreAndroid from '../common/ReadMoreAndroid'
 import { Storage } from 'src/state/cache'
-import { State, PinchGestureHandler } from 'react-native-gesture-handler'
+import { State, PinchGestureHandler, GestureDetector, Gesture } from 'react-native-gesture-handler'
 import Animated, {
+  runOnJS,
   type SharedValue,
   useAnimatedStyle,
   useSharedValue,
@@ -40,6 +41,7 @@ import type {
   PinchGestureHandlerEventPayload,
 } from 'react-native-gesture-handler'
 import type { LoginUserResponse, Status, Timestamp, Visibility } from 'src/lib/api-types'
+import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
 
@@ -351,20 +353,20 @@ interface PostActionsProps {
 
 const PostActions = React.memo(
   ({
+    post,
     hasLiked,
-    hasShared,
     likesCount,
     likedBy,
+    hasShared,
     sharesCount,
-    onOpenComments,
-    post,
-    progress,
-    handleLike,
-    showAltText,
     commentsCount,
-    onBookmark,
+    progress,
+    showAltText,
     hasBookmarked,
+    handleLike,
     onShare,
+    onOpenComments,
+    onBookmark,
   }: PostActionsProps) => {
     const hasAltText =
       post?.media_attachments?.length > 0 &&
@@ -376,24 +378,6 @@ const PostActions = React.memo(
         post?.media_attachments[idx].description ??
           'Media was not tagged with any alt text.'
       )
-    }
-
-    const [likeCountCache, setLikeCount] = useState(likesCount)
-    const [hasLikedCache, setLiked] = useState(hasLiked)
-
-    const handleLikeCached = () => {
-      if (hasLikedCache) {
-        if (likesCount) {
-          setLikeCount(likesCount - 1)
-        } else {
-          setLikeCount(0)
-        }
-        setLiked(false)
-      } else {
-        setLikeCount(likesCount + 1)
-        setLiked(true)
-      }
-      handleLike()
     }
 
     const [shareCountCache, setShareCount] = useState(sharesCount)
@@ -440,11 +424,11 @@ const PostActions = React.memo(
           <XStack gap="$4" justifyContent="space-between">
             <XStack gap="$5">
               <XStack justifyContent="center" alignItems="center" gap="$2">
-                <LikeButton hasLiked={hasLiked} handleLike={handleLikeCached} />
-                {likeCountCache ? (
+                <LikeButton hasLiked={hasLiked} handleLike={handleLike} />
+                {likesCount ? (
                   <Link href={`/post/likes/${post.id}`}>
                     <Text fontWeight={'bold'} allowFontScaling={false}>
-                      {prettyCount(likeCountCache)}
+                      {prettyCount(likesCount)}
                     </Text>
                   </Link>
                 ) : null}
@@ -647,7 +631,6 @@ interface FeedPostProps {
   post: Status
   user: LoginUserResponse
   onOpenComments: (id: string) => void
-  onLike: (id: string, favourited: boolean) => void
   onDeletePost: (id: string) => void
   onBookmark: (id: string) => void
   disableReadMore: boolean
@@ -661,7 +644,6 @@ export default function FeedPost({
   post,
   user,
   onOpenComments,
-  onLike,
   onDeletePost,
   onBookmark,
   disableReadMore = false,
@@ -670,6 +652,7 @@ export default function FeedPost({
   likedAt,
   onShare,
 }: FeedPostProps) {
+  const { handleLike } = useLikeMutation()
   const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
   const progress = useSharedValue(0)
   const snapPoints = useMemo(() => ['45%', '65%'], [])
@@ -686,6 +669,26 @@ export default function FeedPost({
     ),
     []
   )
+
+  const [likeCount, setLikeCount] = useState(post?.favourites_count ?? 0);
+  const [hasLiked, setLiked] = useState(post.favourited ?? false);
+
+  // toggles 'hasLiked' value, updates states and calls mutation
+  const handleLikeAction = () => {
+    let currentHasLiked = !hasLiked;
+
+    setLiked(currentHasLiked);
+    setLikeCount(currentHasLiked ? likeCount + 1 : likeCount - 1);
+
+    handleLike(post?.id, currentHasLiked);
+  }
+
+  const doubleTap = Gesture.Tap()
+  .maxDuration(250)
+  .numberOfTaps(2)
+  .onStart(() => {
+    runOnJS(handleLikeAction)();
+  });
 
   const _onDeletePost = (id: string) => {
     bottomSheetModalRef.current?.close()
@@ -759,25 +762,27 @@ export default function FeedPost({
         userId={post.account?.id}
         onOpenMenu={() => handlePresentModalPress()}
       />
-      {post.media_attachments?.length > 1 ? (
-        <PostAlbumMedia media={post.media_attachments} post={post} progress={progress} />
-      ) : post.media_attachments?.length === 1 ? (
-        <PostMedia media={post.media_attachments} post={post} />
-      ) : null}
+      <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
+        {post.media_attachments?.length > 1 ? (
+          <PostAlbumMedia media={post.media_attachments} post={post} progress={progress} />
+        ) : post.media_attachments?.length === 1 ? (
+          <PostMedia media={post.media_attachments} post={post} />
+        ) : null}
+      </GestureDetector>
       {!hideCaptions || isPermalink ? (
         <>
           <PostActions
-            hasLiked={post?.favourited}
-            hasShared={post?.reblogged}
             post={post}
+            hasLiked={hasLiked}
+            likesCount={likeCount}
+            likedBy={post?.liked_by}
+            hasShared={post?.reblogged}
+            sharesCount={post?.reblogs_count}
             progress={progress}
             hasBookmarked={post?.bookmarked}
-            likesCount={post?.favourites_count}
-            likedBy={post?.liked_by}
-            sharesCount={post?.reblogs_count}
             showAltText={showAltText}
             commentsCount={post.replies_count}
-            handleLike={() => onLike(post?.id, post?.favourited)}
+            handleLike={handleLikeAction}
             onOpenComments={() => onOpenComments(post?.id)}
             onBookmark={() => onBookmark(post?.id)}
             onShare={() => onShare(post?.id)}

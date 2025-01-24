@@ -32,7 +32,6 @@ import CommentFeed from 'src/components/post/CommentFeed'
 import { useShareIntentContext } from 'expo-share-intent'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
-import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 import { useUserCache } from 'src/state/AuthProvider'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
@@ -62,8 +61,6 @@ export default function HomeScreen() {
   const { hasShareIntent } = useShareIntentContext()
   const params = useLocalSearchParams()
   const [isPosting, setIsPosting] = useState(false)
-
-  const { handleLike } = useLikeMutation()
 
   useEffect(() => {
     if (hasShareIntent) {
@@ -144,7 +141,6 @@ export default function HomeScreen() {
         post={item}
         user={user}
         onOpenComments={() => onOpenComments(item.id)}
-        onLike={() => handleLike(item.id, item.favourited)}
         onDeletePost={() => onDeletePost(item.id)}
         onBookmark={() => onBookmark(item.id)}
         onShare={() => onShare(item.id, item.reblogged)}
