@@ -1,5 +1,5 @@
-import React, { ReactNode } from 'react';
-import { Text, View, StyleSheet, LayoutChangeEvent } from 'react-native';
+import React, { type ReactNode } from 'react'
+import { Text, View, StyleSheet, type LayoutChangeEvent } from 'react-native'
 
 const styles = StyleSheet.create({
   fullTextWrapper: {
@@ -14,18 +14,18 @@ const styles = StyleSheet.create({
   transparent: {
     opacity: 0,
   },
-});
+})
 
 interface ReadMoreProps {
-  numberOfLines: number,
+  numberOfLines: number
   children: ReactNode
 }
 
 // PROPS: numberOfLines, childre
 class ReadMore extends React.Component<ReadMoreProps> {
-  trimmedTextHeight: number | null = null;
-  fullTextHeight: number | null = null;
-  shouldShowMore: boolean = false;
+  trimmedTextHeight: number | null = null
+  fullTextHeight: number | null = null
+  shouldShowMore = false
 
   state = {
     isFullTextShown: true,
@@ -33,85 +33,69 @@ class ReadMore extends React.Component<ReadMoreProps> {
   }
 
   hideFullText = () => {
-    if (
-      this.state.isFullTextShown &&
-      this.trimmedTextHeight &&
-      this.fullTextHeight
-    ) {
-      this.shouldShowMore = this.trimmedTextHeight < this.fullTextHeight;
+    if (this.state.isFullTextShown && this.trimmedTextHeight && this.fullTextHeight) {
+      this.shouldShowMore = this.trimmedTextHeight < this.fullTextHeight
       this.setState({
         isFullTextShown: false,
-      });
+      })
     }
   }
 
   onLayoutTrimmedText = (event: LayoutChangeEvent) => {
-    const {
-      height,
-    } = event.nativeEvent.layout;
+    const { height } = event.nativeEvent.layout
 
-    this.trimmedTextHeight = height;
-    this.hideFullText();
+    this.trimmedTextHeight = height
+    this.hideFullText()
   }
 
   onLayoutFullText = (event: LayoutChangeEvent) => {
-    const {
-      height,
-    } = event.nativeEvent.layout;
+    const { height } = event.nativeEvent.layout
 
-    this.fullTextHeight = height;
-    this.hideFullText();
+    this.fullTextHeight = height
+    this.hideFullText()
   }
 
   onPressMore = () => {
     this.setState({
       numberOfLines: null,
-    });
+    })
   }
 
   onPressLess = () => {
     this.setState({
       numberOfLines: this.props.numberOfLines,
-    });
+    })
   }
 
   getWrapperStyle = () => {
     if (this.state.isFullTextShown) {
-      return styles.transparent;
+      return styles.transparent
     }
-    return {};
+    return {}
   }
 
   renderViewMore = () => (
-    <Text
-      style={styles.viewMoreText}
-      onPress={this.onPressMore}
-    >
+    <Text style={styles.viewMoreText} onPress={this.onPressMore}>
       View More
     </Text>
   )
 
   renderViewLess = () => (
-    <Text
-      style={styles.viewMoreText}
-      onPress={this.onPressLess}
-    >
+    <Text style={styles.viewMoreText} onPress={this.onPressLess}>
       View Less
     </Text>
   )
 
   renderFooter = () => {
-    const {
-      numberOfLines,
-    } = this.state;
+    const { numberOfLines } = this.state
 
     if (this.shouldShowMore === true) {
       if (numberOfLines > 0) {
-        return this.renderViewMore();
+        return this.renderViewMore()
       }
-      return this.renderViewLess();
+      return this.renderViewLess()
     }
-    return null;
+    return null
   }
 
   renderFullText = () => {
@@ -120,25 +104,23 @@ class ReadMore extends React.Component<ReadMoreProps> {
         <View onLayout={this.onLayoutFullText} style={styles.fullTextWrapper}>
           {this.props.children}
         </View>
-      );
+      )
     }
-    return null;
+    return null
   }
 
   render() {
     return (
       <View style={this.getWrapperStyle()}>
         <View onLayout={this.onLayoutTrimmedText}>
-          <Text numberOfLines={this.state.numberOfLines}>
-            {this.props.children}
-          </Text>
+          <Text numberOfLines={this.state.numberOfLines}>{this.props.children}</Text>
           {this.renderFooter()}
         </View>
 
         {this.renderFullText()}
       </View>
-    );
+    )
   }
 }
 
-export default ReadMore;
+export default ReadMore
