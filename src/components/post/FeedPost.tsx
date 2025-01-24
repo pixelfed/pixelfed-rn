@@ -24,7 +24,6 @@ import AutolinkText from 'src/components/common/AutolinkText'
 import { Blurhash } from 'react-native-blurhash'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import VideoPlayer from './VideoPlayer'
-import ReadMoreAndroid from '../common/ReadMoreAndroid'
 import { Storage } from 'src/state/cache'
 import { State, PinchGestureHandler } from 'react-native-gesture-handler'
 import Animated, {
@@ -546,6 +545,7 @@ const PostCaption = React.memo(
   }: PostCaptionProps) => {
     const timeAgo = formatTimestamp(createdAt)
     const captionText = htmlToTextWithLineBreaks(caption)
+
     return (
       <BorderlessSection>
         <YStack gap="$3" pt="$1" pb="$3" px="$2">
@@ -558,8 +558,8 @@ const PostCaption = React.memo(
                 onMentionPress={onMentionPress}
                 onUsernamePress={onUsernamePress}
               />
-            ) : Platform.OS === 'ios' ? (
-              <ReadMore numberOfLines={3} renderRevealedFooter={() => <></>}>
+            ) : (
+              <ReadMore numberOfLines={3}>
                 <AutolinkText
                   text={captionText}
                   username={username}
@@ -568,16 +568,6 @@ const PostCaption = React.memo(
                   onUsernamePress={onUsernamePress}
                 />
               </ReadMore>
-            ) : (
-              <ReadMoreAndroid numberOfLines={3} renderRevealedFooter={() => <></>}>
-                <AutolinkText
-                  text={captionText}
-                  username={username}
-                  onHashtagPress={onHashtagPress}
-                  onMentionPress={onMentionPress}
-                  onUsernamePress={onUsernamePress}
-                />
-              </ReadMoreAndroid>
             )}
           </XStack>
           {commentsCount ? (

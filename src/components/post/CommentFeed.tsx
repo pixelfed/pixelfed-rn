@@ -25,7 +25,6 @@ import {
   likeCountLabel,
   prettyCount,
 } from 'src/utils'
-import ReadMoreAndroid from '../common/ReadMoreAndroid'
 import ReadMore from '../common/ReadMore'
 import AutolinkText from '../common/AutolinkText'
 import FastImage from 'react-native-fast-image'
@@ -102,23 +101,13 @@ const CommentItem = ({
                   />
                 )}
 
-                {Platform.OS === 'ios' ? (
-                  <ReadMore numberOfLines={3} renderRevealedFooter={() => <></>}>
-                    <AutolinkText
-                      text={captionText}
-                      onMentionPress={gotoUsernameProfile}
-                      onHashtagPress={gotoHashtag}
-                    />
-                  </ReadMore>
-                ) : (
-                  <ReadMoreAndroid numberOfLines={3} renderRevealedFooter={() => <></>}>
-                    <AutolinkText
-                      text={captionText}
-                      onMentionPress={gotoUsernameProfile}
-                      onHashtagPress={gotoHashtag}
-                    />
-                  </ReadMoreAndroid>
-                )}
+                <ReadMore numberOfLines={3}>
+                  <AutolinkText
+                    text={captionText}
+                    onMentionPress={gotoUsernameProfile}
+                    onHashtagPress={gotoHashtag}
+                  />
+                </ReadMore>
 
                 <XStack mt="$2" gap="$4">
                   <Pressable onPress={() => onReply(item)}>
