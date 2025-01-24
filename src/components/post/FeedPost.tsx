@@ -170,7 +170,7 @@ const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMe
 const PostMedia = React.memo(({ media, post }) => {
   const mediaUrl = media[0].url
   const [showSensitive, setSensitive] = useState(false)
-  const {width} = useWindowDimensions()
+  const { width } = useWindowDimensions()
   const forceSensitive = Storage.getBoolean('ui.forceSensitive') == true
   const height = media[0].meta?.original?.width
     ? width * (media[0].meta?.original?.height / media[0].meta?.original.width)
@@ -244,7 +244,7 @@ const calculateHeight = (item, width: number) => {
 const PostAlbumMedia = React.memo(({ media, post, progress }) => {
   const mediaUrl = media[0].url
   const [showSensitive, setSensitive] = useState(false)
-  const {width} = useWindowDimensions()
+  const { width } = useWindowDimensions()
   const height = media.reduce((max, item) => {
     const height = calculateHeight(item, width)
     return height > max ? height : max
@@ -674,7 +674,7 @@ export default function FeedPost({
   const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
   const progress = useSharedValue(0)
   const snapPoints = useMemo(() => ['45%', '65%'], [])
-  const {width} = useWindowDimensions()
+  const { width } = useWindowDimensions()
   const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
   const showAltText = Storage.getBoolean('ui.showAltText') == true
 
