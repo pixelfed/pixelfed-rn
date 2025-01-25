@@ -106,7 +106,7 @@ export default function ProfilePage() {
 
   const LinkField = ({ label, value, placeholder, path }: LinkFieldProps) => (
     <XStack px='$3' py='$3' alignItems='flex-start' justifyContent='center'>
-      <Text w='30%' fontSize='$5' color='$gray9'>
+      <Text w='25%' fontSize='$5' color='$gray9' paddingTop="$3">
         {label}
       </Text>
 
@@ -116,7 +116,7 @@ export default function ProfilePage() {
           borderColor='$gray4'
           borderWidth={1}
           borderRadius='$4'
-          padding='$4'
+          padding='$3'
           flexDirection='row'
         >
           <Text fontSize='$5' style={value ? styles.fieldValue : styles.placeholder}>
@@ -138,27 +138,33 @@ export default function ProfilePage() {
       {isFetching && <ActivityIndicator color={'#000'} />}
       <ScrollView flexShrink={1}>
         <YStack pt='$3' gap='$2' justifyContent='center' alignItems='center'>
-          <Avatar circular size='$10' borderWidth={1} borderColor='$gray6'>
-            <Avatar.Image accessibilityLabel={user?.username} src={user?.avatar} />
-            <Avatar.Fallback backgroundColor='$gray6' />
-          </Avatar>
-
-          <Text style={styles.username}>@{user?.username}</Text>
-
-          {/* <Button
-            p='0'
-            chromeless
-            color='$blue9'
-            fontWeight='bold'
-            onPress={() => updateProfilePhoto()}
-          >
-            {user?.avatar.endsWith('default.jpg')
-              ? 'Upload profile photo'
-              : 'Update or delete profile photo'}
-          </Button> */}
+          
         </YStack>
+        <XStack padding='$3' gap='$4' alignItems='center'>
+            <Avatar circular size='$10' borderWidth={1} borderColor='$gray6'>
+              <Avatar.Image accessibilityLabel={user?.username} src={user?.avatar} />
+              <Avatar.Fallback backgroundColor='$gray6' />
+            </Avatar>
 
-        <YStack gap='$0' pt='$2'>
+            <YStack>
+              <Text style={styles.username}>@{user?.username}</Text>
+              <Button
+                p='0'
+                chromeless
+                color='$blue9'
+                fontWeight='bold'
+                onPress={() => updateProfilePhoto()}
+              >
+                {user?.avatar.endsWith('default.jpg')
+                  ? 'Upload profile photo'
+                  : 'Update or delete profile photo'}
+              </Button>
+            </YStack>
+          </XStack>
+
+        <Separator />
+
+        <YStack gap='$0'>
           <LinkField
             label='Name'
             value={user?.display_name}
@@ -179,6 +185,8 @@ export default function ProfilePage() {
             placeholder='https://'
           />
         </YStack>
+
+        <Separator />
       </ScrollView>
     </SafeAreaView>
   )
@@ -192,7 +200,6 @@ const styles = StyleSheet.create({
   username: {
     fontWeight: 'bold',
     fontSize: 18,
-    paddingBottom: 8
   },
   fieldValue: {
     flex: 1,
