@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, useRef, useMemo } from 'react'
 import { FlatList, StyleSheet, ActivityIndicator, Platform, ListRenderItemInfo } from 'react-native'
-import { Text, View, XStack, Spinner } from 'tamagui'
+import { Text, View, XStack, Spinner, YStack } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -27,6 +27,7 @@ import {
 } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
 import EmptyFeed from 'src/components/common/EmptyFeed'
+import ErrorFeed from 'src/components/common/ErrorFeed'
 import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet'
 import CommentFeed from 'src/components/post/CommentFeed'
 import { useShareIntentContext } from 'expo-share-intent'
@@ -282,6 +283,27 @@ export default function HomeScreen() {
     )
   }
 
+  const renderFeed = (data: Array<Status>) => {
+    return <FlatList
+        ref={flatListRef}
+        data={data}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+        maxToRenderPerBatch={3}
+        refreshing={isRefetching}
+        onRefresh={refetch}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={status === 'success' ? <EmptyFeed /> : <ErrorFeed />}
+        onViewableItemsChanged={onViewRef}
+        viewabilityConfig={viewConfigRef.current}
+        onEndReached={() => {
+          if (hasNextPage && !isFetching && !isFetchingNextPage) fetchNextPage()
+        }}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}
+      />
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="dark" />
@@ -316,24 +338,9 @@ export default function HomeScreen() {
           handleReport={handleCommentReport}
         />
       </BottomSheetModal>
-      <FlatList
-        ref={flatListRef}
-        data={data?.pages.flatMap((page) => page.data)}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-        maxToRenderPerBatch={3}
-        refreshing={isRefetching}
-        onRefresh={refetch}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={status === 'success' ? <EmptyFeed /> : null}
-        onViewableItemsChanged={onViewRef}
-        viewabilityConfig={viewConfigRef.current}
-        onEndReached={() => {
-          if (hasNextPage && !isFetching && !isFetchingNextPage) fetchNextPage()
-        }}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}
-      />
+
+      {renderFeed(data?.pages.flatMap((page) => page.data))}
+      
     </SafeAreaView>
   )
 }
@@ -363,5 +370,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'white',
     fontWeight: '800',
-  },
+  }
 })
