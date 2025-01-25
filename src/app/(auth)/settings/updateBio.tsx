@@ -1,12 +1,12 @@
 import { ActivityIndicator } from 'react-native'
 import { ScrollView, Text, View, XStack, TextArea, Button } from 'tamagui'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack } from 'expo-router'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { getConfig, updateCredentials } from 'src/lib/api'
 import { router } from 'expo-router'
-import { useQuerySelfProfile, useUserCache } from 'src/state/AuthProvider'
+import { useQuerySelfProfile } from 'src/state/AuthProvider'
 
 export default function Page() {
   const { data: config } = useQuery({
@@ -26,7 +26,7 @@ export default function Page() {
       return await updateCredentials(data)
     },
     onSuccess: () => {
-      router.replace('/settings/profile')
+      router.back()
     },
   })
 
@@ -67,11 +67,12 @@ export default function Page() {
             </Text>
           </View>
         </XStack>
+        
         <TextArea
           value={bio}
           bg="white"
           placeholder="Add an optional bio"
-          p="$1"
+          p='0'
           mx="$3"
           numberOfLines={8}
           maxLength={maxLen}
