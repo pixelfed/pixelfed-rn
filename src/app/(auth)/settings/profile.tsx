@@ -135,12 +135,11 @@ export default function ProfilePage() {
           headerBackTitle: 'Back',
         }}
       />
-      {isFetching && <ActivityIndicator color={'#000'} />}
-      <ScrollView flexShrink={1}>
-        <YStack pt='$3' gap='$2' justifyContent='center' alignItems='center'>
-          
-        </YStack>
-        <XStack padding='$3' gap='$4' alignItems='center'>
+      <ZStack flex={1}>
+        {isFetching && <ActivityIndicator style={styles.activityIndicator} color='#000'/>}
+
+        <ScrollView flexShrink={1}>
+          <XStack padding='$3' gap='$4' alignItems='center'>
             <Avatar circular size='$10' borderWidth={1} borderColor='$gray6'>
               <Avatar.Image accessibilityLabel={user?.username} src={user?.avatar} />
               <Avatar.Fallback backgroundColor='$gray6' />
@@ -162,37 +161,41 @@ export default function ProfilePage() {
             </YStack>
           </XStack>
 
-        <Separator />
+          <Separator />
 
-        <YStack gap='$0'>
-          <LinkField
-            label='Name'
-            value={user?.display_name}
-            path='/settings/updateName'
-            placeholder='Real name'
-          />
-          <LinkField
-            label='Bio'
-            value={user?.note_text}
-            path='settings/bio'
-            placeholder='Profile description'
-          />
+          <YStack gap='$0'>
+            <LinkField
+              label='Name'
+              value={user?.display_name}
+              path='/settings/updateName'
+              placeholder='Real name'
+            />
+            <LinkField
+              label='Bio'
+              value={user?.note_text}
+              path='settings/updateBio'
+              placeholder='Profile description'
+            />
 
-          <LinkField
-            label='Website'
-            value={user?.website}
-            path='settings/updateWebsite'
-            placeholder='https://'
-          />
-        </YStack>
+            <LinkField
+              label='Website'
+              value={user?.website}
+              path='settings/updateWebsite'
+              placeholder='https://'
+            />
+          </YStack>
 
-        <Separator />
-      </ScrollView>
+          <Separator />
+        </ScrollView>
+      </ZStack>
     </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
+  activityIndicator: {
+    padding: 8
+  },
   background: {
     flex: 1,
     backgroundColor: '#fff'
