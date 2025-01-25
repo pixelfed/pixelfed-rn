@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, useRef, useMemo } from 'react'
-import { FlatList, StyleSheet, ActivityIndicator, Platform } from 'react-native'
+import { FlatList, StyleSheet, ActivityIndicator, Platform, ListRenderItemInfo } from 'react-native'
 import { Text, View, XStack, Spinner } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
@@ -34,6 +34,7 @@ import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 import { useUserCache } from 'src/state/AuthProvider'
+import { Status } from 'src/lib/api-types'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   return (
@@ -96,7 +97,7 @@ export default function HomeScreen() {
     }, [navigation])
   )
 
-  const [replyId, setReplyId] = useState(null)
+  const [replyId, setReplyId] = useState<string | undefined>()
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const snapPoints = useMemo(
     () => (Platform.OS === 'ios' ? ['50%', '85%'] : ['64%', '65%', '66%']),
@@ -112,7 +113,7 @@ export default function HomeScreen() {
   )
 
   const onOpenComments = useCallback(
-    (id) => {
+    (id: string) => {
       setReplyId(id)
       bottomSheetModalRef.current?.present()
     },
@@ -139,7 +140,7 @@ export default function HomeScreen() {
   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 })
 
   const renderItem = useCallback(
-    ({ item }) => (
+    ({ item }: ListRenderItemInfo<Status>) => (
       <FeedPost
         post={item}
         user={user}

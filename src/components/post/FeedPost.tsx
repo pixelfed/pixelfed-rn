@@ -38,7 +38,7 @@ import type {
   HandlerStateChangeEvent,
   PinchGestureHandlerEventPayload,
 } from 'react-native-gesture-handler'
-import type { LoginUserResponse, Status, Timestamp, Visibility } from 'src/lib/api-types'
+import type { LoginUserResponse, MediaAttachment, Status, Tag, Timestamp, Visibility } from 'src/lib/api-types'
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
 
@@ -166,7 +166,12 @@ const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMe
   </Section>
 ))
 
-const PostMedia = React.memo(({ media, post }) => {
+interface PostMediaProps {
+  media: Array<MediaAttachment>
+  post: Status
+}
+
+const PostMedia = React.memo(({ media, post }: PostMediaProps) => {
   const mediaUrl = media[0].url
   const [showSensitive, setSensitive] = useState(false)
   const { width } = useWindowDimensions()
@@ -179,7 +184,7 @@ const PostMedia = React.memo(({ media, post }) => {
     return (
       <ZStack w={width} h={height}>
         <Blurhash
-          blurhash={media[0]?.blurhash}
+          blurhash={media[0]?.blurhash || ''}
           style={{
             flex: 1,
             width: width,
@@ -233,15 +238,20 @@ const PostMedia = React.memo(({ media, post }) => {
   )
 })
 
-const calculateHeight = (item, width: number) => {
+const calculateHeight = (item: MediaAttachment, width: number) => {
   if (item.meta?.original?.width) {
     return width * (item.meta.original.height / item.meta.original.width)
   }
   return 500
 }
 
-const PostAlbumMedia = React.memo(({ media, post, progress }) => {
-  const mediaUrl = media[0].url
+interface PostAlbumMediaProps {
+  media: Array<MediaAttachment>
+  post: Status
+  progress: SharedValue<number>
+}
+
+const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProps) => {
   const [showSensitive, setSensitive] = useState(false)
   const { width } = useWindowDimensions()
   const height = media.reduce((max, item) => {
@@ -255,7 +265,7 @@ const PostAlbumMedia = React.memo(({ media, post, progress }) => {
     return (
       <ZStack w={width} h={height}>
         <Blurhash
-          blurhash={media[0]?.blurhash}
+          blurhash={media[0]?.blurhash || ''}
           style={{
             flex: 1,
             width: width,
@@ -368,7 +378,7 @@ const PostActions = React.memo(
   }: PostActionsProps) => {
     const hasAltText =
       post?.media_attachments?.length > 0 &&
-      post?.media_attachments[0]?.description?.trim().length > 0
+      (post?.media_attachments[0]?.description?.trim().length || 0) > 0
     const onShowAlt = () => {
       const idx = Math.floor(progress?.value ?? 0)
       Alert.alert(
@@ -513,16 +523,16 @@ interface PostCaptionProps {
   caption: string
   commentsCount: number
   createdAt: Timestamp
-  tags: Array<string>
+  tags: Array<Tag>
   visibility: Visibility
   onOpenComments: () => void
   onHashtagPress: (tag: string) => void
   onMentionPress: (tag: string) => void
   onUsernamePress: () => void
   disableReadMore: boolean
-  editedAt: Timestamp
+  editedAt: Timestamp | null
   isLikeFeed: boolean
-  likedAt: Timestamp
+  likedAt: Timestamp | null
 }
 
 const PostCaption = React.memo(
@@ -641,10 +651,9 @@ interface FeedPostProps {
   onLike: (id: string, favourited: boolean) => void
   onDeletePost: (id: string) => void
   onBookmark: (id: string) => void
-  disableReadMore: boolean
-  isPermalink: boolean
-  isLikeFeed: boolean
-  likedAt: Timestamp
+  disableReadMore?: boolean
+  isPermalink?: boolean
+  isLikeFeed?: boolean
   onShare: (id: string) => void
 }
 
@@ -658,7 +667,6 @@ export default function FeedPost({
   disableReadMore = false,
   isPermalink = false,
   isLikeFeed = false,
-  likedAt,
   onShare,
 }: FeedPostProps) {
   const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
@@ -759,17 +767,17 @@ export default function FeedPost({
       {!hideCaptions || isPermalink ? (
         <>
           <PostActions
-            hasLiked={post?.favourited}
-            hasShared={post?.reblogged}
+            hasLiked={post?.favourited === true}
+            hasShared={post?.reblogged === true}
             post={post}
             progress={progress}
-            hasBookmarked={post?.bookmarked}
+            hasBookmarked={post?.bookmarked === true}
             likesCount={post?.favourites_count}
             likedBy={post?.liked_by}
             sharesCount={post?.reblogs_count}
             showAltText={showAltText}
             commentsCount={post.replies_count}
-            handleLike={() => onLike(post?.id, post?.favourited)}
+            handleLike={() => onLike(post?.id, post?.favourited === true)}
             onOpenComments={() => onOpenComments(post?.id)}
             onBookmark={() => onBookmark(post?.id)}
             onShare={() => onShare(post?.id)}
@@ -790,7 +798,6 @@ export default function FeedPost({
             onUsernamePress={() => goToProfile()}
             editedAt={post.edited_at}
             isLikeFeed={isLikeFeed}
-            likedAt={likedAt}
           />
         </>
       ) : null}
