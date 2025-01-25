@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, type AlertButton, Platform, StyleSheet } from 'react-native'
+import { ActivityIndicator, Alert, type AlertButton, Platform, Pressable, StyleSheet } from 'react-native'
 import {
   ScrollView,
   Separator,
@@ -116,10 +116,10 @@ export default function ProfilePage() {
           borderColor='$gray4'
           borderWidth={1}
           borderRadius='$4'
-          padding='$3'
           flexDirection='row'
+          pressStyle={styles.pressStyle}
         >
-          <Text fontSize='$5' style={value ? styles.fieldValue : styles.placeholder}>
+          <Text fontSize='$5' p='$3' style={value ? styles.fieldValue : styles.placeholder}>
             {value || placeholder}
           </Text>
         </View>
@@ -209,5 +209,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexWrap: 'wrap',
     color: 'gray'
+  },
+  pressStyle: {
+    backgroundColor: 'rgba(0, 0, 0, 0.1)'
   }
 })
