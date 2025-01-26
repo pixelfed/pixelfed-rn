@@ -31,7 +31,6 @@ import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet'
 import CommentFeed from 'src/components/post/CommentFeed'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
-import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 import { useUserCache } from 'src/state/AuthProvider'
 import type { Status } from 'src/lib/api-types'
 
@@ -121,7 +120,6 @@ export default function HomeScreen() {
         post={item}
         user={user}
         onOpenComments={() => onOpenComments(item.id)}
-        onLike={() => handleLike(item.id, item.favourited)}
         onDeletePost={() => onDeletePost(item.id)}
         onBookmark={() => onBookmark(item.id)}
         onShare={() => onShare(item.id, item.reblogged)}
@@ -187,8 +185,6 @@ export default function HomeScreen() {
       console.error('Error handled by share useMutation:', error)
     },
   })
-
-  const { handleLike } = useLikeMutation()
 
   const handleShowLikes = (id: string) => {
     bottomSheetModalRef.current?.close()
