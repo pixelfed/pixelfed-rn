@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, useRef, useMemo } from 'react'
-import { FlatList, StyleSheet, ActivityIndicator, Platform } from 'react-native'
-import { Text, View, XStack, Spinner } from 'tamagui'
+import { FlatList, StyleSheet, ActivityIndicator, Platform, ListRenderItemInfo } from 'react-native'
+import { Text, View, XStack, Spinner, YStack } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -27,12 +27,14 @@ import {
 } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
 import EmptyFeed from 'src/components/common/EmptyFeed'
+import ErrorFeed from 'src/components/common/ErrorFeed'
 import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet'
 import CommentFeed from 'src/components/post/CommentFeed'
 import { useShareIntentContext } from 'expo-share-intent'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
 import { useUserCache } from 'src/state/AuthProvider'
+import { Status } from 'src/lib/api-types'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   return (
@@ -93,7 +95,7 @@ export default function HomeScreen() {
     }, [navigation])
   )
 
-  const [replyId, setReplyId] = useState(null)
+  const [replyId, setReplyId] = useState<string | undefined>()
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const snapPoints = useMemo(
     () => (Platform.OS === 'ios' ? ['50%', '85%'] : ['64%', '65%', '66%']),
@@ -109,7 +111,7 @@ export default function HomeScreen() {
   )
 
   const onOpenComments = useCallback(
-    (id) => {
+    (id: string) => {
       setReplyId(id)
       bottomSheetModalRef.current?.present()
     },
@@ -136,7 +138,7 @@ export default function HomeScreen() {
   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 })
 
   const renderItem = useCallback(
-    ({ item }) => (
+    ({ item }: ListRenderItemInfo<Status>) => (
       <FeedPost
         post={item}
         user={user}
@@ -277,6 +279,27 @@ export default function HomeScreen() {
     )
   }
 
+  const renderFeed = (data: Array<Status>) => {
+    return <FlatList
+        ref={flatListRef}
+        data={data}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+        maxToRenderPerBatch={3}
+        refreshing={isRefetching}
+        onRefresh={refetch}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={status === 'success' ? <EmptyFeed /> : <ErrorFeed />}
+        onViewableItemsChanged={onViewRef}
+        viewabilityConfig={viewConfigRef.current}
+        onEndReached={() => {
+          if (hasNextPage && !isFetching && !isFetchingNextPage) fetchNextPage()
+        }}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}
+      />
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="dark" />
@@ -311,24 +334,9 @@ export default function HomeScreen() {
           handleReport={handleCommentReport}
         />
       </BottomSheetModal>
-      <FlatList
-        ref={flatListRef}
-        data={data?.pages.flatMap((page) => page.data)}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-        maxToRenderPerBatch={3}
-        refreshing={isRefetching}
-        onRefresh={refetch}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={status === 'success' ? <EmptyFeed /> : null}
-        onViewableItemsChanged={onViewRef}
-        viewabilityConfig={viewConfigRef.current}
-        onEndReached={() => {
-          if (hasNextPage && !isFetching && !isFetchingNextPage) fetchNextPage()
-        }}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}
-      />
+
+      {renderFeed(data?.pages.flatMap((page) => page.data))}
+      
     </SafeAreaView>
   )
 }
@@ -358,5 +366,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'white',
     fontWeight: '800',
-  },
+  }
 })

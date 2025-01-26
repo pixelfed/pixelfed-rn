@@ -26,7 +26,7 @@ import {
   unreblogStatus,
 } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
-import EmptyFeed from 'src/components/common/EmptyFeed'
+import ErrorFeed from 'src/components/common/ErrorFeed'
 import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet'
 import CommentFeed from 'src/components/post/CommentFeed'
 import { useVideo } from 'src/hooks/useVideoProvider'
@@ -290,7 +290,7 @@ export default function HomeScreen() {
         refreshing={isRefetching}
         onRefresh={refetch}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<EmptyFeed />}
+        ListEmptyComponent={<ErrorFeed />}
         onViewableItemsChanged={onViewRef}
         viewabilityConfig={viewConfigRef.current}
         onEndReached={() => {
