@@ -9,7 +9,7 @@ type ProfileMutationArgs = {
 
 export function useProfileMutation(args: ProfileMutationArgs) {
   const profileMutation = useMutation({
-    mutationFn: async (data: UpdateCredentialsParams) => {
+    mutationFn: async (data: Partial<UpdateCredentialsParams>) => {
       args.setSubmitting?.(true)
 
       const params = new URLSearchParams()
