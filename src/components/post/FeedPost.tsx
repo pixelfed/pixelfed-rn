@@ -26,7 +26,12 @@ import { Blurhash } from 'react-native-blurhash'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import VideoPlayer from './VideoPlayer'
 import { Storage } from 'src/state/cache'
-import { State, PinchGestureHandler, GestureDetector, Gesture } from 'react-native-gesture-handler'
+import {
+  State,
+  PinchGestureHandler,
+  GestureDetector,
+  Gesture,
+} from 'react-native-gesture-handler'
 import Animated, {
   runOnJS,
   type SharedValue,
@@ -40,7 +45,15 @@ import type {
   HandlerStateChangeEvent,
   PinchGestureHandlerEventPayload,
 } from 'react-native-gesture-handler'
-import type { LoginUserResponse, MediaAttachment, Status, StatusLikedBy, Tag, Timestamp, Visibility } from 'src/lib/api-types'
+import type {
+  LoginUserResponse,
+  MediaAttachment,
+  Status,
+  StatusLikedBy,
+  Tag,
+  Timestamp,
+  Visibility,
+} from 'src/lib/api-types'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
@@ -685,32 +698,32 @@ export default function FeedPost({
     []
   )
 
-  const [likeCount, setLikeCount] = useState(post?.favourites_count ?? 0);
-  const [hasLiked, setLiked] = useState(post.favourited ?? false);
+  const [likeCount, setLikeCount] = useState(post?.favourites_count ?? 0)
+  const [hasLiked, setLiked] = useState(post.favourited ?? false)
 
   // toggles 'hasLiked' value, updates states and calls mutation
   const handleLikeAction = () => {
-    let currentHasLiked = !hasLiked;
+    let currentHasLiked = !hasLiked
 
-    setLiked(currentHasLiked);
-    setLikeCount(currentHasLiked ? likeCount + 1 : likeCount - 1);
+    setLiked(currentHasLiked)
+    setLikeCount(currentHasLiked ? likeCount + 1 : likeCount - 1)
 
-    handleLike(post?.id, currentHasLiked);
+    handleLike(post?.id, currentHasLiked)
   }
 
   const handleDoubleTap = () => {
     // only allow liking with double tap, not unliking
     if (!hasLiked) {
-      handleLikeAction();
+      handleLikeAction()
     }
   }
 
   const doubleTap = Gesture.Tap()
-  .maxDuration(250)
-  .numberOfTaps(2)
-  .onStart(() => {
-    runOnJS(handleDoubleTap)();
-  });
+    .maxDuration(250)
+    .numberOfTaps(2)
+    .onStart(() => {
+      runOnJS(handleDoubleTap)()
+    })
 
   const _onDeletePost = (id: string) => {
     bottomSheetModalRef.current?.close()
@@ -786,7 +799,11 @@ export default function FeedPost({
       />
       <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
         {post.media_attachments?.length > 1 ? (
-          <PostAlbumMedia media={post.media_attachments} post={post} progress={progress} />
+          <PostAlbumMedia
+            media={post.media_attachments}
+            post={post}
+            progress={progress}
+          />
         ) : post.media_attachments?.length === 1 ? (
           <PostMedia media={post.media_attachments} post={post} />
         ) : null}

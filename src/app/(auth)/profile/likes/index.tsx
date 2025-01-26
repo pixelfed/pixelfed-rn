@@ -14,7 +14,7 @@ export default function LikesScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'My Likes', headerBackTitle: 'Back' })
   }, [navigation])
-  
+
   const user = useUserCache()
   const renderItem = useCallback(
     ({ item }) => (
