@@ -262,10 +262,9 @@ export async function getStatusById(id: string) {
   return await api.get(`api/v1/statuses/${id}?_pe=1`)
 }
 
-export async function getAccountById({ queryKey }) {
-  const instance = Storage.getString('app.instance')
-  const url = `https://${instance}/api/v1/accounts/${queryKey[1]}?_pe=1`
-  return await fetchData(url)
+export async function getAccountById(id: string) {
+  const api = ContextFromStorage()
+  return await api.get(`api/v1/accounts/${id}?_pe=1`)
 }
 
 export async function followAccountById(id: string) {

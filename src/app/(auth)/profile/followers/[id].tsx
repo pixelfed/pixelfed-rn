@@ -9,7 +9,7 @@ import UserAvatar from 'src/components/common/UserAvatar'
 import Feather from '@expo/vector-icons/Feather'
 
 export default function FollowersScreen() {
-  const { id } = useLocalSearchParams()
+  const { id } = useLocalSearchParams<{ id: string }>()
   const navigation = useNavigation()
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Followers', headerBackTitle: 'Back' })
@@ -36,7 +36,7 @@ export default function FollowersScreen() {
 
   const { data: profile } = useQuery({
     queryKey: ['getAccountById', id],
-    queryFn: getAccountById,
+    queryFn: () => getAccountById(id),
   })
 
   const profileId = profile?.id
