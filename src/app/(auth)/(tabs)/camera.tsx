@@ -696,11 +696,12 @@ export default function Camera() {
               <BottomSheetTextInput
                 style={styles.input}
                 multiline={true}
-                numberOfLines={6}
                 maxLength={composeSettings?.max_altext_length}
                 defaultValue={curAltText}
                 onChangeText={setCurAltText}
                 placeholder="Add optional alt text to describe the media for visually impaired"
+                autoCapitalize='sentences'
+                numberOfLines={3}
               />
               <YStack mt="$1" mb="$3">
                 <XStack justifyContent="flex-end">
@@ -738,11 +739,9 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   input: {
-    minHeight: 100,
     borderRadius: 10,
-    fontSize: 20,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    fontSize: 16,
+    padding: 8,
     borderWidth: 0.33,
     borderColor: '#ccc',
     backgroundColor: 'white',
