@@ -1,12 +1,13 @@
 import { ActivityIndicator } from 'react-native'
 import { ScrollView, Text, View, XStack, TextArea, Button } from 'tamagui'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack } from 'expo-router'
-import { useQuery, useMutation } from '@tanstack/react-query'
-import { getConfig, updateCredentials } from 'src/lib/api'
+import { useQuery } from '@tanstack/react-query'
+import { getConfig } from 'src/lib/api'
 import { router } from 'expo-router'
 import { useQuerySelfProfile } from 'src/state/AuthProvider'
+import { useProfileMutation } from 'src/hooks/mutations/useProfileMutation'
 
 export default function Page() {
   const { data: config } = useQuery({
@@ -17,21 +18,16 @@ export default function Page() {
   const maxLen = config ? Math.floor(config?.account.max_bio_length) : 0
 
   const { user } = useQuerySelfProfile()
-  const [bio, setBio] = useState(user?.note_text)
+  const [bio, setBio] = useState(user?.note_text || "")
   const [isSubmitting, setSubmitting] = useState(false)
 
-  const mutation = useMutation({
-    mutationFn: async (data) => {
-      setSubmitting(true)
-      return await updateCredentials(data)
-    },
-    onSuccess: () => {
-      router.back()
-    },
+  const { profileMutation } = useProfileMutation({
+    onSuccess: () => router.replace('/profile'),
+    setSubmitting
   })
 
   const onSubmit = () => {
-    mutation.mutate({ note: bio })
+    profileMutation.mutate({ note: bio })
   }
 
   return (

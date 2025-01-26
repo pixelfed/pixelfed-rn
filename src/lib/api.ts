@@ -1,7 +1,7 @@
 import { objectToForm } from 'src/requests'
 import { Storage } from 'src/state/cache'
 import { parseLinkHeader } from 'src/utils'
-import type { PaginatedStatus, Relationship } from './api-types'
+import type { PaginatedStatus, Relationship, UpdateCredentialsParams } from './api-types'
 
 export function randomKey(length: number) {
   let result = ''
@@ -630,10 +630,9 @@ export async function getSelfAccount() {
   return await fetchData(url)
 }
 
-export async function updateCredentials(data) {
+export async function updateCredentials(params: URLSearchParams) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
-  const params = new URLSearchParams(data)
   let url = `https://${instance}/api/v1/accounts/update_credentials?${params.toString()}`
   const response = await fetch(url, {
     method: 'patch',

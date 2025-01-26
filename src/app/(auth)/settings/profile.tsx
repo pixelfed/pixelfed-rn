@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, type AlertButton, Platform, Pressable, StyleSheet } from 'react-native'
+import { ActivityIndicator, Alert, type AlertButton, Platform, StyleSheet } from 'react-native'
 import {
   ScrollView,
   Separator,
