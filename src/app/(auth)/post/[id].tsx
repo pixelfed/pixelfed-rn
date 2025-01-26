@@ -83,7 +83,7 @@ export default function Page() {
 
   const { isPending, isError, data, error } = useQuery({
     queryKey: ['getStatusById', id],
-    queryFn: getStatusById,
+    queryFn: () => getStatusById(id),
   })
   if (isPending) {
     return (

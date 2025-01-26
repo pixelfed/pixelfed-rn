@@ -111,6 +111,8 @@ export default function Page() {
       return m.description !== ogm.description
     })
 
+    // TODO: error handling
+    // TODO: invalidate react query cache of this post so it is updated in the UI
     await Promise.all(mediaChanges.map(updateMedia))
       .then(async (res) => {
         return await putEditPost(data?.id, {

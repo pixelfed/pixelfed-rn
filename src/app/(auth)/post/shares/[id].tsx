@@ -35,7 +35,7 @@ export default function Page() {
 
   const { data: status } = useQuery({
     queryKey: ['getStatusById', id],
-    queryFn: getStatusById,
+    queryFn: () => getStatusById(id),
   })
 
   const statusId = status?.id

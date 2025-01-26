@@ -2,18 +2,8 @@ import { objectToForm } from 'src/requests'
 import { Storage } from 'src/state/cache'
 import { parseLinkHeader } from 'src/utils'
 import type { PaginatedStatus, Relationship } from './api-types'
-
-export function randomKey(length: number) {
-  let result = ''
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  const charactersLength = characters.length
-  let counter = 0
-  while (counter < length) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength))
-    counter += 1
-  }
-  return result
-}
+import { randomKey } from './randomKey'
+import { ContextFromStorage } from './api-context'
 
 function removeDuplicateObjects(array: any[], keyProps: string[]) {
   return array.filter(
@@ -52,35 +42,6 @@ export async function selfPost(
 
   const resp = await fetch(url, {
     method: 'POST',
-    body: asForm ? objectToForm(params) : JSON.stringify(params),
-    headers,
-  })
-
-  return rawRes ? resp : resp.json()
-}
-
-export async function selfPut(
-  path: string,
-  params = {},
-  asForm = false,
-  rawRes = false,
-  idempotency = false
-) {
-  let headers: Record<string, string> = {}
-  const instance = Storage.getString('app.instance')
-  const token = Storage.getString('app.token')
-  const url = `https://${instance}/${path}`
-
-  headers['Authorization'] = `Bearer ${token}`
-  headers['Accept'] = 'application/json'
-  headers['Content-Type'] = asForm ? 'multipart/form-data' : 'application/json'
-
-  if (idempotency) {
-    headers['Idempotency-Key'] = randomKey(40)
-  }
-
-  const resp = await fetch(url, {
-    method: 'PUT',
     body: asForm ? objectToForm(params) : JSON.stringify(params),
     headers,
   })
@@ -183,6 +144,8 @@ async function fetchCursorPagination(url: string) {
 }
 
 async function fetchData(url: string) {
+  console.log("deprected fetchData called", url);
+  
   const token = Storage.getString('app.token')
 
   const response = await fetch(url, {
@@ -294,10 +257,9 @@ export async function getAccountFollowing(id: string, cursor) {
   return await fetchPaginatedData(url)
 }
 
-export async function getStatusById({ queryKey }) {
-  const instance = Storage.getString('app.instance')
-  const url = `https://${instance}/api/v1/statuses/${queryKey[1]}?_pe=1`
-  return await fetchData(url)
+export async function getStatusById(id: string) {
+  const api = ContextFromStorage()
+  return await api.get(`api/v1/statuses/${id}?_pe=1`)
 }
 
 export async function getAccountById({ queryKey }) {
@@ -694,7 +656,7 @@ export async function deleteChatMessage(id: string) {
   return await selfDelete(path)
 }
 
-export async function sendChatMessage(id: string, message) {
+export async function sendChatMessage(id: string, message: string) {
   const path = `api/v1.1/direct/thread/send`
   return await selfPost(path, {
     to_id: id,
@@ -862,7 +824,8 @@ export async function getSelfBookmarks({ pageParam = false }) {
 }
 
 export async function putEditPost(id: string, params) {
-  return await selfPut(`api/v1/statuses/${id}`, params)
+  let api = ContextFromStorage()
+  return await api.jsonRequest('PUT', `api/v1/statuses/${id}`, params)
 }
 
 export async function getStoryCarousel() {
