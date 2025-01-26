@@ -69,7 +69,7 @@ export default function HomeScreen() {
     }, [navigation])
   )
 
-  const [replyId, setReplyId] = useState(null)
+  const [replyId, setReplyId] = useState<string | null>(null)
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const snapPoints = useMemo(
     () => (Platform.OS === 'ios' ? ['50%', '70%', '90%'] : ['64%', '65%', '66%']),
@@ -88,7 +88,7 @@ export default function HomeScreen() {
   )
 
   const onOpenComments = useCallback(
-    (id) => {
+    (id: string) => {
       setReplyId(id)
       bottomSheetModalRef.current?.present()
     },
@@ -135,7 +135,7 @@ export default function HomeScreen() {
   }
 
   const deletePostMutation = useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async (id: string) => {
       return await deleteStatusV1(id)
     },
     onSuccess: (data, variables) => {
@@ -153,7 +153,7 @@ export default function HomeScreen() {
   })
 
   const bookmarkMutation = useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async (id: string) => {
       return await postBookmark(id)
     },
   })
