@@ -1,22 +1,10 @@
 import { useCallback, useEffect, useState, useRef, useMemo } from 'react'
-import {
-  FlatList,
-  StyleSheet,
-  ActivityIndicator,
-  Platform,
-  type ListRenderItemInfo,
-} from 'react-native'
-import { Text, View, XStack, Spinner, YStack } from 'tamagui'
+import { FlatList, StyleSheet, ActivityIndicator, Platform } from 'react-native'
+import { Text, View, XStack, Spinner } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import {
-  type ErrorBoundaryProps,
-  Stack,
-  useLocalSearchParams,
-  useNavigation,
-  useRouter,
-} from 'expo-router'
+import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import {
   useInfiniteQuery,
   useMutation,
@@ -40,7 +28,10 @@ import { useShareIntentContext } from 'expo-share-intent'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
 import { useUserCache } from 'src/state/AuthProvider'
+
 import type { Status } from 'src/lib/api-types'
+import type { ListRenderItemInfo } from 'react-native'
+import type { ErrorBoundaryProps } from 'expo-router'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   return (
@@ -159,12 +150,12 @@ export default function HomeScreen() {
 
   const keyExtractor = useCallback((item) => item?.id, [])
 
-  const onDeletePost = (id) => {
+  const onDeletePost = (id: string) => {
     deletePostMutation.mutate(id)
   }
 
   const deletePostMutation = useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async (id: string) => {
       return await deleteStatusV1(id)
     },
     onSuccess: (data, variables) => {
@@ -182,16 +173,16 @@ export default function HomeScreen() {
   })
 
   const bookmarkMutation = useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async (id: string) => {
       return await postBookmark(id)
     },
   })
 
-  const onBookmark = (id) => {
+  const onBookmark = (id: string) => {
     bookmarkMutation.mutate(id)
   }
 
-  const onShare = (id, state) => {
+  const onShare = (id: string, state) => {
     try {
       shareMutation.mutate({ type: state == true ? 'unreblog' : 'reblog', id: id })
     } catch (error) {
@@ -220,22 +211,22 @@ export default function HomeScreen() {
     router.push(`/post/likes/${id}`)
   }
 
-  const handleGotoProfile = (id) => {
+  const handleGotoProfile = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/profile/${id}`)
   }
 
-  const handleGotoUsernameProfile = (id) => {
+  const handleGotoUsernameProfile = (username: string) => {
     bottomSheetModalRef.current?.close()
-    router.push(`/profile/0?byUsername=${id}`)
+    router.push(`/profile/0?byUsername=${username}`)
   }
 
-  const gotoHashtag = (id) => {
+  const gotoHashtag = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/hashtag/${id}`)
   }
 
-  const handleCommentReport = (id) => {
+  const handleCommentReport = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/post/report/${id}`)
   }

@@ -456,11 +456,11 @@ export default function ProfileScreen() {
 
   const { data: user, error: userError } = useQuery({
     queryKey:
-      byUsername !== undefined && id == 0
+      byUsername !== undefined && id === '0'
         ? ['getAccountByUsername', byUsername]
         : ['getAccountById', id],
     queryFn:
-      byUsername !== undefined && id == 0
+      byUsername !== undefined && id === '0'
         ? getAccountByUsername
         : () => getAccountById(id),
   })
