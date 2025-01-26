@@ -2,12 +2,12 @@ import { useMutation } from '@tanstack/react-query'
 import { updateCredentials } from 'src/lib/api'
 import { UpdateCredentialsParams } from 'src/lib/api-types'
 
-type ProfileMutationsArgs = {
+type ProfileMutationArgs = {
   onSuccess?: () => void
   setSubmitting?: (value: React.SetStateAction<boolean>) => void
 }
 
-export function useProfileMutation(args: ProfileMutationsArgs) {
+export function useProfileMutation(args: ProfileMutationArgs) {
   const profileMutation = useMutation({
     mutationFn: async (data: UpdateCredentialsParams) => {
       args.setSubmitting?.(true)
