@@ -49,7 +49,7 @@ const SCREEN_WIDTH = Dimensions.get('screen').width
 export default function ProfileScreen() {
   const navigation = useNavigation()
   // TODO: figgure out how byUsername is set or is it ever set at all?
-  const { id, byUsername } = useLocalSearchParams<{ id: string, byUsername }>()
+  const { id, byUsername } = useLocalSearchParams<{ id: string; byUsername }>()
   const queryClient = useQueryClient()
   const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
   const snapPoints = useMemo(() => ['50%', '55%'], [])
@@ -459,7 +459,10 @@ export default function ProfileScreen() {
       byUsername !== undefined && id == 0
         ? ['getAccountByUsername', byUsername]
         : ['getAccountById', id],
-    queryFn: byUsername !== undefined && id == 0 ? getAccountByUsername : () => getAccountById(id),
+    queryFn:
+      byUsername !== undefined && id == 0
+        ? getAccountByUsername
+        : () => getAccountById(id),
   })
 
   useEffect(() => {

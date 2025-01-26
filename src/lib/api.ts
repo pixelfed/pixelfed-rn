@@ -144,8 +144,8 @@ async function fetchCursorPagination(url: string) {
 }
 
 async function fetchData(url: string) {
-  console.log("deprected fetchData called", url);
-  
+  console.log('deprected fetchData called', url)
+
   const token = Storage.getString('app.token')
 
   const response = await fetch(url, {
