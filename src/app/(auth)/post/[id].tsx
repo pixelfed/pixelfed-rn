@@ -9,7 +9,6 @@ import { getStatusById, deleteStatusV1, reblogStatus, unreblogStatus } from 'src
 import FeedPost from 'src/components/post/FeedPost'
 import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet'
 import CommentFeed from 'src/components/post/CommentFeed'
-import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 import { useUserCache } from 'src/state/AuthProvider'
 
 export default function Page() {
@@ -41,14 +40,6 @@ export default function Page() {
   const onOpenComments = useCallback((id: string) => {
     bottomSheetModalRef.current?.present()
   }, [])
-
-  const { handleLike } = useLikeMutation({
-    onSuccess: () => {
-      setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: ['getStatusById'] })
-      }, 1000)
-    },
-  })
 
   const onShare = (id: string, state) => {
     shareMutation.mutate({ type: state == true ? 'unreblog' : 'reblog', id: id })
@@ -137,7 +128,6 @@ export default function Page() {
           post={data}
           user={user}
           onOpenComments={onOpenComments}
-          onLike={handleLike}
           onDeletePost={onDeletePost}
           disableReadMore={true}
           isPermalink={true}
