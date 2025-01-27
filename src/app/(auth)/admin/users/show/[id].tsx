@@ -11,7 +11,7 @@ import UserAvatar from 'src/components/common/UserAvatar'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 
 export default function Screen() {
-  const { id } = useLocalSearchParams()
+  const { id } = useLocalSearchParams<{id:string}>()
   const router = useRouter()
   const instance = Storage.getString('app.instance')
 
