@@ -49,6 +49,10 @@ export class ApiContext {
       try {
         errorResponse = await response.json()
         console.log('API Request Failed', { errorResponse })
+        if (errorResponse.error_code) {
+          throw new Error(`${errorResponse.error_code}: ${errorResponse.msg}`)
+        }
+
         if (
           typeof errorResponse.error === 'undefined' ||
           errorResponse.error.length === 0
