@@ -5,6 +5,7 @@ import { UpdateCredentialsParams } from 'src/lib/api-types'
 
 type ProfileMutationArgs = {
   onSuccess?: () => void
+  onError?: (error: Error) => void
   setSubmitting?: (value: React.SetStateAction<boolean>) => void
 }
 
@@ -23,6 +24,10 @@ export function useProfileMutation(args: ProfileMutationArgs) {
       return await updateCredentials(params)
     },
     onError: (error) => {
+      if (!!args.onError) {
+        return args.onError?.(error)
+      }
+
       args.setSubmitting?.(false)
 
       toast.show('Failed to save changes', {
