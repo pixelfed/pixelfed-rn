@@ -1,3 +1,4 @@
+import { useToastController } from '@tamagui/toast'
 import { useMutation } from '@tanstack/react-query'
 import { updateCredentials } from 'src/lib/api'
 import { UpdateCredentialsParams } from 'src/lib/api-types'
@@ -8,6 +9,8 @@ type ProfileMutationArgs = {
 }
 
 export function useProfileMutation(args: ProfileMutationArgs) {
+  const toast = useToastController()
+
   const profileMutation = useMutation({
     mutationFn: async (data: Partial<UpdateCredentialsParams>) => {
       args.setSubmitting?.(true)
@@ -20,6 +23,12 @@ export function useProfileMutation(args: ProfileMutationArgs) {
       return await updateCredentials(params)
     },
     onError: (error) => {
+      args.setSubmitting?.(false)
+
+      toast.show('Failed to save changes', {
+        message: 'Please try again later',
+        native: false
+      })
       console.error('Error handled by like useMutation:', error)
     },
     onSuccess: () => {
