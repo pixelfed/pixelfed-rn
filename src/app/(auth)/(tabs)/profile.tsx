@@ -100,7 +100,7 @@ export default function ProfileScreen() {
     ) : null
 
   return (
-    <SafeAreaView edges={['top']}>
+    <SafeAreaView edges={['top']} style={{ flexGrow: 1 }}>
       {isFetching && <ActivityIndicator color={'#000'} />}
       <FlatList
         data={feed?.pages.flat()}
