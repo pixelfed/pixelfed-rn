@@ -3,9 +3,12 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { ScrollView, Text, View, XStack, YStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { useMutation } from '@tanstack/react-query'
-import { type NewReport, reportProfile } from 'src/lib/api'
-import { ActivityIndicator, Pressable } from 'react-native'
-import { type ReportType, reportTypes } from 'src/lib/reportTypes'
+import { report } from 'src/lib/api'
+import { ActivityIndicator, Alert, Pressable } from 'react-native'
+import { reportTypes } from 'src/lib/reportTypes'
+
+import type { NewReport } from 'src/lib/api'
+import type { ReportType } from 'src/lib/reportTypes'
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -34,10 +37,13 @@ export default function Page() {
 
   const mutation = useMutation({
     mutationFn: (newReport: NewReport) => {
-      return reportProfile(newReport)
+      return report(newReport)
     },
     onSuccess: (data, variables, context) => {
       router.replace('/profile/report/sent')
+    },
+    onError: (err) => {
+      Alert.alert("Report Failed", err.message)
     },
   })
 

@@ -4,7 +4,7 @@ import { ScrollView, Text, XStack, YStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { useMutation } from '@tanstack/react-query'
 import { report } from 'src/lib/api'
-import { ActivityIndicator, Pressable } from 'react-native'
+import { ActivityIndicator, Alert, Pressable } from 'react-native'
 import { reportTypes } from 'src/lib/reportTypes'
 
 import type { NewReport } from 'src/lib/api'
@@ -41,6 +41,9 @@ export default function Page() {
     },
     onSuccess: (data, variables, context) => {
       router.replace('/post/report/sent')
+    },
+    onError: (err) => {
+      Alert.alert("Report Failed", err.message)
     },
   })
 

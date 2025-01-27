@@ -48,14 +48,10 @@ export class ApiContext {
       let errorResponse
       try {
         errorResponse = await response.json()
-        console.log('API Request Failed', { errorResponse })
-        if (errorResponse.error_code) {
-          throw new Error(`${errorResponse.error_code}: ${errorResponse.msg}`)
-        }
-
+        console.warn('API Request Failed', { errorResponse })
         if (
-          typeof errorResponse.error === 'undefined' ||
-          errorResponse.error.length === 0
+          !errorResponse.error_code &&
+          (typeof errorResponse.error === 'undefined' || errorResponse.error.length === 0)
         ) {
           throw new Error('request failed, but error field is empty')
         }
@@ -63,7 +59,13 @@ export class ApiContext {
         console.error('API Request Failed - Failed to decode error:', error)
         throw new Error('API Request Failed without error message')
       }
-      throw new Error(`API Request Failed: ${errorResponse}`)
+      if (errorResponse.error_code) {
+        throw new Error(
+          `API Request Failed: ${errorResponse.error_code}: ${errorResponse.msg}`
+        )
+      } else {
+        throw new Error(`API Request Failed: ${errorResponse.error}`)
+      }
     }
 
     return response
