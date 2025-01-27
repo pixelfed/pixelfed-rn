@@ -63,9 +63,8 @@ export class ApiContext {
         throw new Error(
           `API Request Failed: ${errorResponse.error_code}: ${errorResponse.msg}`
         )
-      } else {
-        throw new Error(`API Request Failed: ${errorResponse.error}`)
       }
+      throw new Error(`API Request Failed: ${errorResponse.error}`)
     }
 
     return response

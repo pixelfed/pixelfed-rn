@@ -46,7 +46,7 @@ export default function Page() {
         const res = await sendChatMessage(id, message[0].text)
         console.log('send message - server answered:', { res })
 
-        if (typeof res.error !== undefined) {
+        if (typeof res.error !== 'undefined') {
           throw new Error(res.error)
         }
 

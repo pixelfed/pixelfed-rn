@@ -14,7 +14,6 @@ import { formatTimestampMonthYear, postCountLabel } from '../../../utils'
 
 export default function SearchScreen() {
   const { initialQuery } = useLocalSearchParams<{ initialQuery?: string }>()
-  console.log('i', { initialQuery })
 
   const [query, setQuery] = useState(initialQuery || '')
 

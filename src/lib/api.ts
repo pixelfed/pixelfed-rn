@@ -1,7 +1,13 @@
 import { objectToForm } from 'src/requests'
 import { Storage } from 'src/state/cache'
 import { parseLinkHeader } from 'src/utils'
-import type { Account, PaginatedStatus, Relationship, RelationshipFromFollowAPIResponse, Status } from './api-types'
+import type {
+  Account,
+  PaginatedStatus,
+  Relationship,
+  RelationshipFromFollowAPIResponse,
+  Status,
+} from './api-types'
 import { randomKey } from './randomKey'
 import { ContextFromStorage } from './api-context'
 
@@ -267,14 +273,18 @@ export async function getAccountById(id: string) {
   return await api.get(`api/v1/accounts/${id}?_pe=1`)
 }
 
-export async function followAccountById(id: string):Promise<RelationshipFromFollowAPIResponse> {
+export async function followAccountById(
+  id: string
+): Promise<RelationshipFromFollowAPIResponse> {
   const api = ContextFromStorage()
-  return await api.jsonRequest('POST',`api/v1/accounts/${id}/follow`)
+  return await api.jsonRequest('POST', `api/v1/accounts/${id}/follow`)
 }
 
-export async function unfollowAccountById(id: string):Promise<RelationshipFromFollowAPIResponse> {
+export async function unfollowAccountById(
+  id: string
+): Promise<RelationshipFromFollowAPIResponse> {
   const api = ContextFromStorage()
-  return await api.jsonRequest('POST',`api/v1/accounts/${id}/unfollow`)
+  return await api.jsonRequest('POST', `api/v1/accounts/${id}/unfollow`)
 }
 
 export type NewReport = {
@@ -576,9 +586,10 @@ export async function getFollowRequests() {
 }
 
 export async function getSelfAccount() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/accounts/verify_credentials?_pe=1`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get('api/v1/accounts/verify_credentials', {
+    _pe: 1, // todo document what _pe means
+  })
 }
 
 export async function updateCredentials(data) {
