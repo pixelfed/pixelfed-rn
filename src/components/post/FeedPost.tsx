@@ -16,6 +16,7 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
   BottomSheetBackdrop,
+  BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet'
 import Carousel, { Pagination } from 'react-native-reanimated-carousel'
 import ReadMore from '../common/ReadMore'
@@ -39,7 +40,7 @@ import type {
   HandlerStateChangeEvent,
   PinchGestureHandlerEventPayload,
 } from 'react-native-gesture-handler'
-import type { LoginUserResponse, MediaAttachment, Status, Tag, Timestamp, Visibility } from 'src/lib/api-types'
+import type { LoginUserResponse, MediaAttachment, Status, StatusLikedBy, Tag, Timestamp, Visibility } from 'src/lib/api-types'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
@@ -109,19 +110,33 @@ const ZoomableImage = ({ source, style }) => {
 
 const AVATAR_WIDTH = 45
 
-const Section = React.memo(({ children }) => (
+const Section = React.memo(({ children }: React.PropsWithChildren) => (
   <View px="$3" bg="white" borderTopWidth={1} borderBottomWidth={1} borderColor="$gray7">
     {children}
   </View>
 ))
 
-const BorderlessSection = React.memo(({ children }) => (
+const BorderlessSection = React.memo(({ children }: React.PropsWithChildren) => (
   <View px="$3" bg="white">
     {children}
   </View>
 ))
 
-const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMenu }) => (
+interface PostHeaderProps {
+  avatar: string,
+  username: string,
+  displayName: string,
+  userId: string,
+  onOpenMenu: () => void
+}
+
+const PostHeader = React.memo(({
+  avatar,
+  username,
+  displayName,
+  userId,
+  onOpenMenu
+}: PostHeaderProps) => (
   <Section>
     <XStack
       flexGrow={1}
@@ -348,7 +363,7 @@ interface PostActionsProps {
   hasLiked: boolean
   hasShared: boolean
   likesCount: number
-  likedBy
+  likedBy: StatusLikedBy | null
   sharesCount: number
   onOpenComments: () => void
   post: Status
@@ -535,7 +550,7 @@ const PostCaption = React.memo(
     disableReadMore,
     editedAt,
     isLikeFeed,
-    likedAt,
+    likedAt
   }: PostCaptionProps) => {
     const timeAgo = formatTimestamp(createdAt)
     const captionText = htmlToTextWithLineBreaks(caption)
@@ -664,7 +679,7 @@ export default function FeedPost({
   }, [])
   const handleSheetChanges = useCallback((index: number) => {}, [])
   const renderBackdrop = useCallback(
-    (props) => (
+    (props: BottomSheetBackdropProps) => (
       <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
     ),
     []
@@ -729,7 +744,7 @@ export default function FeedPost({
 
   const openInBrowser = async () => {
     bottomSheetModalRef.current?.close()
-    await openBrowserAsync(post.url)
+    await openBrowserAsync(post.url || post.uri)
   }
 
   const onGotoHashtag = (tag: string) => {
@@ -754,8 +769,8 @@ export default function FeedPost({
 
   const onGotoShare = async () => {
     try {
-      const result = await Share.share({
-        message: post.url,
+      await Share.share({
+        message: post.url || post.uri,
       })
     } catch (error) {}
   }
@@ -779,17 +794,14 @@ export default function FeedPost({
       {!hideCaptions || isPermalink ? (
         <>
           <PostActions
-            hasLiked={post?.favourited === true}
+            hasLiked={hasLiked}
             hasShared={post?.reblogged === true}
+            hasBookmarked={post?.bookmarked === true}
             post={post}
             progress={progress}
-            hasBookmarked={post?.bookmarked === true}
             likesCount={post?.favourites_count}
             likedBy={post?.liked_by}
-            hasShared={post?.reblogged}
             sharesCount={post?.reblogs_count}
-            progress={progress}
-            hasBookmarked={post?.bookmarked}
             showAltText={showAltText}
             commentsCount={post.replies_count}
             handleLike={handleLikeAction}
@@ -813,6 +825,7 @@ export default function FeedPost({
             onUsernamePress={() => goToProfile()}
             editedAt={post.edited_at}
             isLikeFeed={isLikeFeed}
+            likedAt={post.liked_at}
           />
         </>
       ) : null}

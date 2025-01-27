@@ -1,11 +1,15 @@
 import { useMutation } from '@tanstack/react-query'
 import { likeStatus, unlikeStatus } from 'src/lib/api'
 
-type onSucessType = Parameters<typeof useMutation>[0]['onSuccess']
+type onSuccessType = Parameters<typeof useMutation>[0]['onSuccess']
+type LikeMutateType = {
+  type: 'like' | 'unlike'
+  id: string
+}
 
-export function useLikeMutation({ onSuccess }: { onSuccess?: onSucessType } = {}) {
+export function useLikeMutation({ onSuccess }: { onSuccess?: onSuccessType } = {}) {
   const likeMutation = useMutation({
-    mutationFn: async (handleLike) => {
+    mutationFn: async (handleLike: LikeMutateType) => {
       try {
         return handleLike.type === 'like'
           ? await likeStatus(handleLike)
@@ -28,7 +32,7 @@ export function useLikeMutation({ onSuccess }: { onSuccess?: onSucessType } = {}
    * @param id string id of the post that has been liked/unliked
    * @param liked value of the posts like status, true = 'like', false = 'unlike'
    */
-  const handleLike = async (id: string, liked: boolean) => {
+  async function handleLike(id: string, liked: boolean) {
     try {
       likeMutation.mutate({ type: liked ? 'like' : 'unlike', id: id })
     } catch (error) {
