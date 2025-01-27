@@ -43,7 +43,7 @@ export default function Page() {
       router.replace('/post/report/sent')
     },
     onError: (err) => {
-      Alert.alert("Report Failed", err.message)
+      Alert.alert('Report Failed', err.message)
     },
   })
 
