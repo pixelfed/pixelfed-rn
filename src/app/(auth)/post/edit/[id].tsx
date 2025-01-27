@@ -63,7 +63,7 @@ const RenderItem = React.memo(({ item, onUpdateMediaAlt }) => (
 ))
 
 export default function Page() {
-  const { id } = useLocalSearchParams()
+  const { id } = useLocalSearchParams<{ id: string }>()
   const navigation = useNavigation()
   const [caption, setCaption] = useState('')
   const [isSensitive, setSensitive] = useState(false)

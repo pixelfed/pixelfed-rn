@@ -7,7 +7,7 @@ import { reportProfile } from 'src/lib/api'
 import { ActivityIndicator, Pressable } from 'react-native'
 
 export default function Page() {
-  const { id } = useLocalSearchParams()
+  const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
 
   const reportTypes = [

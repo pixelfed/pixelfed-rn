@@ -24,7 +24,7 @@ function renderBubble<TMessage extends IMessage>(props: BubbleProps<TMessage>) {
 }
 
 export default function Page() {
-  const { id } = useLocalSearchParams()
+  const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const queryClient = useQueryClient()
   const navigation = useNavigation()

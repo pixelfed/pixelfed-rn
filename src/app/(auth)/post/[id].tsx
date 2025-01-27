@@ -12,7 +12,7 @@ import CommentFeed from 'src/components/post/CommentFeed'
 import { useUserCache } from 'src/state/AuthProvider'
 
 export default function Page() {
-  const { id } = useLocalSearchParams()
+  const { id } = useLocalSearchParams<{ id: string }>()
   const navigation = useNavigation()
 
   useLayoutEffect(() => {

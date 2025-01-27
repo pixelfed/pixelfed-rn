@@ -7,7 +7,7 @@ import { getStatusById, getStatusLikes } from 'src/lib/api'
 import UserAvatar from 'src/components/common/UserAvatar'
 
 export default function Page() {
-  const { id } = useLocalSearchParams()
+  const { id } = useLocalSearchParams<{ id: string }>()
 
   const RenderItem = ({ item }) => {
     return (

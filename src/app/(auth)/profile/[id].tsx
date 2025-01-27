@@ -48,7 +48,7 @@ const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileScreen() {
   const navigation = useNavigation()
-  const { id, byUsername } = useLocalSearchParams<{ id: string; byUsername?:string }>()
+  const { id, byUsername } = useLocalSearchParams<{ id: string; byUsername?: string }>()
   const queryClient = useQueryClient()
   const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
   const snapPoints = useMemo(() => ['50%', '55%'], [])
@@ -478,7 +478,6 @@ export default function ProfileScreen() {
       })
     }
   }, [navigation, user])
-
 
   const { data: relationship, isError: relationshipError } = useQuery({
     queryKey: ['getAccountRelationship', userId],
