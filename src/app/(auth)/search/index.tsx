@@ -1,4 +1,4 @@
-import { Link, Stack } from 'expo-router'
+import { Link, Stack, useLocalSearchParams } from 'expo-router'
 import { FlatList, ActivityIndicator, Keyboard, Pressable } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Text, View, YStack, Input, XStack } from 'tamagui'
@@ -13,7 +13,10 @@ import ReadMore from '../../../components/common/ReadMore'
 import { formatTimestampMonthYear, postCountLabel } from '../../../utils'
 
 export default function SearchScreen() {
-  const [query, setQuery] = useState('')
+  const { initialQuery } = useLocalSearchParams<{ initialQuery?: string }>()
+  console.log('i', { initialQuery })
+
+  const [query, setQuery] = useState(initialQuery || '')
 
   const { data, isLoading, isError, error, isFetching } = useQuery({
     queryKey: ['search', query],

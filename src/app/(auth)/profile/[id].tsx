@@ -548,6 +548,34 @@ export default function ProfileScreen() {
     enabled: !!userId,
   })
 
+  if (userError) {
+    return (
+      <SafeAreaView edges={['top']}>
+        <Stack.Screen
+          options={{
+            headerShown: true,
+            title: byUsername || id,
+            headerBackTitle: 'Back',
+          }}
+        />
+        <View style={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text fontSize="$8">{userError.message}</Text>
+          {byUsername && (
+            <Button
+              bg="$blue9"
+              size="$5"
+              color="white"
+              marginBlockStart="$5"
+              onPress={() =>
+                router.push({ pathname: '/search', params: { initialQuery: byUsername } })
+              }
+            >{`Search for ${byUsername}`}</Button>
+          )}
+        </View>
+      </SafeAreaView>
+    )
+  }
+
   if (status !== 'success' || (isFetching && !isFetchingNextPage)) {
     return (
       <SafeAreaView edges={['top']}>
