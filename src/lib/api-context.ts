@@ -69,14 +69,15 @@ export class ApiContext {
   async jsonRequest(
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     path: string,
-    params = {}
+    data = {},
+    searchParams: ApiRequestOptions['searchParams'] = {}
   ) {
     return await (
       await this.request(path, {
         method,
-        body: JSON.stringify(params),
+        body: JSON.stringify(data),
         headers: { 'Content-Type': 'application/json' },
-      })
+      }, {searchParams})
     ).json()
   }
 

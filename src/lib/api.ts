@@ -280,25 +280,25 @@ export async function unfollowAccountById(id: string) {
 export type NewReport = { id: string; type: string }
 
 export async function reportProfile({ id, type }: NewReport) {
-  const instance = Storage.getString('app.instance')
-  const token = Storage.getString('app.token')
-
-  const params = new URLSearchParams({
+  const api = ContextFromStorage()
+  const response = await api.jsonRequest("POST", "api/v1.1/report", {}, {
     report_type: type,
     object_type: 'user',
     object_id: id,
   })
-  const url = `https://${instance}/api/v1.1/report?${params}`
-  const response = await fetch(url, {
-    method: 'post',
-    headers: new Headers({
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    }),
+  return await response.json()
+}
+
+export async function reportStatus({ id, type }: NewReport) {
+  const api = ContextFromStorage()
+  const response = await api.jsonRequest("POST", "api/v1.1/report", {}, {
+    report_type: type,
+    object_type: 'post',
+    object_id: id,
   })
   return await response.json()
 }
+
 
 export async function getAccountByUsername(username: string): Promise<Account> {
   const api = ContextFromStorage()
@@ -506,27 +506,6 @@ export async function reblogStatus({ id }: { id: string }) {
 
 export async function unreblogStatus({ id }: { id: string }) {
   return await selfPost(`api/v1/statuses/${id}/unreblog`)
-}
-
-export async function reportStatus({ id, type }) {
-  const instance = Storage.getString('app.instance')
-  const token = Storage.getString('app.token')
-
-  const params = new URLSearchParams({
-    report_type: type,
-    object_type: 'post',
-    object_id: id,
-  })
-  const url = `https://${instance}/api/v1.1/report?${params}`
-  const response = await fetch(url, {
-    method: 'post',
-    headers: new Headers({
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    }),
-  })
-  return await response.json()
 }
 
 export async function deleteStatus({ id }: { id: string }) {
