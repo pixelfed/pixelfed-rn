@@ -64,7 +64,7 @@ export default function Page() {
         }
         setMessages((previousMessages) => GiftedChat.append(previousMessages, msg))
       } catch (err: any) {
-        console.log('Failed to send message', err)
+        console.log('Failed to send message', err, err?.msg || err?.message)
         Alert.alert('Failed to send message', err?.message || err)
       }
     },
