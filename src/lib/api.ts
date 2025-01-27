@@ -298,10 +298,9 @@ export async function reportProfile({ id, type }) {
   return await response.json()
 }
 
-export async function getAccountByUsername({ queryKey }) {
-  const instance = Storage.getString('app.instance')
-  const url = `https://${instance}/api/v1.1/accounts/username/${queryKey[1]}?_pe=1`
-  return await fetchData(url)
+export async function getAccountByUsername(username: string) {
+  const api = ContextFromStorage()
+  return await api.get(`api/v1.1/accounts/username/${username}?_pe=1`)
 }
 
 export async function getAccountStatusesById(id: string, page) {

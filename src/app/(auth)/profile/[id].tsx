@@ -453,16 +453,17 @@ export default function ProfileScreen() {
     }
   }
 
-  const { data: user, error: userError } = useQuery({
-    queryKey:
-      byUsername !== undefined && id === '0'
-        ? ['getAccountByUsername', byUsername]
-        : ['getAccountById', id],
-    queryFn:
-      byUsername !== undefined && id === '0'
-        ? getAccountByUsername
-        : () => getAccountById(id),
-  })
+  const { data: user, error: userError } = useQuery(
+    byUsername !== undefined && id === '0'
+      ? {
+          queryKey: ['getAccountByUsername', byUsername],
+          queryFn: () => getAccountByUsername(byUsername),
+        }
+      : {
+          queryKey: ['getAccountById', id],
+          queryFn: () => getAccountById(id),
+        }
+  )
 
   const userId = user?.id
 
