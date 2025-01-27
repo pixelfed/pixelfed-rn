@@ -322,7 +322,7 @@ interface getAccountStatusesByIdParameters {
 export async function getAccountStatusesById(
   id: string,
   parameters: getAccountStatusesByIdParameters
-):Promise<Status[]> {
+): Promise<Status[]> {
   const api = ContextFromStorage()
   return await api.get(`api/v1/accounts/${id}/statuses`, {
     _pe: 1, // todo document what _pe means
