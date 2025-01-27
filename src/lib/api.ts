@@ -1,7 +1,7 @@
 import { objectToForm } from 'src/requests'
 import { Storage } from 'src/state/cache'
 import { parseLinkHeader } from 'src/utils'
-import type { PaginatedStatus, Relationship } from './api-types'
+import type { Account, PaginatedStatus, Relationship } from './api-types'
 import { randomKey } from './randomKey'
 import { ContextFromStorage } from './api-context'
 
@@ -298,9 +298,13 @@ export async function reportProfile({ id, type }) {
   return await response.json()
 }
 
-export async function getAccountByUsername(username: string) {
+export async function getAccountByUsername(username: string): Promise<Account> {
   const api = ContextFromStorage()
-  return await api.get(`api/v1.1/accounts/username/${username}?_pe=1`)
+  let account = await api.get(`api/v1.1/accounts/username/${username}?_pe=1`)
+  if (Array.isArray(account) && account.length === 0) {
+    throw new Error(`Account "${username}" not found`)
+  }
+  return account
 }
 
 export async function getAccountStatusesById(id: string, page) {
