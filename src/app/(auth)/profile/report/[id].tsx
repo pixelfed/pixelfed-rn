@@ -3,14 +3,16 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { ScrollView, Text, View, XStack, YStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { useMutation } from '@tanstack/react-query'
-import { reportProfile } from 'src/lib/api'
+import { type NewReport, reportProfile } from 'src/lib/api'
 import { ActivityIndicator, Pressable } from 'react-native'
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
 
-  const reportTypes = [
+  type ReportType = { name: string; title: string }
+
+  const reportTypes: ReportType[] = [
     { name: 'spam', title: "It's spam" },
     { name: 'sensitive', title: 'Nudity or sexual activity' },
     { name: 'abusive', title: 'Bullying or harassment' },
@@ -22,7 +24,7 @@ export default function Page() {
     { name: 'terrorism', title: 'Terrorism or terrorism-related content' },
   ]
 
-  const RenderOption = ({ title, name }) => (
+  const RenderOption = ({ title, name }: ReportType) => (
     <Pressable onPress={() => handleAction(name)}>
       <XStack
         px="$5"
@@ -39,12 +41,12 @@ export default function Page() {
     </Pressable>
   )
 
-  const handleAction = (type) => {
+  const handleAction = (type: string) => {
     mutation.mutate({ id: id, type: type })
   }
 
   const mutation = useMutation({
-    mutationFn: (newReport) => {
+    mutationFn: (newReport: NewReport) => {
       return reportProfile(newReport)
     },
     onSuccess: (data, variables, context) => {

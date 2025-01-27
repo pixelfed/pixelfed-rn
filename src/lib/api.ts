@@ -277,7 +277,9 @@ export async function unfollowAccountById(id: string) {
   return await selfPost(path)
 }
 
-export async function reportProfile({ id, type }) {
+export type NewReport = { id: string; type: string }
+
+export async function reportProfile({ id, type }: NewReport) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
 
