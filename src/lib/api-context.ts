@@ -73,11 +73,15 @@ export class ApiContext {
     searchParams: ApiRequestOptions['searchParams'] = {}
   ) {
     return await (
-      await this.request(path, {
-        method,
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' },
-      }, {searchParams})
+      await this.request(
+        path,
+        {
+          method,
+          body: JSON.stringify(data),
+          headers: { 'Content-Type': 'application/json' },
+        },
+        { searchParams }
+      )
     ).json()
   }
 

@@ -5,24 +5,11 @@ import { Feather } from '@expo/vector-icons'
 import { useMutation } from '@tanstack/react-query'
 import { type NewReport, reportProfile } from 'src/lib/api'
 import { ActivityIndicator, Pressable } from 'react-native'
+import { type ReportType, reportTypes } from 'src/lib/reportTypes'
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
-
-  type ReportType = { name: string; title: string }
-
-  const reportTypes: ReportType[] = [
-    { name: 'spam', title: "It's spam" },
-    { name: 'sensitive', title: 'Nudity or sexual activity' },
-    { name: 'abusive', title: 'Bullying or harassment' },
-    { name: 'underage', title: 'I think this account is underage' },
-    { name: 'violence', title: 'Violence or dangerous organizations' },
-    { name: 'copyright', title: 'Copyright infringement' },
-    { name: 'impersonation', title: 'Impersonation' },
-    { name: 'scam', title: 'Scam or fraud' },
-    { name: 'terrorism', title: 'Terrorism or terrorism-related content' },
-  ]
 
   const RenderOption = ({ title, name }: ReportType) => (
     <Pressable onPress={() => handleAction(name)}>
@@ -42,7 +29,7 @@ export default function Page() {
   )
 
   const handleAction = (type: string) => {
-    mutation.mutate({ id: id, type: type })
+    mutation.mutate({ object_id: id, object_type: 'user', report_type: type })
   }
 
   const mutation = useMutation({

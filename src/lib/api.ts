@@ -277,28 +277,17 @@ export async function unfollowAccountById(id: string) {
   return await selfPost(path)
 }
 
-export type NewReport = { id: string; type: string }
-
-export async function reportProfile({ id, type }: NewReport) {
-  const api = ContextFromStorage()
-  const response = await api.jsonRequest("POST", "api/v1.1/report", {}, {
-    report_type: type,
-    object_type: 'user',
-    object_id: id,
-  })
-  return await response.json()
+export type NewReport = {
+  object_id: string
+  report_type: string
+  object_type: 'user' | 'post'
 }
 
-export async function reportStatus({ id, type }: NewReport) {
+export async function report(report: NewReport) {
   const api = ContextFromStorage()
-  const response = await api.jsonRequest("POST", "api/v1.1/report", {}, {
-    report_type: type,
-    object_type: 'post',
-    object_id: id,
-  })
+  const response = await api.jsonRequest('POST', 'api/v1.1/report', {}, report)
   return await response.json()
 }
-
 
 export async function getAccountByUsername(username: string): Promise<Account> {
   const api = ContextFromStorage()
