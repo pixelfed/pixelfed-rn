@@ -40,7 +40,10 @@ export default function ProfileScreen() {
   } = useInfiniteQuery({
     queryKey: ['statusesById', userId],
     queryFn: async ({ pageParam }) => {
-      const data = await getAccountStatusesById(userId, pageParam)
+      if (!userId) {
+        throw new Error('getAccountStatusesById: user id missing')
+      }
+      const data = await getAccountStatusesById(userId, { max_id: pageParam })
       return data.filter((p) => {
         return (
           ['photo', 'photo:album', 'video'].includes(p.pf_type) &&

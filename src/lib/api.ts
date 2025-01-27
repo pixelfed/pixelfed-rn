@@ -1,7 +1,7 @@
 import { objectToForm } from 'src/requests'
 import { Storage } from 'src/state/cache'
 import { parseLinkHeader } from 'src/utils'
-import type { Account, PaginatedStatus, Relationship } from './api-types'
+import type { Account, PaginatedStatus, Relationship, Status } from './api-types'
 import { randomKey } from './randomKey'
 import { ContextFromStorage } from './api-context'
 
@@ -307,10 +307,27 @@ export async function getAccountByUsername(username: string): Promise<Account> {
   return account
 }
 
-export async function getAccountStatusesById(id: string, page) {
-  const instance = Storage.getString('app.instance')
-  const url = `https://${instance}/api/v1/accounts/${id}/statuses?_pe=1&limit=24&max_id=${page}`
-  return await fetchData(url)
+interface getAccountStatusesByIdParameters {
+  // https://github.com/pixelfed/pixelfed/blob/fa4474bc38d64b1d96272f9d45e90289020fcb11/app/Http/Controllers/Api/ApiV1Controller.php#L699
+  only_media?: true
+  pinned?: true
+  exclude_replies?: true
+  media_type?: 'photo' | 'video'
+  limit?: number
+  max_id?: number
+  since_id?: number
+  min_id?: number
+}
+
+export async function getAccountStatusesById(
+  id: string,
+  parameters: getAccountStatusesByIdParameters
+):Promise<Status[]> {
+  const api = ContextFromStorage()
+  return await api.get(`api/v1/accounts/${id}/statuses`, {
+    _pe: 1, // todo document what _pe means
+    ...parameters,
+  })
 }
 
 export async function getHashtagByName({ queryKey }) {

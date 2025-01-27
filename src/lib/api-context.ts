@@ -3,6 +3,7 @@ import { randomKey } from './randomKey'
 
 type ApiRequestOptions = {
   idempotency?: true
+  searchParams?: Record<string, string | number | boolean>
 }
 
 export class ApiContext {
@@ -24,7 +25,17 @@ export class ApiContext {
     fetch_options: RequestInit,
     options?: ApiRequestOptions
   ): Promise<Response> {
-    const url = `https://${this.instanceHostName}/${path}`
+    const url = new URL(`${path}`, `https://${this.instanceHostName}`)
+
+    if (options?.searchParams) {
+      let { searchParams } = options
+      for (const key in searchParams) {
+        if (Object.prototype.hasOwnProperty.call(searchParams, key)) {
+          url.searchParams.append(key, String(searchParams[key]))
+        }
+      }
+    }
+
     fetch_options.headers = {
       ...fetch_options.headers,
       Accept: 'application/json',
@@ -69,13 +80,17 @@ export class ApiContext {
     ).json()
   }
 
-  async get(url: string) {
-    const response = await this.request(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
+  async get(url: string, searchParams: ApiRequestOptions['searchParams'] = {}) {
+    const response = await this.request(
+      url,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    })
+      { searchParams }
+    )
     return await response.json()
   }
 }

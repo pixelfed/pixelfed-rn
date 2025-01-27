@@ -207,12 +207,12 @@ export type Status = {
 }
 
 export type StatusLikedBy = {
-  id: string,
-  others: boolean,
-  total_count: number,
-  total_count_pretty: number,
-  url: string,
-  username: string,
+  id: string
+  others: boolean
+  total_count: number
+  total_count_pretty: number
+  url: string
+  username: string
 }
 
 /* ========================== Infinite query types ========================== */
