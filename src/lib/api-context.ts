@@ -113,5 +113,6 @@ export function ContextFromStorage(): ApiContext {
   }
   return new ApiContext(instance, token)
 }
+
 // For debugging
-;(global as any).API = ContextFromStorage()
+;(global as any).API = ContextFromStorage
