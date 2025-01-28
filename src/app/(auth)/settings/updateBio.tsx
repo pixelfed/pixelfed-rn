@@ -19,11 +19,9 @@ export default function Page() {
 
   const { user } = useQuerySelfProfile()
   const [bio, setBio] = useState(user?.note_text || "")
-  const [isSubmitting, setSubmitting] = useState(false)
 
-  const { profileMutation } = useProfileMutation({
-    onSuccess: () => router.replace('/profile'),
-    setSubmitting
+  const { profileMutation, isSubmitting } = useProfileMutation({
+    onSuccess: () => router.replace('/profile')
   })
 
   const onSubmit = () => {

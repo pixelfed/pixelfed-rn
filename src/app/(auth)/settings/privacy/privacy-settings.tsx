@@ -19,7 +19,7 @@ interface RenderSwitchProps {
 
 const RenderSwitch = (props: RenderSwitchProps) => {
   return (
-    <>
+    <YStack>
       <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
         <YStack maxWidth="75%" gap="$2">
           <Text fontSize="$5" fontWeight={'bold'}>
@@ -38,7 +38,7 @@ const RenderSwitch = (props: RenderSwitchProps) => {
         </Switch>
       </XStack>
       <Separator />
-    </>
+    </YStack>
   )
 }
 

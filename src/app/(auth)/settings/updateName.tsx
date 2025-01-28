@@ -10,11 +10,9 @@ import { useProfileMutation } from 'src/hooks/mutations/useProfileMutation'
 export default function Page() {
   const { user } = useQuerySelfProfile()
   const [name, setName] = useState(user?.display_name || '')
-  const [isSubmitting, setSubmitting] = useState(false)
 
-  const { profileMutation } = useProfileMutation({
-    onSuccess: () => router.replace('/profile'),
-    setSubmitting
+  const { profileMutation, isSubmitting } = useProfileMutation({
+    onSuccess: () => router.replace('/profile')
   })
 
   const onSubmit = () => {
