@@ -18,6 +18,7 @@ import { getOpenServers } from 'src/lib/api'
 import { enforceLen, prettyCount } from 'src/utils'
 import FastImage from 'react-native-fast-image'
 import { PressableOpacity } from 'react-native-pressable-opacity'
+import { useI18n } from 'src/hooks/useI18n'
 
 export default function Register() {
   const { data } = useQuery({
@@ -28,6 +29,7 @@ export default function Register() {
   const router = useRouter()
 
   const { login, isLoading } = useAuth()
+  const { t } = useI18n()
 
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -85,7 +87,10 @@ export default function Register() {
           </Text>
           <XStack gap="$2">
             <Text fontSize="$3" color="$gray5">
-              {prettyCount(item.user_count)} users
+              {t('users', {
+                count: item.user_count,
+                prettyCount: prettyCount(item.user_count),
+              })}
             </Text>
 
             <Text fontSize="$3" color="$gray10">
@@ -94,7 +99,7 @@ export default function Register() {
           </XStack>
         </YStack>
         <Text pr="$3" color="$blue8" fontWeight={'bold'}>
-          Login
+          {t('login')}
         </Text>
       </XStack>
     </Button>
@@ -106,14 +111,14 @@ export default function Register() {
       <Stack.Screen options={{ headerShown: false }} />
       <View justifyContent="center" alignItems="center" mb="$5">
         <Text fontSize={30} mt="$6" letterSpacing={-1} color="white">
-          Select your server
+          {t('selectServerScreen.selectYourServer')}
         </Text>
       </View>
       <View style={styles.searchContainer}>
         <Feather name="search" size={20} color="#000" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search servers..."
+          placeholder={t('selectServerScreen.searchServerPlaceholder')}
           value={searchQuery}
           placeholderTextColor={'#999'}
           onChangeText={setSearchQuery}
@@ -135,7 +140,7 @@ export default function Register() {
             fontWeight="bold"
             py="$2"
           >
-            Tap here to login with a server domain
+            {t('selectServerScreen.tapHereToLoginWithAServerDomain')}
           </Text>
         </PressableOpacity>
       </View>
