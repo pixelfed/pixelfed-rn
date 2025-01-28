@@ -1,0 +1,41 @@
+{
+  "pt-BR": {
+    "locales": {
+      "en": "Inglês",
+      "pt-BR": "Português (Brasil)"
+    },
+    "login": "Entrar",
+    "selectServerScreen": {
+      "searchServerPlaceholder": "Procurar servidores...",
+      "selectYourServer": "Selecione seu servidor",
+      "tapHereToLoginWithAServerDomain": "Toque aqui para fazer login com um domínio de servidor"
+    },
+    "settingsScreen": {
+      "accessibility": "Acessibilidade",
+      "appearance": "Aparência",
+      "avatarBioAndDisplayName": "Avatar, Bio e nome visível",
+      "collections": "Coleções",
+      "deleteAccount": "Excluir conta",
+      "followedHashtags": "Hashtags seguidas",
+      "followRequests": "Solicitações de seguir",
+      "language": "Idioma",
+      "legal": "Legal",
+      "logoutModal": {
+        "cancel": "Cancelar",
+        "confirm": "Sair",
+        "message": "Tem certeza de que deseja sair desta conta?",
+        "title": "Confirmar"
+      },
+      "logoutUsername": "Sair @%{username}",
+      "privacyAndRelationships": "Privacidade e relacionamentos",
+      "pushNotifications": "Notificações push",
+      "settings": "Configurações",
+      "version": "Versão"
+    },
+    "users": {
+      "one": "1 usuário",
+      "other": "%{prettyCount} usuários",
+      "zero": "Nenhum usuário"
+    }
+  }
+}
