@@ -20,6 +20,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { VideoProvider } from 'src/hooks/useVideoProvider'
 import * as Notifications from 'expo-notifications'
 import Constants from 'expo-constants'
+import { I18nContextProvider } from './context/i18n/Provider'
 
 export const unstable_settings = {
   initialRouteName: '/login',
@@ -102,19 +103,21 @@ function RootLayoutNav() {
             <TamaguiProvider config={config} defaultTheme={'light'}>
               <ToastProvider native={true}>
                 <ThemeProvider value={DefaultTheme}>
-                  <VideoProvider>
-                    <Stack>
-                      <Stack.Screen
-                        name="(auth)/(tabs)"
-                        options={{ headerShown: false, backBehavior: 'order' }}
-                      />
-                      <Stack.Screen
-                        name="(public)/login"
-                        options={{ headerShown: false }}
-                      />
-                    </Stack>
-                    <ToastViewport />
-                  </VideoProvider>
+                  <I18nContextProvider>
+                    <VideoProvider>
+                      <Stack>
+                        <Stack.Screen
+                          name="(auth)/(tabs)"
+                          options={{ headerShown: false, backBehavior: 'order' }}
+                        />
+                        <Stack.Screen
+                          name="(public)/login"
+                          options={{ headerShown: false }}
+                        />
+                      </Stack>
+                      <ToastViewport />
+                    </VideoProvider>
+                  </I18nContextProvider>
                 </ThemeProvider>
               </ToastProvider>
             </TamaguiProvider>
