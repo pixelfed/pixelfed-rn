@@ -329,14 +329,13 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
         renderItem={({ index }) => {
           const media = mediaList[0]
           return (
-            <FastImage
+            <ZoomableImage
               style={{
                 width: width,
                 height: height,
                 backgroundColor: '#000',
               }}
               source={{ uri: mediaList[index].url }}
-              resizeMode={FastImage.resizeMode.contain}
             />
           )
         }}
