@@ -145,6 +145,11 @@ export default function Page() {
               path="/settings/appearance/"
             />
             <GroupButton
+              icon="globe"
+              title={t('settingsScreen.language')}
+              path="/settings/language/"
+            />
+            <GroupButton
               icon="alert-triangle"
               title={t('settingsScreen.pushNotifications')}
               path="/settings/notifications/"
@@ -168,15 +173,6 @@ export default function Page() {
               path="settings/remove/request/permanent"
             />
           </Group>
-
-          <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
-            <GroupButton
-              icon="globe"
-              title={t('settingsScreen.language')}
-              path="/settings/language/"
-            />
-          </Group>
-
           <Button bg="$gray1" justifyContent="flex-start" size="$5" px="$3">
             <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
               <XStack alignItems="center" ml="$1" gap="$3">
