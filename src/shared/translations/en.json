@@ -1,0 +1,41 @@
+{
+  "en": {
+    "locales": {
+      "en": "English",
+      "pt-BR": "Portuguese (Brazil)"
+    },
+    "login": "Login",
+    "selectServerScreen": {
+      "searchServerPlaceholder": "Search servers...",
+      "selectYourServer": "Select your server",
+      "tapHereToLoginWithAServerDomain": "Tap here to login with a server domain"
+    },
+    "settingsScreen": {
+      "accessibility": "Accessibility",
+      "appearance": "Appearance",
+      "avatarBioAndDisplayName": "Avatar, Bio and Display Name",
+      "collections": "Collections",
+      "deleteAccount": "Delete account",
+      "followedHashtags": "Followed hashtags",
+      "followRequests": "Follow request",
+      "language": "Language",
+      "legal": "Legal",
+      "logoutModal": {
+        "cancel": "Cancel",
+        "confirm": "Log out",
+        "message": "Are you sure you want to log out of this account?",
+        "title": "Confirm"
+      },
+      "logoutUsername": "Logout @%{username}",
+      "privacyAndRelationships": "Privacy & Relationships",
+      "pushNotifications": "Push notifications",
+      "settings": "Settings",
+      "version": "Version"
+    },
+    "users": {
+      "one": "1 user",
+      "other": "%{prettyCount} users",
+      "zero": "No users"
+    }
+  }
+}

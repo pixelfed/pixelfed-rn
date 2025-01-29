@@ -15,10 +15,12 @@ import { useAuth } from '@state/AuthProvider'
 import { ActivityIndicator, Platform, SafeAreaView } from 'react-native'
 import { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
+import { useI18n } from 'src/hooks/useI18n'
 
 export default function Login() {
   const [server, setServer] = useState('pixelfed.social')
   const [loading, setLoading] = useState(true)
+  const { t } = useI18n()
 
   const { login, isLoading } = useAuth()
 
@@ -69,7 +71,7 @@ export default function Login() {
                 fontWeight="bold"
                 flexGrow={1}
               >
-                Login
+                {t('login')}
               </Button>
             </Link>
           </YStack>

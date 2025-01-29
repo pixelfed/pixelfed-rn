@@ -1,9 +1,9 @@
 import { Alert } from 'react-native'
 import { Group, ScrollView, Separator, Text, XStack, YStack, Button } from 'tamagui'
 import { Storage } from 'src/state/cache'
-import React, { useState, useEffect, useLayoutEffect } from 'react'
+import React, { useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, Link, useNavigation } from 'expo-router'
+import { Stack, Link, useNavigation, type LinkProps } from 'expo-router'
 import { useAuth, useUserCache } from '@state/AuthProvider'
 import { openBrowserAsync } from 'src/utils'
 import * as Application from 'expo-application'
@@ -11,12 +11,11 @@ import {
   GroupButtonContent,
   type GroupButtonContentProps,
 } from 'src/components/common/GroupButtonContent'
-
+import { useI18n } from 'src/hooks/useI18n'
 export default function Page() {
   const navigation = useNavigation()
-  useLayoutEffect(() => {
-    navigation.setOptions({ title: 'Settings' })
-  }, [navigation])
+  const { t } = useI18n()
+
   const { username, locked } = useUserCache()
   const instance = Storage.getString('app.instance')
   const buildVersion = 74
@@ -40,9 +39,11 @@ export default function Page() {
     icon,
     title,
     path,
-  }: GroupButtonContentProps & { path: string }) => (
+  }: GroupButtonContentProps & {
+    path: string
+  }) => (
     <Group.Item>
-      <Link href={path} asChild>
+      <Link href={path as LinkProps<String>['href']} asChild>
         <Button bg="$gray1" justifyContent="flex-start" size="$5" px="$3">
           <GroupButtonContent icon={icon} title={title} iconColor="#666" />
         </Button>
@@ -69,22 +70,31 @@ export default function Page() {
   )
 
   const handleLogOut = () => {
-    Alert.alert('Confirm', 'Are you sure you want to log out of this account?', [
-      {
-        text: 'Cancel',
-      },
-      {
-        text: 'Log out',
-        style: 'destructive',
-        onPress: () => cacheClear(),
-      },
-    ])
+    Alert.alert(
+      t('settingsScreen.logoutModal.title'),
+      t('settingsScreen.logoutModal.message'),
+      [
+        {
+          text: t('settingsScreen.logoutModal.cancel'),
+        },
+        {
+          text: t('settingsScreen.logoutModal.confirm'),
+          style: 'destructive',
+          onPress: () => cacheClear(),
+        },
+      ]
+    )
   }
+
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: t('settingsScreen.settings') })
+  }, [navigation])
+
   return (
     <SafeAreaView style={{ flex: 1 }} edges={['bottom']}>
       <Stack.Screen
         options={{
-          title: 'Settings',
+          title: t('settingsScreen.settings'),
           headerBackTitle: 'Back',
         }}
       />
@@ -93,7 +103,7 @@ export default function Page() {
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
             <GroupButton
               icon="user"
-              title="Avatar, Bio and Display Name"
+              title={t('settingsScreen.avatarBioAndDisplayName')}
               path="/settings/profile"
             />
           </Group>
@@ -102,19 +112,23 @@ export default function Page() {
             {locked ? (
               <GroupButton
                 icon="user-plus"
-                title="Follow Requests"
+                title={t('settingsScreen.followRequests')}
                 path="/profile/follow-requests/"
               />
             ) : null}
-            <GroupButton icon="grid" title="Collections" path="/collections/" />
+            <GroupButton
+              icon="grid"
+              title={t('settingsScreen.collections')}
+              path="/collections/"
+            />
             <GroupButton
               icon="tag"
-              title="Followed Hashtags"
+              title={t('settingsScreen.followedHashtags')}
               path="/hashtag/followedTags"
             />
             <GroupButton
               icon="lock"
-              title="Privacy & Relationships"
+              title={t('settingsScreen.privacyAndRelationships')}
               path="/settings/privacy"
             />
           </Group>
@@ -122,13 +136,22 @@ export default function Page() {
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
             <GroupButton
               icon="life-buoy"
-              title="Accessibility"
+              title={t('settingsScreen.accessibility')}
               path="/settings/accessibility/"
             />
-            <GroupButton icon="droplet" title="Appearance" path="/settings/appearance/" />
+            <GroupButton
+              icon="droplet"
+              title={t('settingsScreen.appearance')}
+              path="/settings/appearance/"
+            />
+            <GroupButton
+              icon="globe"
+              title={t('settingsScreen.language')}
+              path="/settings/language/"
+            />
             <GroupButton
               icon="alert-triangle"
-              title="Push Notifications"
+              title={t('settingsScreen.pushNotifications')}
               path="/settings/notifications/"
             />
           </Group>
@@ -139,18 +162,21 @@ export default function Page() {
               title={instance || ''}
               path="/settings/instance/"
             />
-            <GroupButton icon="align-left" title="Legal" path="/settings/legal/" />
+            <GroupButton
+              icon="align-left"
+              title={t('settingsScreen.legal')}
+              path="/settings/legal/"
+            />
             <GroupUrlButton
               icon="trash"
-              title="Delete Account"
+              title={t('settingsScreen.deleteAccount')}
               path="settings/remove/request/permanent"
             />
           </Group>
-
           <Button bg="$gray1" justifyContent="flex-start" size="$5" px="$3">
             <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
               <XStack alignItems="center" ml="$1" gap="$3">
-                <Text fontSize="$6">Version</Text>
+                <Text fontSize="$6">{t('settingsScreen.version')}</Text>
               </XStack>
               <Text fontSize="$6" color="$gray9">
                 {version}
@@ -159,7 +185,7 @@ export default function Page() {
           </Button>
 
           <Button bg="$red4" mt="$2" onPress={() => handleLogOut()}>
-            <Text>Log out {'@' + username}</Text>
+            <Text>{t('settingsScreen.logoutUsername', { username })}</Text>
           </Button>
         </YStack>
       </ScrollView>

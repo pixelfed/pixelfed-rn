@@ -12,13 +12,8 @@
       "resizeMode": "contain",
       "backgroundColor": "#000000"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "assetBundlePatterns": ["**/*"],
+    "platforms": ["ios", "android"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.pixelfed",
@@ -57,9 +52,7 @@
             "NSExtensionActivationSupportsImageWithMaxCount": 1,
             "NSExtensionActivationSupportsMovieWithMaxCount": 1
           },
-          "androidIntentFilters": [
-            "image/*"
-          ]
+          "androidIntentFilters": ["image/*"]
         }
       ],
       [
@@ -81,9 +74,10 @@
         {
           "mode": "production",
           "icon": "./assets/notification-icon.png",
-          "color": "#ffffff" 
+          "color": "#ffffff"
         }
-      ]
+      ],
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true
