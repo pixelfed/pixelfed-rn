@@ -6,6 +6,7 @@ type I18nContextType = {
   setLocale: (locale: string) => void
   localeHasChanged: boolean
   t: typeof i18n.t
+  getLocaleLabel(locale: string): { translated: string; original: string }
 }
 
 const defaultValue: I18nContextType = {
@@ -13,6 +14,9 @@ const defaultValue: I18nContextType = {
   setLocale: () => {},
   localeHasChanged: false,
   t: () => '',
+  getLocaleLabel: () => {
+    return { translated: '', original: '' }
+  },
 }
 
 export const i18nContext = createContext<I18nContextType>(defaultValue)
