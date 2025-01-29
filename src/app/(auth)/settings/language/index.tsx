@@ -6,16 +6,14 @@ import React from 'react'
 import { Feather } from '@expo/vector-icons'
 import { useI18n } from 'src/hooks/useI18n'
 export default function Screen() {
-  const { locale, setLocale, t } = useI18n()
+  const { locale, setLocale, t, getLocaleLabel } = useI18n()
 
   const availableLocalesWithLabels = availableLocales
     .map((locale) => ({
-      label: t(`locales.${locale}`, {
-        defaultValue: locale,
-      }),
+      label: getLocaleLabel(locale),
       value: locale,
     }))
-    .sort((a, b) => a.label.localeCompare(b.label))
+    .sort((a, b) => a.label.translated.localeCompare(b.label.translated))
 
   return (
     <SafeAreaView edges={['bottom']}>
@@ -34,7 +32,8 @@ export default function Screen() {
                 onPress={() => {
                   setLocale(value)
                 }}
-                title={label}
+                title={label.translated}
+                subTitle={label.original}
                 iconAfter={
                   value === locale ? (
                     <Feather name="check-circle" color="green" size={16} />
