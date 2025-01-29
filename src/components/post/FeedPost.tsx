@@ -42,6 +42,7 @@ import type {
 } from 'react-native-gesture-handler'
 import type { LoginUserResponse, MediaAttachment, Status, StatusLikedBy, Tag, Timestamp, Visibility } from 'src/lib/api-types'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
+import { PixelfedBottomSheetModal } from '../BottomSheets'
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
 
@@ -829,7 +830,7 @@ export default function FeedPost({
           />
         </>
       ) : null}
-      <BottomSheetModal
+      <PixelfedBottomSheetModal
         ref={bottomSheetModalRef}
         index={1}
         snapPoints={snapPoints}
@@ -895,7 +896,7 @@ export default function FeedPost({
             Cancel
           </Button>
         </BottomSheetScrollView>
-      </BottomSheetModal>
+      </PixelfedBottomSheetModal>
     </View>
   )
 }
