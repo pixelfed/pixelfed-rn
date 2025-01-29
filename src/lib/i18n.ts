@@ -5,10 +5,13 @@ import en from '../shared/translations/en.json'
 import ptBR from '../shared/translations/pt-BR.json'
 import { Storage } from 'src/state/cache'
 
+const defaultLocale = 'en'
+const locales = getLocales();
+
 export const i18n = new I18n()
 export const i18nLocaleStorageKey = 'ui.locale'
+export const i18nAppSettingsLocaleStorageKey = 'system.appSettingsLocale'
 export const availableLocales: string[] = []
-const defaultLocale = 'en'
 
 const findClosestLocale = (locale: string) => {
   const [language] = locale.split('-')
@@ -19,12 +22,15 @@ const findClosestLocale = (locale: string) => {
 }
 
 const getDeviceLocaleOrClosest = () => {
+  let locale = locales[0].languageTag
+  const storedAppSettingsLocale = Storage.getString(i18nAppSettingsLocaleStorageKey)
   const storedLocale = Storage.getString(i18nLocaleStorageKey)
 
-  if (storedLocale) {
-    return storedLocale
+  if(locale !== storedAppSettingsLocale) {
+    Storage.set(i18nAppSettingsLocaleStorageKey, locale)
+  }else if (storedLocale) {
+    locale = storedLocale
   }
-  const locale = getLocales()[0].languageTag
   return i18n.translations[locale] ? locale : findClosestLocale(locale)
 }
 
