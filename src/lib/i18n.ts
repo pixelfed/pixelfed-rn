@@ -1,13 +1,13 @@
 import { getLocales } from 'expo-localization'
-import { I18n } from 'i18n-js'
+import { type Dict, I18n } from 'i18n-js'
 
 import en from '../shared/translations/en.json'
 import ptBR from '../shared/translations/pt-BR.json'
 import { Storage } from 'src/state/cache'
 
+export const i18n = new I18n()
 export const i18nLocaleStorageKey = 'ui.locale'
-
-export const availableLocales = ['en', 'pt-BR']
+export const availableLocales: string[] = []
 const defaultLocale = 'en'
 
 const findClosestLocale = (locale: string) => {
@@ -28,10 +28,13 @@ const getDeviceLocaleOrClosest = () => {
   return i18n.translations[locale] ? locale : findClosestLocale(locale)
 }
 
-export const i18n = new I18n()
+const addLocale = (locale: string, translations: Dict) => {
+  i18n.store(translations)
+  availableLocales.push(locale)
+}
 
-i18n.store(en)
-i18n.store(ptBR)
+addLocale('en', en)
+addLocale('pt-BR', ptBR)
 
 i18n.defaultLocale = defaultLocale
 i18n.enableFallback = true
