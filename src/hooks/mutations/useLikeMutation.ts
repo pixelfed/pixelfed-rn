@@ -26,9 +26,9 @@ export function useLikeMutation({ onSuccess }: { onSuccess?: onSuccessType } = {
   })
 
   /**
-   * handler function for 'like' mutations that occur when a post is 
+   * handler function for 'like' mutations that occur when a post is
    * liked or unliked
-   * 
+   *
    * @param id string id of the post that has been liked/unliked
    * @param liked value of the posts like status, true = 'like', false = 'unlike'
    */

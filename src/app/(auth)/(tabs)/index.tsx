@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useState, useRef, useMemo } from 'react'
-import { FlatList, StyleSheet, ActivityIndicator, Platform, ListRenderItemInfo } from 'react-native'
+import {
+  FlatList,
+  StyleSheet,
+  ActivityIndicator,
+  Platform,
+  type ListRenderItemInfo,
+} from 'react-native'
 import { Text, View, XStack, Spinner, YStack } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
@@ -34,7 +40,7 @@ import { useShareIntentContext } from 'expo-share-intent'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
 import { useUserCache } from 'src/state/AuthProvider'
-import { Status } from 'src/lib/api-types'
+import type { Status } from 'src/lib/api-types'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   return (
@@ -280,7 +286,8 @@ export default function HomeScreen() {
   }
 
   const renderFeed = (data: Array<Status>) => {
-    return <FlatList
+    return (
+      <FlatList
         ref={flatListRef}
         data={data}
         keyExtractor={keyExtractor}
@@ -298,6 +305,7 @@ export default function HomeScreen() {
         onEndReachedThreshold={0.5}
         ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}
       />
+    )
   }
 
   return (
@@ -336,7 +344,6 @@ export default function HomeScreen() {
       </BottomSheetModal>
 
       {renderFeed(data?.pages.flatMap((page) => page.data))}
-      
     </SafeAreaView>
   )
 }
@@ -366,5 +373,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'white',
     fontWeight: '800',
-  }
+  },
 })
