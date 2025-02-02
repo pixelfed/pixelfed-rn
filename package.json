@@ -11,7 +11,7 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "biome check --write ./src",
-    "check": "yarn check:ts && yarn check:lint",
+    "check": "npm run check:ts && npm run check:lint",
     "check:ts": "tsc",
     "check:lint": "biome check ./src",
     "postinstall": "patch-package"
@@ -81,6 +81,5 @@
     "@types/react": "~18.2.45",
     "babel-plugin-module-resolver": "^5.0.0"
   },
-  "private": true,
-  "packageManager": "yarn@4.0.2"
+  "private": true
 }
