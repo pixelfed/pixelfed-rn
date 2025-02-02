@@ -1,7 +1,7 @@
 import { objectToForm } from 'src/requests'
 import { Storage } from 'src/state/cache'
 import { parseLinkHeader } from 'src/utils'
-import type { Relationship } from './api-types'
+import type { PaginatedStatus, Relationship } from './api-types'
 
 export function randomKey(length: number) {
   let result = ''
@@ -253,7 +253,7 @@ export async function fetchNotifications({ queryKey, pageParam = false }) {
   return await fetchPaginatedData(url)
 }
 
-export async function fetchHomeFeed({ pageParam = false }) {
+export async function fetchHomeFeed({ pageParam = false }): Promise<PaginatedStatus> {
   let url
   if (!pageParam) {
     const instance = Storage.getString('app.instance')
@@ -264,7 +264,7 @@ export async function fetchHomeFeed({ pageParam = false }) {
   return await fetchPaginatedData(url)
 }
 
-export async function fetchNetworkFeed({ pageParam = false }) {
+export async function fetchNetworkFeed({ pageParam = false }): Promise<PaginatedStatus> {
   let url
   if (!pageParam) {
     const instance = Storage.getString('app.instance')

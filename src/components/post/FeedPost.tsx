@@ -1,4 +1,4 @@
-import { Alert, Dimensions, Share, Pressable, Platform } from 'react-native'
+import { Alert, Share, Pressable, Platform, useWindowDimensions } from 'react-native'
 import { Button, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import FastImage from 'react-native-fast-image'
@@ -16,6 +16,7 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
   BottomSheetBackdrop,
+  BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet'
 import Carousel, { Pagination } from 'react-native-reanimated-carousel'
 import ReadMore from '../common/ReadMore'
@@ -24,10 +25,11 @@ import AutolinkText from 'src/components/common/AutolinkText'
 import { Blurhash } from 'react-native-blurhash'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import VideoPlayer from './VideoPlayer'
-import ReadMoreAndroid from '../common/ReadMoreAndroid'
 import { Storage } from 'src/state/cache'
-import { State, PinchGestureHandler } from 'react-native-gesture-handler'
+import { State, PinchGestureHandler, GestureDetector, Gesture } from 'react-native-gesture-handler'
 import Animated, {
+  runOnJS,
+  type SharedValue,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -38,6 +40,8 @@ import type {
   HandlerStateChangeEvent,
   PinchGestureHandlerEventPayload,
 } from 'react-native-gesture-handler'
+import type { LoginUserResponse, MediaAttachment, Status, StatusLikedBy, Tag, Timestamp, Visibility } from 'src/lib/api-types'
+import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
 
@@ -104,22 +108,35 @@ const ZoomableImage = ({ source, style }) => {
   )
 }
 
-const SCREEN_WIDTH = Dimensions.get('screen').width
 const AVATAR_WIDTH = 45
 
-const Section = React.memo(({ children }) => (
+const Section = React.memo(({ children }: React.PropsWithChildren) => (
   <View px="$3" bg="white" borderTopWidth={1} borderBottomWidth={1} borderColor="$gray7">
     {children}
   </View>
 ))
 
-const BorderlessSection = React.memo(({ children }) => (
+const BorderlessSection = React.memo(({ children }: React.PropsWithChildren) => (
   <View px="$3" bg="white">
     {children}
   </View>
 ))
 
-const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMenu }) => (
+interface PostHeaderProps {
+  avatar: string,
+  username: string,
+  displayName: string,
+  userId: string,
+  onOpenMenu: () => void
+}
+
+const PostHeader = React.memo(({
+  avatar,
+  username,
+  displayName,
+  userId,
+  onOpenMenu
+}: PostHeaderProps) => (
   <Section>
     <XStack
       flexGrow={1}
@@ -166,22 +183,28 @@ const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMe
   </Section>
 ))
 
-const PostMedia = React.memo(({ media, post }) => {
+interface PostMediaProps {
+  media: Array<MediaAttachment>
+  post: Status
+}
+
+const PostMedia = React.memo(({ media, post }: PostMediaProps) => {
   const mediaUrl = media[0].url
   const [showSensitive, setSensitive] = useState(false)
+  const { width } = useWindowDimensions()
   const forceSensitive = Storage.getBoolean('ui.forceSensitive') == true
   const height = media[0].meta?.original?.width
-    ? SCREEN_WIDTH * (media[0].meta?.original?.height / media[0].meta?.original.width)
+    ? width * (media[0].meta?.original?.height / media[0].meta?.original.width)
     : 430
 
   if (!forceSensitive && post.sensitive && !showSensitive) {
     return (
-      <ZStack w={SCREEN_WIDTH} h={height}>
+      <ZStack w={width} h={height}>
         <Blurhash
-          blurhash={media[0]?.blurhash}
+          blurhash={media[0]?.blurhash || ''}
           style={{
             flex: 1,
-            width: SCREEN_WIDTH,
+            width: width,
             height: height,
           }}
         />
@@ -198,7 +221,7 @@ const PostMedia = React.memo(({ media, post }) => {
               This post contains sensitive or mature content
             </Text>
           </YStack>
-          <YStack w={SCREEN_WIDTH} flexShrink={1}>
+          <YStack w={width} flexShrink={1}>
             <Separator />
             <PressableOpacity onPress={() => setSensitive(true)}>
               <View p="$4" justifyContent="center" alignItems="center">
@@ -226,24 +249,30 @@ const PostMedia = React.memo(({ media, post }) => {
     <View flex={1} borderBottomWidth={1} borderBottomColor="$gray5" zIndex={100}>
       <ZoomableImage
         source={{ uri: mediaUrl }}
-        style={{ width: SCREEN_WIDTH, height: height, backgroundColor: '#000' }}
+        style={{ width: width, height: height, backgroundColor: '#000' }}
       />
     </View>
   )
 })
 
-const calculateHeight = (item) => {
+const calculateHeight = (item: MediaAttachment, width: number) => {
   if (item.meta?.original?.width) {
-    return SCREEN_WIDTH * (item.meta.original.height / item.meta.original.width)
+    return width * (item.meta.original.height / item.meta.original.width)
   }
   return 500
 }
 
-const PostAlbumMedia = React.memo(({ media, post, progress }) => {
-  const mediaUrl = media[0].url
+interface PostAlbumMediaProps {
+  media: Array<MediaAttachment>
+  post: Status
+  progress: SharedValue<number>
+}
+
+const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProps) => {
   const [showSensitive, setSensitive] = useState(false)
+  const { width } = useWindowDimensions()
   const height = media.reduce((max, item) => {
-    const height = calculateHeight(item)
+    const height = calculateHeight(item, width)
     return height > max ? height : max
   }, 0)
 
@@ -251,12 +280,12 @@ const PostAlbumMedia = React.memo(({ media, post, progress }) => {
 
   if (post.sensitive && !showSensitive) {
     return (
-      <ZStack w={SCREEN_WIDTH} h={height}>
+      <ZStack w={width} h={height}>
         <Blurhash
-          blurhash={media[0]?.blurhash}
+          blurhash={media[0]?.blurhash || ''}
           style={{
             flex: 1,
-            width: SCREEN_WIDTH,
+            width: width,
             height: height,
           }}
         />
@@ -267,7 +296,7 @@ const PostAlbumMedia = React.memo(({ media, post, progress }) => {
               This post contains sensitive or mature content
             </Text>
           </YStack>
-          <YStack w={SCREEN_WIDTH} flexShrink={1}>
+          <YStack w={width} flexShrink={1}>
             <Separator />
 
             <PressableOpacity onPress={() => setSensitive(true)}>
@@ -292,7 +321,7 @@ const PostAlbumMedia = React.memo(({ media, post, progress }) => {
     <YStack zIndex={1}>
       <Carousel
         onConfigurePanGesture={(gestureChain) => gestureChain.activeOffsetX([-10, 10])}
-        width={SCREEN_WIDTH}
+        width={width}
         height={height}
         vertical={false}
         onProgressChange={progress}
@@ -302,7 +331,7 @@ const PostAlbumMedia = React.memo(({ media, post, progress }) => {
           return (
             <FastImage
               style={{
-                width: SCREEN_WIDTH,
+                width: width,
                 height: height,
                 backgroundColor: '#000',
               }}
@@ -330,26 +359,43 @@ const PostAlbumMedia = React.memo(({ media, post, progress }) => {
   )
 })
 
+interface PostActionsProps {
+  hasLiked: boolean
+  hasShared: boolean
+  likesCount: number
+  likedBy: StatusLikedBy | null
+  sharesCount: number
+  onOpenComments: () => void
+  post: Status
+  progress: SharedValue<number>
+  handleLike: () => void
+  showAltText: boolean
+  commentsCount: number
+  onBookmark: () => void
+  hasBookmarked: boolean
+  onShare: () => void
+}
+
 const PostActions = React.memo(
   ({
+    post,
     hasLiked,
-    hasShared,
     likesCount,
     likedBy,
+    hasShared,
     sharesCount,
-    onOpenComments,
-    post,
-    progress,
-    handleLike,
-    showAltText,
     commentsCount,
-    onBookmark,
+    progress,
+    showAltText,
     hasBookmarked,
+    handleLike,
     onShare,
-  }) => {
+    onOpenComments,
+    onBookmark,
+  }: PostActionsProps) => {
     const hasAltText =
       post?.media_attachments?.length > 0 &&
-      post?.media_attachments[0]?.description?.trim().length > 0
+      (post?.media_attachments[0]?.description?.trim().length || 0) > 0
     const onShowAlt = () => {
       const idx = Math.floor(progress?.value ?? 0)
       Alert.alert(
@@ -357,24 +403,6 @@ const PostActions = React.memo(
         post?.media_attachments[idx].description ??
           'Media was not tagged with any alt text.'
       )
-    }
-
-    const [likeCountCache, setLikeCount] = useState(likesCount)
-    const [hasLikedCache, setLiked] = useState(hasLiked)
-
-    const handleLikeCached = () => {
-      if (hasLikedCache) {
-        if (likesCount) {
-          setLikeCount(likesCount - 1)
-        } else {
-          setLikeCount(0)
-        }
-        setLiked(false)
-      } else {
-        setLikeCount(likesCount + 1)
-        setLiked(true)
-      }
-      handleLike()
     }
 
     const [shareCountCache, setShareCount] = useState(sharesCount)
@@ -421,11 +449,11 @@ const PostActions = React.memo(
           <XStack gap="$4" justifyContent="space-between">
             <XStack gap="$5">
               <XStack justifyContent="center" alignItems="center" gap="$2">
-                <LikeButton hasLiked={hasLiked} handleLike={handleLikeCached} />
-                {likeCountCache ? (
+                <LikeButton hasLiked={hasLiked} handleLike={handleLike} />
+                {likesCount ? (
                   <Link href={`/post/likes/${post.id}`}>
                     <Text fontWeight={'bold'} allowFontScaling={false}>
-                      {prettyCount(likeCountCache)}
+                      {prettyCount(likesCount)}
                     </Text>
                   </Link>
                 ) : null}
@@ -488,6 +516,24 @@ const PostActions = React.memo(
   }
 )
 
+interface PostCaptionProps {
+  postId: string
+  username: string
+  caption: string
+  commentsCount: number
+  createdAt: Timestamp
+  tags: Array<Tag>
+  visibility: Visibility
+  onOpenComments: () => void
+  onHashtagPress: (tag: string) => void
+  onMentionPress: (tag: string) => void
+  onUsernamePress: () => void
+  disableReadMore: boolean
+  editedAt: Timestamp | null
+  isLikeFeed: boolean
+  likedAt: Timestamp | null
+}
+
 const PostCaption = React.memo(
   ({
     postId,
@@ -504,10 +550,11 @@ const PostCaption = React.memo(
     disableReadMore,
     editedAt,
     isLikeFeed,
-    likedAt,
-  }) => {
+    likedAt
+  }: PostCaptionProps) => {
     const timeAgo = formatTimestamp(createdAt)
     const captionText = htmlToTextWithLineBreaks(caption)
+
     return (
       <BorderlessSection>
         <YStack gap="$3" pt="$1" pb="$3" px="$2">
@@ -520,8 +567,8 @@ const PostCaption = React.memo(
                 onMentionPress={onMentionPress}
                 onUsernamePress={onUsernamePress}
               />
-            ) : Platform.OS === 'ios' ? (
-              <ReadMore numberOfLines={3} renderRevealedFooter={() => <></>}>
+            ) : (
+              <ReadMore numberOfLines={3}>
                 <AutolinkText
                   text={captionText}
                   username={username}
@@ -530,16 +577,6 @@ const PostCaption = React.memo(
                   onUsernamePress={onUsernamePress}
                 />
               </ReadMore>
-            ) : (
-              <ReadMoreAndroid numberOfLines={3} renderRevealedFooter={() => <></>}>
-                <AutolinkText
-                  text={captionText}
-                  username={username}
-                  onHashtagPress={onHashtagPress}
-                  onMentionPress={onMentionPress}
-                  onUsernamePress={onUsernamePress}
-                />
-              </ReadMoreAndroid>
             )}
           </XStack>
           {commentsCount ? (
@@ -606,22 +643,34 @@ const PostCaption = React.memo(
   }
 )
 
+interface FeedPostProps {
+  post: Status
+  user: LoginUserResponse
+  onOpenComments: (id: string) => void
+  onDeletePost: (id: string) => void
+  onBookmark: (id: string) => void
+  disableReadMore?: boolean
+  isPermalink?: boolean
+  isLikeFeed?: boolean
+  onShare: (id: string) => void
+}
+
 export default function FeedPost({
   post,
   user,
   onOpenComments,
-  onLike,
   onDeletePost,
   onBookmark,
   disableReadMore = false,
   isPermalink = false,
   isLikeFeed = false,
-  likedAt,
   onShare,
-}) {
+}: FeedPostProps) {
+  const { handleLike } = useLikeMutation()
   const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
   const progress = useSharedValue(0)
   const snapPoints = useMemo(() => ['45%', '65%'], [])
+  const { width } = useWindowDimensions()
   const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
   const showAltText = Storage.getBoolean('ui.showAltText') == true
 
@@ -630,11 +679,38 @@ export default function FeedPost({
   }, [])
   const handleSheetChanges = useCallback((index: number) => {}, [])
   const renderBackdrop = useCallback(
-    (props) => (
+    (props: BottomSheetBackdropProps) => (
       <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
     ),
     []
   )
+
+  const [likeCount, setLikeCount] = useState(post?.favourites_count ?? 0);
+  const [hasLiked, setLiked] = useState(post.favourited ?? false);
+
+  // toggles 'hasLiked' value, updates states and calls mutation
+  const handleLikeAction = () => {
+    let currentHasLiked = !hasLiked;
+
+    setLiked(currentHasLiked);
+    setLikeCount(currentHasLiked ? likeCount + 1 : likeCount - 1);
+
+    handleLike(post?.id, currentHasLiked);
+  }
+
+  const handleDoubleTap = () => {
+    // only allow liking with double tap, not unliking
+    if (!hasLiked) {
+      handleLikeAction();
+    }
+  }
+
+  const doubleTap = Gesture.Tap()
+  .maxDuration(250)
+  .numberOfTaps(2)
+  .onStart(() => {
+    runOnJS(handleDoubleTap)();
+  });
 
   const _onDeletePost = (id: string) => {
     bottomSheetModalRef.current?.close()
@@ -668,7 +744,7 @@ export default function FeedPost({
 
   const openInBrowser = async () => {
     bottomSheetModalRef.current?.close()
-    await openBrowserAsync(post.url)
+    await openBrowserAsync(post.url || post.uri)
   }
 
   const onGotoHashtag = (tag: string) => {
@@ -693,14 +769,14 @@ export default function FeedPost({
 
   const onGotoShare = async () => {
     try {
-      const result = await Share.share({
-        message: post.url,
+      await Share.share({
+        message: post.url || post.uri,
       })
     } catch (error) {}
   }
 
   return (
-    <View flex={1} style={{ width: SCREEN_WIDTH }}>
+    <View flex={1} style={{ width }}>
       <PostHeader
         avatar={post.account?.avatar}
         username={post.account?.acct}
@@ -708,25 +784,27 @@ export default function FeedPost({
         userId={post.account?.id}
         onOpenMenu={() => handlePresentModalPress()}
       />
-      {post.media_attachments?.length > 1 ? (
-        <PostAlbumMedia media={post.media_attachments} post={post} progress={progress} />
-      ) : post.media_attachments?.length === 1 ? (
-        <PostMedia media={post.media_attachments} post={post} />
-      ) : null}
+      <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
+        {post.media_attachments?.length > 1 ? (
+          <PostAlbumMedia media={post.media_attachments} post={post} progress={progress} />
+        ) : post.media_attachments?.length === 1 ? (
+          <PostMedia media={post.media_attachments} post={post} />
+        ) : null}
+      </GestureDetector>
       {!hideCaptions || isPermalink ? (
         <>
           <PostActions
-            hasLiked={post?.favourited}
-            hasShared={post?.reblogged}
+            hasLiked={hasLiked}
+            hasShared={post?.reblogged === true}
+            hasBookmarked={post?.bookmarked === true}
             post={post}
             progress={progress}
-            hasBookmarked={post?.bookmarked}
             likesCount={post?.favourites_count}
             likedBy={post?.liked_by}
             sharesCount={post?.reblogs_count}
             showAltText={showAltText}
-            commentsCount={post.reply_count}
-            handleLike={() => onLike(post?.id, post?.favourited)}
+            commentsCount={post.replies_count}
+            handleLike={handleLikeAction}
             onOpenComments={() => onOpenComments(post?.id)}
             onBookmark={() => onBookmark(post?.id)}
             onShare={() => onShare(post?.id)}
@@ -736,7 +814,7 @@ export default function FeedPost({
             postId={post.id}
             username={post.account?.username}
             caption={post.content}
-            commentsCount={post.reply_count}
+            commentsCount={post.replies_count}
             createdAt={post.created_at}
             tags={post.tags}
             visibility={post.visibility}
@@ -747,7 +825,7 @@ export default function FeedPost({
             onUsernamePress={() => goToProfile()}
             editedAt={post.edited_at}
             isLikeFeed={isLikeFeed}
-            likedAt={likedAt}
+            likedAt={post.liked_at}
           />
         </>
       ) : null}

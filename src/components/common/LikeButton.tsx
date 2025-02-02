@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Animated, {
   useSharedValue,
   withSpring,
@@ -16,13 +16,17 @@ type LikeButtonProps = {
 }
 
 export default function LikeButton(props: LikeButtonProps) {
-  const liked = useSharedValue(props.hasLiked ? 1 : 0)
+  const likeAnimation = useSharedValue(props.hasLiked ? 1 : 0)
+
+  useEffect(() => {
+    likeAnimation.value = withSpring<number>(props.hasLiked ? 1 : 0)
+  }, [props.hasLiked])
 
   const outlineStyle = useAnimatedStyle(() => {
     return {
       transform: [
         {
-          scale: interpolate(liked.value, [0, 1], [1, 0], Extrapolate.CLAMP),
+          scale: interpolate(likeAnimation.value, [0, 1], [1, 0], Extrapolate.CLAMP),
         },
       ],
     }
@@ -32,16 +36,15 @@ export default function LikeButton(props: LikeButtonProps) {
     return {
       transform: [
         {
-          scale: liked.value,
+          scale: likeAnimation.value,
         },
       ],
-      opacity: liked.value,
+      opacity: likeAnimation.value,
     }
   })
 
   const handleLike = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-    liked.value = withSpring(liked.value ? 0 : 1)
     props.handleLike()
   }
 

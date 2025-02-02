@@ -1,5 +1,11 @@
 import { useCallback, useState, useRef, useMemo } from 'react'
-import { FlatList, StyleSheet, ActivityIndicator, Platform } from 'react-native'
+import {
+  FlatList,
+  StyleSheet,
+  ActivityIndicator,
+  Platform,
+  type ListRenderItemInfo,
+} from 'react-native'
 import { Text, View } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
@@ -20,13 +26,13 @@ import {
   unreblogStatus,
 } from 'src/lib/api'
 import FeedHeader from 'src/components/common/FeedHeader'
-import EmptyFeed from 'src/components/common/EmptyFeed'
+import ErrorFeed from 'src/components/common/ErrorFeed'
 import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet'
 import CommentFeed from 'src/components/post/CommentFeed'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
-import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 import { useUserCache } from 'src/state/AuthProvider'
+import type { Status } from 'src/lib/api-types'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   return (
@@ -63,7 +69,7 @@ export default function HomeScreen() {
     }, [navigation])
   )
 
-  const [replyId, setReplyId] = useState(null)
+  const [replyId, setReplyId] = useState<string | null>(null)
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const snapPoints = useMemo(
     () => (Platform.OS === 'ios' ? ['50%', '70%', '90%'] : ['64%', '65%', '66%']),
@@ -82,7 +88,7 @@ export default function HomeScreen() {
   )
 
   const onOpenComments = useCallback(
-    (id) => {
+    (id: string) => {
       setReplyId(id)
       bottomSheetModalRef.current?.present()
     },
@@ -109,12 +115,11 @@ export default function HomeScreen() {
   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 })
 
   const renderItem = useCallback(
-    ({ item }) => (
+    ({ item }: ListRenderItemInfo<Status>) => (
       <FeedPost
         post={item}
         user={user}
         onOpenComments={() => onOpenComments(item.id)}
-        onLike={() => handleLike(item.id, item.favourited)}
         onDeletePost={() => onDeletePost(item.id)}
         onBookmark={() => onBookmark(item.id)}
         onShare={() => onShare(item.id, item.reblogged)}
@@ -123,14 +128,14 @@ export default function HomeScreen() {
     [user]
   )
 
-  const keyExtractor = useCallback((item) => item?.id, [])
+  const keyExtractor = useCallback((item: Status) => item.id, [])
 
-  const onDeletePost = (id) => {
+  const onDeletePost = (id: string) => {
     deletePostMutation.mutate(id)
   }
 
   const deletePostMutation = useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async (id: string) => {
       return await deleteStatusV1(id)
     },
     onSuccess: (data, variables) => {
@@ -148,16 +153,16 @@ export default function HomeScreen() {
   })
 
   const bookmarkMutation = useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async (id: string) => {
       return await postBookmark(id)
     },
   })
 
-  const onBookmark = (id) => {
+  const onBookmark = (id: string) => {
     bookmarkMutation.mutate(id)
   }
 
-  const onShare = (id, state) => {
+  const onShare = (id: string, state) => {
     try {
       shareMutation.mutate({ type: state == true ? 'unreblog' : 'reblog', id: id })
     } catch (error) {
@@ -181,29 +186,27 @@ export default function HomeScreen() {
     },
   })
 
-  const { handleLike } = useLikeMutation()
-
-  const handleShowLikes = (id) => {
+  const handleShowLikes = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/post/likes/${id}`)
   }
 
-  const handleGotoProfile = (id) => {
+  const handleGotoProfile = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/profile/${id}`)
   }
 
-  const handleGotoUsernameProfile = (id) => {
+  const handleGotoUsernameProfile = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/profile/0?byUsername=${id}`)
   }
 
-  const gotoHashtag = (id) => {
+  const gotoHashtag = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/hashtag/${id}`)
   }
 
-  const handleCommentReport = (id) => {
+  const handleCommentReport = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/post/report/${id}`)
   }
@@ -287,7 +290,7 @@ export default function HomeScreen() {
         refreshing={isRefetching}
         onRefresh={refetch}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<EmptyFeed />}
+        ListEmptyComponent={<ErrorFeed />}
         onViewableItemsChanged={onViewRef}
         viewabilityConfig={viewConfigRef.current}
         onEndReached={() => {

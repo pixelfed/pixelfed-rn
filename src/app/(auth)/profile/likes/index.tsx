@@ -6,15 +6,15 @@ import { ActivityIndicator, FlatList } from 'react-native'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import FeedPost from 'src/components/post/FeedPost'
 import { useCallback, useLayoutEffect } from 'react'
-import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 import { useUserCache } from 'src/state/AuthProvider'
 
 export default function LikesScreen() {
   const navigation = useNavigation()
+
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'My Likes', headerBackTitle: 'Back' })
   }, [navigation])
-  const { handleLike } = useLikeMutation()
+
   const user = useUserCache()
   const renderItem = useCallback(
     ({ item }) => (
@@ -22,7 +22,6 @@ export default function LikesScreen() {
         post={item}
         user={user}
         onOpenComments={() => onOpenComments(item.id)}
-        onLike={() => handleLike(item.id, item.favourited)}
         onDeletePost={() => onDeletePost(item.id)}
         onBookmark={() => onBookmark(item.id)}
         isLikeFeed={true}
