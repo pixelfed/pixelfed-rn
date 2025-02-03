@@ -1,23 +1,19 @@
-import { Link, router, Stack, useNavigation, useRouter } from 'expo-router'
+import { Stack, useRouter } from 'expo-router'
 import {
   Text,
-  View,
   Form,
   Button,
   YStack,
   Label,
-  Input,
-  Separator,
-  XStack,
+  Input
 } from 'tamagui'
 import { useAuth } from '@state/AuthProvider'
-import { ActivityIndicator, SafeAreaView } from 'react-native'
-import { useEffect, useState } from 'react'
+import { SafeAreaView, StyleSheet } from 'react-native'
+import { useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 
 export default function Login() {
   const [server, setServer] = useState('')
-  const [loading, setLoading] = useState(true)
   const router = useRouter()
 
   const { login, isLoading } = useAuth()
@@ -27,19 +23,8 @@ export default function Login() {
   }
 
   return (
-    <SafeAreaView
-      style={{
-        backgroundColor: 'black',
-        flex: 1,
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-      }}
-    >
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
+    <SafeAreaView style={styles.background} >
+      <Stack.Screen options={{ headerShown: false }} />
       <StatusBar style="light" />
 
       <YStack w="100%" px="$5">
@@ -83,3 +68,12 @@ export default function Login() {
     </SafeAreaView>
   )
 }
+
+const styles = StyleSheet.create({
+  background: {
+    backgroundColor: 'black',
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  }
+})

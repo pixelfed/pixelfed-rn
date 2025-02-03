@@ -1,7 +1,7 @@
 import { objectToForm } from 'src/requests'
 import { Storage } from 'src/state/cache'
 import { parseLinkHeader } from 'src/utils'
-import type { PaginatedStatus, Relationship } from './api-types'
+import type { PaginatedStatus, PixelfedServer, Relationship } from './api-types'
 
 export function randomKey(length: number) {
   let result = ''
@@ -393,7 +393,7 @@ export async function getStatusRepliesById(id: string, page) {
   return res
 }
 
-export async function getOpenServers() {
+export async function getOpenServers(): Promise<Array<PixelfedServer>> {
   const response = await fetch(
     'https://pixelfed.org/api/v1/mobile-app/servers/open.json',
     {

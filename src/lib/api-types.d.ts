@@ -215,6 +215,15 @@ export type StatusLikedBy = {
   username: string
 }
 
+export type PixelfedServer = {
+  domain: string
+  header_thumbnail: string
+  version: string
+  short_description: string
+  user_count: number
+  last_seen_at: Timestamp
+}
+
 /* ========================== Infinite query types ========================== */
 
 export type PaginatedStatus = {
