@@ -20,7 +20,7 @@ type User = {
 type AuthProvider = {
   isLoading: boolean
   user: User | null
-  login: (server: string) => Promise<boolean>
+  login: (server: string, enabledScopes: string) => Promise<boolean>
   logout: () => void
   setUser: (newValue: User | null) => void
   userCache: LoginUserResponse | null
@@ -120,7 +120,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     return true
   }
 
-  const login = async (server: string) => {
+  const login = async (server: string, enabledScopes: string) => {
     const precheck = await loginPreflightCheck(server)
     const url = 'https://' + server
     if (!precheck) {
@@ -132,7 +132,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     const formBody = {
       client_name: 'Pixelfed for ' + (Platform.OS == 'android' ? 'Android' : 'iOS'),
       redirect_uris: REDIRECT_URI,
-      scopes: 'read write follow push admin:read admin:write',
+      scopes: enabledScopes,
       website: 'https://github.com/pixelfed/pixelfed-rn',
     }
     app = await postForm(`${url}/api/v1/apps`, formBody)
@@ -151,7 +151,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     await WebBrowser.openAuthSessionAsync(
       `${url}/oauth/authorize` +
         `?client_id=${app.client_id}` +
-        `&scope=read+write+follow+push+admin:read+admin:write` +
+        `&scope=${enabledScopes.split(' ').join('+')}` +
         `&redirect_uri=${REDIRECT_URI}` +
         `&response_type=code`,
       REDIRECT_URI,

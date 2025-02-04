@@ -31,6 +31,18 @@ import { getOpenServers } from 'src/lib/api'
 import { useQuery } from '@tanstack/react-query'
 import * as WebBrowser from 'expo-web-browser'
 import { Storage } from 'src/state/cache'
+import { Switch } from 'src/components/form/Switch'
+
+const SCOPE_DESCRIPTIONS = {
+  read: 'Full read access to your account',
+  write: 'Full write access to your account',
+  follow: 'Ability to follow other profiles',
+  push: 'Receive your push notifications',
+  'admin:read': 'Read all data on the server',
+  'admin:read:domain_blocks': 'Read sensitive information of all domain blocks',
+  'admin:write': 'Modify all data on the server',
+  'admin:write:domain_blocks': 'Perform moderation actions on domain blocks',
+}
 
 const ServerItem = React.memo(
   ({ item, index, selectedServer }) => (
@@ -113,10 +125,74 @@ const SelectContent = React.memo(({ data, selectedServer }) => (
   </Select.Content>
 ))
 
+const ApiScopesSheet = ({ isOpen, onClose, scopes, onToggleScope }) => {
+  const renderScopeGroup = (title, scopeFilter) => (
+    <YStack space="$3">
+      <Text fontSize="$5" fontWeight="bold" color="$gray11">
+        {title}
+      </Text>
+      {Object.entries(scopes)
+        .filter(([scope]) => scopeFilter(scope))
+        .map(([scope, enabled]) => (
+          <XStack key={scope} justifyContent="space-between" alignItems="center" py="$2">
+            <YStack flex={1} pr="$4" gap="$2">
+              <Text fontSize="$5" color="$gray12" fontWeight={'bold'}>
+                {scope}
+              </Text>
+              <Text fontSize="$3" color="$gray11">
+                {SCOPE_DESCRIPTIONS[scope]}
+              </Text>
+            </YStack>
+            <Switch
+              checked={enabled}
+              onCheckedChange={(checked) => onToggleScope(scope, checked)}
+            >
+              <Switch.Thumb animation="quicker" />
+            </Switch>
+          </XStack>
+        ))}
+    </YStack>
+  )
+
+  return (
+    <Sheet open={isOpen} onOpenChange={onClose} snapPoints={[85]}>
+      <Sheet.Frame backgroundColor="$gray1">
+        <Sheet.Handle />
+        <Sheet.ScrollView>
+          <YStack px="$4" space="$6" mt="$4">
+            <Text fontSize="$6" fontWeight="bold" color="$gray12">
+              API Permissions
+            </Text>
+
+            {renderScopeGroup(
+              'Account Permissions',
+              (scope) => !scope.startsWith('admin:')
+            )}
+
+            {renderScopeGroup('Admin Permissions', (scope) => scope.startsWith('admin:'))}
+          </YStack>
+        </Sheet.ScrollView>
+      </Sheet.Frame>
+      <Sheet.Overlay />
+    </Sheet>
+  )
+}
+
 export default function Login() {
   const [server, setServer] = useState('pixelfed.social')
   const [customServer, setCustomServer] = useState('')
   const [openRegistrations, setOpenServers] = useState([])
+  const [showApiSettings, setShowApiSettings] = useState(false)
+  const [apiScopes, setApiScopes] = useState({
+    read: true,
+    write: true,
+    follow: true,
+    push: true,
+    'admin:read': false,
+    'admin:read:domain_blocks': false,
+    'admin:write': false,
+    'admin:write:domain_blocks': false,
+  })
   const { login, isLoading } = useAuth()
   const router = useRouter()
 
@@ -167,8 +243,20 @@ export default function Login() {
       router.push('/selectServer')
       return
     }
-    login(server)
-  }, [server, login])
+    // Include API scopes in login
+    const enabledScopes = Object.entries(apiScopes)
+      .filter(([_, enabled]) => enabled)
+      .map(([scope]) => scope)
+    if (!enabledScopes.includes('read')) {
+      Alert.alert('Error', 'You need read access to use this app.')
+      return
+    }
+    if (!enabledScopes.includes('write')) {
+      Alert.alert('Error', 'You need write access to use this app.')
+      return
+    }
+    login(server, enabledScopes.join(' '))
+  }, [server, apiScopes, login])
 
   const handleRegister = useCallback(async () => {
     try {
@@ -205,6 +293,13 @@ export default function Login() {
   const clearStorage = () => {
     Storage.clearAll()
   }
+
+  const toggleApiScope = useCallback((scope, enabled) => {
+    setApiScopes((prev) => ({
+      ...prev,
+      [scope]: enabled,
+    }))
+  }, [])
 
   const SheetComponent = useMemo(
     () => (
@@ -263,6 +358,19 @@ export default function Login() {
       edges={['top']}
     >
       <StatusBar style="light" />
+
+      <Pressable
+        onPress={() => setShowApiSettings(true)}
+        style={{
+          position: 'absolute',
+          top: 60,
+          right: 20,
+          zIndex: 100,
+        }}
+      >
+        <Feather name="settings" size={24} color="white" />
+      </Pressable>
+
       <YStack flexGrow={1} w="100%" px="$5">
         <View flexGrow={1} justifyContent="center" alignItems="center">
           <Pressable onPress={() => clearStorage()}>
@@ -356,6 +464,13 @@ export default function Login() {
           </XStack>
         </YStack>
       </YStack>
+
+      <ApiScopesSheet
+        isOpen={showApiSettings}
+        onClose={() => setShowApiSettings(false)}
+        scopes={apiScopes}
+        onToggleScope={toggleApiScope}
+      />
     </SafeAreaView>
   )
 }
