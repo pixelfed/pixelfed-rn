@@ -215,6 +215,22 @@ export type StatusLikedBy = {
   username: string
 }
 
+type UpdateCredentialsParams = {
+  bio: string
+  website: string
+  display_name: string
+  note: string
+  avatar
+  locked: boolean
+  show_profile_follower_count: boolean
+  show_profile_following_count: boolean
+  crawlable: boolean
+  public_dm: boolean
+  disable_embeds: boolean
+  show_atom: boolean
+  is_suggestable: boolean
+}
+
 /* ========================== Infinite query types ========================== */
 
 export type PaginatedStatus = {

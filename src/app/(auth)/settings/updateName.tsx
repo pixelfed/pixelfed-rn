@@ -3,31 +3,20 @@ import { ScrollView, Text, View, XStack, Button, Input } from 'tamagui'
 import { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack } from 'expo-router'
-import { useMutation } from '@tanstack/react-query'
-import { updateCredentials } from 'src/lib/api'
 import { router } from 'expo-router'
 import { useQuerySelfProfile } from 'src/state/AuthProvider'
+import { useProfileMutation } from 'src/hooks/mutations/useProfileMutation'
 
 export default function Page() {
   const { user } = useQuerySelfProfile()
-  const [name, setName] = useState(user?.display_name)
-  const [isSubmitting, setSubmitting] = useState(false)
+  const [name, setName] = useState(user?.display_name || '')
 
-  const mutation = useMutation({
-    mutationFn: async (data: { display_name: string }) => {
-      setSubmitting(true)
-      return await updateCredentials(data)
-    },
-    onSuccess: () => {
-      router.replace('/settings/profile')
-    },
+  const { profileMutation, isSubmitting } = useProfileMutation({
+    onSuccess: () => router.replace('/profile')
   })
 
   const onSubmit = () => {
-    if (typeof name === 'undefined') {
-      return
-    }
-    mutation.mutate({ display_name: name })
+    profileMutation.mutate({ display_name: name })
   }
 
   return (
