@@ -55,6 +55,7 @@ import type {
   Visibility,
 } from 'src/lib/api-types'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
+import { PixelfedBottomSheetModal } from '../BottomSheets'
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
 
@@ -850,7 +851,7 @@ export default function FeedPost({
           />
         </>
       ) : null}
-      <BottomSheetModal
+      <PixelfedBottomSheetModal
         ref={bottomSheetModalRef}
         index={1}
         snapPoints={snapPoints}
@@ -916,7 +917,7 @@ export default function FeedPost({
             Cancel
           </Button>
         </BottomSheetScrollView>
-      </BottomSheetModal>
+      </PixelfedBottomSheetModal>
     </View>
   )
 }
