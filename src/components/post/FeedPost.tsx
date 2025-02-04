@@ -720,7 +720,11 @@ export default function FeedPost({
     .maxDuration(250)
     .numberOfTaps(2)
     .onStart(() => {
-      runOnJS(handleDoubleTap)()
+      try {
+        runOnJS(handleDoubleTap)()
+      } catch (error) {
+        console.error('Double tap error:', error)
+      }
     })
 
   const _onDeletePost = (id: string) => {
@@ -795,17 +799,19 @@ export default function FeedPost({
         userId={post.account?.id}
         onOpenMenu={() => handlePresentModalPress()}
       />
-      <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
-        {post.media_attachments?.length > 1 ? (
-          <PostAlbumMedia
-            media={post.media_attachments}
-            post={post}
-            progress={progress}
-          />
-        ) : post.media_attachments?.length === 1 ? (
-          <PostMedia media={post.media_attachments} post={post} />
-        ) : null}
-      </GestureDetector>
+      {post.media_attachments?.length > 0 ? (
+        <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
+          {post.media_attachments.length > 1 ? (
+            <PostAlbumMedia
+              media={post.media_attachments}
+              post={post}
+              progress={progress}
+            />
+          ) : (
+            <PostMedia media={post.media_attachments} post={post} />
+          )}
+        </GestureDetector>
+      ) : null}
       {!hideCaptions || isPermalink ? (
         <>
           <PostActions
