@@ -22,7 +22,7 @@ import * as Notifications from 'expo-notifications'
 import Constants from 'expo-constants'
 
 export const unstable_settings = {
-  initialRouteName: '/login',
+  initialRouteName: '(public)/login',
   backBehavior: 'history',
 }
 
@@ -106,10 +106,14 @@ function RootLayoutNav() {
                     <Stack>
                       <Stack.Screen
                         name="(auth)/(tabs)"
-                        options={{ headerShown: false, backBehavior: 'order' }}
+                        options={{ headerShown: false }}
                       />
                       <Stack.Screen
                         name="(public)/login"
+                        options={{ headerShown: false }}
+                      />
+                      <Stack.Screen
+                        name="(public)/verifyEmail"
                         options={{ headerShown: false }}
                       />
                     </Stack>
