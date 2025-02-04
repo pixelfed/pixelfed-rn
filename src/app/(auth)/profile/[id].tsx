@@ -546,7 +546,7 @@ export default function ProfileScreen() {
 
   if (status !== 'success' || (isFetching && !isFetchingNextPage)) {
     return (
-      <SafeAreaView edges={['top']}>
+      <SafeAreaView edges={['top']} flex={1}>
         <Stack.Screen options={{ headerShown: false }} />
         <View style={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator color={'#000'} />
