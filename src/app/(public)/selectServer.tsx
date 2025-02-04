@@ -21,7 +21,7 @@ import { PressableOpacity } from 'react-native-pressable-opacity'
 
 export default function Register() {
   const { data } = useQuery({
-    queryKey: ['openServers'],
+    queryKey: ['openServersSelector'],
     queryFn: getOpenServers,
   })
 
@@ -63,7 +63,7 @@ export default function Register() {
         alignItems="center"
         overflow="hidden"
       >
-        {item.user_count > 1400 ? (
+        {item.user_count > 200 ? (
           <FastImage
             source={{ uri: item.header_thumbnail }}
             style={{ width: 100, height: 40, borderRadius: 20 }}
