@@ -16,10 +16,10 @@ type LikeButtonProps = {
 }
 
 export default function LikeButton(props: LikeButtonProps) {
-  const likeAnimation = useSharedValue(props.hasLiked ? 1 : 0);
+  const likeAnimation = useSharedValue(props.hasLiked ? 1 : 0)
 
   useEffect(() => {
-    likeAnimation.value = withSpring<number>(props.hasLiked ? 1 : 0);
+    likeAnimation.value = withSpring<number>(props.hasLiked ? 1 : 0)
   }, [props.hasLiked])
 
   const outlineStyle = useAnimatedStyle(() => {

@@ -700,7 +700,7 @@ export default function Camera() {
                 defaultValue={curAltText}
                 onChangeText={setCurAltText}
                 placeholder="Add optional alt text to describe the media for visually impaired"
-                autoCapitalize='sentences'
+                autoCapitalize="sentences"
                 numberOfLines={3}
               />
               <YStack mt="$1" mb="$3">

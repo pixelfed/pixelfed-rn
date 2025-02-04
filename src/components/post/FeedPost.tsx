@@ -16,6 +16,7 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
   BottomSheetBackdrop,
+  type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet'
 import Carousel, { Pagination } from 'react-native-reanimated-carousel'
 import ReadMore from '../common/ReadMore'
@@ -25,7 +26,12 @@ import { Blurhash } from 'react-native-blurhash'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import VideoPlayer from './VideoPlayer'
 import { Storage } from 'src/state/cache'
-import { State, PinchGestureHandler, GestureDetector, Gesture } from 'react-native-gesture-handler'
+import {
+  State,
+  PinchGestureHandler,
+  GestureDetector,
+  Gesture,
+} from 'react-native-gesture-handler'
 import Animated, {
   runOnJS,
   type SharedValue,
@@ -39,7 +45,15 @@ import type {
   HandlerStateChangeEvent,
   PinchGestureHandlerEventPayload,
 } from 'react-native-gesture-handler'
-import type { LoginUserResponse, MediaAttachment, Status, Tag, Timestamp, Visibility } from 'src/lib/api-types'
+import type {
+  LoginUserResponse,
+  MediaAttachment,
+  Status,
+  StatusLikedBy,
+  Tag,
+  Timestamp,
+  Visibility,
+} from 'src/lib/api-types'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
@@ -109,64 +123,76 @@ const ZoomableImage = ({ source, style }) => {
 
 const AVATAR_WIDTH = 45
 
-const Section = React.memo(({ children }) => (
+const Section = React.memo(({ children }: React.PropsWithChildren) => (
   <View px="$3" bg="white" borderTopWidth={1} borderBottomWidth={1} borderColor="$gray7">
     {children}
   </View>
 ))
 
-const BorderlessSection = React.memo(({ children }) => (
+const BorderlessSection = React.memo(({ children }: React.PropsWithChildren) => (
   <View px="$3" bg="white">
     {children}
   </View>
 ))
 
-const PostHeader = React.memo(({ avatar, username, displayName, userId, onOpenMenu }) => (
-  <Section>
-    <XStack
-      flexGrow={1}
-      justifyContent="space-between"
-      alignSelf="stretch"
-      alignItems="center"
-      py="$2"
-    >
-      <View flexGrow={1}>
-        <Link href={`/profile/${userId}`} asChild>
-          <Pressable>
-            <XStack gap="$3" alignItems="center" flexGrow={1}>
-              <FastImage
-                source={{ uri: avatar }}
-                style={{
-                  width: AVATAR_WIDTH,
-                  height: AVATAR_WIDTH,
-                  borderRadius: AVATAR_WIDTH,
-                  borderWidth: 1,
-                  borderColor: '#eee',
-                }}
-              />
-              <YStack gap={3}>
-                <Text fontWeight="bold" fontSize="$5">
-                  {enforceLen(username, 20, true)}
-                </Text>
-                <Text fontWeight="300" fontSize="$3" color="$gray9">
-                  {enforceLen(displayName, 25, true)}
-                </Text>
-              </YStack>
-            </XStack>
-          </Pressable>
-        </Link>
-      </View>
-      <Pressable onPress={() => onOpenMenu()}>
-        <View px="$3">
-          <Feather
-            name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
-            size={25}
-          />
+interface PostHeaderProps {
+  avatar: string
+  username: string
+  displayName: string
+  userId: string
+  onOpenMenu: () => void
+}
+
+const PostHeader = React.memo(
+  ({ avatar, username, displayName, userId, onOpenMenu }: PostHeaderProps) => (
+    <Section>
+      <XStack
+        flexGrow={1}
+        justifyContent="space-between"
+        alignSelf="stretch"
+        alignItems="center"
+        py="$2"
+      >
+        <View flexGrow={1}>
+          <Link href={`/profile/${userId}`} asChild>
+            <Pressable>
+              <XStack gap="$3" alignItems="center" flexGrow={1}>
+                <FastImage
+                  source={{ uri: avatar }}
+                  style={{
+                    width: AVATAR_WIDTH,
+                    height: AVATAR_WIDTH,
+                    borderRadius: AVATAR_WIDTH,
+                    borderWidth: 1,
+                    borderColor: '#eee',
+                  }}
+                />
+                <YStack gap={3}>
+                  <XStack gap="$2" alignItems="center">
+                    <Text fontWeight="bold" fontSize="$5">
+                      {enforceLen(username, 20, true)}
+                    </Text>
+                  </XStack>
+                  <Text fontWeight="300" fontSize="$3" color="$gray9">
+                    {enforceLen(displayName, 25, true)}
+                  </Text>
+                </YStack>
+              </XStack>
+            </Pressable>
+          </Link>
         </View>
-      </Pressable>
-    </XStack>
-  </Section>
-))
+        <Pressable onPress={() => onOpenMenu()}>
+          <View px="$3">
+            <Feather
+              name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
+              size={25}
+            />
+          </View>
+        </Pressable>
+      </XStack>
+    </Section>
+  )
+)
 
 interface PostMediaProps {
   media: Array<MediaAttachment>
@@ -348,7 +374,7 @@ interface PostActionsProps {
   hasLiked: boolean
   hasShared: boolean
   likesCount: number
-  likedBy
+  likedBy: StatusLikedBy | null
   sharesCount: number
   onOpenComments: () => void
   post: Status
@@ -664,38 +690,42 @@ export default function FeedPost({
   }, [])
   const handleSheetChanges = useCallback((index: number) => {}, [])
   const renderBackdrop = useCallback(
-    (props) => (
+    (props: BottomSheetBackdropProps) => (
       <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
     ),
     []
   )
 
-  const [likeCount, setLikeCount] = useState(post?.favourites_count ?? 0);
-  const [hasLiked, setLiked] = useState(post.favourited ?? false);
+  const [likeCount, setLikeCount] = useState(post?.favourites_count ?? 0)
+  const [hasLiked, setLiked] = useState(post.favourited ?? false)
 
   // toggles 'hasLiked' value, updates states and calls mutation
   const handleLikeAction = () => {
-    let currentHasLiked = !hasLiked;
+    let currentHasLiked = !hasLiked
 
-    setLiked(currentHasLiked);
-    setLikeCount(currentHasLiked ? likeCount + 1 : likeCount - 1);
+    setLiked(currentHasLiked)
+    setLikeCount(currentHasLiked ? likeCount + 1 : likeCount - 1)
 
-    handleLike(post?.id, currentHasLiked);
+    handleLike(post?.id, currentHasLiked)
   }
 
   const handleDoubleTap = () => {
     // only allow liking with double tap, not unliking
     if (!hasLiked) {
-      handleLikeAction();
+      handleLikeAction()
     }
   }
 
   const doubleTap = Gesture.Tap()
-  .maxDuration(250)
-  .numberOfTaps(2)
-  .onStart(() => {
-    runOnJS(handleDoubleTap)();
-  });
+    .maxDuration(250)
+    .numberOfTaps(2)
+    .onStart(() => {
+      try {
+        runOnJS(handleDoubleTap)()
+      } catch (error) {
+        console.error('Double tap error:', error)
+      }
+    })
 
   const _onDeletePost = (id: string) => {
     bottomSheetModalRef.current?.close()
@@ -729,7 +759,7 @@ export default function FeedPost({
 
   const openInBrowser = async () => {
     bottomSheetModalRef.current?.close()
-    await openBrowserAsync(post.url)
+    await openBrowserAsync(post.url || post.uri)
   }
 
   const onGotoHashtag = (tag: string) => {
@@ -754,8 +784,8 @@ export default function FeedPost({
 
   const onGotoShare = async () => {
     try {
-      const result = await Share.share({
-        message: post.url,
+      await Share.share({
+        message: post.url || post.uri,
       })
     } catch (error) {}
   }
@@ -769,27 +799,30 @@ export default function FeedPost({
         userId={post.account?.id}
         onOpenMenu={() => handlePresentModalPress()}
       />
-      <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
-        {post.media_attachments?.length > 1 ? (
-          <PostAlbumMedia media={post.media_attachments} post={post} progress={progress} />
-        ) : post.media_attachments?.length === 1 ? (
-          <PostMedia media={post.media_attachments} post={post} />
-        ) : null}
-      </GestureDetector>
+      {post.media_attachments?.length > 0 ? (
+        <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
+          {post.media_attachments.length > 1 ? (
+            <PostAlbumMedia
+              media={post.media_attachments}
+              post={post}
+              progress={progress}
+            />
+          ) : (
+            <PostMedia media={post.media_attachments} post={post} />
+          )}
+        </GestureDetector>
+      ) : null}
       {!hideCaptions || isPermalink ? (
         <>
           <PostActions
-            hasLiked={post?.favourited === true}
+            hasLiked={hasLiked}
             hasShared={post?.reblogged === true}
+            hasBookmarked={post?.bookmarked === true}
             post={post}
             progress={progress}
-            hasBookmarked={post?.bookmarked === true}
             likesCount={post?.favourites_count}
             likedBy={post?.liked_by}
-            hasShared={post?.reblogged}
             sharesCount={post?.reblogs_count}
-            progress={progress}
-            hasBookmarked={post?.bookmarked}
             showAltText={showAltText}
             commentsCount={post.replies_count}
             handleLike={handleLikeAction}
@@ -813,6 +846,7 @@ export default function FeedPost({
             onUsernamePress={() => goToProfile()}
             editedAt={post.edited_at}
             isLikeFeed={isLikeFeed}
+            likedAt={post.liked_at}
           />
         </>
       ) : null}

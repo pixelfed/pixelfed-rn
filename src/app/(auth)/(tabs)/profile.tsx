@@ -96,9 +96,21 @@ export default function ProfileScreen() {
       </Link>
     ) : null
 
+  if (isFetching) {
+    return (
+      <View flexGrow={1} justifyContent="center" alignItems="center">
+        <ActivityIndicator color={'#000'} />
+      </View>
+    )
+  }
+
   return (
-    <SafeAreaView edges={['top']}>
-      {isFetching && <ActivityIndicator color={'#000'} />}
+    <SafeAreaView edges={['top']} flex={1}>
+      {isFetching && (
+        <View flexGrow={1}>
+          <ActivityIndicator color={'#000'} />
+        </View>
+      )}
       <FlatList
         data={feed?.pages.flat()}
         keyExtractor={(item, index) => item?.id.toString()}

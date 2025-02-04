@@ -5,7 +5,6 @@ The pixelfed mobile app is written in [react native](https://reactnative.dev) an
 ## Requirements
 
 - [`git-lfs`](https://git-lfs.com)
-- [`yarn` package manager](https://yarnpkg.com)
 - [watchman](https://facebook.github.io/watchman/docs/install)
 - Building for android:
     - [android studio](https://developer.android.com/studio) and java
@@ -17,8 +16,7 @@ https://docs.expo.dev/get-started/set-up-your-environment/ helps you to install 
 ## First time setup
 
 ```sh
-corepack enable   # prerequisite to install yarn automatically on next step
-yarn              # install dependencies
+npm i              # install dependencies
 ```
 
 Also follow steps in https://docs.expo.dev/get-started/set-up-your-environment/
@@ -26,35 +24,40 @@ Also follow steps in https://docs.expo.dev/get-started/set-up-your-environment/
 ## Build the project
 
 ```sh
-yarn start
+npm run start
 ```
 
 ### Web
 
 ```sh
-yarn web
+npm run web
 ```
 
 ### Android
 
 ```sh
-yarn android
+npm run android
 ```
 
 ### iOS
 
 ```sh
-yarn ios
+npm run ios
+```
+
+#### Select your real device to test on
+```sh
+npm run ios -- --device
 ```
 
 ### check for ts errors and lint problems
 ```sh
-yarn check
+npm run check
 ```
 
 ### fix formatting & linting
 ```sh
-yarn lint
+npm run lint
 ```
 
 ## Troubleshooting
@@ -76,3 +79,20 @@ cd ios
 pod install
 ```
 
+
+### IOS: "Building workspace pixelfed with scheme pixelfed and configuration Debug"
+
+When you are not part of the pixelfed apple developer team, then you need to make the following changes to get it to build:
+
+- open `ios/pixelfed.xcworkspace` in xcode
+- then in file explorer open "Pixelfed"
+- go to target pixelfed
+- go to Signing & capabilities
+   - Change the team to your own
+   - change bundle identifier by preprending your own domain in reverse notation
+   - disable/remove app group
+   - delete push notification capability
+
+### IOS: "CommandError: ApplicationVerificationFailed"
+
+Build it with xcode. It shows the full error.

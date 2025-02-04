@@ -61,12 +61,12 @@ export default function Page() {
             </Text>
           </View>
         </XStack>
-        
+
         <TextArea
           value={bio}
           bg="white"
           placeholder="Add an optional bio"
-          p='0'
+          p="0"
           mx="$3"
           numberOfLines={8}
           maxLength={maxLen}

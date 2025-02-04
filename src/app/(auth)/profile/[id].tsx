@@ -211,21 +211,34 @@ export default function ProfileScreen() {
     ) : null
   }, [])
 
-  const EmptyFeed = () => (
-    <View flexGrow={1}>
-      {!isFetching && !user?.id ? (
+  const EmptyFeed = () => {
+    if (!isFetched || isFetching) {
+      return (
+        <YStack flex={1} justifyContent="center" alignItems="center" gap="$5">
+          <ActivityIndicator />
+        </YStack>
+      )
+    }
+
+    if (!isFetching && !user?.id) {
+      return (
         <YStack flexGrow={1} justifyContent="center" alignItems="center" gap="$5">
           <View p="$6" borderWidth={2} borderColor="$gray5" borderRadius={100}>
             <Feather name="alert-triangle" size={40} color="#aaa" />
           </View>
           <Text fontSize="$8">Account not found</Text>
         </YStack>
-      ) : !isFetched || isFetching ? (
-        <YStack flex={1} justifyContent="center" alignItems="center" gap="$5">
-          <ActivityIndicator />
-        </YStack>
-      ) : (
-        <YStack flexGrow={1} justifyContent="center" alignItems="center" gap="$5">
+      )
+    }
+    return (
+      <View flex={1} alignItems="center" justifyContent="center">
+        <YStack
+          h="100%"
+          flexGrow={1}
+          justifyContent="center"
+          alignItems="center"
+          gap="$5"
+        >
           {user?.locked && !relationship?.following ? (
             <>
               <View p="$6" borderWidth={2} borderColor="black" borderRadius={100}>
@@ -234,17 +247,17 @@ export default function ProfileScreen() {
               <Text fontSize="$8">This account is private</Text>
             </>
           ) : (
-            <>
+            <View flexGrow={1} alignItems="center" justifyContent="center" gap="$4">
               <View p="$6" borderWidth={2} borderColor="black" borderRadius={100}>
-                <Feather name="camera" size={40} />
+                <Feather name="camera" size={50} />
               </View>
-              <Text fontSize="$8">No Posts Yet</Text>
-            </>
+              <Text fontSize="$9">No Posts Yet</Text>
+            </View>
           )}
         </YStack>
-      )}
-    </View>
-  )
+      </View>
+    )
+  }
 
   const blockMutation = useMutation({
     mutationFn: () => {
@@ -546,7 +559,7 @@ export default function ProfileScreen() {
 
   if (status !== 'success' || (isFetching && !isFetchingNextPage)) {
     return (
-      <SafeAreaView edges={['top']}>
+      <SafeAreaView edges={['top']} flex={1}>
         <Stack.Screen options={{ headerShown: false }} />
         <View style={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator color={'#000'} />
@@ -556,7 +569,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView edges={['top']} style={{ backgroundColor: 'white' }}>
+    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: 'white' }}>
       <Stack.Screen
         options={{
           headerShown: Platform.OS === 'android',

@@ -20,7 +20,7 @@ import * as Notifications from 'expo-notifications'
 import GlobalToast from 'src/components/notifications/GlobalToast'
 
 export const unstable_settings = {
-  initialRouteName: '/login',
+  initialRouteName: '(public)/login',
   backBehavior: 'history',
 }
 
@@ -110,6 +110,10 @@ function RootLayoutNav() {
                       />
                       <Stack.Screen
                         name="(public)/login"
+                        options={{ headerShown: false }}
+                      />
+                      <Stack.Screen
+                        name="(public)/verifyEmail"
                         options={{ headerShown: false }}
                       />
                     </Stack>
