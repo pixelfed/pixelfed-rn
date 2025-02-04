@@ -22,9 +22,10 @@ type AuthProvider = {
   user: User | null
   login: (server: string) => Promise<boolean>
   logout: () => void
-  // setUser: (newValue: User | null) => void,
+  setUser: (newValue: User | null) => void
   userCache: LoginUserResponse | null
   loadUserCacheFromStorage: () => void
+  handleRegistration: (server: string, token: string) => void
 }
 
 function useProtectedRoute(user: User | null, setUser: any, setIsLoading: any) {
@@ -71,9 +72,10 @@ export const AuthContext = createContext<AuthProvider>({
   user: null,
   login: () => Promise.resolve(false),
   logout: () => {},
-  // setUser: (newValue: User|null) => {},
+  setUser: (newValue: User | null) => {},
   userCache: null,
   loadUserCacheFromStorage: () => {},
+  handleRegistration: () => {},
 })
 
 export function useAuth() {
@@ -101,6 +103,22 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     },
     [loadUserCacheFromStorage] /** only run when component is constructed */
   )
+
+  const handleRegistration = async (server: string, token: string) => {
+    const url = `https://${server}/api/v1/accounts/verify_credentials`
+    const profile = await verifyCredentials(server, token)
+
+    setUserCache(profile)
+
+    Storage.set('user.profile', JSON.stringify(profile))
+
+    setUser({
+      server,
+      token,
+    })
+
+    return true
+  }
 
   const login = async (server: string) => {
     const precheck = await loginPreflightCheck(server)
@@ -211,7 +229,15 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ isLoading, user, login, logout, userCache, loadUserCacheFromStorage }}
+      value={{
+        isLoading,
+        user,
+        login,
+        logout,
+        userCache,
+        loadUserCacheFromStorage,
+        handleRegistration,
+      }}
     >
       {children}
     </AuthContext.Provider>
