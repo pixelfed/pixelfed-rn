@@ -16,7 +16,7 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
   BottomSheetBackdrop,
-  BottomSheetBackdropProps,
+  type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet'
 import Carousel, { Pagination } from 'react-native-reanimated-carousel'
 import ReadMore from '../common/ReadMore'
@@ -26,7 +26,12 @@ import { Blurhash } from 'react-native-blurhash'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import VideoPlayer from './VideoPlayer'
 import { Storage } from 'src/state/cache'
-import { State, PinchGestureHandler, GestureDetector, Gesture } from 'react-native-gesture-handler'
+import {
+  State,
+  PinchGestureHandler,
+  GestureDetector,
+  Gesture,
+} from 'react-native-gesture-handler'
 import Animated, {
   runOnJS,
   type SharedValue,
@@ -40,7 +45,15 @@ import type {
   HandlerStateChangeEvent,
   PinchGestureHandlerEventPayload,
 } from 'react-native-gesture-handler'
-import type { LoginUserResponse, MediaAttachment, Status, StatusLikedBy, Tag, Timestamp, Visibility } from 'src/lib/api-types'
+import type {
+  LoginUserResponse,
+  MediaAttachment,
+  Status,
+  StatusLikedBy,
+  Tag,
+  Timestamp,
+  Visibility,
+} from 'src/lib/api-types'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
@@ -123,65 +136,63 @@ const BorderlessSection = React.memo(({ children }: React.PropsWithChildren) => 
 ))
 
 interface PostHeaderProps {
-  avatar: string,
-  username: string,
-  displayName: string,
-  userId: string,
+  avatar: string
+  username: string
+  displayName: string
+  userId: string
   onOpenMenu: () => void
 }
 
-const PostHeader = React.memo(({
-  avatar,
-  username,
-  displayName,
-  userId,
-  onOpenMenu
-}: PostHeaderProps) => (
-  <Section>
-    <XStack
-      flexGrow={1}
-      justifyContent="space-between"
-      alignSelf="stretch"
-      alignItems="center"
-      py="$2"
-    >
-      <View flexGrow={1}>
-        <Link href={`/profile/${userId}`} asChild>
-          <Pressable>
-            <XStack gap="$3" alignItems="center" flexGrow={1}>
-              <FastImage
-                source={{ uri: avatar }}
-                style={{
-                  width: AVATAR_WIDTH,
-                  height: AVATAR_WIDTH,
-                  borderRadius: AVATAR_WIDTH,
-                  borderWidth: 1,
-                  borderColor: '#eee',
-                }}
-              />
-              <YStack gap={3}>
-                <Text fontWeight="bold" fontSize="$5">
-                  {enforceLen(username, 20, true)}
-                </Text>
-                <Text fontWeight="300" fontSize="$3" color="$gray9">
-                  {enforceLen(displayName, 25, true)}
-                </Text>
-              </YStack>
-            </XStack>
-          </Pressable>
-        </Link>
-      </View>
-      <Pressable onPress={() => onOpenMenu()}>
-        <View px="$3">
-          <Feather
-            name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
-            size={25}
-          />
+const PostHeader = React.memo(
+  ({ avatar, username, displayName, userId, onOpenMenu }: PostHeaderProps) => (
+    <Section>
+      <XStack
+        flexGrow={1}
+        justifyContent="space-between"
+        alignSelf="stretch"
+        alignItems="center"
+        py="$2"
+      >
+        <View flexGrow={1}>
+          <Link href={`/profile/${userId}`} asChild>
+            <Pressable>
+              <XStack gap="$3" alignItems="center" flexGrow={1}>
+                <FastImage
+                  source={{ uri: avatar }}
+                  style={{
+                    width: AVATAR_WIDTH,
+                    height: AVATAR_WIDTH,
+                    borderRadius: AVATAR_WIDTH,
+                    borderWidth: 1,
+                    borderColor: '#eee',
+                  }}
+                />
+                <YStack gap={3}>
+                  <XStack gap="$2" alignItems="center">
+                    <Text fontWeight="bold" fontSize="$5">
+                      {enforceLen(username, 20, true)}
+                    </Text>
+                  </XStack>
+                  <Text fontWeight="300" fontSize="$3" color="$gray9">
+                    {enforceLen(displayName, 25, true)}
+                  </Text>
+                </YStack>
+              </XStack>
+            </Pressable>
+          </Link>
         </View>
-      </Pressable>
-    </XStack>
-  </Section>
-))
+        <Pressable onPress={() => onOpenMenu()}>
+          <View px="$3">
+            <Feather
+              name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
+              size={25}
+            />
+          </View>
+        </Pressable>
+      </XStack>
+    </Section>
+  )
+)
 
 interface PostMediaProps {
   media: Array<MediaAttachment>
@@ -550,7 +561,7 @@ const PostCaption = React.memo(
     disableReadMore,
     editedAt,
     isLikeFeed,
-    likedAt
+    likedAt,
   }: PostCaptionProps) => {
     const timeAgo = formatTimestamp(createdAt)
     const captionText = htmlToTextWithLineBreaks(caption)
@@ -685,32 +696,32 @@ export default function FeedPost({
     []
   )
 
-  const [likeCount, setLikeCount] = useState(post?.favourites_count ?? 0);
-  const [hasLiked, setLiked] = useState(post.favourited ?? false);
+  const [likeCount, setLikeCount] = useState(post?.favourites_count ?? 0)
+  const [hasLiked, setLiked] = useState(post.favourited ?? false)
 
   // toggles 'hasLiked' value, updates states and calls mutation
   const handleLikeAction = () => {
-    let currentHasLiked = !hasLiked;
+    let currentHasLiked = !hasLiked
 
-    setLiked(currentHasLiked);
-    setLikeCount(currentHasLiked ? likeCount + 1 : likeCount - 1);
+    setLiked(currentHasLiked)
+    setLikeCount(currentHasLiked ? likeCount + 1 : likeCount - 1)
 
-    handleLike(post?.id, currentHasLiked);
+    handleLike(post?.id, currentHasLiked)
   }
 
   const handleDoubleTap = () => {
     // only allow liking with double tap, not unliking
     if (!hasLiked) {
-      handleLikeAction();
+      handleLikeAction()
     }
   }
 
   const doubleTap = Gesture.Tap()
-  .maxDuration(250)
-  .numberOfTaps(2)
-  .onStart(() => {
-    runOnJS(handleDoubleTap)();
-  });
+    .maxDuration(250)
+    .numberOfTaps(2)
+    .onStart(() => {
+      runOnJS(handleDoubleTap)()
+    })
 
   const _onDeletePost = (id: string) => {
     bottomSheetModalRef.current?.close()
@@ -786,7 +797,11 @@ export default function FeedPost({
       />
       <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
         {post.media_attachments?.length > 1 ? (
-          <PostAlbumMedia media={post.media_attachments} post={post} progress={progress} />
+          <PostAlbumMedia
+            media={post.media_attachments}
+            post={post}
+            progress={progress}
+          />
         ) : post.media_attachments?.length === 1 ? (
           <PostMedia media={post.media_attachments} post={post} />
         ) : null}
