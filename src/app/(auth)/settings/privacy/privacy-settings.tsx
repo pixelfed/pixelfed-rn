@@ -1,47 +1,53 @@
-import { router, Stack } from 'expo-router'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { ScrollView, Text, View, XStack, YStack, Separator } from 'tamagui'
-
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getSelfAccount, updateCredentials } from 'src/lib/api'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { Stack, router } from 'expo-router'
+import React from 'react'
 import { ActivityIndicator, Alert } from 'react-native'
-import { Storage } from 'src/state/cache'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { Switch } from 'src/components/form/Switch'
+import { getSelfAccount } from 'src/lib/api'
+import { Storage } from 'src/state/cache'
+import { ScrollView, Separator, Text, View, XStack, YStack } from 'tamagui'
 
-import type { PropsWithChildren } from 'hoist-non-react-statics/node_modules/@types/react'
+import { useProfileMutation } from 'src/hooks/mutations/useProfileMutation'
+
+interface RenderSwitchProps {
+  title: string
+  description: string
+  initialValue: boolean
+  onCheckedChange: (checked: boolean) => void
+}
+
+const RenderSwitch = (props: RenderSwitchProps) => {
+  return (
+    <YStack>
+      <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
+        <YStack maxWidth="75%" gap="$2">
+          <Text fontSize="$5" fontWeight={'bold'}>
+            {props.title}
+          </Text>
+          <Text fontSize="$3" color="$gray9">
+            {props.description}
+          </Text>
+        </YStack>
+        <Switch
+          size="$3"
+          defaultChecked={props.initialValue}
+          onCheckedChange={props.onCheckedChange}
+        >
+          <Switch.Thumb animation="quicker" />
+        </Switch>
+      </XStack>
+      <Separator />
+    </YStack>
+  )
+}
 
 export default function Page() {
-  const instance = Storage.getString('app.instance').toLowerCase()
+  const instance = Storage.getString('app.instance')!.toLowerCase()
   const queryClient = useQueryClient()
 
-  type RenderSwitchProps = PropsWithChildren<{ title: string; description: string }>
-
-  const RenderSwitch = ({ title, description, children }: RenderSwitchProps) => {
-    return (
-      <>
-        <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
-          <YStack maxWidth="75%" gap="$2">
-            <Text fontSize="$5" fontWeight={'bold'}>
-              {title}
-            </Text>
-            <Text fontSize="$3" color="$gray9">
-              {description}
-            </Text>
-          </YStack>
-          {children}
-        </XStack>
-        <Separator />
-      </>
-    )
-  }
-
-  const mutation = useMutation({
-    mutationFn: async (data) => {
-      return await updateCredentials(data)
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['getSelfAccount'] })
-    },
+  const { profileMutation } = useProfileMutation({
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['getSelfAccount'] }),
   })
 
   const privateAccountSwitch = (checked: boolean) => {
@@ -59,7 +65,7 @@ export default function Page() {
       {
         text: 'Confirm',
         onPress: () => {
-          mutation.mutate({ locked: checked })
+          profileMutation.mutate({ locked: checked })
         },
         style: 'destructive',
       },
@@ -103,191 +109,74 @@ export default function Page() {
       />
       <ScrollView flexGrow={1}>
         <YStack gap="$1">
-          <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
-            <YStack maxWidth="75%" gap="$2">
-              <Text fontSize="$5" fontWeight={'bold'}>
-                Private Account
-              </Text>
-              <Text fontSize="$3" color="$gray9">
-                Limit your posts and account visibility to your followers, and curate new
-                follow requests
-              </Text>
-            </YStack>
-            <Switch
-              size="$3"
-              defaultChecked={profile.locked}
-              onCheckedChange={(checked) => privateAccountSwitch(checked)}
-            >
-              <Switch.Thumb animation="quicker" />
-            </Switch>
-          </XStack>
-          <Separator />
-          <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
-            <YStack maxWidth="75%" gap="$2">
-              <Text fontSize="$5" fontWeight={'bold'}>
-                Hide Followers
-              </Text>
-              <Text fontSize="$3" color="$gray9">
-                Hide your followers collection, only you will be able to see who follows
-                you
-              </Text>
-            </YStack>
-            <Switch
-              size="$3"
-              defaultChecked={!profile.settings.show_profile_follower_count}
-              onCheckedChange={(checked) =>
-                mutation.mutate({ show_profile_follower_count: !checked })
-              }
-            >
-              <Switch.Thumb animation="quicker" />
-            </Switch>
-          </XStack>
-          <Separator />
-          <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
-            <YStack maxWidth="75%" gap="$2">
-              <Text fontSize="$5" fontWeight={'bold'}>
-                Hide Following
-              </Text>
-              <Text fontSize="$3" color="$gray9">
-                Hide your following collection, only you will be able to see who you are
-                following
-              </Text>
-            </YStack>
-            <Switch
-              size="$3"
-              defaultChecked={!profile.settings.show_profile_following_count}
-              onCheckedChange={(checked) =>
-                mutation.mutate({ show_profile_following_count: !checked })
-              }
-            >
-              <Switch.Thumb animation="quicker" />
-            </Switch>
-          </XStack>
-          <Separator />
-          <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
-            <YStack maxWidth="75%" gap="$2">
-              <Text fontSize="$5" fontWeight={'bold'}>
-                Allow Discovery
-              </Text>
-              <Text fontSize="$3" color="$gray9">
-                Allow your account and posts to be recommended to other accounts
-              </Text>
-            </YStack>
-            <Switch
-              size="$3"
-              defaultChecked={profile.settings.crawlable}
-              onCheckedChange={(checked) => mutation.mutate({ crawlable: checked })}
-            >
-              <Switch.Thumb animation="quicker" />
-            </Switch>
-          </XStack>
-          <Separator />
-          <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
-            <YStack maxWidth="75%" gap="$2">
-              <Text fontSize="$5" fontWeight={'bold'}>
-                Filter DMs
-              </Text>
-              <Text fontSize="$3" color="$gray9">
-                Filter Direct Messages from accounts you don't follow
-              </Text>
-            </YStack>
-            <Switch
-              size="$3"
-              defaultChecked={!profile.settings.public_dm}
-              onCheckedChange={(checked) => mutation.mutate({ public_dm: !checked })}
-            >
-              <Switch.Thumb animation="quicker" />
-            </Switch>
-          </XStack>
-          <Separator />
-          {/* 
-          // Temp unavailable, needs backend support (webUI uses internal api for this)
-          <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
-            <YStack maxWidth="75%" gap="$2">
-              <Text fontSize="$5" fontWeight={'bold'}>
-                Include public posts in search results
-              </Text>
-              <Text fontSize="$3" color="$gray9">
-                Your public posts may appear in search results on Pixelfed and Mastodon.
-                People who have interacted with your posts may be able to search them
-                regardless. Not available when your account is private
-              </Text>
-            </YStack>
-            <Switch
-              size="$3"
-              defaultChecked={!profile.settings.indexable}
-              onCheckedChange={(checked) => mutation.mutate({ indexable: !checked })}
-            >
-              <Switch.Thumb animation="quicker" />
-            </Switch>
-          </XStack>
-          <Separator /> */}
-          <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
-            <YStack maxWidth="75%" gap="$2">
-              <Text fontSize="$5" fontWeight={'bold'}>
-                Disable Search Engine indexing
-              </Text>
-              <Text fontSize="$3" color="$gray9">
-                When your account is visible to search engines, your information can be
-                crawled and stored by search engines
-              </Text>
-            </YStack>
-            <Switch
-              size="$3"
-              defaultChecked={!profile.settings.crawlable}
-              onCheckedChange={(checked) => mutation.mutate({ crawlable: !checked })}
-            >
-              <Switch.Thumb animation="quicker" />
-            </Switch>
-          </XStack>
-          <Separator />
-          <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
-            <YStack maxWidth="75%" gap="$2">
-              <Text fontSize="$5" fontWeight={'bold'}>
-                Disable embeds
-              </Text>
-              <Text fontSize="$3" color="$gray9">
-                Disable profile and post embeds to prevent you or others from embedding on
-                other websites
-              </Text>
-            </YStack>
-            <Switch
-              size="$3"
-              defaultChecked={profile.settings.disable_embeds}
-              onCheckedChange={(checked) => mutation.mutate({ disable_embeds: checked })}
-            >
-              <Switch.Thumb animation="quicker" />
-            </Switch>
-          </XStack>
-          <Separator />
-          {/* <XStack py="$3" px="$4" bg='white' justifyContent="space-between">
-                        <YStack maxWidth='75%' gap="$2">
-                            <Text fontSize="$5" fontWeight={'bold'}>Block AI Crawlers</Text>
-                            <Text fontSize="$3" color="$gray9">Block known AI crawlers from your profile and posts</Text>
-                        </YStack>
-                        <Switch 
-                            size="$3" 
-                            defaultChecked={true}
-                            onCheckedChange={(checked) => mutation.mutate({disable_embeds: checked})}
-                        >
-                            <Switch.Thumb animation="quicker" />
-                        </Switch>
-                    </XStack>
-                    <Separator /> */}
-          <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
-            <YStack maxWidth="75%" gap="$2">
-              <Text fontSize="$5" fontWeight={'bold'}>
-                Atom Feed
-              </Text>
-              <Text fontSize="$3" color="$gray9">
-                Enable your public Atom feed, available at {instance}/users/
-                {profile?.username}.atom
-              </Text>
-            </YStack>
-            <Switch size="$3" defaultChecked={true}>
-              <Switch.Thumb />
-            </Switch>
-          </XStack>
+          <RenderSwitch
+            title="Private Account"
+            description="Limit your posts and account visibility to your followers, and curate new
+                follow requests"
+            initialValue={profile.locked}
+            onCheckedChange={(checked) => privateAccountSwitch(checked)}
+          />
+
+          <RenderSwitch
+            title="Hide Followers"
+            description="Hide your followers collection, only you will be able to see who follows
+                you"
+            initialValue={!profile.settings.show_profile_follower_count}
+            onCheckedChange={(checked) =>
+              profileMutation.mutate({ show_profile_follower_count: !checked })
+            }
+          />
+
+          <RenderSwitch
+            title="Hide Following"
+            description="Hide your following collection, only you will be able to see who you are
+                following"
+            initialValue={!profile.settings.show_profile_following_count}
+            onCheckedChange={(checked) =>
+              profileMutation.mutate({ show_profile_following_count: !checked })
+            }
+          />
+
+          <RenderSwitch
+            title="Allow Discovery"
+            description="Allow your account and posts to be recommended to other accounts"
+            initialValue={profile.settings.is_suggestable}
+            onCheckedChange={(checked) =>
+              profileMutation.mutate({ is_suggestable: checked })
+            }
+          />
+
+          <RenderSwitch
+            title="Filter DMs"
+            description="Filter Direct Messages from accounts you don't follow"
+            initialValue={!profile.settings.public_dm}
+            onCheckedChange={(checked) => profileMutation.mutate({ public_dm: !checked })}
+          />
+
+          <RenderSwitch
+            title="Disable Search Engine indexing"
+            description="When your account is visible to search engines, your information can be
+                crawled and stored by search engines"
+            initialValue={!profile.settings.crawlable}
+            onCheckedChange={(checked) => profileMutation.mutate({ crawlable: !checked })}
+          />
+
+          <RenderSwitch
+            title="Disable embeds"
+            description="Disable profile and post embeds to prevent you or others from embedding on
+                other websites"
+            initialValue={profile.settings.disable_embeds}
+            onCheckedChange={(checked) =>
+              profileMutation.mutate({ disable_embeds: checked })
+            }
+          />
+
+          <RenderSwitch
+            title="Atom Feed"
+            description={`Enable your public Atom feed, available at ${instance}/users/${profile?.username}.atom`}
+            initialValue={profile.settings.show_atom}
+            onCheckedChange={(checked) => profileMutation.mutate({ show_atom: checked })}
+          />
         </YStack>
       </ScrollView>
     </SafeAreaView>

@@ -1,21 +1,21 @@
-import { Stack, useRouter } from 'expo-router'
-import { ActivityIndicator, Alert, FlatList, StyleSheet } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Separator, Text, XStack, YStack, View, Group, Button } from 'tamagui'
-import { useQuery, useMutation } from '@tanstack/react-query'
-import { getAutospamReports, postAutospamHandle } from 'src/lib/api'
-import { _timeAgo, enforceLen, htmlToTextWithLineBreaks } from 'src/utils'
 import { Feather } from '@expo/vector-icons'
 import {
+  BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetView,
-  BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { Stack, useRouter } from 'expo-router'
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { PressableOpacity } from 'react-native-pressable-opacity'
+import { ActivityIndicator, Alert, FlatList, StyleSheet } from 'react-native'
 import FastImage from 'react-native-fast-image'
+import { PressableOpacity } from 'react-native-pressable-opacity'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import ReadMore from 'src/components/common/ReadMore'
 import UserAvatar from 'src/components/common/UserAvatar'
+import { getAutospamReports, postAutospamHandle } from 'src/lib/api'
+import { _timeAgo, enforceLen, htmlToTextWithLineBreaks } from 'src/utils'
+import { Button, Group, Separator, Text, View, XStack, YStack } from 'tamagui'
 
 export default function Screen() {
   const [activeReport, setActiveReport] = useState()

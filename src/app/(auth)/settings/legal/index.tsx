@@ -1,13 +1,13 @@
-import { Group, ScrollView, Separator, YStack, Button } from 'tamagui'
-import { Storage } from 'src/state/cache'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack } from 'expo-router'
-import { openBrowserAsync } from '../../../../utils'
+import React from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import {
   GroupButtonContent,
   type GroupButtonContentProps,
 } from 'src/components/common/GroupButtonContent'
-import React from 'react'
+import { Storage } from 'src/state/cache'
+import { Button, Group, ScrollView, Separator, YStack } from 'tamagui'
+import { openBrowserAsync } from '../../../../utils'
 
 export default function Screen() {
   const instance = Storage.getString('app.instance')

@@ -1,13 +1,13 @@
-import { Link, Stack, useNavigation } from 'expo-router'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { ScrollView, Text, View, XStack, YStack, Button } from 'tamagui'
+import Feather from '@expo/vector-icons/Feather'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { getSelfCollections } from 'src/lib/api'
+import { Link, Stack, useNavigation } from 'expo-router'
+import { useLayoutEffect } from 'react'
 import { ActivityIndicator, FlatList } from 'react-native'
 import FastImage from 'react-native-fast-image'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { getSelfCollections } from 'src/lib/api'
 import { formatTimestamp } from 'src/utils'
-import Feather from '@expo/vector-icons/Feather'
-import { useLayoutEffect } from 'react'
+import { Button, ScrollView, Text, View, XStack, YStack } from 'tamagui'
 
 export default function Screen() {
   const navigation = useNavigation()

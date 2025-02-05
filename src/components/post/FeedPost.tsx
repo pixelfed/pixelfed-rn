@@ -1,3 +1,4 @@
+
 import {
   Alert,
   ActivityIndicator,
@@ -20,6 +21,8 @@ import {
 } from "src/utils";
 import { Link, router } from "expo-router";
 import {
+  BottomSheetBackdrop,
+  type BottomSheetBackdropProps,
   BottomSheetModal,
   BottomSheetScrollView,
   BottomSheetBackdrop,
@@ -34,24 +37,25 @@ import { PressableOpacity } from "react-native-pressable-opacity";
 import VideoPlayer from "./VideoPlayer";
 import { Storage } from "src/state/cache";
 import {
-  State,
-  PinchGestureHandler,
-  GestureDetector,
   Gesture,
-} from "react-native-gesture-handler";
+  GestureDetector,
+  PinchGestureHandler,
+  State,
+} from 'react-native-gesture-handler'
 import Animated, {
   runOnJS,
   type SharedValue,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-} from "react-native-reanimated";
+} from 'react-native-reanimated'
+import VideoPlayer from './VideoPlayer'
 
 import type {
   GestureEvent,
   HandlerStateChangeEvent,
   PinchGestureHandlerEventPayload,
-} from "react-native-gesture-handler";
+} from 'react-native-gesture-handler'
 import type {
   LoginUserResponse,
   MediaAttachment,
@@ -62,8 +66,7 @@ import type {
   Visibility,
 } from "src/lib/api-types";
 import { useLikeMutation } from "src/hooks/mutations/useLikeMutation";
-
-const AnimatedFastImage = Animated.createAnimatedComponent(FastImage);
+const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
 
 const ZoomableImage = ({ source, style }) => {
   const scale = useSharedValue(1);
@@ -153,11 +156,11 @@ const BorderlessSection = React.memo(
 );
 
 interface PostHeaderProps {
-  avatar: string;
-  username: string;
-  displayName: string;
-  userId: string;
-  onOpenMenu: () => void;
+  avatar: string
+  username: string
+  displayName: string
+  userId: string
+  onOpenMenu: () => void
 }
 
 const PostHeader = React.memo(
@@ -181,13 +184,15 @@ const PostHeader = React.memo(
                     height: AVATAR_WIDTH,
                     borderRadius: AVATAR_WIDTH,
                     borderWidth: 1,
-                    borderColor: "#eee",
+                    borderColor: '#eee',
                   }}
                 />
                 <YStack gap={3}>
-                  <Text fontWeight="bold" fontSize="$5">
-                    {enforceLen(username, 20, true)}
-                  </Text>
+                  <XStack gap="$2" alignItems="center">
+                    <Text fontWeight="bold" fontSize="$5">
+                      {enforceLen(username, 20, true)}
+                    </Text>
+                  </XStack>
                   <Text fontWeight="300" fontSize="$3" color="$gray9">
                     {enforceLen(displayName, 25, true)}
                   </Text>
@@ -199,7 +204,7 @@ const PostHeader = React.memo(
         <Pressable onPress={() => onOpenMenu()}>
           <View px="$3">
             <Feather
-              name={Platform.OS === "ios" ? "more-horizontal" : "more-vertical"}
+              name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
               size={25}
             />
           </View>
@@ -207,7 +212,7 @@ const PostHeader = React.memo(
       </XStack>
     </Section>
   )
-);
+)
 
 interface PostMediaProps {
   media: Array<MediaAttachment>;
@@ -398,6 +403,47 @@ const PostAlbumMedia = React.memo(
     );
   }
 );
+
+  return (
+    <YStack zIndex={1}>
+      <Carousel
+        onConfigurePanGesture={(gestureChain) => gestureChain.activeOffsetX([-10, 10])}
+        width={width}
+        height={height}
+        vertical={false}
+        onProgressChange={progress}
+        data={mediaList}
+        renderItem={({ index }) => {
+          const media = mediaList[0]
+          return (
+            <ZoomableImage
+              style={{
+                width: width,
+                height: height,
+                backgroundColor: '#000',
+              }}
+              source={{ uri: mediaList[index].url }}
+            />
+          )
+        }}
+      />
+      <Pagination.Basic
+        progress={progress}
+        data={mediaList}
+        dotStyle={{ backgroundColor: 'rgba(0,0,0,0.16)', borderRadius: 50 }}
+        activeDotStyle={{ backgroundColor: '#408DF6', borderRadius: 50 }}
+        containerStyle={{
+          gap: 2,
+          position: 'absolute',
+          bottom: 0,
+          marginBottom: -30,
+          zIndex: 10,
+        }}
+        size={8}
+      />
+    </YStack>
+  )
+})
 
 interface PostActionsProps {
   hasLiked: boolean;
@@ -736,23 +782,23 @@ export default function FeedPost({
     []
   );
 
-  const [likeCount, setLikeCount] = useState(post?.favourites_count ?? 0);
-  const [hasLiked, setLiked] = useState(post.favourited ?? false);
+  const [likeCount, setLikeCount] = useState(post?.favourites_count ?? 0)
+  const [hasLiked, setLiked] = useState(post.favourited ?? false)
 
   // toggles 'hasLiked' value, updates states and calls mutation
   const handleLikeAction = () => {
-    let currentHasLiked = !hasLiked;
+    let currentHasLiked = !hasLiked
 
-    setLiked(currentHasLiked);
-    setLikeCount(currentHasLiked ? likeCount + 1 : likeCount - 1);
+    setLiked(currentHasLiked)
+    setLikeCount(currentHasLiked ? likeCount + 1 : likeCount - 1)
 
-    handleLike(post?.id, currentHasLiked);
-  };
+    handleLike(post?.id, currentHasLiked)
+  }
 
   const handleDoubleTap = () => {
     // only allow liking with double tap, not unliking
     if (!hasLiked) {
-      handleLikeAction();
+      handleLikeAction()
     }
   };
 
@@ -760,8 +806,12 @@ export default function FeedPost({
     .maxDuration(250)
     .numberOfTaps(2)
     .onStart(() => {
-      runOnJS(handleDoubleTap)();
-    });
+      try {
+        runOnJS(handleDoubleTap)()
+      } catch (error) {
+        console.error('Double tap error:', error)
+      }
+    })
 
   const _onDeletePost = (id: string) => {
     bottomSheetModalRef.current?.close();
@@ -835,17 +885,19 @@ export default function FeedPost({
         userId={post.account?.id}
         onOpenMenu={() => handlePresentModalPress()}
       />
-      <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
-        {post.media_attachments?.length > 1 ? (
-          <PostAlbumMedia
-            media={post.media_attachments}
-            post={post}
-            progress={progress}
-          />
-        ) : post.media_attachments?.length === 1 ? (
-          <PostMedia media={post.media_attachments} post={post} />
-        ) : null}
-      </GestureDetector>
+      {post.media_attachments?.length > 0 ? (
+        <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
+          {post.media_attachments.length > 1 ? (
+            <PostAlbumMedia
+              media={post.media_attachments}
+              post={post}
+              progress={progress}
+            />
+          ) : (
+            <PostMedia media={post.media_attachments} post={post} />
+          )}
+        </GestureDetector>
+      ) : null}
       {!hideCaptions || isPermalink ? (
         <>
           <PostActions

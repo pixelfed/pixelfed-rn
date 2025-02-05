@@ -1,7 +1,7 @@
-import { useAuth } from '@state/AuthProvider'
-import { Tabs, Redirect } from 'expo-router'
-import { View } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
+import { useAuth } from '@state/AuthProvider'
+import { Redirect, Tabs } from 'expo-router'
+import { View } from 'tamagui'
 
 // enum here to prevent typos in id when used in multiple places (typescript checkable)
 enum TabName {
@@ -46,9 +46,7 @@ export default function AppLayout() {
           tabBarShowLabel: false,
           headerShown: true,
           tabBarIcon: ({ color }) => (
-            <View bg="$gray4" px="$3" py={4} borderRadius={5}>
-              <Feather name="plus" size={26} color={color} />
-            </View>
+            <Feather name="plus-square" size={30} color={color} />
           ),
         }}
       />

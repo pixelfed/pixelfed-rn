@@ -1,28 +1,20 @@
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { ScrollView, Text, XStack, YStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { useMutation } from '@tanstack/react-query'
-import { reportStatus } from 'src/lib/api'
-import { ActivityIndicator, Pressable } from 'react-native'
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
+import { ActivityIndicator, Alert, Pressable } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { report } from 'src/lib/api'
+import { reportTypes } from 'src/lib/reportTypes'
+import { ScrollView, Text, XStack, YStack } from 'tamagui'
+
+import type { NewReport } from 'src/lib/api'
+import type { ReportType } from 'src/lib/reportTypes'
 
 export default function Page() {
-  const { id } = useLocalSearchParams()
+  const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
 
-  const reportTypes = [
-    { name: 'spam', title: "It's spam" },
-    { name: 'sensitive', title: 'Nudity or sexual activity' },
-    { name: 'abusive', title: 'Bullying or harassment' },
-    { name: 'underage', title: 'I think this account is underage' },
-    { name: 'violence', title: 'Violence or dangerous organizations' },
-    { name: 'copyright', title: 'Copyright infringement' },
-    { name: 'impersonation', title: 'Impersonation' },
-    { name: 'scam', title: 'Scam or fraud' },
-    { name: 'terrorism', title: 'Terrorism or terrorism-related content' },
-  ]
-
-  const RenderOption = ({ title, name }) => (
+  const RenderOption = ({ title, name }: ReportType) => (
     <Pressable onPress={() => handleAction(name)}>
       <XStack
         px="$5"
@@ -39,16 +31,19 @@ export default function Page() {
     </Pressable>
   )
 
-  const handleAction = (type) => {
-    mutation.mutate({ id: id, type: type })
+  const handleAction = (type: string) => {
+    mutation.mutate({ object_id: id, object_type: 'post', report_type: type })
   }
 
   const mutation = useMutation({
-    mutationFn: (newReport) => {
-      return reportStatus(newReport)
+    mutationFn: (newReport: NewReport) => {
+      return report(newReport)
     },
     onSuccess: (data, variables, context) => {
       router.replace('/post/report/sent')
+    },
+    onError: (err) => {
+      Alert.alert('Report Failed', err.message)
     },
   })
 

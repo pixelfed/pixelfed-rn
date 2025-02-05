@@ -1,20 +1,17 @@
-import { ActivityIndicator, Alert, type AlertButton, Pressable } from 'react-native'
-import { View } from 'tamagui'
-import { useState, useLayoutEffect } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { fetchChatThread, sendChatMessage, deleteChatMessage } from 'src/lib/api'
+import { useLayoutEffect, useState } from 'react'
+import { ActivityIndicator, Alert, type AlertButton, Pressable } from 'react-native'
+import { Bubble, GiftedChat, Send } from 'react-native-gifted-chat'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { deleteChatMessage, fetchChatThread, sendChatMessage } from 'src/lib/api'
 import { _timeAgo, enforceLen } from 'src/utils'
-import {
-  GiftedChat,
-  Bubble,
-  Send,
-  type BubbleProps,
-  type IMessage,
-} from 'react-native-gifted-chat'
+import { View } from 'tamagui'
+
 import { Feather } from '@expo/vector-icons'
 import { useUserCache } from 'src/state/AuthProvider'
+
+import type { BubbleProps, IMessage } from 'react-native-gifted-chat'
 
 function renderBubble<TMessage extends IMessage>(props: BubbleProps<TMessage>) {
   return (
@@ -27,7 +24,7 @@ function renderBubble<TMessage extends IMessage>(props: BubbleProps<TMessage>) {
 }
 
 export default function Page() {
-  const { id } = useLocalSearchParams()
+  const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const queryClient = useQueryClient()
   const navigation = useNavigation()
@@ -45,20 +42,32 @@ export default function Page() {
 
   const sendMutation = useMutation({
     mutationFn: async (message) => {
-      const res = await sendChatMessage(id, message[0].text)
-      const msg = {
-        _id: res.id,
-        id: res.id,
-        createdAt: new Date(),
-        sent: true,
-        text: message[0].text,
-        user: {
-          _id: selfUser.id,
-          name: selfUser.username,
-          avatar: selfUser.avatar,
-        },
+      try {
+        const res = await sendChatMessage(id, message[0].text)
+
+        if (typeof res.error !== 'undefined') {
+          throw new Error(res.error)
+        }
+
+        const msg = {
+          _id: res.id,
+          id: res.id,
+          createdAt: new Date(),
+          sent: true,
+          text: message[0].text,
+          user: {
+            _id: selfUser.id,
+            name: selfUser.username,
+            avatar: selfUser.avatar,
+          },
+        }
+        setMessages((previousMessages) => GiftedChat.append(previousMessages, msg))
+      } catch (err: any) {
+        Alert.alert('Failed to send message', err?.message || err)
       }
-      setMessages((previousMessages) => GiftedChat.append(previousMessages, msg))
+    },
+    onError: (err) => {
+      Alert.alert('Failed to send message', err.message)
     },
   })
 

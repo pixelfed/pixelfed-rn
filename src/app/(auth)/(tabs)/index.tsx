@@ -1,46 +1,41 @@
-import { useCallback, useEffect, useState, useRef, useMemo } from 'react'
-import {
-  FlatList,
-  StyleSheet,
-  ActivityIndicator,
-  Platform,
-  type ListRenderItemInfo,
-} from 'react-native'
-import { Text, View, XStack, Spinner, YStack } from 'tamagui'
-import FeedPost from 'src/components/post/FeedPost'
-import { StatusBar } from 'expo-status-bar'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import {
-  type ErrorBoundaryProps,
-  Stack,
-  useLocalSearchParams,
-  useNavigation,
-  useRouter,
-} from 'expo-router'
+import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet'
+import { useFocusEffect } from '@react-navigation/native'
 import {
   useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
+import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
+import type { ErrorBoundaryProps } from 'expo-router'
+import { useShareIntentContext } from 'expo-share-intent'
+import { StatusBar } from 'expo-status-bar'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
-  fetchHomeFeed,
+  ActivityIndicator,
+  FlatList,
+  type ListRenderItemInfo,
+  Platform,
+  StyleSheet,
+} from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import EmptyFeed from 'src/components/common/EmptyFeed'
+import ErrorFeed from 'src/components/common/ErrorFeed'
+import FeedHeader from 'src/components/common/FeedHeader'
+import CommentFeed from 'src/components/post/CommentFeed'
+import FeedPost from 'src/components/post/FeedPost'
+import { useVideo } from 'src/hooks/useVideoProvider'
+import {
   deleteStatusV1,
-  postBookmark,
+  fetchHomeFeed,
   getSelfAccount,
+  postBookmark,
   reblogStatus,
   unreblogStatus,
 } from 'src/lib/api'
-import FeedHeader from 'src/components/common/FeedHeader'
-import EmptyFeed from 'src/components/common/EmptyFeed'
-import ErrorFeed from 'src/components/common/ErrorFeed'
-import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet'
-import CommentFeed from 'src/components/post/CommentFeed'
-import { useShareIntentContext } from 'expo-share-intent'
-import { useVideo } from 'src/hooks/useVideoProvider'
-import { useFocusEffect } from '@react-navigation/native'
-import { useUserCache } from 'src/state/AuthProvider'
 import type { Status } from 'src/lib/api-types'
+import { useUserCache } from 'src/state/AuthProvider'
+import { Spinner, Text, View, XStack, YStack } from 'tamagui'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   return (
@@ -159,12 +154,12 @@ export default function HomeScreen() {
 
   const keyExtractor = useCallback((item) => item?.id, [])
 
-  const onDeletePost = (id) => {
+  const onDeletePost = (id: string) => {
     deletePostMutation.mutate(id)
   }
 
   const deletePostMutation = useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async (id: string) => {
       return await deleteStatusV1(id)
     },
     onSuccess: (data, variables) => {
@@ -182,16 +177,16 @@ export default function HomeScreen() {
   })
 
   const bookmarkMutation = useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async (id: string) => {
       return await postBookmark(id)
     },
   })
 
-  const onBookmark = (id) => {
+  const onBookmark = (id: string) => {
     bookmarkMutation.mutate(id)
   }
 
-  const onShare = (id, state) => {
+  const onShare = (id: string, state) => {
     try {
       shareMutation.mutate({ type: state == true ? 'unreblog' : 'reblog', id: id })
     } catch (error) {
@@ -220,22 +215,22 @@ export default function HomeScreen() {
     router.push(`/post/likes/${id}`)
   }
 
-  const handleGotoProfile = (id) => {
+  const handleGotoProfile = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/profile/${id}`)
   }
 
-  const handleGotoUsernameProfile = (id) => {
+  const handleGotoUsernameProfile = (username: string) => {
     bottomSheetModalRef.current?.close()
-    router.push(`/profile/0?byUsername=${id}`)
+    router.push(`/profile/0?byUsername=${username}`)
   }
 
-  const gotoHashtag = (id) => {
+  const gotoHashtag = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/hashtag/${id}`)
   }
 
-  const handleCommentReport = (id) => {
+  const handleCommentReport = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/post/report/${id}`)
   }

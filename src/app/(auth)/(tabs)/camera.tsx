@@ -1,52 +1,54 @@
-import {
-  Button,
-  Text,
-  View,
-  YStack,
-  XStack,
-  TextArea,
-  Separator,
-  ScrollView,
-  ZStack,
-} from 'tamagui'
 import { Feather } from '@expo/vector-icons'
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+  BottomSheetTextInput,
+  BottomSheetView,
+} from '@gorhom/bottom-sheet'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import * as ImagePicker from 'expo-image-picker'
 import { Stack, useNavigation, useRouter } from 'expo-router'
+import { useShareIntentContext } from 'expo-share-intent'
+import mime from 'mime'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
   ActivityIndicator,
-  StyleSheet,
   Alert,
-  Platform,
-  Linking,
   Keyboard,
+  Linking,
   ListRenderItem,
   type ListRenderItemInfo,
+  Platform,
+  StyleSheet,
 } from 'react-native'
-import { Storage } from 'src/state/cache'
-import UserAvatar from 'src/components/common/UserAvatar'
-import { useState, useRef, useCallback, useMemo, useEffect, useLayoutEffect } from 'react'
-import * as ImagePicker from 'expo-image-picker'
-import { FlatList } from 'react-native-gesture-handler'
 import FastImage from 'react-native-fast-image'
+import { FlatList } from 'react-native-gesture-handler'
 import { PressableOpacity } from 'react-native-pressable-opacity'
-import {
-  BottomSheetModal,
-  BottomSheetView,
-  BottomSheetScrollView,
-  BottomSheetBackdrop,
-  BottomSheetTextInput,
-} from '@gorhom/bottom-sheet'
+import { ErrorAlert } from 'src/components/common/ErrorAlert'
+import UserAvatar from 'src/components/common/UserAvatar'
 import { Switch } from 'src/components/form/Switch'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  getInstanceV1,
   getComposeSettings,
-  uploadMediaV2,
-  postNewStatus,
+  getInstanceV1,
   getSelfAccount,
+  postNewStatus,
+  uploadMediaV2,
 } from 'src/lib/api'
-import mime from 'mime'
-import { useShareIntentContext } from 'expo-share-intent'
+import type { UploadV2ErrorResponse, UploadV2Response } from 'src/lib/api-types'
 import { useUserCache } from 'src/state/AuthProvider'
+import { Storage } from 'src/state/cache'
+import {
+  Button,
+  ScrollView,
+  Separator,
+  Text,
+  TextArea,
+  View,
+  XStack,
+  YStack,
+  ZStack,
+} from 'tamagui'
 
 type MediaAsset = {
   path: string
@@ -73,6 +75,7 @@ export default function Camera() {
   const [curAltText, setCurAltText] = useState('')
   const [canPost, setCanPost] = useState(false)
   const [isPosting, setIsPosting] = useState(false)
+  const [postingError, setPostingError] = useState<string | null>(null)
   const [maxMediaLimit, setMaxMediaLimit] = useState(4)
   const queryClient = useQueryClient()
   const scopeLabel = {
@@ -189,7 +192,11 @@ export default function Camera() {
     if (!result.canceled) {
       setMedia([
         ...media,
-        { path: result.assets[0].uri, type: result.assets[0].type, altText: null },
+        {
+          path: result.assets[0].uri,
+          type: result.assets[0].type,
+          altText: null,
+        },
       ])
       setCanPost(true)
     }
@@ -399,9 +406,27 @@ export default function Camera() {
 
     await Promise.all(uploads.map(uploadMediaToIds))
       .then((res) => {
+        const hasSomeError = res.some((r) => r.error === true)
+
+        if (hasSomeError) {
+          const error = res.find((r) => r.error === true)
+
+          if (error) {
+            const data = error.data as UploadV2ErrorResponse
+            throw new Error(data.errors.file[0])
+          }
+
+          throw new Error('An unknown error occurred.')
+        }
+
+        const resData = res as Array<{
+          error: false
+          data: UploadV2Response
+        }>
+
         let postParams = {
           status: captionInput,
-          media_ids: res.map((r) => r.id),
+          media_ids: resData.map((r) => r.data.id),
           visibility: scope,
           sensitive: isSensitive,
         }
@@ -414,12 +439,30 @@ export default function Camera() {
       .then((res) => {
         resetForm()
         router.replace('/?ref30=1')
-        queryClient.invalidateQueries({ queryKey: ['statusesById', userSelf?.id] })
+        queryClient.invalidateQueries({
+          queryKey: ['statusesById', userSelf?.id],
+        })
+      })
+      .catch((err) => {
+        setIsPosting(false)
+        setPostingError(err.message)
       })
   }
 
-  const uploadMediaToIds = async (capture) => {
-    return await uploadMediaV2(
+  const uploadMediaToIds = async (capture: {
+    description: string | null
+    file: { uri: string; type: any; name: string }
+  }): Promise<
+    | {
+        error: true
+        data: UploadV2ErrorResponse
+      }
+    | {
+        error: false
+        data: UploadV2Response
+      }
+  > => {
+    const res = await uploadMediaV2(
       capture.description
         ? {
             file: capture.file,
@@ -429,10 +472,17 @@ export default function Camera() {
             file: capture.file,
           }
     )
-      .then((res) => {
-        return res
-      })
-      .catch((err) => {})
+
+    if (Object.hasOwn(res, 'errors')) {
+      return {
+        error: true,
+        data: res as UploadV2ErrorResponse,
+      }
+    }
+    return {
+      error: false,
+      data: res as UploadV2Response,
+    }
   }
 
   const { data: userSelf } = useQuery({
@@ -491,6 +541,11 @@ export default function Camera() {
           headerRight: HeaderRight,
         }}
       />
+      {postingError ? (
+        <View px="$3">
+          <ErrorAlert message={postingError} title="Error uploading media" />
+        </View>
+      ) : null}
       {isPosting ? (
         <View flexGrow={1} bg="white" justifyContent="center" alignItems="center">
           <YStack gap="$3">
@@ -688,7 +743,10 @@ export default function Camera() {
                   <Separator />
                   <FastImage
                     source={{ uri: media[activeIndex].path }}
-                    style={{ width: '100%', height: Keyboard.isVisible() ? 140 : 240 }}
+                    style={{
+                      width: '100%',
+                      height: Keyboard.isVisible() ? 140 : 240,
+                    }}
                     resizeMode={FastImage.resizeMode.contain}
                   />
                 </>

@@ -1,12 +1,12 @@
-import { Stack, router, useNavigation } from 'expo-router'
-import { Text, View, Form, Button, YStack, Label, Input, Image, XStack } from 'tamagui'
 import { useAuth } from '@state/AuthProvider'
-import { ActivityIndicator, FlatList, SafeAreaView } from 'react-native'
-import { useState } from 'react'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { Stack, router, useNavigation } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
+import { useState } from 'react'
+import { ActivityIndicator, FlatList, SafeAreaView } from 'react-native'
 import { getOpenServers } from 'src/lib/api'
 import { prettyCount } from 'src/utils'
+import { Button, Form, Image, Input, Label, Text, View, XStack, YStack } from 'tamagui'
 
 export default function Register() {
   const { data } = useQuery({

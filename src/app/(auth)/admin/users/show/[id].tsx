@@ -1,17 +1,17 @@
-import { ActivityIndicator, Alert, Pressable, Linking } from 'react-native'
-import { Group, ScrollView, Separator, Text, View, XStack, YStack, Button } from 'tamagui'
-import { Storage } from 'src/state/cache'
-import { getAdminUser } from 'src/lib/api'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
-import { prettyCount, _timeAgo, enforceLen, formatTimestamp } from 'src/utils'
 import { useQuery } from '@tanstack/react-query'
-import UserAvatar from 'src/components/common/UserAvatar'
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
+import { ActivityIndicator, Alert, Linking, Pressable } from 'react-native'
 import { PressableOpacity } from 'react-native-pressable-opacity'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import UserAvatar from 'src/components/common/UserAvatar'
+import { getAdminUser } from 'src/lib/api'
+import { Storage } from 'src/state/cache'
+import { _timeAgo, enforceLen, formatTimestamp, prettyCount } from 'src/utils'
+import { Button, Group, ScrollView, Separator, Text, View, XStack, YStack } from 'tamagui'
 
 export default function Screen() {
-  const { id } = useLocalSearchParams()
+  const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const instance = Storage.getString('app.instance')
 

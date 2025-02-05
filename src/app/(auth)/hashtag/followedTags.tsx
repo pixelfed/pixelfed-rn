@@ -1,10 +1,10 @@
+import Feather from '@expo/vector-icons/Feather'
+import { useQuery } from '@tanstack/react-query'
 import { Link, Stack } from 'expo-router'
+import { ActivityIndicator, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { getFollowedTags } from 'src/lib/api'
 import { Text, View, YStack } from 'tamagui'
-import { useQuery } from '@tanstack/react-query'
-import { FlatList, ActivityIndicator } from 'react-native'
-import Feather from '@expo/vector-icons/Feather'
 
 export default function Screen() {
   const RenderItem = ({ item }) => (

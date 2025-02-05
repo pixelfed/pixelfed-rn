@@ -1,5 +1,9 @@
+import { Feather } from '@expo/vector-icons'
+import { useAuth } from '@state/AuthProvider'
+import { useQuery } from '@tanstack/react-query'
+import { Stack, useRouter } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
 import React, { useState, useMemo } from 'react'
-import { Text, View, Button, YStack, Image, XStack } from 'tamagui'
 import {
   ActivityIndicator,
   Alert,
@@ -9,19 +13,15 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native'
-import { StatusBar } from 'expo-status-bar'
-import { useQuery } from '@tanstack/react-query'
-import { Stack, useRouter } from 'expo-router'
-import { useAuth } from '@state/AuthProvider'
-import { Feather } from '@expo/vector-icons'
-import { getOpenServers } from 'src/lib/api'
-import { enforceLen, prettyCount } from 'src/utils'
 import FastImage from 'react-native-fast-image'
 import { PressableOpacity } from 'react-native-pressable-opacity'
+import { getOpenServers } from 'src/lib/api'
+import { enforceLen, prettyCount } from 'src/utils'
+import { Button, Image, Text, View, XStack, YStack } from 'tamagui'
 
 export default function Register() {
   const { data } = useQuery({
-    queryKey: ['openServers'],
+    queryKey: ['openServersSelector'],
     queryFn: getOpenServers,
   })
 
@@ -63,7 +63,7 @@ export default function Register() {
         alignItems="center"
         overflow="hidden"
       >
-        {item.user_count > 1400 ? (
+        {item.user_count > 200 ? (
           <FastImage
             source={{ uri: item.header_thumbnail }}
             style={{ width: 100, height: 40, borderRadius: 20 }}

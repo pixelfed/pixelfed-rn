@@ -1,11 +1,11 @@
-import { Stack } from 'expo-router'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { getAppSettings } from 'src/lib/api'
 import { useQuery } from '@tanstack/react-query'
+import { Stack } from 'expo-router'
 import { ActivityIndicator } from 'react-native'
-import { ScrollView, Separator, Text, View, XStack, YStack } from 'tamagui'
-import { Storage } from 'src/state/cache'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { Switch } from 'src/components/form/Switch'
+import { getAppSettings } from 'src/lib/api'
+import { Storage } from 'src/state/cache'
+import { ScrollView, Separator, Text, View, XStack, YStack } from 'tamagui'
 export default function Screen() {
   const showAltText = Storage.getBoolean('ui.showAltText') == true
   const requireSelfAltText = Storage.getBoolean('ui.requireSelfAltText') == true

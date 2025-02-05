@@ -1,9 +1,9 @@
-import React, { useRef } from 'react'
-import { View, StyleSheet } from 'react-native'
-import Video from 'react-native-video'
 import Feather from '@expo/vector-icons/Feather'
 import { BlurView } from '@react-native-community/blur'
+import React, { useRef } from 'react'
+import { StyleSheet, View } from 'react-native'
 import { PressableOpacity } from 'react-native-pressable-opacity'
+import Video from 'react-native-video'
 import { useVideo } from 'src/hooks/useVideoProvider'
 
 const VideoPlayer = ({ source, height, videoId }) => {

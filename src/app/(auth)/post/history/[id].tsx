@@ -1,15 +1,15 @@
-import { FlatList, ActivityIndicator, StyleSheet } from 'react-native'
-import { Separator, Text, View, XStack, YStack } from 'tamagui'
-import { useCallback, useLayoutEffect } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
+import { Stack, useLocalSearchParams, useNavigation } from 'expo-router'
+import { useCallback, useLayoutEffect } from 'react'
+import { ActivityIndicator, FlatList, StyleSheet } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import ReadMore from 'src/components/common/ReadMore'
 import { getStatusHistory } from 'src/lib/api'
 import { _timeAgo, htmlToTextWithLineBreaks } from 'src/utils'
-import ReadMore from 'src/components/common/ReadMore'
+import { Separator, Text, View, XStack, YStack } from 'tamagui'
 
 export default function Page() {
-  const { id } = useLocalSearchParams()
+  const { id } = useLocalSearchParams<{ id: string }>()
   const navigation = useNavigation()
 
   useLayoutEffect(() => {
