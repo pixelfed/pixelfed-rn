@@ -7,7 +7,7 @@ import { getStatusById, getStatusReblogs } from 'src/lib/api'
 import UserAvatar from 'src/components/common/UserAvatar'
 
 export default function Page() {
-  const { id } = useLocalSearchParams()
+  const { id } = useLocalSearchParams<{ id: string }>()
 
   const RenderItem = ({ item }) => {
     return (
@@ -35,7 +35,7 @@ export default function Page() {
 
   const { data: status } = useQuery({
     queryKey: ['getStatusById', id],
-    queryFn: getStatusById,
+    queryFn: () => getStatusById(id),
   })
 
   const statusId = status?.id

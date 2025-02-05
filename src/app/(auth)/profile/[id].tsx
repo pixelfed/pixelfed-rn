@@ -48,7 +48,7 @@ const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileScreen() {
   const navigation = useNavigation()
-  const { id, byUsername } = useLocalSearchParams()
+  const { id, byUsername } = useLocalSearchParams<{ id: string; byUsername?: string }>()
   const queryClient = useQueryClient()
   const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
   const snapPoints = useMemo(() => ['50%', '55%'], [])
@@ -332,7 +332,7 @@ export default function ProfileScreen() {
     bottomSheetModalRef.current?.close()
 
     if (action === 'report') {
-      router.push('/profile/report/' + id)
+      router.push('/profile/report/' + userId)
     }
 
     if (action === 'block') {
@@ -347,7 +347,7 @@ export default function ProfileScreen() {
           {
             text: 'Block',
             style: 'destructive',
-            onPress: () => _handleBlock(),
+            onPress: () => handleBlock(),
           },
         ]
       )
@@ -362,7 +362,7 @@ export default function ProfileScreen() {
         {
           text: 'Unblock',
           style: 'destructive',
-          onPress: () => _handleUnblock(),
+          onPress: () => handleUnblock(),
         },
       ])
     }
@@ -379,7 +379,7 @@ export default function ProfileScreen() {
           {
             text: 'Mute',
             style: 'destructive',
-            onPress: () => _handleMute(),
+            onPress: () => handleMute(),
           },
         ]
       )
@@ -394,7 +394,7 @@ export default function ProfileScreen() {
         {
           text: 'Unmute',
           style: 'destructive',
-          onPress: () => _handleUnmute(),
+          onPress: () => handleUnmute(),
         },
       ])
     }
@@ -426,35 +426,35 @@ export default function ProfileScreen() {
     }
   }
 
-  const _handleBlock = () => {
+  const handleBlock = () => {
     blockMutation.mutate()
   }
 
-  const _handleUnblock = () => {
+  const handleUnblock = () => {
     unblockMutation.mutate()
   }
 
-  const _handleMute = () => {
+  const handleMute = () => {
     muteMutation.mutate()
   }
 
-  const _handleUnmute = () => {
+  const handleUnmute = () => {
     unmuteMutation.mutate()
   }
 
-  const _handleFollow = () => {
+  const handleFollow = () => {
     followMutation.mutate()
   }
 
-  const _handleUnfollow = () => {
+  const handleUnfollow = () => {
     unfollowMutation.mutate()
   }
 
-  const _handleCancelFollowRequest = () => {
+  const handleCancelFollowRequest = () => {
     unfollowMutation.mutate()
   }
 
-  const _handleOnShare = async () => {
+  const handleOnShare = async () => {
     try {
       const result = await Share.share({
         message: user.url,
@@ -466,13 +466,19 @@ export default function ProfileScreen() {
     }
   }
 
-  const { data: user, error: userError } = useQuery({
-    queryKey:
-      byUsername !== undefined && id == 0
-        ? ['getAccountByUsername', byUsername]
-        : ['getAccountById', id],
-    queryFn: byUsername !== undefined && id == 0 ? getAccountByUsername : getAccountById,
-  })
+  const { data: user, error: userError } = useQuery(
+    byUsername !== undefined && id === '0'
+      ? {
+          queryKey: ['getAccountByUsername', byUsername],
+          queryFn: () => getAccountByUsername(byUsername),
+        }
+      : {
+          queryKey: ['getAccountById', id],
+          queryFn: () => getAccountById(id),
+        }
+  )
+
+  const userId = user?.id
 
   useEffect(() => {
     if (user && Platform.OS == 'android') {
@@ -486,8 +492,6 @@ export default function ProfileScreen() {
       })
     }
   }, [navigation, user])
-
-  const userId = user?.id
 
   const { data: relationship, isError: relationshipError } = useQuery({
     queryKey: ['getAccountRelationship', userId],
@@ -507,10 +511,10 @@ export default function ProfileScreen() {
         profile={user}
         relationship={relationship}
         openMenu={onOpenMenu}
-        onFollow={() => _handleFollow()}
-        onUnfollow={() => _handleUnfollow()}
-        onCancelFollowRequest={() => _handleCancelFollowRequest()}
-        onShare={() => _handleOnShare()}
+        onFollow={() => handleFollow()}
+        onUnfollow={() => handleUnfollow()}
+        onCancelFollowRequest={() => handleCancelFollowRequest()}
+        onShare={() => handleOnShare()}
         mutuals={mutuals}
       />
     ),
@@ -556,6 +560,34 @@ export default function ProfileScreen() {
     },
     enabled: !!userId,
   })
+
+  if (userError) {
+    return (
+      <SafeAreaView edges={['top']}>
+        <Stack.Screen
+          options={{
+            headerShown: true,
+            title: byUsername || id,
+            headerBackTitle: 'Back',
+          }}
+        />
+        <View style={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text fontSize="$8">{userError.message}</Text>
+          {byUsername && (
+            <Button
+              bg="$blue9"
+              size="$5"
+              color="white"
+              marginBlockStart="$5"
+              onPress={() =>
+                router.push({ pathname: '/search', params: { initialQuery: byUsername } })
+              }
+            >{`Search for ${byUsername}`}</Button>
+          )}
+        </View>
+      </SafeAreaView>
+    )
+  }
 
   if (status !== 'success' || (isFetching && !isFetchingNextPage)) {
     return (

@@ -9,7 +9,7 @@ import { getAccountById, getAccountRelationship } from 'src/lib/api'
 import { formatTimestampMonthYear, formatTimestamp, getDomain } from 'src/utils'
 
 export default function ProfileScreen() {
-  const { id } = useLocalSearchParams()
+  const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
 
   const {
@@ -18,7 +18,7 @@ export default function ProfileScreen() {
     isFetching: isFetchingUser,
   } = useQuery({
     queryKey: ['getAccountById', id],
-    queryFn: getAccountById,
+    queryFn: () => getAccountById(id),
   })
 
   if (userError) {

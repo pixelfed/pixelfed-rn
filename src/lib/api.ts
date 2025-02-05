@@ -1,7 +1,16 @@
 import { objectToForm } from 'src/requests'
 import { Storage } from 'src/state/cache'
 import { parseLinkHeader } from 'src/utils'
-import type { PaginatedStatus, Relationship, UpdateCredentialsParams } from './api-types'
+import type {
+  Account,
+  PaginatedStatus,
+  Relationship,
+  RelationshipFromFollowAPIResponse,
+  UpdateCredentialsParams,
+  Status,
+} from './api-types'
+import { randomKey } from './randomKey'
+import { ContextFromStorage } from './api-context'
 
 export function randomKey(length: number) {
   let result = ''
@@ -52,35 +61,6 @@ export async function selfPost(
 
   const resp = await fetch(url, {
     method: 'POST',
-    body: asForm ? objectToForm(params) : JSON.stringify(params),
-    headers,
-  })
-
-  return rawRes ? resp : resp.json()
-}
-
-export async function selfPut(
-  path: string,
-  params = {},
-  asForm = false,
-  rawRes = false,
-  idempotency = false
-) {
-  let headers: Record<string, string> = {}
-  const instance = Storage.getString('app.instance')
-  const token = Storage.getString('app.token')
-  const url = `https://${instance}/${path}`
-
-  headers['Authorization'] = `Bearer ${token}`
-  headers['Accept'] = 'application/json'
-  headers['Content-Type'] = asForm ? 'multipart/form-data' : 'application/json'
-
-  if (idempotency) {
-    headers['Idempotency-Key'] = randomKey(40)
-  }
-
-  const resp = await fetch(url, {
-    method: 'PUT',
     body: asForm ? objectToForm(params) : JSON.stringify(params),
     headers,
   })
@@ -183,6 +163,8 @@ async function fetchCursorPagination(url: string) {
 }
 
 async function fetchData(url: string) {
+  console.log('deprected fetchData called', url)
+
   const token = Storage.getString('app.token')
 
   const response = await fetch(url, {
@@ -294,59 +276,72 @@ export async function getAccountFollowing(id: string, cursor) {
   return await fetchPaginatedData(url)
 }
 
-export async function getStatusById({ queryKey }) {
-  const instance = Storage.getString('app.instance')
-  const url = `https://${instance}/api/v1/statuses/${queryKey[1]}?_pe=1`
-  return await fetchData(url)
+export async function getStatusById(id: string) {
+  const api = ContextFromStorage()
+  return await api.get(`api/v1/statuses/${id}?_pe=1`)
 }
 
-export async function getAccountById({ queryKey }) {
-  const instance = Storage.getString('app.instance')
-  const url = `https://${instance}/api/v1/accounts/${queryKey[1]}?_pe=1`
-  return await fetchData(url)
+export async function getAccountById(id: string) {
+  const api = ContextFromStorage()
+  return await api.get(`api/v1/accounts/${id}?_pe=1`)
 }
 
-export async function followAccountById(id: string) {
-  let path = `api/v1/accounts/${id}/follow`
-  return await selfPost(path)
+export async function followAccountById(
+  id: string
+): Promise<RelationshipFromFollowAPIResponse> {
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/accounts/${id}/follow`)
 }
 
-export async function unfollowAccountById(id: string) {
-  let path = `api/v1/accounts/${id}/unfollow`
-  return await selfPost(path)
+export async function unfollowAccountById(
+  id: string
+): Promise<RelationshipFromFollowAPIResponse> {
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/accounts/${id}/unfollow`)
 }
 
-export async function reportProfile({ id, type }) {
-  const instance = Storage.getString('app.instance')
-  const token = Storage.getString('app.token')
+export type NewReport = {
+  object_id: string
+  report_type: string
+  object_type: 'user' | 'post'
+}
 
-  const params = new URLSearchParams({
-    report_type: type,
-    object_type: 'user',
-    object_id: id,
-  })
-  const url = `https://${instance}/api/v1.1/report?${params}`
-  const response = await fetch(url, {
-    method: 'post',
-    headers: new Headers({
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    }),
-  })
+export async function report(report: NewReport) {
+  const api = ContextFromStorage()
+  const response = await api.jsonRequest('POST', 'api/v1.1/report', {}, report)
   return await response.json()
 }
 
-export async function getAccountByUsername({ queryKey }) {
-  const instance = Storage.getString('app.instance')
-  const url = `https://${instance}/api/v1.1/accounts/username/${queryKey[1]}?_pe=1`
-  return await fetchData(url)
+export async function getAccountByUsername(username: string): Promise<Account> {
+  const api = ContextFromStorage()
+  let account = await api.get(`api/v1.1/accounts/username/${username}?_pe=1`)
+  if (Array.isArray(account) && account.length === 0) {
+    throw new Error(`Account "${username}" not found`)
+  }
+  return account
 }
 
-export async function getAccountStatusesById(id: string, page) {
-  const instance = Storage.getString('app.instance')
-  const url = `https://${instance}/api/v1/accounts/${id}/statuses?_pe=1&limit=24&max_id=${page}`
-  return await fetchData(url)
+interface getAccountStatusesByIdParameters {
+  // https://github.com/pixelfed/pixelfed/blob/fa4474bc38d64b1d96272f9d45e90289020fcb11/app/Http/Controllers/Api/ApiV1Controller.php#L699
+  only_media?: true
+  pinned?: true
+  exclude_replies?: true
+  media_type?: 'photo' | 'video'
+  limit?: number
+  max_id?: number
+  since_id?: number
+  min_id?: number
+}
+
+export async function getAccountStatusesById(
+  id: string,
+  parameters: getAccountStatusesByIdParameters
+): Promise<Status[]> {
+  const api = ContextFromStorage()
+  return await api.get(`api/v1/accounts/${id}/statuses`, {
+    _pe: 1, // todo document what _pe means
+    ...parameters,
+  })
 }
 
 export async function getHashtagByName({ queryKey }) {
@@ -525,27 +520,6 @@ export async function unreblogStatus({ id }: { id: string }) {
   return await selfPost(`api/v1/statuses/${id}/unreblog`)
 }
 
-export async function reportStatus({ id, type }) {
-  const instance = Storage.getString('app.instance')
-  const token = Storage.getString('app.token')
-
-  const params = new URLSearchParams({
-    report_type: type,
-    object_type: 'post',
-    object_id: id,
-  })
-  const url = `https://${instance}/api/v1.1/report?${params}`
-  const response = await fetch(url, {
-    method: 'post',
-    headers: new Headers({
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    }),
-  })
-  return await response.json()
-}
-
 export async function deleteStatus({ id }: { id: string }) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
@@ -625,9 +599,10 @@ export async function getFollowRequests() {
 }
 
 export async function getSelfAccount() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/accounts/verify_credentials?_pe=1`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get('api/v1/accounts/verify_credentials', {
+    _pe: 1, // todo document what _pe means
+  })
 }
 
 export async function updateCredentials(params: URLSearchParams) {
@@ -693,7 +668,7 @@ export async function deleteChatMessage(id: string) {
   return await selfDelete(path)
 }
 
-export async function sendChatMessage(id: string, message) {
+export async function sendChatMessage(id: string, message: string) {
   const path = `api/v1.1/direct/thread/send`
   return await selfPost(path, {
     to_id: id,
@@ -861,7 +836,8 @@ export async function getSelfBookmarks({ pageParam = false }) {
 }
 
 export async function putEditPost(id: string, params) {
-  return await selfPut(`api/v1/statuses/${id}`, params)
+  let api = ContextFromStorage()
+  return await api.jsonRequest('PUT', `api/v1/statuses/${id}`, params)
 }
 
 export async function getStoryCarousel() {

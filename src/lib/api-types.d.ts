@@ -100,14 +100,27 @@ export type Relationship = {
   blocking: boolean
   domain_blocking
   endorsed: boolean
-  followed_by?
-  following
+  followed_by?: boolean
+  following: boolean
   following_since
   id
-  muting
+  muting: boolean
   muting_notifications
-  requested
+  requested: boolean
   showing_reblogs
+}
+
+export type RelationshipFromFollowAPIResponse = {
+  blocking: boolean
+  domain_blocking: any | null
+  endorsed: boolean
+  followed_by?: boolean
+  following: boolean
+  id: string
+  muting: boolean
+  muting_notifications: any | null
+  requested: boolean
+  showing_reblogs: any | null
 }
 
 export type Account = {

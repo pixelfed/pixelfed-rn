@@ -267,7 +267,7 @@ export function useQuerySelfProfile() {
     isFetchedAfterMount,
   } = useQuery<Account>({
     queryKey: ['profileById', userCache.id],
-    queryFn: getAccountById,
+    queryFn: () => getAccountById(userCache.id),
     placeholderData: userCache,
   })
 

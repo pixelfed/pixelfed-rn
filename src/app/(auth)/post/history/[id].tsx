@@ -9,7 +9,7 @@ import { _timeAgo, htmlToTextWithLineBreaks } from 'src/utils'
 import ReadMore from 'src/components/common/ReadMore'
 
 export default function Page() {
-  const { id } = useLocalSearchParams()
+  const { id } = useLocalSearchParams<{ id: string }>()
   const navigation = useNavigation()
 
   useLayoutEffect(() => {
