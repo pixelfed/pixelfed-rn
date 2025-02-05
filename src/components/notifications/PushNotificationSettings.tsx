@@ -1,17 +1,17 @@
-import { ScrollView, Text, View, XStack, YStack, Separator } from 'tamagui'
-import { ActivityIndicator, Platform } from 'react-native'
-import * as Notifications from 'expo-notifications'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import Constants from 'expo-constants'
 import * as Device from 'expo-device'
+import * as Notifications from 'expo-notifications'
 import { useEffect, useState } from 'react'
+import { ActivityIndicator, Platform } from 'react-native'
 import { Switch } from 'src/components/form/Switch'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   pushState,
-  pushStateDisable,
   pushStateCompare,
+  pushStateDisable,
   pushStateUpdate,
 } from 'src/lib/api'
+import { ScrollView, Separator, Text, View, XStack, YStack } from 'tamagui'
 
 function handleRegistrationError(errorMessage: string) {
   alert(errorMessage)

@@ -1,18 +1,18 @@
-import { ActivityIndicator } from 'react-native'
-import { ScrollView, Text, View, XStack, Button, Input } from 'tamagui'
-import { useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack } from 'expo-router'
 import { router } from 'expo-router'
-import { useQuerySelfProfile } from 'src/state/AuthProvider'
+import { useState } from 'react'
+import { ActivityIndicator } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useProfileMutation } from 'src/hooks/mutations/useProfileMutation'
+import { useQuerySelfProfile } from 'src/state/AuthProvider'
+import { Button, Input, ScrollView, Text, View, XStack } from 'tamagui'
 
 export default function Page() {
   const { user } = useQuerySelfProfile()
   const [name, setName] = useState(user?.display_name || '')
 
   const { profileMutation, isSubmitting } = useProfileMutation({
-    onSuccess: () => router.replace('/profile')
+    onSuccess: () => router.replace('/profile'),
   })
 
   const onSubmit = () => {

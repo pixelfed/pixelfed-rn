@@ -1,12 +1,12 @@
-import { FlatList, ActivityIndicator } from 'react-native'
-import { Separator, Text, View, XStack, YStack } from 'tamagui'
-import { getAdminUsers } from 'src/lib/api'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, Link } from 'expo-router'
 import { Feather } from '@expo/vector-icons'
-import { prettyCount, _timeAgo, enforceLen } from 'src/utils'
 import { useInfiniteQuery } from '@tanstack/react-query'
+import { Link, Stack } from 'expo-router'
+import { ActivityIndicator, FlatList } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import UserAvatar from 'src/components/common/UserAvatar'
+import { getAdminUsers } from 'src/lib/api'
+import { _timeAgo, enforceLen, prettyCount } from 'src/utils'
+import { Separator, Text, View, XStack, YStack } from 'tamagui'
 
 const keyExtractor = (_, index) => `user-${_.id}`
 

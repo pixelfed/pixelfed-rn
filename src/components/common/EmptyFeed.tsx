@@ -1,5 +1,5 @@
-import { Text, YStack } from 'tamagui'
 import { StyleSheet } from 'react-native'
+import { Text, YStack } from 'tamagui'
 import GhostIcon from '../icons/GhostIcon'
 
 const almostBlack = 'rgb(64, 64, 64)'

@@ -1,7 +1,7 @@
-import { Platform, Pressable } from 'react-native'
-import { Text, XStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { Link } from 'expo-router'
+import { Platform, Pressable } from 'react-native'
+import { Text, XStack } from 'tamagui'
 
 export default function FeedHeader({ title = 'Home', user }) {
   return (

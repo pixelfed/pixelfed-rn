@@ -4,6 +4,7 @@
     "enabled": true
   },
   "files": {
+    "include": ["src/**/*"],
     "maxSize": 2000000
   },
   "linter": {

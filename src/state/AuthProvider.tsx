@@ -1,16 +1,16 @@
+import * as Linking from 'expo-linking'
+import { router, useSegments } from 'expo-router'
+import * as WebBrowser from 'expo-web-browser'
 import { createContext, useCallback, useEffect } from 'react'
 import { useContext, useState } from 'react'
-import { router, useSegments } from 'expo-router'
-import { loginPreflightCheck, postForm, get, verifyCredentials } from 'src/requests'
-import * as Linking from 'expo-linking'
+import { Alert, Platform } from 'react-native'
+import { get, loginPreflightCheck, postForm, verifyCredentials } from 'src/requests'
 import { Storage } from './cache'
-import * as WebBrowser from 'expo-web-browser'
-import { Platform, Alert } from 'react-native'
 
-import type { ReactNode } from 'react'
-import type { Account, LoginUserResponse } from 'src/lib/api-types'
 import { useQuery } from '@tanstack/react-query'
+import type { ReactNode } from 'react'
 import { getAccountById } from 'src/lib/api'
+import type { Account, LoginUserResponse } from 'src/lib/api-types'
 
 type User = {
   server: string

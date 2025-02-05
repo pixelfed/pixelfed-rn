@@ -1,12 +1,12 @@
-import { ActivityIndicator, Alert, type AlertButton, Pressable } from 'react-native'
-import { View } from 'tamagui'
-import { useState, useLayoutEffect } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { fetchChatThread, sendChatMessage, deleteChatMessage } from 'src/lib/api'
+import { useLayoutEffect, useState } from 'react'
+import { ActivityIndicator, Alert, type AlertButton, Pressable } from 'react-native'
+import { Bubble, GiftedChat, Send } from 'react-native-gifted-chat'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { deleteChatMessage, fetchChatThread, sendChatMessage } from 'src/lib/api'
 import { _timeAgo, enforceLen } from 'src/utils'
-import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat'
+import { View } from 'tamagui'
 
 import { Feather } from '@expo/vector-icons'
 import { useUserCache } from 'src/state/AuthProvider'
@@ -44,7 +44,6 @@ export default function Page() {
     mutationFn: async (message) => {
       try {
         const res = await sendChatMessage(id, message[0].text)
-        console.log('send message - server answered:', { res })
 
         if (typeof res.error !== 'undefined') {
           throw new Error(res.error)
@@ -64,12 +63,10 @@ export default function Page() {
         }
         setMessages((previousMessages) => GiftedChat.append(previousMessages, msg))
       } catch (err: any) {
-        console.log('Failed to send message', err, err?.msg || err?.message)
         Alert.alert('Failed to send message', err?.message || err)
       }
     },
     onError: (err) => {
-      console.log('sendMutation: Failed to send message', err)
       Alert.alert('Failed to send message', err.message)
     },
   })

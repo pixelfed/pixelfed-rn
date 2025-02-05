@@ -1,8 +1,33 @@
-import { Alert, Share, Pressable, Platform, useWindowDimensions } from 'react-native'
-import { Button, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
-import FastImage from 'react-native-fast-image'
+import {
+  BottomSheetBackdrop,
+  type BottomSheetBackdropProps,
+  BottomSheetModal,
+  BottomSheetScrollView,
+} from '@gorhom/bottom-sheet'
+import { Link, router } from 'expo-router'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
+import { Alert, Platform, Pressable, Share, useWindowDimensions } from 'react-native'
+import { Blurhash } from 'react-native-blurhash'
+import FastImage from 'react-native-fast-image'
+import {
+  Gesture,
+  GestureDetector,
+  PinchGestureHandler,
+  State,
+} from 'react-native-gesture-handler'
+import { PressableOpacity } from 'react-native-pressable-opacity'
+import Animated, {
+  runOnJS,
+  type SharedValue,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated'
+import Carousel, { Pagination } from 'react-native-reanimated-carousel'
+import AutolinkText from 'src/components/common/AutolinkText'
+import LikeButton from 'src/components/common/LikeButton'
+import { Storage } from 'src/state/cache'
 import {
   _timeAgo,
   enforceLen,
@@ -11,40 +36,16 @@ import {
   openBrowserAsync,
   prettyCount,
 } from 'src/utils'
-import { Link, router } from 'expo-router'
-import {
-  BottomSheetModal,
-  BottomSheetScrollView,
-  BottomSheetBackdrop,
-  type BottomSheetBackdropProps,
-} from '@gorhom/bottom-sheet'
-import Carousel, { Pagination } from 'react-native-reanimated-carousel'
+import { Button, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
 import ReadMore from '../common/ReadMore'
-import LikeButton from 'src/components/common/LikeButton'
-import AutolinkText from 'src/components/common/AutolinkText'
-import { Blurhash } from 'react-native-blurhash'
-import { PressableOpacity } from 'react-native-pressable-opacity'
 import VideoPlayer from './VideoPlayer'
-import { Storage } from 'src/state/cache'
-import {
-  State,
-  PinchGestureHandler,
-  GestureDetector,
-  Gesture,
-} from 'react-native-gesture-handler'
-import Animated, {
-  runOnJS,
-  type SharedValue,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated'
 
 import type {
   GestureEvent,
   HandlerStateChangeEvent,
   PinchGestureHandlerEventPayload,
 } from 'react-native-gesture-handler'
+import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 import type {
   LoginUserResponse,
   MediaAttachment,
@@ -54,7 +55,6 @@ import type {
   Timestamp,
   Visibility,
 } from 'src/lib/api-types'
-import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
 

@@ -1,17 +1,17 @@
-import { Link, Stack } from 'expo-router'
-import { FlatList, ActivityIndicator, Keyboard, Pressable } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Text, View, YStack, Input, XStack } from 'tamagui'
 import { useQuery } from '@tanstack/react-query'
+import { Link, Stack } from 'expo-router'
+import { ActivityIndicator, FlatList, Keyboard, Pressable } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { Input, Text, View, XStack, YStack } from 'tamagui'
 
-import { searchQuery } from 'src/lib/api'
-import { useCallback, useState } from 'react'
-import UserAvatar from 'src/components/common/UserAvatar'
-import { getDomain, prettyCount } from 'src/utils'
 import Feather from '@expo/vector-icons/Feather'
+import { useCallback, useState } from 'react'
 import ReadMore from 'src/components/common/ReadMore'
-import { formatTimestampMonthYear, postCountLabel } from 'src/utils'
+import UserAvatar from 'src/components/common/UserAvatar'
+import { searchQuery } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
+import { getDomain, prettyCount } from 'src/utils'
+import { formatTimestampMonthYear, postCountLabel } from 'src/utils'
 
 export default function SearchScreen() {
   const [query, setQuery] = useState('')

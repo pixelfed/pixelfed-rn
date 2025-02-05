@@ -1,15 +1,15 @@
+import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
+import { useCallback, useLayoutEffect, useMemo, useRef } from 'react'
 //@ts-check
 import { ActivityIndicator, Platform } from 'react-native'
-import { ScrollView, Text, View } from 'tamagui'
-import { useRef, useMemo, useCallback, useLayoutEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, router, useNavigation } from 'expo-router'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getStatusById, deleteStatusV1, reblogStatus, unreblogStatus } from 'src/lib/api'
-import FeedPost from 'src/components/post/FeedPost'
-import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet'
 import CommentFeed from 'src/components/post/CommentFeed'
+import FeedPost from 'src/components/post/FeedPost'
+import { deleteStatusV1, getStatusById, reblogStatus, unreblogStatus } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
+import { ScrollView, Text, View } from 'tamagui'
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()

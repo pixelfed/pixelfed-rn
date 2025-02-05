@@ -1,13 +1,13 @@
-import { FlatList, Dimensions, ActivityIndicator, Share, Alert } from 'react-native'
-import { Image, View } from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link } from 'expo-router'
-import { useInfiniteQuery } from '@tanstack/react-query'
-import { getAccountStatusesById } from 'src/lib/api'
 import Feather from '@expo/vector-icons/Feather'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { Link } from 'expo-router'
+import { ActivityIndicator, Alert, Dimensions, FlatList, Share } from 'react-native'
 import { Blurhash } from 'react-native-blurhash'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { getAccountStatusesById } from 'src/lib/api'
 import { useQuerySelfProfile } from 'src/state/AuthProvider'
+import { Image, View } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 

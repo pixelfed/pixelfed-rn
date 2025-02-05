@@ -1,38 +1,38 @@
-import { useCallback, useState, useRef, useMemo } from 'react'
-import {
-  FlatList,
-  StyleSheet,
-  ActivityIndicator,
-  Platform,
-  type ListRenderItemInfo,
-} from 'react-native'
-import { Text, View } from 'tamagui'
-import FeedPost from 'src/components/post/FeedPost'
-import { StatusBar } from 'expo-status-bar'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { type ErrorBoundaryProps, Stack, useNavigation, useRouter } from 'expo-router'
+import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet'
+import { useFocusEffect } from '@react-navigation/native'
 import {
   useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
+import { type ErrorBoundaryProps, Stack, useNavigation, useRouter } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import {
-  fetchNetworkFeed,
+  ActivityIndicator,
+  FlatList,
+  type ListRenderItemInfo,
+  Platform,
+  StyleSheet,
+} from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import ErrorFeed from 'src/components/common/ErrorFeed'
+import FeedHeader from 'src/components/common/FeedHeader'
+import CommentFeed from 'src/components/post/CommentFeed'
+import FeedPost from 'src/components/post/FeedPost'
+import { useVideo } from 'src/hooks/useVideoProvider'
+import {
   deleteStatusV1,
-  postBookmark,
+  fetchNetworkFeed,
   getSelfAccount,
+  postBookmark,
   reblogStatus,
   unreblogStatus,
 } from 'src/lib/api'
-import FeedHeader from 'src/components/common/FeedHeader'
-import ErrorFeed from 'src/components/common/ErrorFeed'
-import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet'
-import CommentFeed from 'src/components/post/CommentFeed'
-import { useVideo } from 'src/hooks/useVideoProvider'
-import { useFocusEffect } from '@react-navigation/native'
-import { useUserCache } from 'src/state/AuthProvider'
 import type { Status } from 'src/lib/api-types'
+import { useUserCache } from 'src/state/AuthProvider'
+import { Text, View } from 'tamagui'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   return (

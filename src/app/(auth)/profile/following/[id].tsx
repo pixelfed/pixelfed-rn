@@ -1,12 +1,12 @@
-import { FlatList, ActivityIndicator } from 'react-native'
-import { Text, View, YStack, XStack } from 'tamagui'
-import { useLayoutEffect } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link, Stack, useLocalSearchParams, useNavigation } from 'expo-router'
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
-import { getAccountById, getAccountFollowing } from 'src/lib/api'
-import UserAvatar from 'src/components/common/UserAvatar'
 import Feather from '@expo/vector-icons/Feather'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { Link, Stack, useLocalSearchParams, useNavigation } from 'expo-router'
+import { useLayoutEffect } from 'react'
+import { ActivityIndicator, FlatList } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import UserAvatar from 'src/components/common/UserAvatar'
+import { getAccountById, getAccountFollowing } from 'src/lib/api'
+import { Text, View, XStack, YStack } from 'tamagui'
 
 export default function FollowingScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()

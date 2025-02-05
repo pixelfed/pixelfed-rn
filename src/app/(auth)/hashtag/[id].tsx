@@ -1,25 +1,25 @@
-import { FlatList, Dimensions, ActivityIndicator } from 'react-native'
-import { ScrollView, Text, View, XStack, YStack, Button, Separator } from 'tamagui'
-import { useCallback } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, Link } from 'expo-router'
+import { Feather } from '@expo/vector-icons'
 import {
-  useQuery,
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
+import { Link, Stack, useLocalSearchParams } from 'expo-router'
+import { useCallback } from 'react'
+import { ActivityIndicator, Dimensions, FlatList } from 'react-native'
+import { Blurhash } from 'react-native-blurhash'
+import FastImage from 'react-native-fast-image'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import {
+  followHashtag,
   getHashtagByName,
   getHashtagByNameFeed,
   getHashtagRelated,
-  followHashtag,
   unfollowHashtag,
 } from 'src/lib/api'
+import { Button, ScrollView, Separator, Text, View, XStack, YStack } from 'tamagui'
 import { prettyCount } from '../../../utils'
-import FastImage from 'react-native-fast-image'
-import { Feather } from '@expo/vector-icons'
-import { Blurhash } from 'react-native-blurhash'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 const IMAGE_WIDTH = SCREEN_WIDTH / 3 - 2
