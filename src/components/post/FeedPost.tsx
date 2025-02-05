@@ -703,22 +703,14 @@ export default function FeedPost({
     []
   )
 
-  const [likeCount, setLikeCount] = useState(post?.favourites_count ?? 0)
-  const [hasLiked, setLiked] = useState(post.favourited ?? false)
-
-  // toggles 'hasLiked' value, updates states and calls mutation
-  const handleLikeAction = () => {
-    let currentHasLiked = !hasLiked
-
-    setLiked(currentHasLiked)
-    setLikeCount(currentHasLiked ? likeCount + 1 : likeCount - 1)
-
-    handleLike(post?.id, currentHasLiked)
-  }
+  const handleLikeAction = useCallback(() => {
+    const shouldLike = !post.favourited
+    handleLike(post.id, shouldLike)
+  }, [post.id, post.favourited, post.favourites_count, handleLike])
 
   const handleDoubleTap = () => {
     // only allow liking with double tap, not unliking
-    if (!hasLiked) {
+    if (!post.favourited) {
       handleLikeAction()
     }
   }
@@ -822,7 +814,7 @@ export default function FeedPost({
       {!hideCaptions || isPermalink ? (
         <>
           <PostActions
-            hasLiked={hasLiked}
+            hasLiked={post.favourited}
             hasShared={post?.reblogged === true}
             hasBookmarked={post?.bookmarked === true}
             post={post}
