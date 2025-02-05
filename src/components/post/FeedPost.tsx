@@ -1,5 +1,9 @@
 import { Feather } from '@expo/vector-icons'
-import { BottomSheetModal, BottomSheetScrollView, BottomSheetBackdrop } from '@gorhom/bottom-sheet'
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+} from '@gorhom/bottom-sheet'
 import { Link, router } from 'expo-router'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import {
