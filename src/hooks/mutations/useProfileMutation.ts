@@ -33,14 +33,14 @@ export function useProfileMutation(args: ProfileMutationArgs) {
 
       toast.show('Failed to save changes', {
         message: 'Please try again later',
-        native: false
+        native: false,
       })
       console.error('Error handled by like useMutation:', error)
     },
     onSuccess: () => {
       setSubmitting(false)
       args.onSuccess?.()
-    }
+    },
   })
 
   return { profileMutation, isSubmitting }

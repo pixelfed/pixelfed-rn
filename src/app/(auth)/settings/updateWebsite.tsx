@@ -12,7 +12,7 @@ export default function Page() {
   const [website, setWebsite] = useState(user?.website || '')
 
   const { profileMutation, isSubmitting } = useProfileMutation({
-    onSuccess: () => router.replace('/profile')
+    onSuccess: () => router.replace('/profile'),
   })
 
   const onSubmit = () => {

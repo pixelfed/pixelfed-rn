@@ -18,10 +18,10 @@ export default function Page() {
   const maxLen = config ? Math.floor(config?.account.max_bio_length) : 0
 
   const { user } = useQuerySelfProfile()
-  const [bio, setBio] = useState(user?.note_text || "")
+  const [bio, setBio] = useState(user?.note_text || '')
 
   const { profileMutation, isSubmitting } = useProfileMutation({
-    onSuccess: () => router.replace('/profile')
+    onSuccess: () => router.replace('/profile'),
   })
 
   const onSubmit = () => {

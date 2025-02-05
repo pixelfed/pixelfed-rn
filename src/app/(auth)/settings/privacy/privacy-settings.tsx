@@ -11,9 +11,9 @@ import { Switch } from 'src/components/form/Switch'
 import { useProfileMutation } from 'src/hooks/mutations/useProfileMutation'
 
 interface RenderSwitchProps {
-  title: string,
-  description: string,
-  initialValue: boolean,
+  title: string
+  description: string
+  initialValue: boolean
   onCheckedChange: (checked: boolean) => void
 }
 
@@ -47,7 +47,7 @@ export default function Page() {
   const queryClient = useQueryClient()
 
   const { profileMutation } = useProfileMutation({
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['getSelfAccount'] })
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['getSelfAccount'] }),
   })
 
   const privateAccountSwitch = (checked: boolean) => {
@@ -110,59 +110,73 @@ export default function Page() {
       <ScrollView flexGrow={1}>
         <YStack gap="$1">
           <RenderSwitch
-            title='Private Account'
-            description='Limit your posts and account visibility to your followers, and curate new
-                follow requests'
+            title="Private Account"
+            description="Limit your posts and account visibility to your followers, and curate new
+                follow requests"
             initialValue={profile.locked}
-            onCheckedChange={(checked) => privateAccountSwitch(checked)} />
-          
-          <RenderSwitch
-            title='Hide Followers'
-            description='Hide your followers collection, only you will be able to see who follows
-                you'
-            initialValue={!profile.settings.show_profile_follower_count}
-            onCheckedChange={(checked) =>
-              profileMutation.mutate({ show_profile_follower_count: !checked })} />
-          
-          <RenderSwitch
-            title='Hide Following'
-            description='Hide your following collection, only you will be able to see who you are
-                following'
-            initialValue={!profile.settings.show_profile_following_count}
-            onCheckedChange={(checked) =>
-              profileMutation.mutate({ show_profile_following_count: !checked })} />
-          
-          <RenderSwitch
-            title='Allow Discovery'
-            description='Allow your account and posts to be recommended to other accounts'
-            initialValue={profile.settings.is_suggestable}
-            onCheckedChange={(checked) => profileMutation.mutate({ is_suggestable: checked })} />
-          
-          <RenderSwitch
-            title='Filter DMs'
-            description="Filter Direct Messages from accounts you don't follow"
-            initialValue={!profile.settings.public_dm}
-            onCheckedChange={(checked) => profileMutation.mutate({ public_dm: !checked })} />
+            onCheckedChange={(checked) => privateAccountSwitch(checked)}
+          />
 
           <RenderSwitch
-            title='Disable Search Engine indexing'
-            description='When your account is visible to search engines, your information can be
-                crawled and stored by search engines'
+            title="Hide Followers"
+            description="Hide your followers collection, only you will be able to see who follows
+                you"
+            initialValue={!profile.settings.show_profile_follower_count}
+            onCheckedChange={(checked) =>
+              profileMutation.mutate({ show_profile_follower_count: !checked })
+            }
+          />
+
+          <RenderSwitch
+            title="Hide Following"
+            description="Hide your following collection, only you will be able to see who you are
+                following"
+            initialValue={!profile.settings.show_profile_following_count}
+            onCheckedChange={(checked) =>
+              profileMutation.mutate({ show_profile_following_count: !checked })
+            }
+          />
+
+          <RenderSwitch
+            title="Allow Discovery"
+            description="Allow your account and posts to be recommended to other accounts"
+            initialValue={profile.settings.is_suggestable}
+            onCheckedChange={(checked) =>
+              profileMutation.mutate({ is_suggestable: checked })
+            }
+          />
+
+          <RenderSwitch
+            title="Filter DMs"
+            description="Filter Direct Messages from accounts you don't follow"
+            initialValue={!profile.settings.public_dm}
+            onCheckedChange={(checked) => profileMutation.mutate({ public_dm: !checked })}
+          />
+
+          <RenderSwitch
+            title="Disable Search Engine indexing"
+            description="When your account is visible to search engines, your information can be
+                crawled and stored by search engines"
             initialValue={!profile.settings.crawlable}
-            onCheckedChange={(checked) => profileMutation.mutate({ crawlable: !checked })} />
-          
+            onCheckedChange={(checked) => profileMutation.mutate({ crawlable: !checked })}
+          />
+
           <RenderSwitch
-            title='Disable embeds'
-            description='Disable profile and post embeds to prevent you or others from embedding on
-                other websites'
+            title="Disable embeds"
+            description="Disable profile and post embeds to prevent you or others from embedding on
+                other websites"
             initialValue={profile.settings.disable_embeds}
-            onCheckedChange={(checked) => profileMutation.mutate({ disable_embeds: checked })} />
-          
+            onCheckedChange={(checked) =>
+              profileMutation.mutate({ disable_embeds: checked })
+            }
+          />
+
           <RenderSwitch
-            title='Atom Feed'
+            title="Atom Feed"
             description={`Enable your public Atom feed, available at ${instance}/users/${profile?.username}.atom`}
             initialValue={profile.settings.show_atom}
-            onCheckedChange={(checked) => profileMutation.mutate({ show_atom: checked })} />
+            onCheckedChange={(checked) => profileMutation.mutate({ show_atom: checked })}
+          />
         </YStack>
       </ScrollView>
     </SafeAreaView>

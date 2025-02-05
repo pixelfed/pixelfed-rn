@@ -99,9 +99,7 @@ function RootLayoutNav() {
               <ToastProvider native={false}>
                 <ThemeProvider value={DefaultTheme}>
                   <VideoProvider>
-                    <ToastViewport
-                      padding='$6'
-                      bottom={0} left={0} right={0} />
+                    <ToastViewport padding="$6" bottom={0} left={0} right={0} />
                     <GlobalToast />
                     <Stack>
                       <Stack.Screen

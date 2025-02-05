@@ -35,7 +35,6 @@ import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
 import { useUserCache } from 'src/state/AuthProvider'
 import type { Status } from 'src/lib/api-types'
-import type { ListRenderItemInfo } from 'react-native'
 import type { ErrorBoundaryProps } from 'expo-router'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
