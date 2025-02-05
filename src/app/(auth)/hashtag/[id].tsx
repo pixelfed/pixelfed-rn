@@ -54,7 +54,7 @@ const RenderItem = ({ item }) =>
   ) : null
 
 export default function Page() {
-  const { id } = useLocalSearchParams()
+  const { id } = useLocalSearchParams<{ id: string }>()
   const queryClient = useQueryClient()
 
   const RelatedTags = useCallback(

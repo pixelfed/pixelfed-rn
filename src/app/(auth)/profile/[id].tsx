@@ -48,7 +48,7 @@ const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileScreen() {
   const navigation = useNavigation()
-  const { id, byUsername } = useLocalSearchParams()
+  const { id, byUsername } = useLocalSearchParams<{ id: string; byUsername?: string }>()
   const queryClient = useQueryClient()
   const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
   const snapPoints = useMemo(() => ['50%', '55%'], [])
@@ -211,21 +211,34 @@ export default function ProfileScreen() {
     ) : null
   }, [])
 
-  const EmptyFeed = () => (
-    <View flexGrow={1}>
-      {!isFetching && !user?.id ? (
+  const EmptyFeed = () => {
+    if (!isFetched || isFetching) {
+      return (
+        <YStack flex={1} justifyContent="center" alignItems="center" gap="$5">
+          <ActivityIndicator />
+        </YStack>
+      )
+    }
+
+    if (!isFetching && !user?.id) {
+      return (
         <YStack flexGrow={1} justifyContent="center" alignItems="center" gap="$5">
           <View p="$6" borderWidth={2} borderColor="$gray5" borderRadius={100}>
             <Feather name="alert-triangle" size={40} color="#aaa" />
           </View>
           <Text fontSize="$8">Account not found</Text>
         </YStack>
-      ) : !isFetched || isFetching ? (
-        <YStack flex={1} justifyContent="center" alignItems="center" gap="$5">
-          <ActivityIndicator />
-        </YStack>
-      ) : (
-        <YStack flexGrow={1} justifyContent="center" alignItems="center" gap="$5">
+      )
+    }
+    return (
+      <View flex={1} alignItems="center" justifyContent="center">
+        <YStack
+          h="100%"
+          flexGrow={1}
+          justifyContent="center"
+          alignItems="center"
+          gap="$5"
+        >
           {user?.locked && !relationship?.following ? (
             <>
               <View p="$6" borderWidth={2} borderColor="black" borderRadius={100}>
@@ -234,17 +247,17 @@ export default function ProfileScreen() {
               <Text fontSize="$8">This account is private</Text>
             </>
           ) : (
-            <>
+            <View flexGrow={1} alignItems="center" justifyContent="center" gap="$4">
               <View p="$6" borderWidth={2} borderColor="black" borderRadius={100}>
-                <Feather name="camera" size={40} />
+                <Feather name="camera" size={50} />
               </View>
-              <Text fontSize="$8">No Posts Yet</Text>
-            </>
+              <Text fontSize="$9">No Posts Yet</Text>
+            </View>
           )}
         </YStack>
-      )}
-    </View>
-  )
+      </View>
+    )
+  }
 
   const blockMutation = useMutation({
     mutationFn: () => {
@@ -319,7 +332,7 @@ export default function ProfileScreen() {
     bottomSheetModalRef.current?.close()
 
     if (action === 'report') {
-      router.push('/profile/report/' + id)
+      router.push('/profile/report/' + userId)
     }
 
     if (action === 'block') {
@@ -334,7 +347,7 @@ export default function ProfileScreen() {
           {
             text: 'Block',
             style: 'destructive',
-            onPress: () => _handleBlock(),
+            onPress: () => handleBlock(),
           },
         ]
       )
@@ -349,7 +362,7 @@ export default function ProfileScreen() {
         {
           text: 'Unblock',
           style: 'destructive',
-          onPress: () => _handleUnblock(),
+          onPress: () => handleUnblock(),
         },
       ])
     }
@@ -366,7 +379,7 @@ export default function ProfileScreen() {
           {
             text: 'Mute',
             style: 'destructive',
-            onPress: () => _handleMute(),
+            onPress: () => handleMute(),
           },
         ]
       )
@@ -381,7 +394,7 @@ export default function ProfileScreen() {
         {
           text: 'Unmute',
           style: 'destructive',
-          onPress: () => _handleUnmute(),
+          onPress: () => handleUnmute(),
         },
       ])
     }
@@ -413,35 +426,35 @@ export default function ProfileScreen() {
     }
   }
 
-  const _handleBlock = () => {
+  const handleBlock = () => {
     blockMutation.mutate()
   }
 
-  const _handleUnblock = () => {
+  const handleUnblock = () => {
     unblockMutation.mutate()
   }
 
-  const _handleMute = () => {
+  const handleMute = () => {
     muteMutation.mutate()
   }
 
-  const _handleUnmute = () => {
+  const handleUnmute = () => {
     unmuteMutation.mutate()
   }
 
-  const _handleFollow = () => {
+  const handleFollow = () => {
     followMutation.mutate()
   }
 
-  const _handleUnfollow = () => {
+  const handleUnfollow = () => {
     unfollowMutation.mutate()
   }
 
-  const _handleCancelFollowRequest = () => {
+  const handleCancelFollowRequest = () => {
     unfollowMutation.mutate()
   }
 
-  const _handleOnShare = async () => {
+  const handleOnShare = async () => {
     try {
       const result = await Share.share({
         message: user.url,
@@ -453,13 +466,19 @@ export default function ProfileScreen() {
     }
   }
 
-  const { data: user, error: userError } = useQuery({
-    queryKey:
-      byUsername !== undefined && id == 0
-        ? ['getAccountByUsername', byUsername]
-        : ['getAccountById', id],
-    queryFn: byUsername !== undefined && id == 0 ? getAccountByUsername : getAccountById,
-  })
+  const { data: user, error: userError } = useQuery(
+    byUsername !== undefined && id === '0'
+      ? {
+          queryKey: ['getAccountByUsername', byUsername],
+          queryFn: () => getAccountByUsername(byUsername),
+        }
+      : {
+          queryKey: ['getAccountById', id],
+          queryFn: () => getAccountById(id),
+        }
+  )
+
+  const userId = user?.id
 
   useEffect(() => {
     if (user && Platform.OS == 'android') {
@@ -473,8 +492,6 @@ export default function ProfileScreen() {
       })
     }
   }, [navigation, user])
-
-  const userId = user?.id
 
   const { data: relationship, isError: relationshipError } = useQuery({
     queryKey: ['getAccountRelationship', userId],
@@ -494,10 +511,10 @@ export default function ProfileScreen() {
         profile={user}
         relationship={relationship}
         openMenu={onOpenMenu}
-        onFollow={() => _handleFollow()}
-        onUnfollow={() => _handleUnfollow()}
-        onCancelFollowRequest={() => _handleCancelFollowRequest()}
-        onShare={() => _handleOnShare()}
+        onFollow={() => handleFollow()}
+        onUnfollow={() => handleUnfollow()}
+        onCancelFollowRequest={() => handleCancelFollowRequest()}
+        onShare={() => handleOnShare()}
         mutuals={mutuals}
       />
     ),
@@ -544,9 +561,37 @@ export default function ProfileScreen() {
     enabled: !!userId,
   })
 
-  if (status !== 'success' || (isFetching && !isFetchingNextPage)) {
+  if (userError) {
     return (
       <SafeAreaView edges={['top']}>
+        <Stack.Screen
+          options={{
+            headerShown: true,
+            title: byUsername || id,
+            headerBackTitle: 'Back',
+          }}
+        />
+        <View style={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text fontSize="$8">{userError.message}</Text>
+          {byUsername && (
+            <Button
+              bg="$blue9"
+              size="$5"
+              color="white"
+              marginBlockStart="$5"
+              onPress={() =>
+                router.push({ pathname: '/search', params: { initialQuery: byUsername } })
+              }
+            >{`Search for ${byUsername}`}</Button>
+          )}
+        </View>
+      </SafeAreaView>
+    )
+  }
+
+  if (status !== 'success' || (isFetching && !isFetchingNextPage)) {
+    return (
+      <SafeAreaView edges={['top']} flex={1}>
         <Stack.Screen options={{ headerShown: false }} />
         <View style={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator color={'#000'} />
@@ -556,7 +601,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView edges={['top']} style={{ backgroundColor: 'white' }}>
+    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: 'white' }}>
       <Stack.Screen
         options={{
           headerShown: Platform.OS === 'android',

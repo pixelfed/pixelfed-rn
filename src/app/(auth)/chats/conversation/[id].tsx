@@ -6,15 +6,12 @@ import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-rout
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { fetchChatThread, sendChatMessage, deleteChatMessage } from 'src/lib/api'
 import { _timeAgo, enforceLen } from 'src/utils'
-import {
-  GiftedChat,
-  Bubble,
-  Send,
-  type BubbleProps,
-  type IMessage,
-} from 'react-native-gifted-chat'
+import { GiftedChat, Bubble, Send } from 'react-native-gifted-chat'
+
 import { Feather } from '@expo/vector-icons'
 import { useUserCache } from 'src/state/AuthProvider'
+
+import type { BubbleProps, IMessage } from 'react-native-gifted-chat'
 
 function renderBubble<TMessage extends IMessage>(props: BubbleProps<TMessage>) {
   return (
@@ -27,7 +24,7 @@ function renderBubble<TMessage extends IMessage>(props: BubbleProps<TMessage>) {
 }
 
 export default function Page() {
-  const { id } = useLocalSearchParams()
+  const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const queryClient = useQueryClient()
   const navigation = useNavigation()
@@ -45,20 +42,35 @@ export default function Page() {
 
   const sendMutation = useMutation({
     mutationFn: async (message) => {
-      const res = await sendChatMessage(id, message[0].text)
-      const msg = {
-        _id: res.id,
-        id: res.id,
-        createdAt: new Date(),
-        sent: true,
-        text: message[0].text,
-        user: {
-          _id: selfUser.id,
-          name: selfUser.username,
-          avatar: selfUser.avatar,
-        },
+      try {
+        const res = await sendChatMessage(id, message[0].text)
+        console.log('send message - server answered:', { res })
+
+        if (typeof res.error !== 'undefined') {
+          throw new Error(res.error)
+        }
+
+        const msg = {
+          _id: res.id,
+          id: res.id,
+          createdAt: new Date(),
+          sent: true,
+          text: message[0].text,
+          user: {
+            _id: selfUser.id,
+            name: selfUser.username,
+            avatar: selfUser.avatar,
+          },
+        }
+        setMessages((previousMessages) => GiftedChat.append(previousMessages, msg))
+      } catch (err: any) {
+        console.log('Failed to send message', err, err?.msg || err?.message)
+        Alert.alert('Failed to send message', err?.message || err)
       }
-      setMessages((previousMessages) => GiftedChat.append(previousMessages, msg))
+    },
+    onError: (err) => {
+      console.log('sendMutation: Failed to send message', err)
+      Alert.alert('Failed to send message', err.message)
     },
   })
 

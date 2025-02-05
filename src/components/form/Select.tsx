@@ -11,6 +11,7 @@ export function FormSelect(props: any) {
           {props?.label}
         </Label>
         <FormSelectItem
+          title={props?.title}
           options={props?.options}
           defaultValue={props?.defaultValue}
           open={props.open}
@@ -25,8 +26,16 @@ export function FormSelectItem(props: SelectProps) {
 
   return (
     <Select value={val} onValueChange={setVal} disablePreventBodyScroll {...props}>
-      <Select.Trigger width={220} iconAfter={<Feather name="chevron-down" />}>
-        <Select.Value placeholder="Select an option" />
+      <Select.Trigger
+        width={220}
+        iconAfter={<Feather name="chevron-down" />}
+        backgroundColor="black"
+        borderColor="#aaa"
+        borderWidth={1}
+        themeInverse={true}
+        color="#aaa"
+      >
+        <Select.Value placeholder="Select an option" color="#aaa" />
       </Select.Trigger>
 
       <Adapt when="sm" platform="touch">
@@ -74,7 +83,7 @@ export function FormSelectItem(props: SelectProps) {
           exitStyle={{ o: 0, y: 10 }}
         >
           <Select.Group>
-            {/* <Select.Label>Select</Select.Label> */}
+            {props?.title && <Select.Label>{props?.title}</Select.Label>}
             {/* for longer lists memoizing these is useful */}
             {useMemo(
               () =>
