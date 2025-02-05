@@ -61,7 +61,6 @@ export default function SearchScreen() {
                     whiteSpace="break-all"
                     overflow="hidden"
                   >
-                    <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
                       <Text fontSize="$6" fontWeight="bold">
                         {item.username}
                       </Text>
@@ -74,15 +73,10 @@ export default function SearchScreen() {
                           @{getDomain(item.url)}
                         </Text>
                       ) : null}
-                    </ReadMore>
                   </XStack>
                   <XStack gap="$2" alignItems="center">
                     <Text color="$gray9" fontSize="$2">
                       {prettyCount(item.followers_count)} Followers
-                    </Text>
-                    <Text color="$gray8">·</Text>
-                    <Text color="$gray9" fontSize="$2">
-                      {postCountLabel(item.statuses_count)}
                     </Text>
                     <Text color="$gray8">·</Text>
                     <Text color="$gray9" fontSize="$2">
@@ -101,19 +95,19 @@ export default function SearchScreen() {
     if (item._type === 'hashtag') {
       return (
         <Link href={`/hashtag/${item.name}`} asChild>
-          <View p="$3" bg="white">
-            <XStack alignItems="center" gap="$3">
+          <View px="$4" py="$3" bg="white">
+            <XStack alignItems="center" gap="$4">
               <View
-                w={50}
-                h={50}
+                w={30}
+                h={30}
                 borderRadius={50}
                 bg="$gray3"
                 justifyContent="center"
                 alignItems="center"
               >
-                <Feather name="hash" size={30} color="#000" />
+                <Feather name="hash" size={20} color="#000" />
               </View>
-              <YStack gap={4}>
+              <XStack flexGrow={1} gap={4} justifyContent='space-between' alignItems="center">
                 <Text fontSize="$6" fontWeight="bold">
                   {item.name}
                 </Text>
@@ -122,7 +116,7 @@ export default function SearchScreen() {
                     {prettyCount(item.count)} posts
                   </Text>
                 </XStack>
-              </YStack>
+              </XStack>
             </XStack>
           </View>
         </Link>
@@ -198,6 +192,8 @@ export default function SearchScreen() {
           onChangeText={(text) => setQuery(text)}
           value={query}
           bg="white"
+          autoCorrect={false}
+          autoComplete='off'
           autoFocus={true}
           size="$6"
         />
