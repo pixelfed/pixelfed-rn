@@ -6,10 +6,23 @@ import type {
   PaginatedStatus,
   Relationship,
   RelationshipFromFollowAPIResponse,
+  UpdateCredentialsParams,
   Status,
 } from './api-types'
 import { randomKey } from './randomKey'
 import { ContextFromStorage } from './api-context'
+
+export function randomKey(length: number) {
+  let result = ''
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  const charactersLength = characters.length
+  let counter = 0
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength))
+    counter += 1
+  }
+  return result
+}
 
 function removeDuplicateObjects(array: any[], keyProps: string[]) {
   return array.filter(
@@ -592,10 +605,9 @@ export async function getSelfAccount() {
   })
 }
 
-export async function updateCredentials(data) {
+export async function updateCredentials(params: URLSearchParams) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')
-  const params = new URLSearchParams(data)
   let url = `https://${instance}/api/v1/accounts/update_credentials?${params.toString()}`
   const response = await fetch(url, {
     method: 'patch',

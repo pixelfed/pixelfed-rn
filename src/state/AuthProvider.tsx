@@ -20,11 +20,12 @@ type User = {
 type AuthProvider = {
   isLoading: boolean
   user: User | null
-  login: (server: string) => Promise<boolean>
+  login: (server: string, enabledScopes: string) => Promise<boolean>
   logout: () => void
-  // setUser: (newValue: User | null) => void,
+  setUser: (newValue: User | null) => void
   userCache: LoginUserResponse | null
   loadUserCacheFromStorage: () => void
+  handleRegistration: (server: string, token: string) => void
 }
 
 function useProtectedRoute(user: User | null, setUser: any, setIsLoading: any) {
@@ -71,9 +72,10 @@ export const AuthContext = createContext<AuthProvider>({
   user: null,
   login: () => Promise.resolve(false),
   logout: () => {},
-  // setUser: (newValue: User|null) => {},
+  setUser: (newValue: User | null) => {},
   userCache: null,
   loadUserCacheFromStorage: () => {},
+  handleRegistration: () => {},
 })
 
 export function useAuth() {
@@ -102,7 +104,23 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     [loadUserCacheFromStorage] /** only run when component is constructed */
   )
 
-  const login = async (server: string) => {
+  const handleRegistration = async (server: string, token: string) => {
+    const url = `https://${server}/api/v1/accounts/verify_credentials`
+    const profile = await verifyCredentials(server, token)
+
+    setUserCache(profile)
+
+    Storage.set('user.profile', JSON.stringify(profile))
+
+    setUser({
+      server,
+      token,
+    })
+
+    return true
+  }
+
+  const login = async (server: string, enabledScopes: string) => {
     const precheck = await loginPreflightCheck(server)
     const url = 'https://' + server
     if (!precheck) {
@@ -114,7 +132,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     const formBody = {
       client_name: 'Pixelfed for ' + (Platform.OS == 'android' ? 'Android' : 'iOS'),
       redirect_uris: REDIRECT_URI,
-      scopes: 'read write follow push admin:read admin:write',
+      scopes: enabledScopes,
       website: 'https://github.com/pixelfed/pixelfed-rn',
     }
     app = await postForm(`${url}/api/v1/apps`, formBody)
@@ -133,7 +151,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     await WebBrowser.openAuthSessionAsync(
       `${url}/oauth/authorize` +
         `?client_id=${app.client_id}` +
-        `&scope=read+write+follow+push+admin:read+admin:write` +
+        `&scope=${enabledScopes.split(' ').join('+')}` +
         `&redirect_uri=${REDIRECT_URI}` +
         `&response_type=code`,
       REDIRECT_URI,
@@ -211,7 +229,15 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ isLoading, user, login, logout, userCache, loadUserCacheFromStorage }}
+      value={{
+        isLoading,
+        user,
+        login,
+        logout,
+        userCache,
+        loadUserCacheFromStorage,
+        handleRegistration,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -46,9 +46,7 @@ export default function AppLayout() {
           tabBarShowLabel: false,
           headerShown: true,
           tabBarIcon: ({ color }) => (
-            <View bg="$gray4" px="$3" py={4} borderRadius={5}>
-              <Feather name="plus" size={26} color={color} />
-            </View>
+            <Feather name="plus-square" size={30} color={color} />
           ),
         }}
       />

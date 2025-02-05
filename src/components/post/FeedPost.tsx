@@ -16,7 +16,7 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
   BottomSheetBackdrop,
-  BottomSheetBackdropProps,
+  type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet'
 import Carousel, { Pagination } from 'react-native-reanimated-carousel'
 import ReadMore from '../common/ReadMore'
@@ -136,65 +136,63 @@ const BorderlessSection = React.memo(({ children }: React.PropsWithChildren) => 
 ))
 
 interface PostHeaderProps {
-  avatar: string,
-  username: string,
-  displayName: string,
-  userId: string,
+  avatar: string
+  username: string
+  displayName: string
+  userId: string
   onOpenMenu: () => void
 }
 
-const PostHeader = React.memo(({
-  avatar,
-  username,
-  displayName,
-  userId,
-  onOpenMenu
-}: PostHeaderProps) => (
-  <Section>
-    <XStack
-      flexGrow={1}
-      justifyContent="space-between"
-      alignSelf="stretch"
-      alignItems="center"
-      py="$2"
-    >
-      <View flexGrow={1}>
-        <Link href={`/profile/${userId}`} asChild>
-          <Pressable>
-            <XStack gap="$3" alignItems="center" flexGrow={1}>
-              <FastImage
-                source={{ uri: avatar }}
-                style={{
-                  width: AVATAR_WIDTH,
-                  height: AVATAR_WIDTH,
-                  borderRadius: AVATAR_WIDTH,
-                  borderWidth: 1,
-                  borderColor: '#eee',
-                }}
-              />
-              <YStack gap={3}>
-                <Text fontWeight="bold" fontSize="$5">
-                  {enforceLen(username, 20, true)}
-                </Text>
-                <Text fontWeight="300" fontSize="$3" color="$gray9">
-                  {enforceLen(displayName, 25, true)}
-                </Text>
-              </YStack>
-            </XStack>
-          </Pressable>
-        </Link>
-      </View>
-      <Pressable onPress={() => onOpenMenu()}>
-        <View px="$3">
-          <Feather
-            name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
-            size={25}
-          />
+const PostHeader = React.memo(
+  ({ avatar, username, displayName, userId, onOpenMenu }: PostHeaderProps) => (
+    <Section>
+      <XStack
+        flexGrow={1}
+        justifyContent="space-between"
+        alignSelf="stretch"
+        alignItems="center"
+        py="$2"
+      >
+        <View flexGrow={1}>
+          <Link href={`/profile/${userId}`} asChild>
+            <Pressable>
+              <XStack gap="$3" alignItems="center" flexGrow={1}>
+                <FastImage
+                  source={{ uri: avatar }}
+                  style={{
+                    width: AVATAR_WIDTH,
+                    height: AVATAR_WIDTH,
+                    borderRadius: AVATAR_WIDTH,
+                    borderWidth: 1,
+                    borderColor: '#eee',
+                  }}
+                />
+                <YStack gap={3}>
+                  <XStack gap="$2" alignItems="center">
+                    <Text fontWeight="bold" fontSize="$5">
+                      {enforceLen(username, 20, true)}
+                    </Text>
+                  </XStack>
+                  <Text fontWeight="300" fontSize="$3" color="$gray9">
+                    {enforceLen(displayName, 25, true)}
+                  </Text>
+                </YStack>
+              </XStack>
+            </Pressable>
+          </Link>
         </View>
-      </Pressable>
-    </XStack>
-  </Section>
-))
+        <Pressable onPress={() => onOpenMenu()}>
+          <View px="$3">
+            <Feather
+              name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
+              size={25}
+            />
+          </View>
+        </Pressable>
+      </XStack>
+    </Section>
+  )
+)
 
 interface PostMediaProps {
   media: Array<MediaAttachment>
@@ -563,7 +561,7 @@ const PostCaption = React.memo(
     disableReadMore,
     editedAt,
     isLikeFeed,
-    likedAt
+    likedAt,
   }: PostCaptionProps) => {
     const timeAgo = formatTimestamp(createdAt)
     const captionText = htmlToTextWithLineBreaks(caption)
@@ -722,7 +720,11 @@ export default function FeedPost({
     .maxDuration(250)
     .numberOfTaps(2)
     .onStart(() => {
-      runOnJS(handleDoubleTap)()
+      try {
+        runOnJS(handleDoubleTap)()
+      } catch (error) {
+        console.error('Double tap error:', error)
+      }
     })
 
   const _onDeletePost = (id: string) => {
@@ -797,17 +799,19 @@ export default function FeedPost({
         userId={post.account?.id}
         onOpenMenu={() => handlePresentModalPress()}
       />
-      <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
-        {post.media_attachments?.length > 1 ? (
-          <PostAlbumMedia
-            media={post.media_attachments}
-            post={post}
-            progress={progress}
-          />
-        ) : post.media_attachments?.length === 1 ? (
-          <PostMedia media={post.media_attachments} post={post} />
-        ) : null}
-      </GestureDetector>
+      {post.media_attachments?.length > 0 ? (
+        <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
+          {post.media_attachments.length > 1 ? (
+            <PostAlbumMedia
+              media={post.media_attachments}
+              post={post}
+              progress={progress}
+            />
+          ) : (
+            <PostMedia media={post.media_attachments} post={post} />
+          )}
+        </GestureDetector>
+      ) : null}
       {!hideCaptions || isPermalink ? (
         <>
           <PostActions

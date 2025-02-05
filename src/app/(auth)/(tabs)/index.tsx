@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useState, useRef, useMemo } from 'react'
-import { FlatList, StyleSheet, ActivityIndicator, Platform } from 'react-native'
-import { Text, View, XStack, Spinner } from 'tamagui'
+import {
+  FlatList,
+  StyleSheet,
+  ActivityIndicator,
+  Platform,
+  type ListRenderItemInfo,
+} from 'react-native'
+import { Text, View, XStack, Spinner, YStack } from 'tamagui'
 import FeedPost from 'src/components/post/FeedPost'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -28,7 +34,6 @@ import { useShareIntentContext } from 'expo-share-intent'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import { useFocusEffect } from '@react-navigation/native'
 import { useUserCache } from 'src/state/AuthProvider'
-
 import type { Status } from 'src/lib/api-types'
 import type { ListRenderItemInfo } from 'react-native'
 import type { ErrorBoundaryProps } from 'expo-router'
