@@ -3,14 +3,14 @@ import { Storage } from 'src/state/cache'
 import { parseLinkHeader } from 'src/utils'
 import { ContextFromStorage } from './api-context'
 import type {
+  Account,
   PaginatedStatus,
   Relationship,
-  UploadV2Params,
-  UploadV2ResponseOrError,
-  Account,
   RelationshipFromFollowAPIResponse,
   Status,
   UpdateCredentialsParams,
+  UploadV2Params,
+  UploadV2ResponseOrError,
 } from './api-types'
 import { randomKey } from './randomKey'
 

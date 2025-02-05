@@ -1,6 +1,6 @@
-import React from 'react'
-import { YStack, Text, XStack, View } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
+import React from 'react'
+import { Text, View, XStack, YStack } from 'tamagui'
 export const ErrorAlert = ({
   message,
   title,

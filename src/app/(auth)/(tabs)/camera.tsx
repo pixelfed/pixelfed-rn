@@ -25,6 +25,7 @@ import {
 import FastImage from 'react-native-fast-image'
 import { FlatList } from 'react-native-gesture-handler'
 import { PressableOpacity } from 'react-native-pressable-opacity'
+import { ErrorAlert } from 'src/components/common/ErrorAlert'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { Switch } from 'src/components/form/Switch'
 import {
@@ -34,9 +35,8 @@ import {
   postNewStatus,
   uploadMediaV2,
 } from 'src/lib/api'
-import { useUserCache } from 'src/state/AuthProvider'
 import type { UploadV2ErrorResponse, UploadV2Response } from 'src/lib/api-types'
-import { ErrorAlert } from 'src/components/common/ErrorAlert'
+import { useUserCache } from 'src/state/AuthProvider'
 import { Storage } from 'src/state/cache'
 import {
   Button,
