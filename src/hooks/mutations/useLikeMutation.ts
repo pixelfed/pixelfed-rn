@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { likeStatus, unlikeStatus } from 'src/lib/api'
-import { Status } from 'src/lib/api-types'
+import type { Status } from 'src/lib/api-types'
 
 type onSuccessType = Parameters<typeof useMutation>[0]['onSuccess']
 type LikeMutateType = {
@@ -8,22 +8,22 @@ type LikeMutateType = {
   id: string
 }
 
-
 export function useLikeMutation({ onSuccess }: { onSuccess?: onSuccessType } = {}) {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   // By default, after a like/unlike I'm updating the state with the new info I received from backend
   const defaultOnSuccess: onSuccessType = (data: Status, variables) => {
     queryClient.setQueryData(['getStatusById', data.id], data)
-  };
+  }
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (handleLike: LikeMutateType) => {
       try {
-        const res = handleLike.type === 'like'
-          ? await likeStatus(handleLike)
-          : await unlikeStatus(handleLike);
-        return res;
+        const res =
+          handleLike.type === 'like'
+            ? await likeStatus(handleLike)
+            : await unlikeStatus(handleLike)
+        return res
       } catch (error) {
         console.error('Error within mutationFn:', error)
         throw error // the thrown error is not handled? the count is still updated / not reverted in ui
@@ -32,7 +32,7 @@ export function useLikeMutation({ onSuccess }: { onSuccess?: onSuccessType } = {
     onError: (error) => {
       console.error('Error handled by like useMutation:', error)
     },
-    onSuccess: onSuccess || defaultOnSuccess
+    onSuccess: onSuccess || defaultOnSuccess,
   })
 
   /**
