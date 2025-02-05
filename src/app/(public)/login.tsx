@@ -32,6 +32,8 @@ import { useQuery } from '@tanstack/react-query'
 import * as WebBrowser from 'expo-web-browser'
 import { Storage } from 'src/state/cache'
 import { Switch } from 'src/components/form/Switch'
+import FastImage from 'react-native-fast-image'
+import { prettyCount } from 'src/utils'
 
 const SCOPE_DESCRIPTIONS = {
   read: 'Full read access to your account',
@@ -125,6 +127,46 @@ const SelectContent = React.memo(({ data, selectedServer }) => (
   </Select.Content>
 ))
 
+const ServerPreview = React.memo(({ server, data }) => {
+  const serverData = useMemo(() => {
+    return (
+      data?.find((s) => s.domain === server) || {
+        domain: server,
+        header_thumbnail: null,
+        short_description: 'No description available',
+      }
+    )
+  }, [data, server])
+
+  return (
+    <YStack p="$3" borderWidth={1} borderColor="#333" borderRadius={10}>
+      {serverData.header_thumbnail && (
+        <FastImage
+          source={{
+            uri: serverData.header_thumbnail,
+            priority: FastImage.priority.normal,
+          }}
+          style={{ width: '100%', height: 120, borderRadius: 10 }}
+          resizeMode={FastImage.resizeMode.cover}
+        />
+      )}
+      <YStack mt="$3" gap="$2">
+        <XStack justifyContent="space-between" alignItems="center">
+          <Text color="$gray5" fontSize="$6" fontWeight="bold">
+            {serverData.domain}
+          </Text>
+          <Text color="$gray5" fontSize="$4" fontWeight="bold">
+            {prettyCount(serverData.user_count)} Users
+          </Text>
+        </XStack>
+        <Text color="$gray6" fontSize="$4" numberOfLines={2}>
+          {serverData.short_description}
+        </Text>
+      </YStack>
+    </YStack>
+  )
+})
+
 const ApiScopesSheet = ({ isOpen, onClose, scopes, onToggleScope }) => {
   const renderScopeGroup = (title, scopeFilter) => (
     <YStack space="$3">
@@ -181,6 +223,7 @@ const ApiScopesSheet = ({ isOpen, onClose, scopes, onToggleScope }) => {
 export default function Login() {
   const [server, setServer] = useState('pixelfed.social')
   const [customServer, setCustomServer] = useState('')
+  const [hasSelected, setHasSelected] = useState(false)
   const [openRegistrations, setOpenServers] = useState([])
   const [showApiSettings, setShowApiSettings] = useState(false)
   const [apiScopes, setApiScopes] = useState({
@@ -214,6 +257,8 @@ export default function Login() {
           .map((s) => s.domain)
           .slice(0, 20)
         setOpenServers(openReg)
+
+        console.log(res[0])
 
         // Check if pixelfed.social exists in the response
         const hasPixelFed = filtered.some((server) => server.domain === 'pixelfed.social')
@@ -383,6 +428,7 @@ export default function Login() {
         </View>
 
         <YStack space="$4" mb="$5">
+          {server !== 'pixelfed.social' && <ServerPreview data={data} server={server} />}
           <YStack>
             <XStack alignItems="center" justifyContent="space-between" gap="$4">
               <Label miw={80} fontSize="$5" color="$gray9">
