@@ -194,16 +194,24 @@ export async function searchQuery(query: string) {
   })
   const data = await response.json()
   let mapd = [
-    ...data.hashtags.map((a) => {
-      a._type = 'hashtag'
+    ...data.statuses.slice(0, 1).map((a) => {
+      a._type = 'status'
       return a
     }),
-    ...data.accounts.map((a) => {
+    ...data.accounts.slice(0, 2).map((a) => {
       a._type = 'account'
       return a
     }),
-    ...data.statuses.map((a) => {
-      a._type = 'status'
+    ...data.hashtags.slice(0, 6).map((a) => {
+      a._type = 'hashtag'
+      return a
+    }),
+    ...data.accounts.slice(2).map((a) => {
+      a._type = 'account'
+      return a
+    }),
+    ...data.hashtags.slice(6).map((a) => {
+      a._type = 'hashtag'
       return a
     }),
   ]
