@@ -1,7 +1,7 @@
-import { useAuth } from '@state/AuthProvider'
-import { Tabs, Redirect } from 'expo-router'
-import { View } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
+import { useAuth } from '@state/AuthProvider'
+import { Redirect, Tabs } from 'expo-router'
+import { View } from 'tamagui'
 
 // enum here to prevent typos in id when used in multiple places (typescript checkable)
 enum TabName {

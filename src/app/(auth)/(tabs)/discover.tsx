@@ -1,23 +1,23 @@
+import { Feather } from '@expo/vector-icons'
+import { useQuery } from '@tanstack/react-query'
+import { Link, useRouter } from 'expo-router'
 import {
   ActivityIndicator,
-  FlatList,
-  SafeAreaView,
   Dimensions,
+  FlatList,
   Platform,
+  SafeAreaView,
 } from 'react-native'
-import { Text, YStack, ScrollView, View, XStack, Image } from 'tamagui'
-import { useQuery } from '@tanstack/react-query'
+import FastImage from 'react-native-fast-image'
+import { PressableOpacity } from 'react-native-pressable-opacity'
+import UserAvatar from 'src/components/common/UserAvatar'
 import {
   getTrendingHashtags,
   getTrendingPopularPosts,
   getTrendingPostsV1,
 } from 'src/lib/api'
-import { Link, useRouter } from 'expo-router'
-import UserAvatar from 'src/components/common/UserAvatar'
 import { enforceLen, prettyCount } from 'src/utils'
-import FastImage from 'react-native-fast-image'
-import { PressableOpacity } from 'react-native-pressable-opacity'
-import { Feather } from '@expo/vector-icons'
+import { Image, ScrollView, Text, View, XStack, YStack } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 

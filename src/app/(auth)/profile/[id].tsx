@@ -1,46 +1,46 @@
-import {
-  FlatList,
-  Dimensions,
-  ActivityIndicator,
-  Alert,
-  Share,
-  Platform,
-} from 'react-native'
-import { Button, Separator, Text, View, YStack, ZStack } from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
 import { Feather } from '@expo/vector-icons'
-import { Storage } from 'src/state/cache'
-import { useEffect, useCallback, useRef, useMemo } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, Link, router, useNavigation } from 'expo-router'
 import {
-  useQuery,
-  useInfiniteQuery,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query'
-import FastImage from 'react-native-fast-image'
-import {
-  getAccountById,
-  getAccountStatusesById,
-  getAccountRelationship,
-  getAccountByUsername,
-  blockProfileById,
-  unblockProfileById,
-  muteProfileById,
-  unmuteProfileById,
-  followAccountById,
-  unfollowAccountById,
-  getMutualFollowing,
-} from 'src/lib/api'
-import {
-  BottomSheetModal,
   BottomSheetBackdrop,
+  BottomSheetModal,
   BottomSheetScrollView,
 } from '@gorhom/bottom-sheet'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { useToastController } from '@tamagui/toast'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
+import { Link, Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
+import {
+  ActivityIndicator,
+  Alert,
+  Dimensions,
+  FlatList,
+  Platform,
+  Share,
+} from 'react-native'
 import { Blurhash } from 'react-native-blurhash'
+import FastImage from 'react-native-fast-image'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import {
+  blockProfileById,
+  followAccountById,
+  getAccountById,
+  getAccountByUsername,
+  getAccountRelationship,
+  getAccountStatusesById,
+  getMutualFollowing,
+  muteProfileById,
+  unblockProfileById,
+  unfollowAccountById,
+  unmuteProfileById,
+} from 'src/lib/api'
+import { Storage } from 'src/state/cache'
+import { Button, Separator, Text, View, YStack, ZStack } from 'tamagui'
 
 import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet'
 

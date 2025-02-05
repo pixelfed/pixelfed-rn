@@ -1,3 +1,8 @@
+import { useQueryClient } from '@tanstack/react-query'
+import * as ImagePicker from 'expo-image-picker'
+import { Link, Stack, useNavigation } from 'expo-router'
+import mime from 'mime'
+import { useLayoutEffect } from 'react'
 import {
   ActivityIndicator,
   Alert,
@@ -6,25 +11,20 @@ import {
   Pressable,
   StyleSheet,
 } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { deleteAvatar, updateAvatar } from 'src/lib/api'
+import { useQuerySelfProfile } from 'src/state/AuthProvider'
 import {
+  Avatar,
+  Button,
   ScrollView,
   Separator,
   Text,
   View,
   XStack,
   YStack,
-  Button,
-  Avatar,
   ZStack,
 } from 'tamagui'
-import { useLayoutEffect } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, Link, useNavigation } from 'expo-router'
-import { useQueryClient } from '@tanstack/react-query'
-import { updateAvatar, deleteAvatar } from 'src/lib/api'
-import * as ImagePicker from 'expo-image-picker'
-import mime from 'mime'
-import { useQuerySelfProfile } from 'src/state/AuthProvider'
 
 type LinkFieldProps = {
   label: string

@@ -1,10 +1,10 @@
-import { FlatList, ActivityIndicator } from 'react-native'
-import { Text, View, YStack, XStack } from 'tamagui'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { Link, Stack, useLocalSearchParams } from 'expo-router'
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query'
-import { getStatusById, getStatusLikes } from 'src/lib/api'
+import { ActivityIndicator, FlatList } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import UserAvatar from 'src/components/common/UserAvatar'
+import { getStatusById, getStatusLikes } from 'src/lib/api'
+import { Text, View, XStack, YStack } from 'tamagui'
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()

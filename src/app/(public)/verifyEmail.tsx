@@ -1,29 +1,29 @@
+import * as ImagePicker from 'expo-image-picker'
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
+import mime from 'mime'
 import React, { useState } from 'react'
 import {
-  View,
-  TextInput,
-  TouchableOpacity,
   ActivityIndicator,
+  Alert,
   Animated,
-  StyleSheet,
   Dimensions,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Keyboard,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
   TouchableWithoutFeedback,
-  Alert,
+  View,
 } from 'react-native'
-import { Separator, Text } from 'tamagui'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { objectToForm } from 'src/requests'
-import { Storage } from 'src/state/cache'
-import { useAuth } from 'src/state/AuthProvider'
-import * as ImagePicker from 'expo-image-picker'
 import FastImage from 'react-native-fast-image'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { updateAvatar, updateCredentials } from 'src/lib/api'
-import mime from 'mime'
+import { objectToForm } from 'src/requests'
+import { useAuth } from 'src/state/AuthProvider'
+import { Storage } from 'src/state/cache'
+import { Separator, Text } from 'tamagui'
 
 const { width } = Dimensions.get('window')
 
@@ -353,9 +353,7 @@ const SignUp = ({ navigation }) => {
       toValue: -width * (currentStep + 1),
       duration: 300,
       useNativeDriver: true,
-    }).start(() => {
-      console.log('Registration step:', currentStep + 1)
-    })
+    }).start(() => {})
   }
 
   const handleVerificationSubmit = async (code) => {

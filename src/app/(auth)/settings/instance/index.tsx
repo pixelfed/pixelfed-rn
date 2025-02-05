@@ -1,13 +1,13 @@
-import { ActivityIndicator } from 'react-native'
-import { Group, ScrollView, Separator, Text, View, XStack, YStack, Button } from 'tamagui'
-import { Storage } from 'src/state/cache'
-import { getInstanceV1 } from 'src/lib/api'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, Link } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
+import { Link, Stack } from 'expo-router'
+import { ActivityIndicator } from 'react-native'
 import FastImage from 'react-native-fast-image'
-import { openBrowserAsync, prettyCount } from '../../../../utils'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import UserAvatar from 'src/components/common/UserAvatar'
+import { getInstanceV1 } from 'src/lib/api'
+import { Storage } from 'src/state/cache'
+import { Button, Group, ScrollView, Separator, Text, View, XStack, YStack } from 'tamagui'
+import { openBrowserAsync, prettyCount } from '../../../../utils'
 
 export default function Screen() {
   const instance = Storage.getString('app.instance')

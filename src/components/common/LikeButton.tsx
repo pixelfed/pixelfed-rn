@@ -1,4 +1,7 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons'
+import * as Haptics from 'expo-haptics'
 import React, { useEffect } from 'react'
+import { Pressable, StyleSheet } from 'react-native'
 import Animated, {
   useSharedValue,
   withSpring,
@@ -6,9 +9,6 @@ import Animated, {
   Extrapolate,
   interpolate,
 } from 'react-native-reanimated'
-import { Pressable, StyleSheet } from 'react-native'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
-import * as Haptics from 'expo-haptics'
 
 type LikeButtonProps = {
   hasLiked: boolean

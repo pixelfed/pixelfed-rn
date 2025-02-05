@@ -1,8 +1,8 @@
-import { ScrollView, Separator, Text, XStack, YStack } from 'tamagui'
-import { Storage } from 'src/state/cache'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack } from 'expo-router'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { Switch } from 'src/components/form/Switch'
+import { Storage } from 'src/state/cache'
+import { ScrollView, Separator, Text, XStack, YStack } from 'tamagui'
 
 export default function Screen() {
   const forceSensitive = Storage.getBoolean('ui.forceSensitive') == true

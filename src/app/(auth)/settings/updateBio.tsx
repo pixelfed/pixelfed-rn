@@ -1,13 +1,13 @@
-import { ActivityIndicator } from 'react-native'
-import { ScrollView, Text, View, XStack, TextArea, Button } from 'tamagui'
-import React, { useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
-import { getConfig } from 'src/lib/api'
+import { Stack } from 'expo-router'
 import { router } from 'expo-router'
-import { useQuerySelfProfile } from 'src/state/AuthProvider'
+import React, { useState } from 'react'
+import { ActivityIndicator } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useProfileMutation } from 'src/hooks/mutations/useProfileMutation'
+import { getConfig } from 'src/lib/api'
+import { useQuerySelfProfile } from 'src/state/AuthProvider'
+import { Button, ScrollView, Text, TextArea, View, XStack } from 'tamagui'
 
 export default function Page() {
   const { data: config } = useQuery({

@@ -1,13 +1,13 @@
-import { Stack } from 'expo-router'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Text, View, Button, YStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
-import { ActivityIndicator } from 'react-native'
 import { useQuery } from '@tanstack/react-query'
-import { pushNotificationSupported } from 'src/lib/api'
+import { Stack } from 'expo-router'
+import { ActivityIndicator } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import PushNotificationSettings from 'src/components/notifications/PushNotificationSettings'
-import { openBrowserAsync } from 'src/utils'
+import { pushNotificationSupported } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
+import { openBrowserAsync } from 'src/utils'
+import { Button, Text, View, YStack } from 'tamagui'
 
 export default function Page() {
   const userCache = useUserCache()

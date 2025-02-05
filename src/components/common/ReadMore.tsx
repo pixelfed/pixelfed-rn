@@ -1,5 +1,5 @@
 import React, { type ReactNode } from 'react'
-import { Text, View, StyleSheet, type LayoutChangeEvent } from 'react-native'
+import { type LayoutChangeEvent, StyleSheet, Text, View } from 'react-native'
 
 const styles = StyleSheet.create({
   fullTextWrapper: {

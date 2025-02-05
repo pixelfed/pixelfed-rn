@@ -1,34 +1,34 @@
-import { useCallback, useState, useRef } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import {
-  StyleSheet,
-  Pressable,
   ActivityIndicator,
-  Dimensions,
   Alert,
-  Platform,
+  Dimensions,
   Keyboard,
+  Platform,
+  Pressable,
+  StyleSheet,
 } from 'react-native'
 
-import { Text, View, XStack, YStack, Separator } from 'tamagui'
 import { Feather, Ionicons } from '@expo/vector-icons'
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import {
-  getStatusRepliesById,
-  postComment,
-  likeStatus,
-  unlikeStatus,
-  deleteStatus,
-} from 'src/lib/api'
 import { BottomSheetFlatList, BottomSheetTextInput } from '@gorhom/bottom-sheet'
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import FastImage from 'react-native-fast-image'
+import {
+  deleteStatus,
+  getStatusRepliesById,
+  likeStatus,
+  postComment,
+  unlikeStatus,
+} from 'src/lib/api'
 import {
   _timeAgo,
   htmlToTextWithLineBreaks,
   likeCountLabel,
   prettyCount,
 } from 'src/utils'
-import ReadMore from '../common/ReadMore'
+import { Separator, Text, View, XStack, YStack } from 'tamagui'
 import AutolinkText from '../common/AutolinkText'
-import FastImage from 'react-native-fast-image'
+import ReadMore from '../common/ReadMore'
 import { Switch } from '../form/Switch'
 
 import type { TextInput } from 'react-native'

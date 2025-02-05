@@ -1,52 +1,52 @@
-import {
-  Button,
-  Text,
-  View,
-  YStack,
-  XStack,
-  TextArea,
-  Separator,
-  ScrollView,
-  ZStack,
-} from 'tamagui'
 import { Feather } from '@expo/vector-icons'
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+  BottomSheetTextInput,
+  BottomSheetView,
+} from '@gorhom/bottom-sheet'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import * as ImagePicker from 'expo-image-picker'
 import { Stack, useNavigation, useRouter } from 'expo-router'
+import { useShareIntentContext } from 'expo-share-intent'
+import mime from 'mime'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
   ActivityIndicator,
-  StyleSheet,
   Alert,
-  Platform,
-  Linking,
   Keyboard,
+  Linking,
   ListRenderItem,
   type ListRenderItemInfo,
+  Platform,
+  StyleSheet,
 } from 'react-native'
-import { Storage } from 'src/state/cache'
-import UserAvatar from 'src/components/common/UserAvatar'
-import { useState, useRef, useCallback, useMemo, useEffect, useLayoutEffect } from 'react'
-import * as ImagePicker from 'expo-image-picker'
-import { FlatList } from 'react-native-gesture-handler'
 import FastImage from 'react-native-fast-image'
+import { FlatList } from 'react-native-gesture-handler'
 import { PressableOpacity } from 'react-native-pressable-opacity'
-import {
-  BottomSheetModal,
-  BottomSheetView,
-  BottomSheetScrollView,
-  BottomSheetBackdrop,
-  BottomSheetTextInput,
-} from '@gorhom/bottom-sheet'
+import UserAvatar from 'src/components/common/UserAvatar'
 import { Switch } from 'src/components/form/Switch'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  getInstanceV1,
   getComposeSettings,
-  uploadMediaV2,
-  postNewStatus,
+  getInstanceV1,
   getSelfAccount,
+  postNewStatus,
+  uploadMediaV2,
 } from 'src/lib/api'
-import mime from 'mime'
-import { useShareIntentContext } from 'expo-share-intent'
 import { useUserCache } from 'src/state/AuthProvider'
+import { Storage } from 'src/state/cache'
+import {
+  Button,
+  ScrollView,
+  Separator,
+  Text,
+  TextArea,
+  View,
+  XStack,
+  YStack,
+  ZStack,
+} from 'tamagui'
 
 type MediaAsset = {
   path: string

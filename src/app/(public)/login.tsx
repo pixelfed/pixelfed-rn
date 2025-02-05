@@ -1,20 +1,10 @@
-import { Link, router, useNavigation, useRouter } from 'expo-router'
-import {
-  Text,
-  View,
-  Form,
-  Button,
-  YStack,
-  Image,
-  Label,
-  Input,
-  Separator,
-  XStack,
-  Adapt,
-  Select,
-  Sheet,
-} from 'tamagui'
+import Feather from '@expo/vector-icons/Feather'
 import { useAuth } from '@state/AuthProvider'
+import { useQuery } from '@tanstack/react-query'
+import { Link, router, useNavigation, useRouter } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
+import * as WebBrowser from 'expo-web-browser'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   ActivityIndicator,
   Alert,
@@ -23,17 +13,27 @@ import {
   SafeAreaView,
   TextInput,
 } from 'react-native'
-import { useEffect, useState, useMemo, useCallback } from 'react'
-import { StatusBar } from 'expo-status-bar'
-import Feather from '@expo/vector-icons/Feather'
-import { FormSelect } from 'src/components/form/Select'
-import { getOpenServers } from 'src/lib/api'
-import { useQuery } from '@tanstack/react-query'
-import * as WebBrowser from 'expo-web-browser'
-import { Storage } from 'src/state/cache'
-import { Switch } from 'src/components/form/Switch'
 import FastImage from 'react-native-fast-image'
+import { FormSelect } from 'src/components/form/Select'
+import { Switch } from 'src/components/form/Switch'
+import { getOpenServers } from 'src/lib/api'
+import { Storage } from 'src/state/cache'
 import { prettyCount } from 'src/utils'
+import {
+  Adapt,
+  Button,
+  Form,
+  Image,
+  Input,
+  Label,
+  Select,
+  Separator,
+  Sheet,
+  Text,
+  View,
+  XStack,
+  YStack,
+} from 'tamagui'
 
 const SCOPE_DESCRIPTIONS = {
   read: 'Full read access to your account',
@@ -258,8 +258,6 @@ export default function Login() {
           .slice(0, 20)
         setOpenServers(openReg)
 
-        console.log(res[0])
-
         // Check if pixelfed.social exists in the response
         const hasPixelFed = filtered.some((server) => server.domain === 'pixelfed.social')
 
@@ -309,7 +307,6 @@ export default function Login() {
         `https://${server}/i/app-email-verify`,
         'pixelfed://verifyEmail'
       ).then((res) => {
-        console.log(res)
         if (res.type === 'success') {
           handleDeepLink(server, res.url)
         } else {

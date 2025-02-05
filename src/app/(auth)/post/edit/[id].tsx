@@ -1,22 +1,22 @@
+import { useQuery } from '@tanstack/react-query'
+import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
 import React, { useCallback, useLayoutEffect, useState, useMemo } from 'react'
 import {
   ActivityIndicator,
-  StyleSheet,
-  Keyboard,
   Dimensions,
+  Keyboard,
   Platform,
+  StyleSheet,
 } from 'react-native'
-import { ScrollView, Text, View, XStack, YStack, TextArea } from 'tamagui'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router'
-import { useQuery } from '@tanstack/react-query'
-import { getStatusById, getInstanceV1, editPostMedia, putEditPost } from 'src/lib/api'
-import { _timeAgo } from 'src/utils'
-import UserAvatar from 'src/components/common/UserAvatar'
-import { Switch } from 'src/components/form/Switch'
 import FastImage from 'react-native-fast-image'
 import { PressableOpacity } from 'react-native-pressable-opacity'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import UserAvatar from 'src/components/common/UserAvatar'
+import { Switch } from 'src/components/form/Switch'
+import { editPostMedia, getInstanceV1, getStatusById, putEditPost } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
+import { _timeAgo } from 'src/utils'
+import { ScrollView, Text, TextArea, View, XStack, YStack } from 'tamagui'
 
 const SCREEN_HEIGHT = Dimensions.get('screen').height
 

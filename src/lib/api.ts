@@ -1,16 +1,16 @@
 import { objectToForm } from 'src/requests'
 import { Storage } from 'src/state/cache'
 import { parseLinkHeader } from 'src/utils'
+import { ContextFromStorage } from './api-context'
 import type {
   Account,
   PaginatedStatus,
   Relationship,
   RelationshipFromFollowAPIResponse,
-  UpdateCredentialsParams,
   Status,
+  UpdateCredentialsParams,
 } from './api-types'
 import { randomKey } from './randomKey'
-import { ContextFromStorage } from './api-context'
 
 function removeDuplicateObjects(array: any[], keyProps: string[]) {
   return array.filter(
@@ -151,8 +151,6 @@ async function fetchCursorPagination(url: string) {
 }
 
 async function fetchData(url: string) {
-  console.log('deprected fetchData called', url)
-
   const token = Storage.getString('app.token')
 
   const response = await fetch(url, {

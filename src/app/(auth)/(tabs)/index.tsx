@@ -1,41 +1,41 @@
-import { useCallback, useEffect, useState, useRef, useMemo } from 'react'
-import {
-  FlatList,
-  StyleSheet,
-  ActivityIndicator,
-  Platform,
-  type ListRenderItemInfo,
-} from 'react-native'
-import { Text, View, XStack, Spinner, YStack } from 'tamagui'
-import FeedPost from 'src/components/post/FeedPost'
-import { StatusBar } from 'expo-status-bar'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
+import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet'
+import { useFocusEffect } from '@react-navigation/native'
 import {
   useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
+import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
+import type { ErrorBoundaryProps } from 'expo-router'
+import { useShareIntentContext } from 'expo-share-intent'
+import { StatusBar } from 'expo-status-bar'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
-  fetchHomeFeed,
+  ActivityIndicator,
+  FlatList,
+  type ListRenderItemInfo,
+  Platform,
+  StyleSheet,
+} from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import EmptyFeed from 'src/components/common/EmptyFeed'
+import ErrorFeed from 'src/components/common/ErrorFeed'
+import FeedHeader from 'src/components/common/FeedHeader'
+import CommentFeed from 'src/components/post/CommentFeed'
+import FeedPost from 'src/components/post/FeedPost'
+import { useVideo } from 'src/hooks/useVideoProvider'
+import {
   deleteStatusV1,
-  postBookmark,
+  fetchHomeFeed,
   getSelfAccount,
+  postBookmark,
   reblogStatus,
   unreblogStatus,
 } from 'src/lib/api'
-import FeedHeader from 'src/components/common/FeedHeader'
-import EmptyFeed from 'src/components/common/EmptyFeed'
-import ErrorFeed from 'src/components/common/ErrorFeed'
-import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet'
-import CommentFeed from 'src/components/post/CommentFeed'
-import { useShareIntentContext } from 'expo-share-intent'
-import { useVideo } from 'src/hooks/useVideoProvider'
-import { useFocusEffect } from '@react-navigation/native'
-import { useUserCache } from 'src/state/AuthProvider'
 import type { Status } from 'src/lib/api-types'
-import type { ErrorBoundaryProps } from 'expo-router'
+import { useUserCache } from 'src/state/AuthProvider'
+import { Spinner, Text, View, XStack, YStack } from 'tamagui'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   return (

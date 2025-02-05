@@ -1,12 +1,12 @@
-import React from 'react'
-import { router, Stack } from 'expo-router'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { ScrollView, Text, View, XStack, YStack, Separator } from 'tamagui'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { getSelfAccount } from 'src/lib/api'
+import { Stack, router } from 'expo-router'
+import React from 'react'
 import { ActivityIndicator, Alert } from 'react-native'
-import { Storage } from 'src/state/cache'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { Switch } from 'src/components/form/Switch'
+import { getSelfAccount } from 'src/lib/api'
+import { Storage } from 'src/state/cache'
+import { ScrollView, Separator, Text, View, XStack, YStack } from 'tamagui'
 
 import { useProfileMutation } from 'src/hooks/mutations/useProfileMutation'
 
