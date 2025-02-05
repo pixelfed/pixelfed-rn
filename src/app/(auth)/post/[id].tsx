@@ -85,6 +85,7 @@ export default function Page() {
     queryKey: ['getStatusById', id],
     queryFn: () => getStatusById(id),
   })
+
   if (isPending) {
     return (
       <View flexGrow={1} mt="$5">
