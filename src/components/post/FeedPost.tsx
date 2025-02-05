@@ -673,250 +673,263 @@ interface FeedPostProps {
   onShare: (id: string) => void
 }
 
-export default function FeedPost({
-  post,
-  user,
-  onOpenComments,
-  onDeletePost,
-  onBookmark,
-  disableReadMore = false,
-  isPermalink = false,
-  isLikeFeed = false,
-  onShare,
-}: FeedPostProps) {
-  const { handleLike, isLikePending } = useLikeMutation()
-  const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
-  const progress = useSharedValue(0)
-  const snapPoints = useMemo(() => ['45%', '65%'], [])
-  const { width } = useWindowDimensions()
-  const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
-  const showAltText = Storage.getBoolean('ui.showAltText') == true
+const FeedPost = React.memo(
+  function FeedPost({
+    post,
+    user,
+    onOpenComments,
+    onDeletePost,
+    onBookmark,
+    disableReadMore = false,
+    isPermalink = false,
+    isLikeFeed = false,
+    onShare,
+  }: FeedPostProps) {
+    const { handleLike, isLikePending } = useLikeMutation()
+    const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
+    const progress = useSharedValue(0)
+    const snapPoints = useMemo(() => ['45%', '65%'], [])
+    const { width } = useWindowDimensions()
+    const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
+    const showAltText = Storage.getBoolean('ui.showAltText') == true
 
-  const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present()
-  }, [])
-  const handleSheetChanges = useCallback((_: number) => {}, [])
-  const renderBackdrop = useCallback(
-    (props: BottomSheetBackdropProps) => (
-      <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
-    ),
-    []
-  )
+    const handlePresentModalPress = useCallback(() => {
+      bottomSheetModalRef.current?.present()
+    }, [])
+    const handleSheetChanges = useCallback((_: number) => {}, [])
+    const renderBackdrop = useCallback(
+      (props: BottomSheetBackdropProps) => (
+        <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
+      ),
+      []
+    )
 
-  const handleLikeAction = useCallback(() => {
-    const shouldLike = !post.favourited
-    handleLike(post.id, shouldLike)
-  }, [post.id, post.favourited, post.favourites_count, handleLike])
+    const handleLikeAction = useCallback(() => {
+      const shouldLike = !post.favourited
+      handleLike(post.id, shouldLike)
+    }, [post.id, post.favourited, post.favourites_count, handleLike])
 
-  const handleDoubleTap = () => {
-    // only allow liking with double tap, not unliking
-    if (!post.favourited) {
-      handleLikeAction()
-    }
-  }
-
-  const doubleTap = Gesture.Tap()
-    .maxDuration(250)
-    .numberOfTaps(2)
-    .onStart(() => {
-      try {
-        runOnJS(handleDoubleTap)()
-      } catch (error) {
-        console.error('Double tap error:', error)
+    const handleDoubleTap = () => {
+      // only allow liking with double tap, not unliking
+      if (!post.favourited) {
+        handleLikeAction()
       }
-    })
+    }
 
-  const _onDeletePost = (id: string) => {
-    bottomSheetModalRef.current?.close()
-    Alert.alert('Delete Post', 'Are you sure you want to delete this post?', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () => onDeletePost(id),
-      },
-    ])
-  }
-
-  const goToPost = () => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/post/${post.id}`)
-  }
-
-  const goToProfile = () => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/profile/${post.account.id}`)
-  }
-
-  const goToReport = () => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/post/report/${post.id}`)
-  }
-
-  const openInBrowser = async () => {
-    bottomSheetModalRef.current?.close()
-    await openBrowserAsync(post.url || post.uri)
-  }
-
-  const onGotoHashtag = (tag: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/hashtag/${tag}`)
-  }
-
-  const onGotoMention = (tag: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/profile/0?byUsername=${tag}`)
-  }
-
-  const onGotoAbout = () => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/profile/about/${post.account.id}`)
-  }
-
-  const _onEditPost = (id: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/post/edit/${id}`)
-  }
-
-  const onGotoShare = async () => {
-    try {
-      await Share.share({
-        message: post.url || post.uri,
+    const doubleTap = Gesture.Tap()
+      .maxDuration(250)
+      .numberOfTaps(2)
+      .onStart(() => {
+        try {
+          runOnJS(handleDoubleTap)()
+        } catch (error) {
+          console.error('Double tap error:', error)
+        }
       })
-    } catch (error) {}
-  }
 
-  return (
-    <View flex={1} style={{ width }}>
-      <PostHeader
-        avatar={post.account?.avatar}
-        username={post.account?.acct}
-        displayName={post.account?.display_name}
-        userId={post.account?.id}
-        onOpenMenu={() => handlePresentModalPress()}
-      />
-      {post.media_attachments?.length > 0 ? (
-        <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
-          {post.media_attachments.length > 1 ? (
-            <PostAlbumMedia
-              media={post.media_attachments}
+    const _onDeletePost = (id: string) => {
+      bottomSheetModalRef.current?.close()
+      Alert.alert('Delete Post', 'Are you sure you want to delete this post?', [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => onDeletePost(id),
+        },
+      ])
+    }
+
+    const goToPost = () => {
+      bottomSheetModalRef.current?.close()
+      router.push(`/post/${post.id}`)
+    }
+
+    const goToProfile = () => {
+      bottomSheetModalRef.current?.close()
+      router.push(`/profile/${post.account.id}`)
+    }
+
+    const goToReport = () => {
+      bottomSheetModalRef.current?.close()
+      router.push(`/post/report/${post.id}`)
+    }
+
+    const openInBrowser = async () => {
+      bottomSheetModalRef.current?.close()
+      await openBrowserAsync(post.url || post.uri)
+    }
+
+    const onGotoHashtag = (tag: string) => {
+      bottomSheetModalRef.current?.close()
+      router.push(`/hashtag/${tag}`)
+    }
+
+    const onGotoMention = (tag: string) => {
+      bottomSheetModalRef.current?.close()
+      router.push(`/profile/0?byUsername=${tag}`)
+    }
+
+    const onGotoAbout = () => {
+      bottomSheetModalRef.current?.close()
+      router.push(`/profile/about/${post.account.id}`)
+    }
+
+    const _onEditPost = (id: string) => {
+      bottomSheetModalRef.current?.close()
+      router.push(`/post/edit/${id}`)
+    }
+
+    const onGotoShare = async () => {
+      try {
+        await Share.share({
+          message: post.url || post.uri,
+        })
+      } catch (error) {}
+    }
+
+    return (
+      <View flex={1} style={{ width }}>
+        <PostHeader
+          avatar={post.account?.avatar}
+          username={post.account?.acct}
+          displayName={post.account?.display_name}
+          userId={post.account?.id}
+          onOpenMenu={() => handlePresentModalPress()}
+        />
+        {post.media_attachments?.length > 0 ? (
+          <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
+            {post.media_attachments.length > 1 ? (
+              <PostAlbumMedia
+                media={post.media_attachments}
+                post={post}
+                progress={progress}
+              />
+            ) : (
+              <PostMedia media={post.media_attachments} post={post} />
+            )}
+          </GestureDetector>
+        ) : null}
+        {!hideCaptions || isPermalink ? (
+          <>
+            <PostActions
+              hasLiked={post.favourited}
+              hasShared={post?.reblogged === true}
+              hasBookmarked={post?.bookmarked === true}
               post={post}
               progress={progress}
+              isLikePending={isLikePending}
+              likesCount={post?.favourites_count}
+              likedBy={post?.liked_by}
+              sharesCount={post?.reblogs_count}
+              showAltText={showAltText}
+              commentsCount={post.replies_count}
+              handleLike={handleLikeAction}
+              onOpenComments={() => onOpenComments(post?.id)}
+              onBookmark={() => onBookmark(post?.id)}
+              onShare={() => onShare(post?.id)}
             />
-          ) : (
-            <PostMedia media={post.media_attachments} post={post} />
-          )}
-        </GestureDetector>
-      ) : null}
-      {!hideCaptions || isPermalink ? (
-        <>
-          <PostActions
-            hasLiked={post.favourited}
-            hasShared={post?.reblogged === true}
-            hasBookmarked={post?.bookmarked === true}
-            post={post}
-            progress={progress}
-            isLikePending={isLikePending}
-            likesCount={post?.favourites_count}
-            likedBy={post?.liked_by}
-            sharesCount={post?.reblogs_count}
-            showAltText={showAltText}
-            commentsCount={post.replies_count}
-            handleLike={handleLikeAction}
-            onOpenComments={() => onOpenComments(post?.id)}
-            onBookmark={() => onBookmark(post?.id)}
-            onShare={() => onShare(post?.id)}
-          />
 
-          <PostCaption
-            postId={post.id}
-            username={post.account?.username}
-            caption={post.content}
-            commentsCount={post.replies_count}
-            createdAt={post.created_at}
-            tags={post.tags}
-            visibility={post.visibility}
-            disableReadMore={disableReadMore}
-            onOpenComments={() => onOpenComments(post.id)}
-            onHashtagPress={(tag) => onGotoHashtag(tag)}
-            onMentionPress={(tag) => onGotoMention(tag)}
-            onUsernamePress={() => goToProfile()}
-            editedAt={post.edited_at}
-            isLikeFeed={isLikeFeed}
-            likedAt={post.liked_at}
-          />
-        </>
-      ) : null}
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        index={1}
-        snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-        backdropComponent={renderBackdrop}
-      >
-        <BottomSheetScrollView>
-          <Button size="$6" chromeless onPress={() => onGotoShare()}>
-            Share
-          </Button>
-          <Separator />
-          {!isPermalink ? (
-            <>
-              <Button size="$6" chromeless onPress={() => goToPost()}>
-                View Post
-              </Button>
-              <Separator />
-            </>
-          ) : null}
-          <Button size="$6" chromeless onPress={() => goToProfile()}>
-            View Profile
-          </Button>
-          <Separator />
-          <Button size="$6" chromeless onPress={() => onGotoAbout()}>
-            About this account
-          </Button>
-          <Separator />
-          <Button size="$6" chromeless onPress={() => openInBrowser()}>
-            Open in browser
-          </Button>
-          <Separator />
-          {user && user?.id != post?.account?.id ? (
-            <>
-              <Button size="$6" chromeless color="red" onPress={() => goToReport()}>
-                Report
-              </Button>
-              <Separator />
-            </>
-          ) : null}
-          {user && user?.id === post?.account?.id ? (
-            <>
-              <Button size="$6" chromeless onPress={() => _onEditPost(post.id)}>
-                Edit Post
-              </Button>
-              <Separator />
-              <Button
-                size="$6"
-                chromeless
-                color="red"
-                onPress={() => _onDeletePost(post.id)}
-              >
-                Delete Post
-              </Button>
-              <Separator />
-            </>
-          ) : null}
-          <Button
-            size="$6"
-            chromeless
-            color="$gray8"
-            onPress={() => bottomSheetModalRef.current?.close()}
-          >
-            Cancel
-          </Button>
-        </BottomSheetScrollView>
-      </BottomSheetModal>
-    </View>
-  )
-}
+            <PostCaption
+              postId={post.id}
+              username={post.account?.username}
+              caption={post.content}
+              commentsCount={post.replies_count}
+              createdAt={post.created_at}
+              tags={post.tags}
+              visibility={post.visibility}
+              disableReadMore={disableReadMore}
+              onOpenComments={() => onOpenComments(post.id)}
+              onHashtagPress={(tag) => onGotoHashtag(tag)}
+              onMentionPress={(tag) => onGotoMention(tag)}
+              onUsernamePress={() => goToProfile()}
+              editedAt={post.edited_at}
+              isLikeFeed={isLikeFeed}
+              likedAt={post.liked_at}
+            />
+          </>
+        ) : null}
+        <BottomSheetModal
+          ref={bottomSheetModalRef}
+          index={1}
+          snapPoints={snapPoints}
+          onChange={handleSheetChanges}
+          backdropComponent={renderBackdrop}
+        >
+          <BottomSheetScrollView>
+            <Button size="$6" chromeless onPress={() => onGotoShare()}>
+              Share
+            </Button>
+            <Separator />
+            {!isPermalink ? (
+              <>
+                <Button size="$6" chromeless onPress={() => goToPost()}>
+                  View Post
+                </Button>
+                <Separator />
+              </>
+            ) : null}
+            <Button size="$6" chromeless onPress={() => goToProfile()}>
+              View Profile
+            </Button>
+            <Separator />
+            <Button size="$6" chromeless onPress={() => onGotoAbout()}>
+              About this account
+            </Button>
+            <Separator />
+            <Button size="$6" chromeless onPress={() => openInBrowser()}>
+              Open in browser
+            </Button>
+            <Separator />
+            {user && user?.id != post?.account?.id ? (
+              <>
+                <Button size="$6" chromeless color="red" onPress={() => goToReport()}>
+                  Report
+                </Button>
+                <Separator />
+              </>
+            ) : null}
+            {user && user?.id === post?.account?.id ? (
+              <>
+                <Button size="$6" chromeless onPress={() => _onEditPost(post.id)}>
+                  Edit Post
+                </Button>
+                <Separator />
+                <Button
+                  size="$6"
+                  chromeless
+                  color="red"
+                  onPress={() => _onDeletePost(post.id)}
+                >
+                  Delete Post
+                </Button>
+                <Separator />
+              </>
+            ) : null}
+            <Button
+              size="$6"
+              chromeless
+              color="$gray8"
+              onPress={() => bottomSheetModalRef.current?.close()}
+            >
+              Cancel
+            </Button>
+          </BottomSheetScrollView>
+        </BottomSheetModal>
+      </View>
+    )
+  },
+  (prevProps, nextProps) => {
+    // Custom comparison to prevent unnecessary re-renders
+    return (
+      prevProps.post.id === nextProps.post.id &&
+      prevProps.post.favourited === nextProps.post.favourited &&
+      prevProps.post.favourites_count === nextProps.post.favourites_count &&
+      prevProps.post.reblogged === nextProps.post.reblogged
+    )
+  }
+)
+
+export default FeedPost

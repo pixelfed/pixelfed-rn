@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useCallback } from 'react'
 import { likeStatus, unlikeStatus } from 'src/lib/api'
 import type { Status } from 'src/lib/api-types'
 
@@ -11,123 +12,65 @@ type LikeMutateType = {
 export function useLikeMutation({ onSuccess }: { onSuccess?: onSuccessType } = {}) {
   const queryClient = useQueryClient()
 
-  const updateStatusInCache = (status: Status, isLike: boolean) => {
-    const newStatus = {
-      ...status,
-      favourited: isLike,
-      // Don't modify count if the favourited state hasn't changed
-      favourites_count:
-        status.favourited === isLike
-          ? status.favourites_count
-          : isLike
-            ? (status.favourites_count ?? 0) + 1
-            : Math.max(0, (status.favourites_count ?? 1) - 1),
-    }
-
-    return newStatus
-  }
-
-  const updateFeedData = (old: any, statusId: string, isLike: boolean) => {
-    if (!old?.pages) return old
-    return {
-      ...old,
-      pages: old.pages.map((page: any) => ({
-        ...page,
-        data: Array.isArray(page.data)
-          ? page.data.map((status: Status) =>
-              status.id === statusId ? updateStatusInCache(status, isLike) : status
-            )
-          : page.data,
-      })),
-    }
+  const updateFeedCache = (id: string, isLike: boolean) => {
+    queryClient.setQueriesData({ queryKey: ['homeFeed'] }, (old: any) => {
+      if (!old?.pages) return old
+      let found = false
+      const newPages = old.pages.map((page) => {
+        const newData = page.data.map((post: Status) => {
+          if (post.id !== id) return post
+          found = true
+          return {
+            ...post,
+            favourited: isLike,
+            favourites_count: isLike
+              ? post.favourites_count + 1
+              : post.favourites_count - 1,
+          }
+        })
+        return { ...page, data: newData }
+      })
+      return found ? { ...old, pages: newPages } : old
+    })
   }
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async (handleLike: LikeMutateType) => {
-      const res =
-        handleLike.type === 'like'
-          ? await likeStatus(handleLike)
-          : await unlikeStatus(handleLike)
-
-      return res
+    mutationFn: async ({ id, type }: LikeMutateType) => {
+      return type === 'like' ? await likeStatus({ id }) : await unlikeStatus({ id })
     },
 
-    onMutate: async (newLike: LikeMutateType) => {
-      // Cancel outgoing refetches
-      await Promise.all([
-        queryClient.cancelQueries({ queryKey: ['homeFeed'] }),
-        queryClient.cancelQueries({ queryKey: ['fetchNetworkFeed'] }),
-        queryClient.cancelQueries({ queryKey: ['getStatusById', newLike.id] }),
-      ])
+    onMutate: async ({ id, type }) => {
+      await queryClient.cancelQueries({ queryKey: ['homeFeed'] })
+      const previousData = queryClient.getQueryData(['homeFeed'])
+      updateFeedCache(id, type === 'like')
+      return { previousData }
+    },
 
-      // Snapshot previous state
-      const previousState = {
-        homeFeed: queryClient.getQueryData(['homeFeed']),
-        networkFeed: queryClient.getQueryData(['fetchNetworkFeed']),
-        status: queryClient.getQueryData(['getStatusById', newLike.id]),
+    onError: (err, { id }, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(['homeFeed'], context.previousData)
       }
-
-      const isLike = newLike.type === 'like'
-
-      // Optimistic updates
-      queryClient.setQueriesData({ queryKey: ['homeFeed'] }, (old: any) =>
-        updateFeedData(old, newLike.id, isLike)
-      )
-
-      queryClient.setQueriesData({ queryKey: ['fetchNetworkFeed'] }, (old: any) =>
-        updateFeedData(old, newLike.id, isLike)
-      )
-
-      queryClient.setQueryData(
-        ['getStatusById', newLike.id],
-        (oldStatus: Status | undefined) =>
-          oldStatus ? updateStatusInCache(oldStatus, isLike) : oldStatus
-      )
-
-      return previousState
     },
 
-    onSuccess: (data, variables) => {
-      // Simply use the server response data directly
-      const queries = [['homeFeed'], ['fetchNetworkFeed']]
-
-      queries.forEach((queryKey) => {
-        queryClient.setQueriesData({ queryKey }, (old: any) => {
-          if (!old?.pages) return old
-          return {
-            ...old,
-            pages: old.pages.map((page: any) => ({
-              ...page,
-              data: Array.isArray(page.data)
-                ? page.data.map((status: Status) =>
-                    status.id === data.id ? data : status
-                  )
-                : page.data,
-            })),
-          }
-        })
+    onSuccess: (data) => {
+      // Use server data to ensure consistency
+      queryClient.setQueriesData({ queryKey: ['homeFeed'] }, (old: any) => {
+        if (!old?.pages) return old
+        const newPages = old.pages.map((page) => ({
+          ...page,
+          data: page.data.map((post: Status) => (post.id === data.id ? data : post)),
+        }))
+        return { ...old, pages: newPages }
       })
-
-      // Update individual status
-      queryClient.setQueryData(['getStatusById', data.id], data)
-    },
-
-    onError: (err, variables, context) => {
-      if (context) {
-        queryClient.setQueryData(['homeFeed'], context.homeFeed)
-        queryClient.setQueryData(['fetchNetworkFeed'], context.networkFeed)
-        queryClient.setQueryData(['getStatusById', variables.id], context.status)
-      }
     },
   })
 
-  const handleLike = async (id: string, liked: boolean) => {
-    try {
-      await mutate({ type: liked ? 'like' : 'unlike', id })
-    } catch (error) {
-      console.error('Error in handleLike:', error)
-    }
-  }
+  const handleLike = useCallback(
+    (id: string, liked: boolean) => {
+      mutate({ id, type: liked ? 'like' : 'unlike' })
+    },
+    [mutate]
+  )
 
   return { handleLike, isLikePending: isPending }
 }

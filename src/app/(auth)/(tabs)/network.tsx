@@ -17,6 +17,7 @@ import {
   StyleSheet,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import EmptyFeed from 'src/components/common/EmptyFeed'
 import ErrorFeed from 'src/components/common/ErrorFeed'
 import FeedHeader from 'src/components/common/FeedHeader'
 import CommentFeed from 'src/components/post/CommentFeed'
@@ -114,20 +115,6 @@ export default function HomeScreen() {
 
   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 })
 
-  const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<Status>) => (
-      <FeedPost
-        post={item}
-        user={user}
-        onOpenComments={() => onOpenComments(item.id)}
-        onDeletePost={() => onDeletePost(item.id)}
-        onBookmark={() => onBookmark(item.id)}
-        onShare={() => onShare(item.id, item.reblogged)}
-      />
-    ),
-    [user]
-  )
-
   const keyExtractor = useCallback((item: Status) => item.id, [])
 
   const onDeletePost = (id: string) => {
@@ -211,6 +198,20 @@ export default function HomeScreen() {
     router.push(`/post/report/${id}`)
   }
 
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<Status>) => (
+      <FeedPost
+        post={item}
+        user={user}
+        onOpenComments={() => onOpenComments(item.id)}
+        onDeletePost={() => onDeletePost(item.id)}
+        onBookmark={() => onBookmark(item.id)}
+        onShare={() => onShare(item.id, item.reblogged)}
+      />
+    ),
+    [user, onOpenComments, onDeletePost, onBookmark, onShare]
+  )
+
   const { data: userSelf } = useQuery({
     queryKey: ['getSelfAccount'],
     queryFn: getSelfAccount,
@@ -228,6 +229,7 @@ export default function HomeScreen() {
     isRefetching,
     refetch,
     isFetching,
+    status,
     isError,
     error,
   } = useInfiniteQuery({
@@ -256,6 +258,33 @@ export default function HomeScreen() {
     )
   }
 
+  const renderFeed = (data: Array<Status>) => {
+    return (
+      <FlatList
+        ref={flatListRef}
+        data={data}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+        maxToRenderPerBatch={3}
+        windowSize={5}
+        removeClippedSubviews={true}
+        initialNumToRender={5}
+        updateCellsBatchingPeriod={50}
+        refreshing={isRefetching}
+        onRefresh={refetch}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={status === 'success' ? <EmptyFeed /> : <ErrorFeed />}
+        onViewableItemsChanged={onViewRef}
+        viewabilityConfig={viewConfigRef.current}
+        onEndReached={() => {
+          if (hasNextPage && !isFetching && !isFetchingNextPage) fetchNextPage()
+        }}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}
+      />
+    )
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="dark" />
@@ -281,24 +310,7 @@ export default function HomeScreen() {
           handleReport={handleCommentReport}
         />
       </BottomSheetModal>
-      <FlatList
-        ref={flatListRef}
-        data={data?.pages.flatMap((page) => page.data)}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-        maxToRenderPerBatch={3}
-        refreshing={isRefetching}
-        onRefresh={refetch}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<ErrorFeed />}
-        onViewableItemsChanged={onViewRef}
-        viewabilityConfig={viewConfigRef.current}
-        onEndReached={() => {
-          if (hasNextPage && !isFetchingNextPage) fetchNextPage()
-        }}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}
-      />
+      {renderFeed(data?.pages.flatMap((page) => page.data))}
     </SafeAreaView>
   )
 }

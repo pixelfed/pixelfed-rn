@@ -138,20 +138,6 @@ export default function HomeScreen() {
 
   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 })
 
-  const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<Status>) => (
-      <FeedPost
-        post={item}
-        user={user}
-        onOpenComments={() => onOpenComments(item.id)}
-        onDeletePost={() => onDeletePost(item.id)}
-        onBookmark={() => onBookmark(item.id)}
-        onShare={() => onShare(item.id, item.reblogged)}
-      />
-    ),
-    [user]
-  )
-
   const keyExtractor = useCallback((item) => item?.id, [])
 
   const onDeletePost = (id: string) => {
@@ -235,6 +221,20 @@ export default function HomeScreen() {
     router.push(`/post/report/${id}`)
   }
 
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<Status>) => (
+      <FeedPost
+        post={item}
+        user={user}
+        onOpenComments={() => onOpenComments(item.id)}
+        onDeletePost={() => onDeletePost(item.id)}
+        onBookmark={() => onBookmark(item.id)}
+        onShare={() => onShare(item.id, item.reblogged)}
+      />
+    ),
+    [user, onOpenComments, onDeletePost, onBookmark, onShare]
+  )
+
   const { data: userSelf } = useQuery({
     queryKey: ['getSelfAccount'],
     queryFn: getSelfAccount,
@@ -288,6 +288,10 @@ export default function HomeScreen() {
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         maxToRenderPerBatch={3}
+        windowSize={5}
+        removeClippedSubviews={true}
+        initialNumToRender={5}
+        updateCellsBatchingPeriod={50}
         refreshing={isRefetching}
         onRefresh={refetch}
         showsVerticalScrollIndicator={false}
