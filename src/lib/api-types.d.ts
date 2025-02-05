@@ -251,3 +251,31 @@ export type PaginatedStatus = {
   nextPage: string | undefined
   prevPage: string | undefined
 }
+
+export type UploadV2Response = {
+  blurhash: string
+  description: string
+  id: string
+  preview_url: string
+  remote_url: string
+  text_url: string
+  type: string
+  url: string
+}
+
+export type UploadV2ErrorResponse = {
+  errors: {
+    file: string[]
+  }
+  message: string
+}
+
+type UploadV2ResponseOrError = UploadV2Response | UploadV2ErrorResponse
+type UploadV2Params =
+  | {
+      file: unknown
+    }
+  | {
+      file: unknown
+      description: string
+    }

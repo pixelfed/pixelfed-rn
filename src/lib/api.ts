@@ -3,9 +3,11 @@ import { Storage } from 'src/state/cache'
 import { parseLinkHeader } from 'src/utils'
 import { ContextFromStorage } from './api-context'
 import type {
-  Account,
   PaginatedStatus,
   Relationship,
+  UploadV2Params,
+  UploadV2ResponseOrError,
+  Account,
   RelationshipFromFollowAPIResponse,
   Status,
   UpdateCredentialsParams,
@@ -22,11 +24,17 @@ function removeDuplicateObjects(array: any[], keyProps: string[]) {
   )
 }
 
-export async function selfPost(
+export async function selfPost<
+  AsForm extends boolean = false,
+  ParamsType = AsForm extends true ? { [key: string | number]: any } : Object,
+  ResponseType = Object,
+  RawRes extends Boolean = false,
+  ActualResponse = RawRes extends false ? Promise<ResponseType> : Response,
+>(
   path: string,
-  params = {},
-  asForm = false,
-  rawRes = false,
+  params: ParamsType = {} as ParamsType,
+  asForm: AsForm = false as AsForm,
+  rawRes: RawRes = false as RawRes,
   idempotency = false,
   appHeader = false
 ) {
@@ -49,11 +57,13 @@ export async function selfPost(
 
   const resp = await fetch(url, {
     method: 'POST',
-    body: asForm ? objectToForm(params) : JSON.stringify(params),
+    body: asForm
+      ? objectToForm(params as { [key: string | number]: any })
+      : JSON.stringify(params),
     headers,
   })
 
-  return rawRes ? resp : resp.json()
+  return (rawRes ? resp : resp.json()) as ActualResponse
 }
 
 export async function selfDelete(
@@ -663,9 +673,15 @@ export async function sendChatMessage(id: string, message: string) {
   })
 }
 
-export async function uploadMediaV2(params) {
+export async function uploadMediaV2(params: UploadV2Params) {
   const path = `api/v2/media`
-  return await selfPost(path, params, true, false, true)
+  return await selfPost<true, UploadV2Params, UploadV2ResponseOrError>(
+    path,
+    params,
+    true,
+    false,
+    true
+  )
 }
 
 export async function postNewStatus(params) {
