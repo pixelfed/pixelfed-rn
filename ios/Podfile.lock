@@ -1484,13 +1484,13 @@ SPEC CHECKSUMS:
   FBLazyVector: f64d1e2ea739b4d8f7e4740cde18089cd97fe864
   FBReactNativeSpec: 9f2b8b243131565335437dba74923a8d3015e780
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  glog: c5d68082e772fa1c511173d6b30a9de2c05a69a2
-  hermes-engine: 9cecf9953a681df7556b8cc9c74905de8f3293c0
+  glog: 79d13cd7c34b5d0cea5f4ca72c0e6b462ef8fb4d
+  hermes-engine: 6474974cf6baee35ab3383d3307339e7b2aa5534
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
   MMKV: 506311d0494023c2f7e0b62cc1f31b7370fa3cfb
   MMKVCore: 9e2e5fd529b64a9fe15f1a7afb3d73b2e27b4db9
-  RCT-Folly: 7169b2b1c44399c76a47b5deaaba715eeeb476c0
+  RCT-Folly: 082c31bb88ae3582d685f8923b9938147be587b3
   RCTRequired: ca1d7414aba0b27efcfa2ccd37637edb1ab77d96
   RCTTypeSafety: 678e344fb976ff98343ca61dc62e151f3a042292
   React: e296bcebb489deaad87326067204eb74145934ab
