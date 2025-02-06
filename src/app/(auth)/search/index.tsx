@@ -51,28 +51,19 @@ export default function SearchScreen() {
             <Pressable>
               <XStack alignItems="center" gap="$3">
                 <UserAvatar url={item.avatar} width={40} height={40} />
-                <YStack flexGrow={1} gap={4}>
-                  {/* <Text fontSize="$3" color="$gray9">
-                    {item.display_name}
-                  </Text> */}
-                  <XStack
-                    alignItems="center"
-                    flexWrap="wrap"
-                    whiteSpace="break-all"
-                    overflow="hidden"
-                  >
-                      <Text fontSize="$6" fontWeight="bold">
-                        {item.username}
-                      </Text>
+                <YStack flexGrow={1} gap={4} w="50%">
+                  <XStack alignItems="center" gap="$2" flexWrap="wrap">
+                    <Text fontSize="$6" fontWeight="bold">
+                      {item.username}
+                    </Text>
 
-                      {/* { !item.local ? <View bg="$gray3" px={5} py={4} borderRadius={5}>
-                            <Text fontSize="$2" fontWeight="bold" color="#999">{getDomain(item.url)}</Text>
-                          </View> : null } */}
-                      {!item.local ? (
-                        <Text fontSize="$6" color="$gray9">
-                          @{getDomain(item.url)}
+                    {!item.local ? (
+                      <View bg="$gray3" px={5} py={4} borderRadius={5}>
+                        <Text fontSize="$2" fontWeight="bold" color="#999">
+                          {getDomain(item.url)}
                         </Text>
-                      ) : null}
+                      </View>
+                    ) : null}
                   </XStack>
                   <XStack gap="$2" alignItems="center">
                     <Text color="$gray9" fontSize="$2">
@@ -107,8 +98,14 @@ export default function SearchScreen() {
               >
                 <Feather name="hash" size={20} color="#000" />
               </View>
-              <XStack flexGrow={1} gap={4} justifyContent='space-between' alignItems="center">
-                <Text fontSize="$6" fontWeight="bold">
+              <XStack
+                flexGrow={1}
+                gap={4}
+                flexWrap="wrap"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Text fontSize="$6" w="70%" fontWeight="bold" flexWrap="wrap">
                   {item.name}
                 </Text>
                 <XStack>
@@ -193,7 +190,7 @@ export default function SearchScreen() {
           value={query}
           bg="white"
           autoCorrect={false}
-          autoComplete='off'
+          autoComplete="off"
           autoFocus={true}
           size="$6"
         />
