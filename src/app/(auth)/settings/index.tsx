@@ -19,7 +19,7 @@ export default function Page() {
   }, [navigation])
   const { username, locked } = useUserCache()
   const instance = Storage.getString('app.instance')
-  const buildVersion = 76
+  const buildVersion = 77
   const version = Application.nativeApplicationVersion + '.' + buildVersion
 
   const { logout } = useAuth()

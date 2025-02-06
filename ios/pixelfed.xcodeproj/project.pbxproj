@@ -63,6 +63,16 @@
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8AA1C1EA80AC4C96812215CB /* Copy Files */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Copy Files";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8FD824620F7D412687023E73 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -113,7 +123,10 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = pixelfed/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = pixelfed/main.m; sourceTree = "<group>"; };
 		159CEF85708D4025AA634D09 /* ShareViewController.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ShareViewController.swift; path = ShareExtension/ShareViewController.swift; sourceTree = "<group>"; };
+		1DA1C4AB28104CA3980DF829 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = ShareExtension/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		2A7446DCCB464E01A4B932CD /* MainInterface.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = file.storyboard; name = MainInterface.storyboard; path = ShareExtension/MainInterface.storyboard; sourceTree = "<group>"; };
 		30CC65DA46EF435DADAD1E86 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "pixelfed/noop-file.swift"; sourceTree = "<group>"; };
+		37C6C33B69FD4B2792865231 /* ShareViewController.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ShareViewController.swift; path = ShareExtension/ShareViewController.swift; sourceTree = "<group>"; };
 		448B523A6E1F4B069665A6BD /* ShareViewController.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ShareViewController.swift; path = ShareExtension/ShareViewController.swift; sourceTree = "<group>"; };
 		4D40E02ECE594828A02601F7 /* pixelfed-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "pixelfed-Bridging-Header.h"; path = "pixelfed/pixelfed-Bridging-Header.h"; sourceTree = "<group>"; };
 		56348D1FE6E94AF098D6F642 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = ShareExtension/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -202,6 +215,9 @@
 				A25041CC3746414481BC92AE /* ShareViewController.swift */,
 				7D4CD8459005407688EC7F4C /* MainInterface.storyboard */,
 				848F054A5A864830B735582E /* PrivacyInfo.xcprivacy */,
+				37C6C33B69FD4B2792865231 /* ShareViewController.swift */,
+				2A7446DCCB464E01A4B932CD /* MainInterface.storyboard */,
+				1DA1C4AB28104CA3980DF829 /* PrivacyInfo.xcprivacy */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -297,6 +313,7 @@
 				3A3AC40DC1C14AA5B8486E2A /* Copy Files */,
 				386B6D9D46514607BEE9D853 /* Copy Files */,
 				ADB42E6E37C741AAA618C36A /* Copy Files */,
+				8AA1C1EA80AC4C96812215CB /* Copy Files */,
 			);
 			buildRules = (
 			);
@@ -516,7 +533,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pixelfed/pixelfed.entitlements;
-				CURRENT_PROJECT_VERSION = 76;
+				CURRENT_PROJECT_VERSION = 77;
 				DEVELOPMENT_TEAM = 2Z4W72WU87;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -555,7 +572,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pixelfed/pixelfed.entitlements;
-				CURRENT_PROJECT_VERSION = 76;
+				CURRENT_PROJECT_VERSION = 77;
 				DEVELOPMENT_TEAM = 2Z4W72WU87;
 				INFOPLIST_FILE = pixelfed/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Pixelfed;
@@ -666,7 +683,10 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -723,7 +743,10 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
