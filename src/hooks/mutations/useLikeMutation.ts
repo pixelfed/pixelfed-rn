@@ -13,37 +13,37 @@ export function useLikeMutation({ onSuccess }: { onSuccess?: onSuccessType } = {
 
   const updateStatus = (status: Status, isLike: boolean) => {
     if (!status || status.favourited === isLike) return status
-    
+
     return {
       ...status,
       favourited: isLike,
-      favourites_count: isLike 
-        ? (status.favourites_count ?? 0) + 1 
-        : Math.max(0, (status.favourites_count ?? 1) - 1)
+      favourites_count: isLike
+        ? (status.favourites_count ?? 0) + 1
+        : Math.max(0, (status.favourites_count ?? 1) - 1),
     }
   }
 
   const updateFeed = (old: any, statusId: string, isLike: boolean) => {
     if (!old?.pages) return old
-    
+
     let updated = false
     const newPages = old.pages.map((page: any) => {
       if (!Array.isArray(page.data)) return page
-      
+
       let pageUpdated = false
       const newData = page.data.map((status: Status) => {
         if (status.id !== statusId) return status
         if (status.favourited === isLike) return status
-        
+
         pageUpdated = true
         return updateStatus(status, isLike)
       })
-      
+
       if (!pageUpdated) return page
       updated = true
       return { ...page, data: newData }
     })
-    
+
     return updated ? { ...old, pages: newPages } : old
   }
 
@@ -58,19 +58,19 @@ export function useLikeMutation({ onSuccess }: { onSuccess?: onSuccessType } = {
       const queryKeys = [
         ['homeFeed'],
         ['fetchNetworkFeed'],
-        ['getStatusById', newLike.id]
+        ['getStatusById', newLike.id],
       ]
-      
+
       // Cancel queries in parallel
       await Promise.all(
-        queryKeys.map(key => queryClient.cancelQueries({ queryKey: key }))
+        queryKeys.map((key) => queryClient.cancelQueries({ queryKey: key }))
       )
 
       const isLike = newLike.type === 'like'
       const previousState: Record<string, any> = {}
 
       // Snapshot and update in a single pass
-      queryKeys.forEach(key => {
+      queryKeys.forEach((key) => {
         const queryKey = key.join('/')
         const currentData = queryClient.getQueryData(key)
         previousState[queryKey] = currentData
@@ -107,12 +107,12 @@ export function useLikeMutation({ onSuccess }: { onSuccess?: onSuccessType } = {
       const queryKeys = [
         ['homeFeed'],
         ['fetchNetworkFeed'],
-        ['getStatusById', variables.id]
+        ['getStatusById', variables.id],
       ]
 
-      queryKeys.forEach(key => {
+      queryKeys.forEach((key) => {
         if (key.length === 1) {
-          queryClient.setQueriesData({ queryKey: key }, old => {
+          queryClient.setQueriesData({ queryKey: key }, (old) => {
             if (!old?.pages) return old
             return updateFeed(old, data.id, data.favourited)
           })
@@ -124,7 +124,7 @@ export function useLikeMutation({ onSuccess }: { onSuccess?: onSuccessType } = {
       if (onSuccess) {
         onSuccess(data, variables)
       }
-    }
+    },
   })
 
   const handleLike = async (id: string, liked: boolean) => {

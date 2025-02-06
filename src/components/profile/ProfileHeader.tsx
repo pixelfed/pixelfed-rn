@@ -375,7 +375,7 @@ export default function ProfileHeader({
             </XStack>
           ) : null}
 
-          { profile?.note && profile?.note.length && (<RenderBio />) }
+          {profile?.note && profile?.note.length && <RenderBio />}
 
           {profile?.website && profile?.website.trim().length ? (
             <PressableOpacity onPress={() => _openWebsite()}>
