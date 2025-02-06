@@ -55,8 +55,9 @@
             "NSExtensionActivationSupportsWebURLWithMaxCount": 0,
             "NSExtensionActivationSupportsWebPageWithMaxCount": 0,
             "NSExtensionActivationSupportsImageWithMaxCount": 1,
-            "NSExtensionActivationSupportsMovieWithMaxCount": 1
+            "NSExtensionActivationSupportsMovieWithMaxCount": 0
           },
+          "iosShareExtensionName": "Pixelfed Share",
           "androidIntentFilters": [
             "image/*"
           ]

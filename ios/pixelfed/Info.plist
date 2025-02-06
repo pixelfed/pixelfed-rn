@@ -19,7 +19,7 @@
     <key>CFBundlePackageType</key>
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.0</string>
+    <string>1.0.1</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleURLTypes</key>
@@ -46,11 +46,11 @@
       <true/>
     </dict>
     <key>NSCameraUsageDescription</key>
-    <string>$(PRODUCT_NAME) needs camera access so you can take photos and share them on your Pixelfed timeline.</string>
+    <string>Pixelfed needs camera access so you can take photos and share them on your Pixelfed timeline. This allows you to capture and post new pictures directly through the app.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>This app uses your location to show nearby places and events.</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>$(PRODUCT_NAME) needs microphone access to allow you to record and add sound to your video posts on Pixelfed.</string>
+    <string>Pixelfed needs microphone access to allow you to record and add sound to your video posts on Pixelfed. This enables you to capture videos with audio when sharing moments with your followers.</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>The app accesses your photos to let you share them with your friends.</string>
     <key>NSUserActivityTypes</key>
