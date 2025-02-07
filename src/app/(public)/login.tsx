@@ -167,7 +167,7 @@ const ServerPreview = React.memo(({ server, data }) => {
   )
 })
 
-const ApiScopesSheet = ({ isOpen, onClose, scopes, onToggleScope }) => {
+const ApiScopesSheet = ({ isOpen, onClose, scopes, onToggleScope, allowCustom, onToggleCustom }) => {
   const renderScopeGroup = (title, scopeFilter) => (
     <YStack space="$3">
       <Text fontSize="$5" fontWeight="bold" color="$gray11">
@@ -202,6 +202,23 @@ const ApiScopesSheet = ({ isOpen, onClose, scopes, onToggleScope }) => {
         <Sheet.Handle />
         <Sheet.ScrollView>
           <YStack px="$4" space="$6" mt="$4">
+
+            <XStack justifyContent="space-between" alignItems="center" py="$2">
+              <YStack flex={1} pr="$4" gap="$2">
+                <Text fontSize="$5" color="$gray12" fontWeight={'bold'}>
+                  Allow custom server
+                </Text>
+                <Text fontSize="$3" color="$gray11">
+                  Login to another server other than pixelfed.social
+                </Text>
+              </YStack>
+              <Switch
+                checked={allowCustom}
+                onCheckedChange={(checked) => onToggleCustom(checked)}
+              >
+                <Switch.Thumb animation="quicker" />
+              </Switch>
+            </XStack>
             <Text fontSize="$6" fontWeight="bold" color="$gray12">
               API Permissions
             </Text>
@@ -223,6 +240,7 @@ const ApiScopesSheet = ({ isOpen, onClose, scopes, onToggleScope }) => {
 export default function Login() {
   const [server, setServer] = useState('pixelfed.social')
   const [customServer, setCustomServer] = useState('')
+  const [showSelector, setShowSelector] = useState(false)
   const [hasSelected, setHasSelected] = useState(false)
   const [openRegistrations, setOpenServers] = useState([])
   const [showApiSettings, setShowApiSettings] = useState(false)
@@ -450,11 +468,12 @@ export default function Login() {
           </Pressable>
         </View>
 
-        <YStack space="$4" mb="$5">
-          {!['pixelfed.social', 'Other'].includes(server) && (
+          <YStack space="$4" mb="$5">
+          {showSelector && !['pixelfed.social', 'Other'].includes(server) && (
             <ServerPreview data={data} server={server} />
           )}
-          <YStack>
+
+          { showSelector && (<YStack>
             <XStack alignItems="center" justifyContent="space-between" gap="$4">
               <Label miw={80} fontSize="$5" color="$gray9">
                 <XStack gap="$3" alignItems="center">
@@ -482,7 +501,7 @@ export default function Login() {
                 <SelectContent data={data} selectedServer={server} />
               </Select>
             </XStack>
-          </YStack>
+          </YStack>)}
 
           <XStack space="$3">
             <Button
@@ -519,6 +538,8 @@ export default function Login() {
         onClose={() => setShowApiSettings(false)}
         scopes={apiScopes}
         onToggleScope={toggleApiScope}
+        allowCustom={showSelector}
+        onToggleCustom={setShowSelector}
       />
     </SafeAreaView>
   )
