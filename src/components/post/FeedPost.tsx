@@ -676,7 +676,6 @@ interface FeedPostProps {
   onOpenComments: (id: string) => void
   onDeletePost: (id: string) => void
   disableReadMore?: boolean
-  disableBookMark?: boolean
   isPermalink?: boolean
   isLikeFeed?: boolean
   onShare: (id: string) => void
