@@ -527,7 +527,6 @@ export default function ProfileScreen() {
     data: feed,
     fetchNextPage,
     hasNextPage,
-    hasPreviousPage,
     isFetchingNextPage,
     isFetched,
     isFetching,
@@ -543,23 +542,34 @@ export default function ProfileScreen() {
           p.media_attachments.length
         )
       })
-      return res
+      return {
+        items: res,
+        nextCursor: pageParam,
+      }
     },
+    maxPages: 80,
     initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages, lastPageParam) => {
-      if (lastPage.length === 0) {
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage.items.length) {
         return undefined
       }
-      let lowestId = lastPage.reduce((min, obj) => {
-        if (obj.id < min) {
-          return obj.id
-        }
-        return min
-      }, lastPage[0].id)
-      return lowestId
+
+      const lowestId = lastPage.items.reduce(
+        (min, obj) => Math.min(min, Number.parseInt(obj.id)),
+        Number.parseInt(lastPage.items[0].id)
+      )
+
+      return lowestId !== lastPage.nextCursor ? lowestId : undefined
     },
     enabled: !!userId,
   })
+
+  const flattenedData = useMemo(() => {
+    if (!feed?.pages) return []
+    const allItems = feed.pages.flatMap((page) => page.items)
+    const uniqueItems = [...new Map(allItems.map((item) => [item.id, item])).values()]
+    return uniqueItems
+  }, [feed?.pages])
 
   if (userError) {
     return (
@@ -608,14 +618,16 @@ export default function ProfileScreen() {
         }}
       />
       <FlatList
-        data={feed?.pages.flat()}
-        keyExtractor={(item, index) => item?.id.toString()}
+        data={flattenedData}
+        keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={RenderHeader}
         renderItem={RenderItem}
         numColumns={3}
         showsVerticalScrollIndicator={false}
         onEndReached={() => {
-          if (!userError && !isFetching && hasNextPage) fetchNextPage()
+          if (!userError && !isFetching && hasNextPage) {
+            fetchNextPage()
+          }
         }}
         onEndReachedThreshold={0.1}
         ListEmptyComponent={EmptyFeed}
