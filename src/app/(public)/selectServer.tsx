@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons'
 import { useAuth } from '@state/AuthProvider'
 import { useQuery } from '@tanstack/react-query'
-import { Stack, useRouter } from 'expo-router'
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import React, { useState, useMemo } from 'react'
 import {
@@ -20,6 +20,7 @@ import { enforceLen, prettyCount } from 'src/utils'
 import { Button, Image, Text, View, XStack, YStack } from 'tamagui'
 
 export default function Register() {
+  const params = useLocalSearchParams()
   const { data } = useQuery({
     queryKey: ['openServersSelector'],
     queryFn: getOpenServers,
@@ -32,11 +33,11 @@ export default function Register() {
   const [searchQuery, setSearchQuery] = useState('')
 
   const handleLogin = (server) => {
-    login(server)
+    login(server, params.enabledScopes)
   }
 
   const manualLogin = () => {
-    router.push('/manualLogin')
+    router.push(`/manualLogin?enabledScopes=${params.enabledScopes.split(' ').join('+')}`)
   }
 
   const filteredData = useMemo(() => {

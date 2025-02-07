@@ -256,12 +256,24 @@ export default function Login() {
           .filter((s) => s.mobile_registration)
           .map((s) => s.domain)
           .slice(0, 20)
+
         setOpenServers(openReg)
 
         // Check if pixelfed.social exists in the response
-        const hasPixelFed = filtered.some((server) => server.domain === 'pixelfed.social')
+        const hasPixelfedSocial = filtered.some(
+          (server) => server.domain === 'pixelfed.social'
+        )
+        const hasPixelfedArt = filtered.some((server) => server.domain === 'pixelfed.art')
 
-        if (!hasPixelFed) {
+        if (!hasPixelfedArt) {
+          // If pixelfed.social isn't in the response, add it at the beginning
+          filtered.unshift({ domain: 'pixelfed.art' })
+          // Remove last item if we're over 20 items
+          if (filtered.length > 20) {
+            filtered.pop()
+          }
+        }
+        if (!hasPixelfedSocial) {
           // If pixelfed.social isn't in the response, add it at the beginning
           filtered.unshift({ domain: 'pixelfed.social' })
           // Remove last item if we're over 20 items
@@ -275,17 +287,21 @@ export default function Login() {
         return filtered
       } catch (error) {
         // Fallback data if the request fails
-        return [{ domain: 'pixelfed.social' }, { domain: 'Other' }]
+        return [
+          { domain: 'pixelfed.social' },
+          { domain: 'pixelfed.art' },
+          { domain: 'Other' },
+        ]
       }
     },
-    placeholderData: [{ domain: 'pixelfed.social' }, { domain: 'Other' }],
+    placeholderData: [
+      { domain: 'pixelfed.social' },
+      { domain: 'pixelfed.art' },
+      { domain: 'Other' },
+    ],
   })
 
   const handleLogin = useCallback(() => {
-    if (server === 'Other') {
-      router.push('/selectServer')
-      return
-    }
     // Include API scopes in login
     const enabledScopes = Object.entries(apiScopes)
       .filter(([_, enabled]) => enabled)
@@ -298,6 +314,16 @@ export default function Login() {
       Alert.alert('Error', 'You need write access to use this app.')
       return
     }
+
+    if (server === 'Other') {
+      const enabledScopes = Object.entries(apiScopes)
+        .filter(([_, enabled]) => enabled)
+        .map(([scope]) => scope)
+
+      router.push(`/selectServer?enabledScopes=${enabledScopes.join('+')}`)
+      return
+    }
+
     login(server, enabledScopes.join(' '))
   }, [server, apiScopes, login])
 
@@ -425,7 +451,9 @@ export default function Login() {
         </View>
 
         <YStack space="$4" mb="$5">
-          {server !== 'pixelfed.social' && <ServerPreview data={data} server={server} />}
+          {!['pixelfed.social', 'Other'].includes(server) && (
+            <ServerPreview data={data} server={server} />
+          )}
           <YStack>
             <XStack alignItems="center" justifyContent="space-between" gap="$4">
               <Label miw={80} fontSize="$5" color="$gray9">
@@ -449,34 +477,12 @@ export default function Login() {
                   <Select.Value placeholder="Select an option" color="#aaa" />
                 </Select.Trigger>
 
-                <Adapt when="sm" platform="touch">
-                  {SheetComponent}
-                </Adapt>
+                <Adapt platform="touch">{SheetComponent}</Adapt>
 
                 <SelectContent data={data} selectedServer={server} />
               </Select>
             </XStack>
           </YStack>
-
-          {server === 'custom' && (
-            <XStack alignItems="center" space="$2">
-              <Feather name="link" size={20} color="white" />
-              <Input
-                flex={1}
-                value={customServer}
-                onChangeText={setCustomServer}
-                placeholder="Enter custom server URL"
-                placeholderTextColor="$gray8"
-                borderWidth={1}
-                borderColor="white"
-                backgroundColor="black"
-                color="white"
-                focusStyle={{
-                  borderColor: '$gray8',
-                }}
-              />
-            </XStack>
-          )}
 
           <XStack space="$3">
             <Button

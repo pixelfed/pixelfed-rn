@@ -1,5 +1,12 @@
 import { useAuth } from '@state/AuthProvider'
-import { Link, Stack, router, useNavigation, useRouter } from 'expo-router'
+import {
+  Link,
+  Stack,
+  router,
+  useLocalSearchParams,
+  useNavigation,
+  useRouter,
+} from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useState } from 'react'
 import { ActivityIndicator, SafeAreaView } from 'react-native'
@@ -16,6 +23,7 @@ import {
 } from 'tamagui'
 
 export default function Login() {
+  const params = useLocalSearchParams()
   const [server, setServer] = useState('')
   const [loading, setLoading] = useState(true)
   const router = useRouter()
@@ -23,7 +31,7 @@ export default function Login() {
   const { login, isLoading } = useAuth()
 
   const handleLogin = () => {
-    login(server)
+    login(server, params.enabledScopes)
   }
 
   return (
