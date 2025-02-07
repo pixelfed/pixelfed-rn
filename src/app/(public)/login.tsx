@@ -1,28 +1,22 @@
 import Feather from '@expo/vector-icons/Feather'
 import { useAuth } from '@state/AuthProvider'
 import { useQuery } from '@tanstack/react-query'
-import { Link, router, useNavigation, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import * as WebBrowser from 'expo-web-browser'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import {
-  ActivityIndicator,
-  Alert,
-  Platform,
-  Pressable,
-  SafeAreaView,
-  TextInput,
-} from 'react-native'
+import React from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { ActivityIndicator, Alert, Pressable } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import FastImage from 'react-native-fast-image'
-import { FormSelect } from 'src/components/form/Select'
 import { Switch } from 'src/components/form/Switch'
 import { getOpenServers } from 'src/lib/api'
+import type { GetOpenServersServer } from 'src/lib/api-types'
 import { Storage } from 'src/state/cache'
 import { prettyCount } from 'src/utils'
 import {
   Adapt,
   Button,
-  Form,
   Image,
   Input,
   Label,
@@ -46,135 +40,27 @@ const SCOPE_DESCRIPTIONS = {
   'admin:write:domain_blocks': 'Perform moderation actions on domain blocks',
 }
 
-const ServerItem = React.memo(
-  ({ item, index, selectedServer }) => (
-    <View>
-      <Separator />
-      <Select.Item index={index} value={item.domain} py="$3" alignItems="center">
-        <YStack flexGrow={1} py="$2">
-          <XStack justifyContent="space-between" alignItems="center" gap="$5">
-            <Select.ItemText
-              flexWrap="wrap"
-              fontSize="$6"
-              fontWeight={selectedServer === item.domain ? 'bold' : 'normal'}
-            >
-              {item.domain}
-            </Select.ItemText>
-            {item.mobile_registration && item.domain != selectedServer && (
-              <Feather name="user-plus" size={24} color="#51a2ff" />
-            )}
-            <Select.ItemIndicator marginLeft="auto">
-              <Feather name="check" size={16} color="#7ccf00" />
-            </Select.ItemIndicator>
-          </XStack>
-        </YStack>
-      </Select.Item>
-    </View>
-  ),
-  (prevProps, nextProps) => {
-    return (
-      prevProps.selectedServer === nextProps.selectedServer &&
-      prevProps.item.domain === nextProps.item.domain
-    )
-  }
-)
-
-const SelectContent = React.memo(({ data, selectedServer }) => (
-  <Select.Content zIndex={200000}>
-    <Select.ScrollUpButton
-      alignItems="center"
-      justifyContent="center"
-      position="relative"
-      width="100%"
-      height="$3"
-    >
-      <YStack zIndex={10}>
-        <Feather name="chevron-up" size={20} />
-      </YStack>
-    </Select.ScrollUpButton>
-
-    <Select.Viewport
-      animation="quick"
-      animateOnly={['transform', 'opacity']}
-      enterStyle={{ o: 0, y: -10 }}
-      exitStyle={{ o: 0, y: 10 }}
-    >
-      <Select.Group>
-        <Select.Label>Select a server</Select.Label>
-        {data?.map((item, i) => (
-          <ServerItem
-            key={item.domain}
-            item={item}
-            index={i}
-            selectedServer={selectedServer}
-          />
-        ))}
-        <View h={50}></View>
-      </Select.Group>
-    </Select.Viewport>
-
-    <Select.ScrollDownButton
-      alignItems="center"
-      justifyContent="center"
-      position="relative"
-      width="100%"
-      height="$3"
-    >
-      <YStack zIndex={10}>
-        <Feather name="chevron-down" size={20} />
-      </YStack>
-    </Select.ScrollDownButton>
-  </Select.Content>
-))
-
-const ServerPreview = React.memo(({ server, data }) => {
-  const serverData = useMemo(() => {
-    return (
-      data?.find((s) => s.domain === server) || {
-        domain: server,
-        header_thumbnail: null,
-        short_description: 'No description available',
-      }
-    )
-  }, [data, server])
-
-  return (
-    <YStack p="$3" borderWidth={1} borderColor="#333" borderRadius={10}>
-      {serverData.header_thumbnail && (
-        <FastImage
-          source={{
-            uri: serverData.header_thumbnail,
-            priority: FastImage.priority.normal,
-          }}
-          style={{ width: '100%', height: 120, borderRadius: 10 }}
-          resizeMode={FastImage.resizeMode.cover}
-        />
-      )}
-      <YStack mt="$3" gap="$2">
-        <XStack justifyContent="space-between" alignItems="center">
-          <Text color="$gray5" fontSize="$6" fontWeight="bold">
-            {serverData.domain}
-          </Text>
-          <Text color="$gray5" fontSize="$4" fontWeight="bold">
-            {prettyCount(serverData.user_count)} Users
-          </Text>
-        </XStack>
-        <Text color="$gray6" fontSize="$4" numberOfLines={2}>
-          {serverData.short_description}
-        </Text>
-      </YStack>
-    </YStack>
-  )
-})
-
-const ApiScopesSheet = ({ isOpen, onClose, scopes, onToggleScope }) => {
-  const renderScopeGroup = (title, scopeFilter) => (
+const ApiScopesSheet = ({
+  isOpen,
+  onClose,
+  scopes,
+  onToggleScope,
+}: {
+  isOpen: boolean
+  onClose: () => void
+  scopes: ApiScopes
+  onToggleScope: (scope: keyof ApiScopes, enabled: boolean) => void
+}) => {
+  const renderScopeGroup = (
+    title: string,
+    scopeFilter: (scope: keyof ApiScopes) => boolean
+  ) => (
     <YStack space="$3">
       <Text fontSize="$5" fontWeight="bold" color="$gray11">
         {title}
       </Text>
       {Object.entries(scopes)
-        .filter(([scope]) => scopeFilter(scope))
+        .filter(([scope]) => scopeFilter(scope as keyof ApiScopes))
         .map(([scope, enabled]) => (
           <XStack key={scope} justifyContent="space-between" alignItems="center" py="$2">
             <YStack flex={1} pr="$4" gap="$2">
@@ -182,12 +68,14 @@ const ApiScopesSheet = ({ isOpen, onClose, scopes, onToggleScope }) => {
                 {scope}
               </Text>
               <Text fontSize="$3" color="$gray11">
-                {SCOPE_DESCRIPTIONS[scope]}
+                {SCOPE_DESCRIPTIONS[scope as keyof typeof SCOPE_DESCRIPTIONS]}
               </Text>
             </YStack>
             <Switch
               checked={enabled}
-              onCheckedChange={(checked) => onToggleScope(scope, checked)}
+              onCheckedChange={(checked) =>
+                onToggleScope(scope as keyof ApiScopes, checked)
+              }
             >
               <Switch.Thumb animation="quicker" />
             </Switch>
@@ -220,13 +108,23 @@ const ApiScopesSheet = ({ isOpen, onClose, scopes, onToggleScope }) => {
   )
 }
 
+type ApiScopes = {
+  read: boolean
+  write: boolean
+  follow: boolean
+  push: boolean
+  'admin:read': boolean
+  'admin:read:domain_blocks': boolean
+  'admin:write': boolean
+  'admin:write:domain_blocks': boolean
+}
+
 export default function Login() {
   const [server, setServer] = useState('pixelfed.social')
   const [customServer, setCustomServer] = useState('')
-  const [hasSelected, setHasSelected] = useState(false)
-  const [openRegistrations, setOpenServers] = useState([])
+  const [openRegistrations, setOpenServers] = useState<Array<String>>([])
   const [showApiSettings, setShowApiSettings] = useState(false)
-  const [apiScopes, setApiScopes] = useState({
+  const [apiScopes, setApiScopes] = useState<ApiScopes>({
     read: true,
     write: true,
     follow: true,
@@ -251,7 +149,7 @@ export default function Login() {
     queryFn: async () => {
       try {
         const res = await getOpenServers()
-        let filtered = res.slice(0, 20)
+        let filtered: Array<GetOpenServersServer | { domain: string }> = res.slice(0, 20)
         let openReg = res
           .filter((s) => s.mobile_registration)
           .map((s) => s.domain)
@@ -318,25 +216,26 @@ export default function Login() {
     }
   }, [server])
 
-  const handleDeepLink = (domain, url) => {
+  const handleDeepLink = (domain: string, url: string) => {
     const parsedUrl = new URL(url)
     const path = parsedUrl.pathname.substring(2)
     const searchParams = new URLSearchParams(parsedUrl.search)
     const params = {
       domain: domain,
-      email: searchParams.get('email'),
-      expires_in: Number.parseInt(searchParams.get('expires_in')),
-      status: searchParams.get('status'),
+      email: searchParams.get('email') ?? '',
+      expires_in: Number.parseInt(searchParams.get('expires_in') ?? '0').toString(),
+      status: searchParams.get('status') ?? '',
     }
     const q = new URLSearchParams(params)
-    router.push(`/verifyEmail?${q.toString()}`)
+    const finalPath = `/verifyEmail?${q.toString()}`
+    router.push(finalPath as Parameters<typeof router.push>[0])
   }
 
   const clearStorage = () => {
     Storage.clearAll()
   }
 
-  const toggleApiScope = useCallback((scope, enabled) => {
+  const toggleApiScope = useCallback((scope: keyof ApiScopes, enabled: boolean) => {
     setApiScopes((prev) => ({
       ...prev,
       [scope]: enabled,
@@ -517,3 +416,168 @@ export default function Login() {
     </SafeAreaView>
   )
 }
+
+const ServerPreview = ({
+  server,
+  data,
+}: { server: string; data?: Array<GetOpenServersServer | { domain: string }> }) => {
+  const serverData = useMemo(() => {
+    const thisServer = data?.find((s) => s.domain === server)
+
+    if (!thisServer) {
+      return {
+        domain: server,
+        header_thumbnail: null,
+        short_description: 'No description available',
+        user_count: 0,
+      }
+    }
+
+    if (!Object.hasOwn(thisServer, 'user_count')) {
+      return {
+        ...thisServer,
+        user_count: 0,
+        header_thumbnail: null,
+        short_description: 'No description available',
+      }
+    }
+
+    const thisServerData = thisServer as GetOpenServersServer
+
+    return {
+      ...thisServerData,
+      user_count: thisServerData.user_count ?? 0,
+      header_thumbnail: thisServerData.header_thumbnail ?? null,
+      short_description: thisServerData.short_description ?? 'No description available',
+    }
+  }, [data, server])
+
+  return (
+    <YStack p="$3" borderWidth={1} borderColor="#333" borderRadius={10}>
+      {serverData.header_thumbnail && (
+        <FastImage
+          source={{
+            uri: serverData.header_thumbnail,
+            priority: FastImage.priority.normal,
+          }}
+          style={{ width: '100%', height: 120, borderRadius: 10 }}
+          resizeMode={FastImage.resizeMode.cover}
+        />
+      )}
+      <YStack mt="$3" gap="$2">
+        <XStack justifyContent="space-between" alignItems="center">
+          <Text color="$gray5" fontSize="$6" fontWeight="bold">
+            {serverData.domain}
+          </Text>
+          <Text color="$gray5" fontSize="$4" fontWeight="bold">
+            {prettyCount(serverData.user_count ?? 0)} Users
+          </Text>
+        </XStack>
+        <Text color="$gray6" fontSize="$4" numberOfLines={2}>
+          {serverData.short_description}
+        </Text>
+      </YStack>
+    </YStack>
+  )
+}
+
+const SelectContent = ({
+  data,
+  selectedServer,
+}: {
+  data?: Array<GetOpenServersServer | { domain: string }>
+  selectedServer: string
+}) => (
+  <Select.Content zIndex={200000}>
+    <Select.ScrollUpButton
+      alignItems="center"
+      justifyContent="center"
+      position="relative"
+      width="100%"
+      height="$3"
+    >
+      <YStack zIndex={10}>
+        <Feather name="chevron-up" size={20} />
+      </YStack>
+    </Select.ScrollUpButton>
+
+    <Select.Viewport
+      animation="quick"
+      animateOnly={['transform', 'opacity']}
+      enterStyle={{ o: 0, y: -10 }}
+      exitStyle={{ o: 0, y: 10 }}
+    >
+      <Select.Group>
+        <Select.Label>Select a server</Select.Label>
+        {data?.map((item, i) => (
+          <ServerItem
+            key={item.domain}
+            item={item}
+            index={i}
+            selectedServer={selectedServer}
+          />
+        ))}
+        <View h={50}></View>
+      </Select.Group>
+    </Select.Viewport>
+
+    <Select.ScrollDownButton
+      alignItems="center"
+      justifyContent="center"
+      position="relative"
+      width="100%"
+      height="$3"
+    >
+      <YStack zIndex={10}>
+        <Feather name="chevron-down" size={20} />
+      </YStack>
+    </Select.ScrollDownButton>
+  </Select.Content>
+)
+
+const ServerItem = React.memo(
+  ({
+    item,
+    index,
+    selectedServer,
+  }: {
+    item:
+      | GetOpenServersServer
+      | {
+          domain: string
+        }
+    selectedServer: string
+    index: number
+  }) => (
+    <View>
+      <Separator />
+      <Select.Item index={index} value={item.domain} py="$3" alignItems="center">
+        <YStack flexGrow={1} py="$2">
+          <XStack justifyContent="space-between" alignItems="center" gap="$5">
+            <Select.ItemText
+              flexWrap="wrap"
+              fontSize="$6"
+              fontWeight={selectedServer === item.domain ? 'bold' : 'normal'}
+            >
+              {item.domain}
+            </Select.ItemText>
+            {Object.hasOwn(item, 'mobile_registration') &&
+              (item as GetOpenServersServer).mobile_registration &&
+              item.domain != selectedServer && (
+                <Feather name="user-plus" size={24} color="#51a2ff" />
+              )}
+            <Select.ItemIndicator marginLeft="auto">
+              <Feather name="check" size={16} color="#7ccf00" />
+            </Select.ItemIndicator>
+          </XStack>
+        </YStack>
+      </Select.Item>
+    </View>
+  ),
+  (prevProps, nextProps) => {
+    return (
+      prevProps.selectedServer === nextProps.selectedServer &&
+      prevProps.item.domain === nextProps.item.domain
+    )
+  }
+)
