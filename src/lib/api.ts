@@ -4,6 +4,7 @@ import { parseLinkHeader } from 'src/utils'
 import { ContextFromStorage } from './api-context'
 import type {
   Account,
+  GetOpenServersResponse,
   PaginatedStatus,
   Relationship,
   RelationshipFromFollowAPIResponse,
@@ -404,7 +405,7 @@ export async function getOpenServers() {
       }),
     }
   )
-  return await response.json()
+  return (await response.json()) as GetOpenServersResponse
 }
 
 export async function getStatusLikes(id: string, cursor) {
