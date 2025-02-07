@@ -167,7 +167,14 @@ const ServerPreview = React.memo(({ server, data }) => {
   )
 })
 
-const ApiScopesSheet = ({ isOpen, onClose, scopes, onToggleScope, allowCustom, onToggleCustom }) => {
+const ApiScopesSheet = ({
+  isOpen,
+  onClose,
+  scopes,
+  onToggleScope,
+  allowCustom,
+  onToggleCustom,
+}) => {
   const renderScopeGroup = (title, scopeFilter) => (
     <YStack space="$3">
       <Text fontSize="$5" fontWeight="bold" color="$gray11">
@@ -202,7 +209,6 @@ const ApiScopesSheet = ({ isOpen, onClose, scopes, onToggleScope, allowCustom, o
         <Sheet.Handle />
         <Sheet.ScrollView>
           <YStack px="$4" space="$6" mt="$4">
-
             <XStack justifyContent="space-between" alignItems="center" py="$2">
               <YStack flex={1} pr="$4" gap="$2">
                 <Text fontSize="$5" color="$gray12" fontWeight={'bold'}>
@@ -468,40 +474,42 @@ export default function Login() {
           </Pressable>
         </View>
 
-          <YStack space="$4" mb="$5">
+        <YStack space="$4" mb="$5">
           {showSelector && !['pixelfed.social', 'Other'].includes(server) && (
             <ServerPreview data={data} server={server} />
           )}
 
-          { showSelector && (<YStack>
-            <XStack alignItems="center" justifyContent="space-between" gap="$4">
-              <Label miw={80} fontSize="$5" color="$gray9">
-                <XStack gap="$3" alignItems="center">
-                  <Pressable onPress={() => serverInfo()}>
-                    <Feather name="info" color="#ccc" size={20} />
-                  </Pressable>
-                  <Text color="$gray5">Server</Text>
-                </XStack>
-              </Label>
-              <Select value={server} onValueChange={setServer} disablePreventBodyScroll>
-                <Select.Trigger
-                  width={220}
-                  iconAfter={<Feather name="chevron-down" />}
-                  backgroundColor="black"
-                  borderColor="#aaa"
-                  borderWidth={1}
-                  themeInverse={true}
-                  color="#aaa"
-                >
-                  <Select.Value placeholder="Select an option" color="#aaa" />
-                </Select.Trigger>
+          {showSelector && (
+            <YStack>
+              <XStack alignItems="center" justifyContent="space-between" gap="$4">
+                <Label miw={80} fontSize="$5" color="$gray9">
+                  <XStack gap="$3" alignItems="center">
+                    <Pressable onPress={() => serverInfo()}>
+                      <Feather name="info" color="#ccc" size={20} />
+                    </Pressable>
+                    <Text color="$gray5">Server</Text>
+                  </XStack>
+                </Label>
+                <Select value={server} onValueChange={setServer} disablePreventBodyScroll>
+                  <Select.Trigger
+                    width={220}
+                    iconAfter={<Feather name="chevron-down" />}
+                    backgroundColor="black"
+                    borderColor="#aaa"
+                    borderWidth={1}
+                    themeInverse={true}
+                    color="#aaa"
+                  >
+                    <Select.Value placeholder="Select an option" color="#aaa" />
+                  </Select.Trigger>
 
-                <Adapt platform="touch">{SheetComponent}</Adapt>
+                  <Adapt platform="touch">{SheetComponent}</Adapt>
 
-                <SelectContent data={data} selectedServer={server} />
-              </Select>
-            </XStack>
-          </YStack>)}
+                  <SelectContent data={data} selectedServer={server} />
+                </Select>
+              </XStack>
+            </YStack>
+          )}
 
           <XStack space="$3">
             <Button
