@@ -10,13 +10,15 @@ import { useUserCache } from 'src/state/AuthProvider'
 import { _timeAgo, enforceLen, prettyCount } from 'src/utils'
 import { Separator, Text, View, XStack, YStack } from 'tamagui'
 
+import type { AdminInstancesOptions } from 'src/lib/api-types'
+
 const keyExtractor = (_, index) => `instance-${_.id}-${index}`
 
 export default function Page() {
   const router = useRouter()
   const { is_admin } = useUserCache()
-  const [sort, setSort] = useState('desc')
-  const [sortBy, setSortBy] = useState('id')
+  const [sort, setSort] = useState<AdminInstancesOptions['sort']>('desc')
+  const [sortBy, setSortBy] = useState<AdminInstancesOptions['sort_by']>('id')
   const queryClient = useQueryClient()
 
   if (!is_admin) {
@@ -62,11 +64,11 @@ export default function Page() {
               </YStack>
             ) : null}
 
-            {/* { item?.status_count ? 
+            {/* { item?.status_count ?
                         <YStack w={50} justifyContent="center" alignItems="center" gap={3}>
                             <Text fontSize="$3" fontWeight="bold" color="$gray9" allowFontScaling={false}>{ prettyCount(item?.status_count) }</Text>
                             <Feather name="image" size={14} color="#ccc" />
-                        </YStack> 
+                        </YStack>
                         : null } */}
           </XStack>
         </XStack>
@@ -101,8 +103,8 @@ export default function Page() {
   const { data, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
     useInfiniteQuery({
       queryKey: ['instances'],
-      queryFn: async (queryKey) => {
-        return await adminInstances(queryKey, sort, sortBy)
+      queryFn: async () => {
+        return await adminInstances({ sort, sort_by: sortBy })
       },
       initialPageParam: null,
       getNextPageParam: (lastPage) => lastPage.nextPage,

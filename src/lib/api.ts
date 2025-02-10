@@ -5,6 +5,7 @@ import { ContextFromStorage } from './api-context'
 import type {
   Account,
   OpenServersResponse,
+  AdminInstancesOptions,
   PaginatedStatus,
   Relationship,
   RelationshipFromFollowAPIResponse,
@@ -692,13 +693,9 @@ export async function getAdminStats() {
   return await selfGet(path)
 }
 
-export async function adminInstances(queryKey?: { pageParam?: string }, sort, sortBy) {
-  const instance = Storage.getString('app.instance')
-  let path = queryKey?.pageParam
-    ? queryKey.pageParam
-    : `https://${instance}/api/admin/instances/list?order_by=sort=${sort}&sort_by=${sortBy}`
-  const res = await fetchData(path)
-  return { data: res.data, nextPage: res.links?.next, prevPage: res.links?.prev }
+export async function adminInstances(options: AdminInstancesOptions) {
+  const api = ContextFromStorage()
+  return await api.getPaginated("api/admin/instances/list", { ...options })
 }
 
 export async function adminInstanceGet() {

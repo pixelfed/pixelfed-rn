@@ -273,8 +273,8 @@ export type UploadV2ErrorResponse = {
 type UploadV2ResponseOrError = UploadV2Response | UploadV2ErrorResponse
 type UploadV2Params =
   | {
-      file: unknown
-    }
+    file: unknown
+  }
   | {
       file: unknown
       description: string
@@ -291,3 +291,10 @@ interface OpenServer {
 }
 
 type OpenServersResponse = Array<OpenServer>
+
+export type AdminInstancesOptions = {
+  q?: string,
+  sort?: 'asc' | 'desc',
+  sort_by?: 'id' | 'status_count' | 'user_count' | 'domain',
+  filter?: 'all' | 'unlisted' | 'auto_cw' | 'banned'
+}
