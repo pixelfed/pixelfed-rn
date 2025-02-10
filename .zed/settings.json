@@ -13,5 +13,9 @@
     "language_server": {
       "name": "biome"
     }
+  },
+  "auto_install_extension": {
+    "biome":true,
+    "html": true
   }
 }
