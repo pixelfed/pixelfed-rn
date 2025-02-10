@@ -442,33 +442,18 @@ export async function getStatusReblogs(id: string, cursor?: number) {
 }
 
 export async function getTrendingHashtags() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1.1/discover/posts/hashtags`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get('api/v1.1/discover/posts/hashtags')
 }
 
 export async function getTrendingPopularAccounts() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1.1/discover/accounts/popular`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get('api/v1.1/discover/accounts/populars')
 }
 
-export async function getTrendingPopularPosts() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1.1/discover/posts/trending?range=daily`
-  return await fetchData(url)
-}
-
-export async function getTrendingPopularPostsMonthly() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1.1/discover/posts/trending?range=monthly`
-  return await fetchData(url)
-}
-
-export async function getTrendingPopularPostsYearly() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1.1/discover/posts/trending?range=yearly`
-  return await fetchData(url)
+export async function getTrendingPopularPosts(range: 'daily' | 'monthly' | 'yearly') {
+  const api = ContextFromStorage()
+  return await api.get('api/v1.1/discover/posts/trending', { range })
 }
 
 export async function getAccountRelationship({ queryKey }): Promise<Relationship> {
