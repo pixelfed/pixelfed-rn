@@ -96,37 +96,6 @@ export async function selfDelete(
   return rawRes ? resp : resp.json()
 }
 
-export async function selfGet(
-  path: string,
-  rawRes = false,
-  idempotency = false,
-  appHeader = false
-) {
-  let headers: Record<string, string> = {}
-  const instance = Storage.getString('app.instance')
-  const token = Storage.getString('app.token')
-  const url = `https://${instance}/${path}`
-
-  headers['Authorization'] = `Bearer ${token}`
-  headers['Accept'] = 'application/json'
-  headers['Content-Type'] = 'application/json'
-
-  if (idempotency) {
-    headers['Idempotency-Key'] = randomKey(40)
-  }
-
-  if (appHeader) {
-    headers['X-PIXELFED-APP'] = '1'
-  }
-
-  const resp = await fetch(url, {
-    method: 'GET',
-    headers,
-  })
-
-  return rawRes ? resp : resp.json()
-}
-
 async function fetchPaginatedData(url: string) {
   const token = Storage.getString('app.token')
 
@@ -637,14 +606,14 @@ export async function deleteAvatar() {
   return await response.json()
 }
 
-export async function fetchChatThread(id: string) {
-  const path = `api/v1.1/direct/thread?pid=${id}`
-  return await selfGet(path)
+export async function fetchChatThread(pid: string) {
+  const api = ContextFromStorage()
+  return await api.get('api/v1.1/direct/thread', { pid })
 }
 
 export async function deleteChatMessage(id: string) {
-  const path = `api/v1.1/direct/thread/message?id=${id}`
-  return await selfDelete(path)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('DELETE', 'api/v1.1/direct/thread/message', undefined, { id })
 }
 
 export async function sendChatMessage(id: string, message: string) {
@@ -673,8 +642,8 @@ export async function postNewStatus(params) {
 }
 
 export async function getAdminStats() {
-  const path = `api/admin/stats`
-  return await selfGet(path)
+  const api = ContextFromStorage()
+  return await api.get('api/admin/stats')
 }
 
 export async function adminInstances(options: AdminInstancesOptions) {
@@ -683,11 +652,13 @@ export async function adminInstances(options: AdminInstancesOptions) {
 }
 
 export async function adminInstanceGet() {
-  return await selfGet('api/admin/instances/get')
+  const api = ContextFromStorage()
+  return await api.get('api/admin/instances/get')
 }
 
 export async function getDomainBlocks() {
-  return await selfGet('api/v1/domain_blocks')
+  const api = ContextFromStorage()
+  return await api.get('api/v1/domain_blocks')
 }
 
 export async function deleteStatusV1(id: string) {
@@ -724,7 +695,8 @@ export async function editPostMedia(id: string, description: string) {
 }
 
 export async function getTrendingPostsV1() {
-  const res = await selfGet('api/v1.1/discover/posts/network/trending')
+  const api = ContextFromStorage()
+  const res = await api.get('api/v1.1/discover/posts/network/trending')
   const accounts = removeDuplicateObjects(
     res.map((s) => s.account),
     ['id']
@@ -752,7 +724,8 @@ export async function unfollowHashtag(id: string) {
 }
 
 export async function getAdminConfig() {
-  return await selfGet('api/admin/config')
+  const api = ContextFromStorage()
+  return await api.get('api/admin/config')
 }
 
 export async function updateAdminConfig(params) {
@@ -766,16 +739,19 @@ export async function getAdminUsers(cursor) {
   return await fetchCursorPagination(url)
 }
 
-export async function getAdminUser(id: string) {
-  return await selfGet(`api/admin/users/get?user_id=${id}`)
+export async function getAdminUser(user_id: string) {
+  const api = ContextFromStorage()
+  return await api.get('api/admin/users/get', { user_id })
 }
 
 export async function getModReports() {
-  return await selfGet('api/admin/mod-reports/list')
+  const api = ContextFromStorage()
+  return await api.get('api/admin/mod-reports/list')
 }
 
 export async function getAutospamReports() {
-  return await selfGet('api/admin/autospam/list')
+  const api = ContextFromStorage()
+  return await api.get('api/admin/autospam/list')
 }
 
 export async function postUserHandle(params) {
@@ -790,12 +766,14 @@ export async function postAutospamHandle(params) {
   return await selfPost('api/admin/autospam/handle', params)
 }
 
-export async function getStatusHistory(id) {
-  return await selfGet(`api/v1/statuses/${id}/history`)
+export async function getStatusHistory(id: number) {
+  const api = ContextFromStorage()
+  return await api.get(`api/v1/statuses/${id}/history`)
 }
 
-export async function getMutualFollowing({ queryKey }) {
-  return await selfGet(`api/v1.1/accounts/mutuals/${queryKey[1]}`)
+export async function getMutualFollowing(userId: string) {
+  const api = ContextFromStorage()
+  return await api.get(`api/v1.1/accounts/mutuals/${userId}`)
 }
 
 export async function getSelfLikes({ pageParam = false }) {
@@ -826,15 +804,18 @@ export async function putEditPost(id: string, params) {
 }
 
 export async function getStoryCarousel() {
-  return await selfGet(`api/v1.1/stories/carousel`)
+  const api = ContextFromStorage()
+  return await api.get(`api/v1.1/stories/carousel`)
 }
 
 export async function pushNotificationSupported() {
-  return await selfGet(`api/v1.1/nag/state`)
+  const api = ContextFromStorage()
+  return await api.get(`api/v1.1/nag/state`)
 }
 
 export async function pushState() {
-  return await selfGet(`api/v1.1/push/state`, false, false, true)
+  const api = ContextFromStorage()
+  return await api.get(`api/v1.1/push/state`)
 }
 
 export async function pushStateDisable() {
