@@ -47,6 +47,7 @@ export class ApiContext {
       ...fetch_options.headers,
       Accept: 'application/json',
       Authorization: `Bearer ${this.token}`,
+      'X-PIXELFED-APP': '1',
       ...(options?.idempotency ? { 'Idempotency-Key': randomKey(40) } : {}),
     }
 
