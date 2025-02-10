@@ -64,6 +64,7 @@ export default function HomeScreen() {
     useCallback(() => {
       const unsubscribe = navigation.addListener('tabPress', () => {
         flatListRef.current?.scrollToOffset({ animated: true, offset: 0 })
+        refetch();
       })
 
       return unsubscribe
