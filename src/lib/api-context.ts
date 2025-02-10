@@ -83,7 +83,8 @@ export class ApiContext {
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     path: string,
     data = {},
-    searchParams: ApiRequestOptions['searchParams'] = {}
+    searchParams: ApiRequestOptions['searchParams'] = {},
+    idempotency?: true
   ) {
     return await (
       await this.request(
@@ -93,7 +94,7 @@ export class ApiContext {
           body: JSON.stringify(data),
           headers: { 'Content-Type': 'application/json' },
         },
-        { searchParams }
+        { searchParams, idempotency }
       )
     ).json()
   }

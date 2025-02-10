@@ -455,11 +455,13 @@ export async function unlikeStatus({ id }: { id: string }) {
 }
 
 export async function reblogStatus({ id }: { id: string }) {
-  return await selfPost(`api/v1/statuses/${id}/reblog`)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/statuses/${id}/reblog`)
 }
 
 export async function unreblogStatus({ id }: { id: string }) {
-  return await selfPost(`api/v1/statuses/${id}/unreblog`)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/statuses/${id}/unreblog`)
 }
 
 export async function deleteStatus({ id }: { id: string }) {
@@ -562,33 +564,27 @@ export async function updateAvatar(data: {
     }
   }
 }) {
-  let path = `api/v1/accounts/update_credentials`
-  return await selfPost(path, data, true)
+  const api = ContextFromStorage()
+  return await api.request(`api/v1/accounts/update_credentials`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'multipart/form-data' },
+    body: objectToForm(data as { [key: string | number]: any })
+  })
 }
 
 export async function accountFollowRequestAccept(id: string) {
-  let path = `api/v1/follow_requests/${id}/authorize`
-  return await selfPost(path)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/follow_requests/${id}/authorize`)
 }
 
 export async function accountFollowRequestReject(id: string) {
-  let path = `api/v1/follow_requests/${id}/reject`
-  return await selfPost(path)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/follow_requests/${id}/reject`)
 }
 
 export async function deleteAvatar() {
-  const instance = Storage.getString('app.instance')
-  const token = Storage.getString('app.token')
-  let url = `https://${instance}/api/v1.1/accounts/avatar`
-  const response = await fetch(url, {
-    method: 'DELETE',
-    headers: new Headers({
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    }),
-  })
-  return await response.json()
+  const api = ContextFromStorage()
+  return await api.jsonRequest('DELETE', 'api/v1.1/accounts/avatar')
 }
 
 export async function fetchChatThread(pid: string) {
@@ -602,8 +598,8 @@ export async function deleteChatMessage(id: string) {
 }
 
 export async function sendChatMessage(id: string, message: string) {
-  const path = `api/v1.1/direct/thread/send`
-  return await selfPost(path, {
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1.1/direct/thread/send`, {
     to_id: id,
     message: message,
     type: 'text',
@@ -622,8 +618,8 @@ export async function uploadMediaV2(params: UploadV2Params) {
 }
 
 export async function postNewStatus(params) {
-  const path = `api/v1/statuses`
-  return await selfPost(path, params, false, false, true)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/statuses`, params, undefined, true)
 }
 
 export async function getAdminStats() {
@@ -693,15 +689,18 @@ export async function getTrendingPostsV1() {
 }
 
 export async function postBookmark(id: string) {
-  return await selfPost(`api/v1/statuses/${id}/bookmark`)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/statuses/${id}/bookmark`)
 }
 
 export async function followHashtag(id: string) {
-  return await selfPost(`api/v1/tags/${id}/follow`)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/tags/${id}/follow`)
 }
 
 export async function unfollowHashtag(id: string) {
-  return await selfPost(`api/v1/tags/${id}/unfollow`)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/tags/${id}/unfollow`)
 }
 
 export async function getAdminConfig() {
@@ -710,7 +709,8 @@ export async function getAdminConfig() {
 }
 
 export async function updateAdminConfig(params) {
-  return await selfPost('api/admin/config/update', params)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', 'api/admin/config/update', params)
 }
 
 export async function getAdminUsers(cursor) {
@@ -736,15 +736,18 @@ export async function getAutospamReports() {
 }
 
 export async function postUserHandle(params) {
-  return await selfPost('api/admin/users/action', params)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', 'api/admin/users/action', params)
 }
 
 export async function postReportHandle(params) {
-  return await selfPost('api/admin/mod-reports/handle', params)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', 'api/admin/mod-reports/handle', params)
 }
 
 export async function postAutospamHandle(params) {
-  return await selfPost('api/admin/autospam/handle', params)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', 'api/admin/autospam/handle', params)
 }
 
 export async function getStatusHistory(id: number) {
@@ -796,17 +799,20 @@ export async function pushNotificationSupported() {
 
 export async function pushState() {
   const api = ContextFromStorage()
-  return await api.get(`api/v1.1/push/state`)
+  return await api.get('api/v1.1/push/state')
 }
 
 export async function pushStateDisable() {
-  return await selfPost(`api/v1.1/push/disable`, false, false, false, true)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', 'api/v1.1/push/disable')
 }
 
 export async function pushStateCompare(params) {
-  return await selfPost(`api/v1.1/push/compare`, params, false, false, false, true)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', 'api/v1.1/push/compare', params)
 }
 
 export async function pushStateUpdate(params) {
-  return await selfPost(`api/v1.1/push/update`, params, false, false, false, true)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', 'api/v1.1/push/update', params)
 }
