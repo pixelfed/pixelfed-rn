@@ -124,7 +124,7 @@ export default function DiscoverScreen() {
 
   const { data: posts, isPending: isPopularPostsPending } = useQuery({
     queryKey: ['getTrendingPopularPosts'],
-    queryFn: getTrendingPopularPosts,
+    queryFn: () => getTrendingPopularPosts('daily'),
     enabled: !!hashtags,
   })
 

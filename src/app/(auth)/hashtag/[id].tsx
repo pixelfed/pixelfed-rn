@@ -65,7 +65,7 @@ export default function Page() {
             {relatedTags.map((tag) => (
               <Link key={tag.name} href={`/hashtag/${tag.name}`} asChild>
                 <View bg="$gray6" px="$3" py="$2" mr="$2" borderRadius={10}>
-                  <Text>{tag.name}</Text>
+                  <Text>#{tag.name}</Text>
                 </View>
               </Link>
             ))}
@@ -118,7 +118,7 @@ export default function Page() {
 
   const { data: hashtag, isPending } = useQuery({
     queryKey: ['getHashtagByName', id],
-    queryFn: getHashtagByName,
+    queryFn: () => getHashtagByName(id),
   })
 
   const {
@@ -135,6 +135,7 @@ export default function Page() {
   } = useInfiniteQuery({
     queryKey: ['getHashtagByNameFeed', id],
     queryFn: async ({ pageParam }) => {
+      console.log({ pageParam })
       const data = await getHashtagByNameFeed(id, pageParam)
 
       return data.data?.filter((p) => {
