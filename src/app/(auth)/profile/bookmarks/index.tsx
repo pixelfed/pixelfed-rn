@@ -22,7 +22,6 @@ export default function LikesScreen() {
         user={user}
         onOpenComments={() => onOpenComments(item.id)}
         onDeletePost={() => onDeletePost(item.id)}
-        onBookmark={() => onBookmark(item.id)}
       />
     ),
     []
