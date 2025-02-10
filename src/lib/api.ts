@@ -570,40 +570,33 @@ export async function unblockProfileById(id: string) {
 }
 
 export async function getSelfCollections({ pageParam = 1 }) {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1.1/collections/self?page=${pageParam}`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get("api/v1.1/collections/self", { page: pageParam })
 }
 
 export async function getFollowedTags() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/followed_tags`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get("api/v1/followed_tags")
 }
 
 export async function getInstanceV1() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/instance`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get("api/v1/instance")
 }
 
 export async function getAppSettings() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/pixelfed/v1/app/settings`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get("api/pixelfed/v1/app/settings")
 }
 
 export async function getFollowRequests() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/follow_requests`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get("api/v1/follow_requests")
 }
 
 export async function getSelfAccount() {
   const api = ContextFromStorage()
-  return await api.get('api/v1/accounts/verify_credentials', {
-    _pe: 1, // todo document what _pe means
-  })
+  return await api.get('api/v1/accounts/verify_credentials')
 }
 
 export async function updateCredentials(params: URLSearchParams) {
