@@ -283,12 +283,12 @@ export async function getAccountFollowing(id: string, cursor) {
 
 export async function getStatusById(id: string) {
   const api = ContextFromStorage()
-  return await api.get(`api/v1/statuses/${id}?_pe=1`)
+  return await api.get(`api/v1/statuses/${id}`)
 }
 
 export async function getAccountById(id: string) {
   const api = ContextFromStorage()
-  return await api.get(`api/v1/accounts/${id}?_pe=1`)
+  return await api.get(`api/v1/accounts/${id}`)
 }
 
 export async function followAccountById(
@@ -318,7 +318,7 @@ export async function report(report: NewReport) {
 
 export async function getAccountByUsername(username: string): Promise<Account> {
   const api = ContextFromStorage()
-  let account = await api.get(`api/v1.1/accounts/username/${username}?_pe=1`)
+  let account = await api.get(`api/v1.1/accounts/username/${username}`)
   if (Array.isArray(account) && account.length === 0) {
     throw new Error(`Account "${username}" not found`)
   }
@@ -343,23 +343,19 @@ export async function getAccountStatusesById(
 ): Promise<Status[]> {
   const api = ContextFromStorage()
   return await api.get(`api/v1/accounts/${id}/statuses`, {
-    _pe: 1, // TODO: document what _pe means
     ...parameters,
   })
 }
 
 export async function getHashtagByName(id: string) {
   const api = ContextFromStorage()
-  return await api.get(`api/v1/tags/${id}/`, {
-    _pe: 1, // TODO: document what _pe means
-  })
+  return await api.get(`api/v1/tags/${id}/`)
 }
 
 export async function getHashtagByNameFeed(id: string, page: number) {
   const api = ContextFromStorage()
   return await api.getPaginated(`/api/v1/timelines/tag/${id}`,
     {
-      _pe: 1, // TODO: document what _pe means,
       max_id: page
     }
   )
