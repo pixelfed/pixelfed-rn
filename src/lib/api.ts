@@ -6,6 +6,11 @@ import type {
   Account,
   AdminInstancesOptions,
   PaginatedStatus,
+  PushStateCompareParams,
+  PushStateCompareResponse,
+  PushState,
+  PushStateParams,
+  PushStateResponse,
   Relationship,
   RelationshipFromFollowAPIResponse,
   Status,
@@ -764,27 +769,27 @@ export async function getStoryCarousel() {
   return await api.get(`api/v1.1/stories/carousel`)
 }
 
-export async function pushNotificationSupported() {
+export async function pushNotificationSupported(): Promise<{ active: boolean }> {
   const api = ContextFromStorage()
   return await api.get(`api/v1.1/nag/state`)
 }
 
-export async function pushState() {
+export async function pushState(): Promise<PushState> {
   const api = ContextFromStorage()
   return await api.get('api/v1.1/push/state')
 }
 
-export async function pushStateDisable() {
+export async function pushStateDisable(): Promise<PushState> {
   const api = ContextFromStorage()
   return await api.jsonRequest('POST', 'api/v1.1/push/disable')
 }
 
-export async function pushStateCompare(params) {
+export async function pushStateCompare(params: PushStateCompareParams): Promise<PushStateCompareResponse> {
   const api = ContextFromStorage()
   return await api.jsonRequest('POST', 'api/v1.1/push/compare', params)
 }
 
-export async function pushStateUpdate(params) {
+export async function pushStateUpdate(params: PushStateParams): Promise<PushStateResponse> {
   const api = ContextFromStorage()
   return await api.jsonRequest('POST', 'api/v1.1/push/update', params)
 }
