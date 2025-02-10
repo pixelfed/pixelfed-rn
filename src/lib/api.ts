@@ -555,19 +555,18 @@ export async function unmuteProfileById(id: string) {
 }
 
 export async function getBlocks() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/blocks`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get("api/v1/blocks")
 }
 
 export async function blockProfileById(id: string) {
-  let path = `api/v1/accounts/${id}/block`
-  return await selfPost(path)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/accounts/${id}/block`)
 }
 
 export async function unblockProfileById(id: string) {
-  let path = `api/v1/accounts/${id}/unblock`
-  return await selfPost(path)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/accounts/${id}/unblock`)
 }
 
 export async function getSelfCollections({ pageParam = 1 }) {
