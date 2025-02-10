@@ -362,26 +362,24 @@ export async function getHashtagByNameFeed(id: string, page: number) {
 }
 
 export async function getHashtagRelated(id: string) {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/tags/${id}/related`
-  return await fetchPaginatedData(url)
+  const api = ContextFromStorage()
+  // TODO do we need pagination here? it is not used currently
+  return await api.getPaginated(`api/v1/tags/${id}/related`)
 }
 
 export async function getConversations() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/conversations`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get('api/v1/conversations')
 }
 
 export async function getComposeSettings() {
-  const path = `api/v1.1/compose/settings`
-  return await selfGet(path)
+  const api = ContextFromStorage()
+  return await api.get('api/v1.1/compose/settings')
 }
 
 export async function getConfig() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v2/config`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get('api/v2/config')
 }
 
 export async function getStatusRepliesById(id: string, page) {
