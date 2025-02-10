@@ -162,22 +162,6 @@ async function fetchCursorPagination(url: string) {
   return { data: data.data, nextPage: data?.links?.next, prevPage: data?.links?.prev }
 }
 
-async function fetchData(url: string) {
-  const token = Storage.getString('app.token')
-
-  const response = await fetch(url, {
-    method: 'get',
-    headers: new Headers({
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    }),
-  })
-  const data = await response.json()
-
-  return data
-}
-
 export async function searchQuery(query: string) {
   if (!query || query.trim() === '') return []
   const instance = Storage.getString('app.instance')
