@@ -343,21 +343,26 @@ export async function getAccountStatusesById(
 ): Promise<Status[]> {
   const api = ContextFromStorage()
   return await api.get(`api/v1/accounts/${id}/statuses`, {
-    _pe: 1, // todo document what _pe means
+    _pe: 1, // TODO: document what _pe means
     ...parameters,
   })
 }
 
-export async function getHashtagByName({ queryKey }) {
-  const instance = Storage.getString('app.instance')
-  const url = `https://${instance}/api/v1/tags/${queryKey[1]}/?_pe=1`
-  return await fetchData(url)
+export async function getHashtagByName(id: string) {
+  const api = ContextFromStorage()
+  return await api.get(`api/v1/tags/${id}/`, {
+    _pe: 1, // TODO: document what _pe means
+  })
 }
 
-export async function getHashtagByNameFeed(id: string, page) {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/timelines/tag/${id}?_pe=1&max_id=${page}`
-  return await fetchPaginatedData(url)
+export async function getHashtagByNameFeed(id: string, page: number) {
+  const api = ContextFromStorage()
+  return await api.getPaginated(`/api/v1/timelines/tag/${id}`,
+    {
+      _pe: 1, // TODO: document what _pe means,
+      max_id: page
+    }
+  )
 }
 
 export async function getHashtagRelated(id: string) {
