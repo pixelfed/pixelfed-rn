@@ -68,34 +68,6 @@ export async function selfPost<
   return (rawRes ? resp : resp.json()) as ActualResponse
 }
 
-export async function selfDelete(
-  path: string,
-  params = {},
-  rawRes = false,
-  idempotency = false
-) {
-  let headers: Record<string, string> = {}
-  const instance = Storage.getString('app.instance')
-  const token = Storage.getString('app.token')
-  const url = `https://${instance}/${path}`
-
-  headers['Authorization'] = `Bearer ${token}`
-  headers['Accept'] = 'application/json'
-  headers['Content-Type'] = 'application/json'
-
-  if (idempotency) {
-    headers['Idempotency-Key'] = randomKey(40)
-  }
-
-  const resp = await fetch(url, {
-    method: 'DELETE',
-    body: JSON.stringify(params),
-    headers,
-  })
-
-  return rawRes ? resp : resp.json()
-}
-
 async function fetchPaginatedData(url: string) {
   const token = Storage.getString('app.token')
 
