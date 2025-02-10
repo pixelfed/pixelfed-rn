@@ -4,7 +4,7 @@ import { parseLinkHeader } from 'src/utils'
 
 type ApiRequestOptions = {
   idempotency?: true
-  searchParams?: Record<string, string | number | boolean>
+  searchParams?: Record<string, string | number | boolean | undefined>
 }
 
 export class ApiContext {
@@ -32,7 +32,9 @@ export class ApiContext {
       let { searchParams } = options
       for (const key in searchParams) {
         if (Object.prototype.hasOwnProperty.call(searchParams, key)) {
-          url.searchParams.append(key, String(searchParams[key]))
+          if (typeof searchParams[key] !== "undefined") {
+            url.searchParams.append(key, String(searchParams[key]))
+          }
         }
       }
     }

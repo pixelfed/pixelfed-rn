@@ -382,11 +382,13 @@ export async function getConfig() {
   return await api.get('api/v2/config')
 }
 
-export async function getStatusRepliesById(id: string, page) {
-  const instance = Storage.getString('app.instance')
-  const url = `https://${instance}/api/v1/statuses/${id}/context?_pe=1&max_id=${page}`
-  let res = await fetchPaginatedData(url)
-
+export async function getStatusRepliesById(id: string, page: number) {
+  const api = ContextFromStorage()
+  let res = await api.getPaginated(`api/v1/statuses/${id}/context`, {
+    max_id: page
+  })
+  // TODO: investigate - link header is also empty
+  //  -> does this need really paginated or could use plain api.get instead?
   res.data = res.data.descendants
   return res
 }
@@ -421,22 +423,22 @@ export async function getRegisterServers() {
   return (await response.json()) as OpenServersResponse
 }
 
-export async function getStatusLikes(id: string, cursor) {
-  let url
-  const instance = Storage.getString('app.instance')
-  url = cursor
-    ? `https://${instance}/api/v1/statuses/${id}/favourited_by?_pe=1&limit=20&cursor=${cursor}`
-    : `https://${instance}/api/v1/statuses/${id}/favourited_by?_pe=1&limit=20`
-  return await fetchPaginatedData(url)
+export async function getStatusLikes(id: string, cursor?: number) {
+  const api = ContextFromStorage()
+  // TODO: investigate - link header is also empty
+  //  -> does this need really paginated or could use plain api.get instead?
+  return await api.getPaginated(`api/v1/statuses/${id}/favourited_by`, {
+    limit: 20,
+    cursor
+  })
 }
 
-export async function getStatusReblogs(id: string, cursor) {
-  let url
-  const instance = Storage.getString('app.instance')
-  url = cursor
-    ? `https://${instance}/api/v1/statuses/${id}/reblogged_by?_pe=1&limit=20&cursor=${cursor}`
-    : `https://${instance}/api/v1/statuses/${id}/reblogged_by?_pe=1&limit=20`
-  return await fetchPaginatedData(url)
+export async function getStatusReblogs(id: string, cursor?: number) {
+  const api = ContextFromStorage()
+  return await api.getPaginated(`api/v1/statuses/${id}/reblogged_by`, {
+    limit: 20,
+    cursor
+  })
 }
 
 export async function getTrendingHashtags() {
