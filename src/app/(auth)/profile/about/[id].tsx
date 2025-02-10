@@ -38,7 +38,7 @@ export default function ProfileScreen() {
 
   const { data: relationship } = useQuery({
     queryKey: ['getAccountRelationship', userId],
-    queryFn: getAccountRelationship,
+    queryFn: () => getAccountRelationship(userId),
     enabled: !!userId,
   })
 

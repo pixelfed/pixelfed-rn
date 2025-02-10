@@ -456,11 +456,9 @@ export async function getTrendingPopularPosts(range: 'daily' | 'monthly' | 'year
   return await api.get('api/v1.1/discover/posts/trending', { range })
 }
 
-export async function getAccountRelationship({ queryKey }): Promise<Relationship> {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/accounts/relationships?id[]=${queryKey[1]}&_pe=1`
-  const res = await fetchData(url)
-  return res[0]
+export async function getAccountRelationship(id: string): Promise<Relationship> {
+  const api = ContextFromStorage()
+  return (await api.get('api/v1/accounts/relationships', { "id[]": id }))[0]
 }
 
 export async function postComment({ postId, commentText, scope = 'public', cw = false }) {
