@@ -298,3 +298,43 @@ export type AdminInstancesOptions = {
   sort_by?: 'id' | 'status_count' | 'user_count' | 'domain',
   filter?: 'all' | 'unlisted' | 'auto_cw' | 'banned'
 }
+
+
+type PushNotifyCategories = {
+  notify_like: boolean,
+  notify_follow: boolean,
+  notify_mention: boolean,
+  notify_comment: boolean,
+}
+
+export type PushState = {
+  version: string,
+  username: string,
+  profile_id: string,
+  notify_enabled: boolean,
+  has_token: boolean,
+} & PushNotifyCategories
+
+export type PushStateCompareParams = {
+  expo_token: string
+}
+
+export type PushStateCompareResponse = {
+  version: string,
+  username: string,
+  profile_id: string,
+  notify_enabled: boolean,
+  match: boolean,
+  has_existing: boolean
+}
+
+export type PushStateParams = {
+  notify_enabled: boolean,
+  token: string,
+} & Partial<PushNotifyCategories>
+
+export type PushStateResponse = {
+  version: string,
+  notify_enabled: boolean,
+  has_token: boolean,
+} & PushNotifyCategories
