@@ -37,6 +37,10 @@ export class ApiContext {
       }
     }
 
+    // Tell the API that we want the extra pixelfed specific fields
+    // (that would not be in the mastodon api)
+    url.searchParams.append("_pe", "1")
+
     fetch_options.headers = {
       ...fetch_options.headers,
       Accept: 'application/json',
