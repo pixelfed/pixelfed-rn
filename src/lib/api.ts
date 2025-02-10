@@ -540,19 +540,18 @@ export async function deleteStatus({ id }: { id: string }) {
 }
 
 export async function getMutes() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/mutes`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get("api/v1/mutes")
 }
 
 export async function muteProfileById(id: string) {
-  let path = `api/v1/accounts/${id}/mute`
-  return await selfPost(path)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/accounts/${id}/mute`)
 }
 
 export async function unmuteProfileById(id: string) {
-  let path = `api/v1/accounts/${id}/unmute`
-  return await selfPost(path)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/accounts/${id}/unmute`)
 }
 
 export async function getBlocks() {
