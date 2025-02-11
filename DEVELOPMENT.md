@@ -62,13 +62,15 @@ npm run lint
 
 ## Troubleshooting
 
-### node not fount
+These are common errors you might encounter when building this project.
+
+### node not found
 If iOS build complains about not being able to find `node`, but you can use node just fine, then run:
 ```
 echo export NODE_BINARY=$(command -v node) > ios/.xcode.env.local
 ```
 
-### missing .mm file in pods
+### iOS: Missing .mm file in pods
 when you get an error like this one:
 ```
 error: Build input file cannot be found: '/Users/me/Coding/pixelfed/pixelfed-rn/node_modules/react-native/React/Fabric/RCTThirdPartyFabricComponentsProvider.mm'. Did you forget to declare this file as an output of a script phase or custom build rule which produces it? (in target 'React-RCTFabric' from project 'Pods')
@@ -80,7 +82,7 @@ pod install
 ```
 
 
-### IOS: "Building workspace pixelfed with scheme pixelfed and configuration Debug"
+### iOS: "Building workspace pixelfed with scheme pixelfed and configuration Debug"
 
 When you are not part of the pixelfed apple developer team, then you need to make the following changes to get it to build:
 
@@ -93,6 +95,10 @@ When you are not part of the pixelfed apple developer team, then you need to mak
    - disable/remove app group
    - delete push notification capability
 
-### IOS: "CommandError: ApplicationVerificationFailed"
+### iOS: "CommandError: ApplicationVerificationFailed"
 
 Build it with xcode. It shows the full error.
+
+### Android: "Error: Could not find or load main class org.gradle.wrapper.GradleWrapperMain"
+
+Try removing the folder containing this repository and clone it again.
