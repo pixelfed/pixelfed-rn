@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons'
+import { Feather, Ionicons } from '@expo/vector-icons'
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -52,6 +52,7 @@ import type {
   PinchGestureHandlerEventPayload,
 } from 'react-native-gesture-handler'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
+import { useBookmarkMutation } from 'src/hooks/mutations/useBookmarkMutation'
 import type {
   LoginUserResponse,
   MediaAttachment,
@@ -387,8 +388,8 @@ interface PostActionsProps {
   handleLike: () => void
   showAltText: boolean
   commentsCount: number
-  onBookmark: () => void
   hasBookmarked: boolean
+  isLikeFeed: boolean
   onShare: () => void
 }
 
@@ -408,7 +409,7 @@ const PostActions = React.memo(
     handleLike,
     onShare,
     onOpenComments,
-    onBookmark,
+    isLikeFeed
   }: PostActionsProps) => {
     const hasAltText =
       post?.media_attachments?.length > 0 &&
@@ -418,12 +419,17 @@ const PostActions = React.memo(
       Alert.alert(
         'Alt Text',
         post?.media_attachments[idx].description ??
-          'Media was not tagged with any alt text.'
+        'Media was not tagged with any alt text.'
       )
     }
 
     const [shareCountCache, setShareCount] = useState(sharesCount)
     const [hasSharedCache, setShared] = useState(hasShared)
+
+    const { handleBookmark, isBookmarkPending } = useBookmarkMutation();
+    const handleBookmarkAction = useCallback(() => {
+      handleBookmark(post.id, !hasBookmarked);
+    }, [post.id, post.bookmarked, handleBookmark])
 
     const handleOnShare = () => {
       const labelText = hasSharedCache ? 'Unshare' : 'Share'
@@ -509,14 +515,17 @@ const PostActions = React.memo(
                   ) : null}
                 </XStack>
               ) : null}
-              {/* <PressableOpacity onPress={() => onBookmark()}>
-                <XStack gap="$4">
-                  { hasBookmarked ?
-                    <Ionicons name="bookmark" size={30} /> :
-                    <Feather name="bookmark" size={30} />
-                  }
+              {!isLikeFeed && isBookmarkPending ? <ActivityIndicator color="#000" /> : null}
+              {!isBookmarkPending && !isLikeFeed ? (
+                <PressableOpacity onPress={() => handleBookmarkAction()}>
+                  <XStack gap="$4">
+                    {hasBookmarked ?
+                      <Ionicons name="bookmark" size={30} /> :
+                      <Feather name="bookmark" size={30} />
+                    }
                   </XStack>
-              </PressableOpacity> */}
+                </PressableOpacity>
+              ) : null}
               {showAltText && hasAltText ? (
                 <PressableOpacity onPress={() => onShowAlt()}>
                   <XStack bg="black" px="$3" py={4} borderRadius={5}>
@@ -666,7 +675,6 @@ interface FeedPostProps {
   user: LoginUserResponse
   onOpenComments: (id: string) => void
   onDeletePost: (id: string) => void
-  onBookmark: (id: string) => void
   disableReadMore?: boolean
   isPermalink?: boolean
   isLikeFeed?: boolean
@@ -679,7 +687,6 @@ const FeedPost = React.memo(
     user,
     onOpenComments,
     onDeletePost,
-    onBookmark,
     disableReadMore = false,
     isPermalink = false,
     isLikeFeed = false,
@@ -696,7 +703,7 @@ const FeedPost = React.memo(
     const handlePresentModalPress = useCallback(() => {
       bottomSheetModalRef.current?.present()
     }, [])
-    const handleSheetChanges = useCallback((_: number) => {}, [])
+    const handleSheetChanges = useCallback((_: number) => { }, [])
     const renderBackdrop = useCallback(
       (props: BottomSheetBackdropProps) => (
         <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
@@ -787,9 +794,8 @@ const FeedPost = React.memo(
         await Share.share({
           message: post.url || post.uri,
         })
-      } catch (error) {}
+      } catch (error) { }
     }
-
     return (
       <View flex={1} style={{ width }}>
         <PostHeader
@@ -818,6 +824,7 @@ const FeedPost = React.memo(
               hasLiked={post.favourited}
               hasShared={post?.reblogged === true}
               hasBookmarked={post?.bookmarked === true}
+              isLikeFeed={isLikeFeed}
               post={post}
               progress={progress}
               isLikePending={isLikePending}
@@ -828,7 +835,6 @@ const FeedPost = React.memo(
               commentsCount={post.replies_count}
               handleLike={handleLikeAction}
               onOpenComments={() => onOpenComments(post?.id)}
-              onBookmark={() => onBookmark(post?.id)}
               onShare={() => onShare(post?.id)}
             />
 
@@ -927,7 +933,8 @@ const FeedPost = React.memo(
       prevProps.post.id === nextProps.post.id &&
       prevProps.post.favourited === nextProps.post.favourited &&
       prevProps.post.favourites_count === nextProps.post.favourites_count &&
-      prevProps.post.reblogged === nextProps.post.reblogged
+      prevProps.post.reblogged === nextProps.post.reblogged &&
+      prevProps.post.bookmarked === nextProps.post.bookmarked
     )
   }
 )

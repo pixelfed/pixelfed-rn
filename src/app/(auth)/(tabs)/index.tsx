@@ -29,7 +29,6 @@ import {
   deleteStatusV1,
   fetchHomeFeed,
   getSelfAccount,
-  postBookmark,
   reblogStatus,
   unreblogStatus,
 } from 'src/lib/api'
@@ -103,7 +102,7 @@ export default function HomeScreen() {
     []
   )
 
-  const handleSheetChanges = useCallback((index: number) => {}, [])
+  const handleSheetChanges = useCallback((index: number) => { }, [])
   const renderBackdrop = useCallback(
     (props: any) => (
       <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
@@ -162,16 +161,6 @@ export default function HomeScreen() {
     },
   })
 
-  const bookmarkMutation = useMutation({
-    mutationFn: async (id: string) => {
-      return await postBookmark(id)
-    },
-  })
-
-  const onBookmark = (id: string) => {
-    bookmarkMutation.mutate(id)
-  }
-
   const onShare = (id: string, state) => {
     try {
       shareMutation.mutate({ type: state == true ? 'unreblog' : 'reblog', id: id })
@@ -228,11 +217,10 @@ export default function HomeScreen() {
         user={user}
         onOpenComments={() => onOpenComments(item.id)}
         onDeletePost={() => onDeletePost(item.id)}
-        onBookmark={() => onBookmark(item.id)}
         onShare={() => onShare(item.id, item.reblogged)}
       />
     ),
-    [user, onOpenComments, onDeletePost, onBookmark, onShare]
+    [user, onOpenComments, onDeletePost, onShare]
   )
 
   const { data: userSelf } = useQuery({
@@ -263,7 +251,6 @@ export default function HomeScreen() {
     getNextPageParam: (lastPage) => lastPage.nextPage,
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
   })
-
   if (isFetching && !isFetchingNextPage && !isRefetching) {
     return (
       <View flexGrow={1} mt="$5" py="$5" justifyContent="center" alignItems="center">
