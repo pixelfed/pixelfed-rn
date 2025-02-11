@@ -3,15 +3,15 @@ import { postBookmark, postUnBookmark } from 'src/lib/api'
 import type { Status } from 'src/lib/api-types'
 
 type onSuccessType = Parameters<typeof useMutation>[0]['onSuccess']
-type bookMarkMutateType = {
+type bookmarkMutateType = {
   type: boolean
   id: string
 }
 
-export function useBookMarkMutation({ onSuccess }: { onSuccess?: onSuccessType } = {}) {
+export function useBookmarkMutation({ onSuccess }: { onSuccess?: onSuccessType } = {}) {
   const queryClient = useQueryClient()
 
-  const updateAPICache = (id: string, isBookMarked: boolean) => {
+  const updateAPICache = (id: string, isBookmarked: boolean) => {
 
     const queryKeys = [
       ['homeFeed'],
@@ -30,7 +30,7 @@ export function useBookMarkMutation({ onSuccess }: { onSuccess?: onSuccessType }
               if (post.id !== id) return post
               return {
                 ...post,
-                bookmarked: isBookMarked
+                bookmarked: isBookmarked
               }
             })
             return { ...page, data: newData }
@@ -43,7 +43,7 @@ export function useBookMarkMutation({ onSuccess }: { onSuccess?: onSuccessType }
           if (!oldData) return oldData
           return {
             ...oldData,
-            bookmarked: isBookMarked
+            bookmarked: isBookmarked
           }
         })
       }
@@ -51,7 +51,7 @@ export function useBookMarkMutation({ onSuccess }: { onSuccess?: onSuccessType }
   }
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async ({ id, type }: bookMarkMutateType) => {
+    mutationFn: async ({ id, type }: bookmarkMutateType) => {
       return type ? await postBookmark(id) : await postUnBookmark(id);
     },
 
@@ -92,7 +92,7 @@ export function useBookMarkMutation({ onSuccess }: { onSuccess?: onSuccessType }
     },
   })
 
-  const handleBookMark = async (id: string, isBookmarked: boolean) => {
+  const handleBookmark = async (id: string, isBookmarked: boolean) => {
     try {
       await mutate({ id, type: isBookmarked })
     } catch (err) {
@@ -101,5 +101,5 @@ export function useBookMarkMutation({ onSuccess }: { onSuccess?: onSuccessType }
 
   }
 
-  return { handleBookMark, isBookMarkPending: isPending }
+  return { handleBookmark, isBookmarkPending: isPending }
 }

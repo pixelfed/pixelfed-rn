@@ -52,7 +52,7 @@ import type {
   PinchGestureHandlerEventPayload,
 } from 'react-native-gesture-handler'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
-import { useBookMarkMutation } from 'src/hooks/mutations/useBookMarkMutation'
+import { useBookmarkMutation } from 'src/hooks/mutations/useBookmarkMutation'
 import type {
   LoginUserResponse,
   MediaAttachment,
@@ -426,10 +426,10 @@ const PostActions = React.memo(
     const [shareCountCache, setShareCount] = useState(sharesCount)
     const [hasSharedCache, setShared] = useState(hasShared)
 
-    const { handleBookMark, isBookMarkPending } = useBookMarkMutation();
-    const handleBookMarkAction = useCallback(() => {
-      handleBookMark(post.id, !hasBookmarked);
-    }, [post.id, post.bookmarked, handleBookMark])
+    const { handleBookmark, isBookmarkPending } = useBookmarkMutation();
+    const handleBookmarkAction = useCallback(() => {
+      handleBookmark(post.id, !hasBookmarked);
+    }, [post.id, post.bookmarked, handleBookmark])
 
     const handleOnShare = () => {
       const labelText = hasSharedCache ? 'Unshare' : 'Share'
@@ -515,9 +515,9 @@ const PostActions = React.memo(
                   ) : null}
                 </XStack>
               ) : null}
-              {!isLikeFeed && isBookMarkPending ? <ActivityIndicator color="#000" /> : null}
-              {!isBookMarkPending && !isLikeFeed ? (
-                <PressableOpacity onPress={() => handleBookMarkAction()}>
+              {!isLikeFeed && isBookmarkPending ? <ActivityIndicator color="#000" /> : null}
+              {!isBookmarkPending && !isLikeFeed ? (
+                <PressableOpacity onPress={() => handleBookmarkAction()}>
                   <XStack gap="$4">
                     {hasBookmarked ?
                       <Ionicons name="bookmark" size={30} /> :
