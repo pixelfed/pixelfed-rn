@@ -64,6 +64,10 @@ npm run lint
 
 These are common errors you might encounter when building this project.
 
+When debugging Android issues it is helpful to run `./gradlew assembleDebug`
+within the `android/` directory. `npm` will not always show the full Android
+build error otherwise.
+
 ### node not found
 If iOS build complains about not being able to find `node`, but you can use node just fine, then run:
 ```
