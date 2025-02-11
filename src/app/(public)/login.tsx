@@ -45,11 +45,15 @@ const ApiScopesSheet = ({
   onClose,
   scopes,
   onToggleScope,
+  allowCustom,
+  onToggleCustom,
 }: {
   isOpen: boolean
   onClose: () => void
   scopes: ApiScopes
   onToggleScope: (scope: keyof ApiScopes, enabled: boolean) => void
+  allowCustom: boolean
+  onToggleCustom: (enabled: boolean) => void
 }) => {
   const renderScopeGroup = (
     title: string,
@@ -90,6 +94,22 @@ const ApiScopesSheet = ({
         <Sheet.Handle />
         <Sheet.ScrollView>
           <YStack px="$4" space="$6" mt="$4">
+            <XStack justifyContent="space-between" alignItems="center" py="$2">
+              <YStack flex={1} pr="$4" gap="$2">
+                <Text fontSize="$5" color="$gray12" fontWeight={'bold'}>
+                  Allow custom server
+                </Text>
+                <Text fontSize="$3" color="$gray11">
+                  Login to another server other than pixelfed.social
+                </Text>
+              </YStack>
+              <Switch
+                checked={allowCustom}
+                onCheckedChange={(checked) => onToggleCustom(checked)}
+              >
+                <Switch.Thumb animation="quicker" />
+              </Switch>
+            </XStack>
             <Text fontSize="$6" fontWeight="bold" color="$gray12">
               API Permissions
             </Text>
@@ -122,6 +142,7 @@ type ApiScopes = {
 export default function Login() {
   const [server, setServer] = useState('pixelfed.social')
   const [customServer, setCustomServer] = useState('')
+  const [showSelector, setShowSelector] = useState(false)
   const [openRegistrations, setOpenServers] = useState<Array<String>>([])
   const [showApiSettings, setShowApiSettings] = useState(false)
   const [apiScopes, setApiScopes] = useState<ApiScopes>({
@@ -154,12 +175,24 @@ export default function Login() {
           .filter((s) => s.mobile_registration)
           .map((s) => s.domain)
           .slice(0, 20)
+
         setOpenServers(openReg)
 
         // Check if pixelfed.social exists in the response
-        const hasPixelFed = filtered.some((server) => server.domain === 'pixelfed.social')
+        const hasPixelfedSocial = filtered.some(
+          (server) => server.domain === 'pixelfed.social'
+        )
+        const hasPixelfedArt = filtered.some((server) => server.domain === 'pixelfed.art')
 
-        if (!hasPixelFed) {
+        if (!hasPixelfedArt) {
+          // If pixelfed.social isn't in the response, add it at the beginning
+          filtered.unshift({ domain: 'pixelfed.art' })
+          // Remove last item if we're over 20 items
+          if (filtered.length > 20) {
+            filtered.pop()
+          }
+        }
+        if (!hasPixelfedSocial) {
           // If pixelfed.social isn't in the response, add it at the beginning
           filtered.unshift({ domain: 'pixelfed.social' })
           // Remove last item if we're over 20 items
@@ -173,17 +206,21 @@ export default function Login() {
         return filtered
       } catch (error) {
         // Fallback data if the request fails
-        return [{ domain: 'pixelfed.social' }, { domain: 'Other' }]
+        return [
+          { domain: 'pixelfed.social' },
+          { domain: 'pixelfed.art' },
+          { domain: 'Other' },
+        ]
       }
     },
-    placeholderData: [{ domain: 'pixelfed.social' }, { domain: 'Other' }],
+    placeholderData: [
+      { domain: 'pixelfed.social' },
+      { domain: 'pixelfed.art' },
+      { domain: 'Other' },
+    ],
   })
 
   const handleLogin = useCallback(() => {
-    if (server === 'Other') {
-      router.push('/selectServer')
-      return
-    }
     // Include API scopes in login
     const enabledScopes = Object.entries(apiScopes)
       .filter(([_, enabled]) => enabled)
@@ -196,6 +233,20 @@ export default function Login() {
       Alert.alert('Error', 'You need write access to use this app.')
       return
     }
+
+    if (server === 'Other') {
+      const enabledScopes = Object.entries(apiScopes)
+        .filter(([_, enabled]) => enabled)
+        .map(([scope]) => scope)
+
+      router.push(
+        `/selectServer?enabledScopes=${enabledScopes.join('+')}` as Parameters<
+          typeof router.push
+        >[0]
+      )
+      return
+    }
+
     login(server, enabledScopes.join(' '))
   }, [server, apiScopes, login])
 
@@ -324,57 +375,40 @@ export default function Login() {
         </View>
 
         <YStack space="$4" mb="$5">
-          {server !== 'pixelfed.social' && <ServerPreview data={data} server={server} />}
-          <YStack>
-            <XStack alignItems="center" justifyContent="space-between" gap="$4">
-              <Label miw={80} fontSize="$5" color="$gray9">
-                <XStack gap="$3" alignItems="center">
-                  <Pressable onPress={() => serverInfo()}>
-                    <Feather name="info" color="#ccc" size={20} />
-                  </Pressable>
-                  <Text color="$gray5">Server</Text>
-                </XStack>
-              </Label>
-              <Select value={server} onValueChange={setServer} disablePreventBodyScroll>
-                <Select.Trigger
-                  width={220}
-                  iconAfter={<Feather name="chevron-down" />}
-                  backgroundColor="black"
-                  borderColor="#aaa"
-                  borderWidth={1}
-                  themeInverse={true}
-                  color="#aaa"
-                >
-                  <Select.Value placeholder="Select an option" color="#aaa" />
-                </Select.Trigger>
+          {showSelector && !['pixelfed.social', 'Other'].includes(server) && (
+            <ServerPreview data={data} server={server} />
+          )}
 
-                <Adapt when="sm" platform="touch">
-                  {SheetComponent}
-                </Adapt>
+          {showSelector && (
+            <YStack>
+              <XStack alignItems="center" justifyContent="space-between" gap="$4">
+                <Label miw={80} fontSize="$5" color="$gray9">
+                  <XStack gap="$3" alignItems="center">
+                    <Pressable onPress={() => serverInfo()}>
+                      <Feather name="info" color="#ccc" size={20} />
+                    </Pressable>
+                    <Text color="$gray5">Server</Text>
+                  </XStack>
+                </Label>
+                <Select value={server} onValueChange={setServer} disablePreventBodyScroll>
+                  <Select.Trigger
+                    width={220}
+                    iconAfter={<Feather name="chevron-down" />}
+                    backgroundColor="black"
+                    borderColor="#aaa"
+                    borderWidth={1}
+                    themeInverse={true}
+                    color="#aaa"
+                  >
+                    <Select.Value placeholder="Select an option" color="#aaa" />
+                  </Select.Trigger>
 
-                <SelectContent data={data} selectedServer={server} />
-              </Select>
-            </XStack>
-          </YStack>
+                  <Adapt platform="touch">{SheetComponent}</Adapt>
 
-          {server === 'custom' && (
-            <XStack alignItems="center" space="$2">
-              <Feather name="link" size={20} color="white" />
-              <Input
-                flex={1}
-                value={customServer}
-                onChangeText={setCustomServer}
-                placeholder="Enter custom server URL"
-                placeholderTextColor="$gray8"
-                borderWidth={1}
-                borderColor="white"
-                backgroundColor="black"
-                color="white"
-                focusStyle={{
-                  borderColor: '$gray8',
-                }}
-              />
-            </XStack>
+                  <SelectContent data={data} selectedServer={server} />
+                </Select>
+              </XStack>
+            </YStack>
           )}
 
           <XStack space="$3">
@@ -412,6 +446,8 @@ export default function Login() {
         onClose={() => setShowApiSettings(false)}
         scopes={apiScopes}
         onToggleScope={toggleApiScope}
+        allowCustom={showSelector}
+        onToggleCustom={setShowSelector}
       />
     </SafeAreaView>
   )
