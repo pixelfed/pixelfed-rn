@@ -11,7 +11,7 @@ import FastImage from 'react-native-fast-image'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Switch } from 'src/components/form/Switch'
 import { getOpenServers } from 'src/lib/api'
-import type { GetOpenServersServer } from 'src/lib/api-types'
+import type { OpenServer } from 'src/lib/api-types'
 import { Storage } from 'src/state/cache'
 import { prettyCount } from 'src/utils'
 import {
@@ -170,7 +170,7 @@ export default function Login() {
     queryFn: async () => {
       try {
         const res = await getOpenServers()
-        let filtered: Array<GetOpenServersServer | { domain: string }> = res.slice(0, 20)
+        let filtered: Array<OpenServer | { domain: string }> = res.slice(0, 20)
         let openReg = res
           .filter((s) => s.mobile_registration)
           .map((s) => s.domain)
@@ -456,7 +456,7 @@ export default function Login() {
 const ServerPreview = ({
   server,
   data,
-}: { server: string; data?: Array<GetOpenServersServer | { domain: string }> }) => {
+}: { server: string; data?: Array<OpenServer | { domain: string }> }) => {
   const serverData = useMemo(() => {
     const thisServer = data?.find((s) => s.domain === server)
 
@@ -478,7 +478,7 @@ const ServerPreview = ({
       }
     }
 
-    const thisServerData = thisServer as GetOpenServersServer
+    const thisServerData = thisServer as OpenServer
 
     return {
       ...thisServerData,
@@ -521,7 +521,7 @@ const SelectContent = ({
   data,
   selectedServer,
 }: {
-  data?: Array<GetOpenServersServer | { domain: string }>
+  data?: Array<OpenServer | { domain: string }>
   selectedServer: string
 }) => (
   <Select.Content zIndex={200000}>
@@ -578,7 +578,7 @@ const ServerItem = React.memo(
     selectedServer,
   }: {
     item:
-      | GetOpenServersServer
+      | OpenServer
       | {
           domain: string
         }
@@ -598,7 +598,7 @@ const ServerItem = React.memo(
               {item.domain}
             </Select.ItemText>
             {Object.hasOwn(item, 'mobile_registration') &&
-              (item as GetOpenServersServer).mobile_registration &&
+              (item as OpenServer).mobile_registration &&
               item.domain != selectedServer && (
                 <Feather name="user-plus" size={24} color="#51a2ff" />
               )}

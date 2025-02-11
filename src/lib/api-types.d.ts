@@ -280,7 +280,7 @@ type UploadV2Params =
       description: string
     }
 
-interface GetOpenServersServer {
+interface OpenServer {
   domain: string
   header_thumbnail: string
   mobile_registration: boolean
@@ -290,4 +290,4 @@ interface GetOpenServersServer {
   last_seen_at: string
 }
 
-type GetOpenServersResponse = Array<GetOpenServersServer>
+type OpenServersResponse = Array<OpenServer>
