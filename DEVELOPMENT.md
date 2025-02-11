@@ -98,9 +98,9 @@ When you are not part of the pixelfed apple developer team, then you need to mak
 Build it with xcode. It shows the full error.
 
 
-## android: BUG! exception in phase 'semantic analysis' in source unit '_BuildScript_' Unsupported class file major version 67
+### Android: BUG! exception in phase 'semantic analysis' in source unit '_BuildScript_' Unsupported class file major version 67
 
-This might mean that your java version is too new for the project.
+This might mean that your java version is too new for the project. It is recommended to use Java 17.
 
 ### On macOS you can try this
 
@@ -111,7 +111,7 @@ brew install openjdk@17
 sudo ln -sfn /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
 ```
 
-## android: File google-services.json is missing
+### Android: File google-services.json is missing
 
 ```
 > Task :app:processDebugGoogleServices FAILED
