@@ -15,12 +15,12 @@ import GlobalToast from 'src/components/notifications/GlobalToast'
 import { useAppState } from 'src/hooks/useAppState'
 import { useOnlineManager } from 'src/hooks/useOnlineManager'
 import { VideoProvider } from 'src/hooks/useVideoProvider'
-import { TamaguiProvider, ZStack } from 'tamagui'
+import { TamaguiProvider } from 'tamagui'
 import { config } from '../../tamagui.config'
 import AuthProvider from '../state/AuthProvider'
 
 export const unstable_settings = {
-  initialRouteName: '(public)/login',
+  initialRouteName: '(public)/register',
   backBehavior: 'history',
 }
 
