@@ -20,7 +20,6 @@ import { config } from '../../tamagui.config'
 import AuthProvider from '../state/AuthProvider'
 
 export const unstable_settings = {
-  initialRouteName: '(public)/login',
   backBehavior: 'history',
 }
 
