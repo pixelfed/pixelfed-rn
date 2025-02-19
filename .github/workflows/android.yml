@@ -2,7 +2,7 @@ name: Android build
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, '@kwasow/buildCI' ]
   pull_request:
     branches: [ main ]
 
