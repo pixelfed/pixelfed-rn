@@ -117,7 +117,7 @@ export default function NotificationsScreen() {
       </Tabs>
 
       <FlatList
-        style={{ height: "100%" }}
+        style={{ height: '100%' }}
         data={data?.pages.flatMap((page) => page.data)}
         ItemSeparatorComponent={() => <Separator borderColor="$gray5" />}
         renderItem={({ item }) => <RenderNotificationItem item={item} />}
@@ -125,25 +125,21 @@ export default function NotificationsScreen() {
         keyExtractor={(item, index) => `${item.id}_${index.toString()}`}
         onEndReached={handleInfiniteScroll}
         refreshing={isRefetching}
-        onRefresh={() => queryClient.invalidateQueries({
-          queryKey: ['notifications'] }
-        )}
+        onRefresh={() =>
+          queryClient.invalidateQueries({
+            queryKey: ['notifications'],
+          })
+        }
         onEndReachedThreshold={0.5}
         contentContainerStyle={{ flexGrow: 1 }}
-        ListFooterComponent={() =>
+        ListFooterComponent={() => (
           <View py="$6">
-            {
-              isFetchingNextPage ?
-                <ActivityIndicator />
-              : null
-            }
-            {
-              !hasNextPage ?
-                <Text ta="center">No more notifications for now!</Text>
-               : null
-            }
+            {isFetchingNextPage ? <ActivityIndicator /> : null}
+            {!hasNextPage ? (
+              <Text ta="center">No more notifications for now!</Text>
+            ) : null}
           </View>
-        }
+        )}
       />
     </SafeAreaView>
   )
