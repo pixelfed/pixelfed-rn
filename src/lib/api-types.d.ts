@@ -279,3 +279,15 @@ type UploadV2Params =
       file: unknown
       description: string
     }
+
+interface OpenServer {
+  domain: string
+  header_thumbnail: string
+  mobile_registration: boolean
+  version: string
+  short_description: string
+  user_count: number
+  last_seen_at: string
+}
+
+type OpenServersResponse = Array<OpenServer>
