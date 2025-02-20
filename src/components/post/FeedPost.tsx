@@ -1,7 +1,7 @@
 import { Feather, Ionicons } from '@expo/vector-icons'
 import {
   BottomSheetBackdrop,
-  BottomSheetModal,
+  type BottomSheetModal,
   BottomSheetScrollView,
 } from '@gorhom/bottom-sheet'
 import { Link, router } from 'expo-router'
@@ -53,7 +53,6 @@ import type {
 } from 'react-native-gesture-handler'
 import { useBookmarkMutation } from 'src/hooks/mutations/useBookmarkMutation'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
-import { PixelfedBottomSheetModal } from '../BottomSheets'
 import type {
   LoginUserResponse,
   MediaAttachment,
@@ -63,6 +62,7 @@ import type {
   Timestamp,
   Visibility,
 } from 'src/lib/api-types'
+import { PixelfedBottomSheetModal } from '../BottomSheets'
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
 
