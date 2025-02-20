@@ -27,7 +27,6 @@ import {
   deleteStatusV1,
   fetchNetworkFeed,
   getSelfAccount,
-  postBookmark,
   reblogStatus,
   unreblogStatus,
 } from 'src/lib/api'
@@ -80,7 +79,7 @@ export default function HomeScreen() {
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
   }, [])
-  const handleSheetChanges = useCallback((index: number) => {}, [])
+  const handleSheetChanges = useCallback((index: number) => { }, [])
   const renderBackdrop = useCallback(
     (props: any) => (
       <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
@@ -139,16 +138,6 @@ export default function HomeScreen() {
     },
   })
 
-  const bookmarkMutation = useMutation({
-    mutationFn: async (id: string) => {
-      return await postBookmark(id)
-    },
-  })
-
-  const onBookmark = (id: string) => {
-    bookmarkMutation.mutate(id)
-  }
-
   const onShare = (id: string, state) => {
     try {
       shareMutation.mutate({ type: state == true ? 'unreblog' : 'reblog', id: id })
@@ -205,11 +194,10 @@ export default function HomeScreen() {
         user={user}
         onOpenComments={() => onOpenComments(item.id)}
         onDeletePost={() => onDeletePost(item.id)}
-        onBookmark={() => onBookmark(item.id)}
         onShare={() => onShare(item.id, item.reblogged)}
       />
     ),
-    [user, onOpenComments, onDeletePost, onBookmark, onShare]
+    [user, onOpenComments, onDeletePost, onShare]
   )
 
   const { data: userSelf } = useQuery({

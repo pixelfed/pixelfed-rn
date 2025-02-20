@@ -769,6 +769,10 @@ export async function postBookmark(id: string) {
   return await selfPost(`api/v1/statuses/${id}/bookmark`)
 }
 
+export async function postUnBookmark(id: string) {
+  return await selfPost(`api/v1/statuses/${id}/unbookmark`)
+}
+
 export async function followHashtag(id: string) {
   return await selfPost(`api/v1/tags/${id}/follow`)
 }
