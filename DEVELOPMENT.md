@@ -105,4 +105,37 @@ Build it with xcode. It shows the full error.
 
 ### Android: "Error: Could not find or load main class org.gradle.wrapper.GradleWrapperMain"
 
+
 Try removing the folder containing this repository and clone it again.
+
+Build it with xcode. It shows the full error.
+
+
+### Android: BUG! exception in phase 'semantic analysis' in source unit '_BuildScript_' Unsupported class file major version 67
+
+This might mean that your java version is too new for the project. It is recommended to use Java 17.
+
+### On macOS you can try this
+
+`export JAVA_HOME=$(/usr/libexec/java_home -v 17)` after installing with homebrew and running
+
+```
+brew install openjdk@17
+sudo ln -sfn /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
+```
+
+### Android: File google-services.json is missing
+
+```
+> Task :app:processDebugGoogleServices FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:processDebugGoogleServices'.
+> File google-services.json is missing. The Google Services Plugin cannot function without it. 
+   Searched Location: 
+```
+
+This means firebase config is missing. you need to create a firebase project and put the google-services.json into the Repository’s root directory. Then run `npx expo prebuild --platform android`
+

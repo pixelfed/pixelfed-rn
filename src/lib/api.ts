@@ -4,6 +4,7 @@ import { parseLinkHeader } from 'src/utils'
 import { ContextFromStorage } from './api-context'
 import type {
   Account,
+  OpenServersResponse,
   PaginatedStatus,
   Relationship,
   RelationshipFromFollowAPIResponse,
@@ -404,7 +405,7 @@ export async function getOpenServers() {
       }),
     }
   )
-  return await response.json()
+  return (await response.json()) as OpenServersResponse
 }
 
 export async function getStatusLikes(id: string, cursor) {
@@ -766,6 +767,10 @@ export async function getTrendingPostsV1() {
 
 export async function postBookmark(id: string) {
   return await selfPost(`api/v1/statuses/${id}/bookmark`)
+}
+
+export async function postUnBookmark(id: string) {
+  return await selfPost(`api/v1/statuses/${id}/unbookmark`)
 }
 
 export async function followHashtag(id: string) {

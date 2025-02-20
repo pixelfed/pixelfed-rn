@@ -58,6 +58,7 @@ export function useLikeMutation({ onSuccess }: { onSuccess?: onSuccessType } = {
       const queryKeys = [
         ['homeFeed'],
         ['fetchNetworkFeed'],
+        ['getSelfBookmarks'],
         ['getStatusById', newLike.id],
       ]
 
@@ -107,6 +108,7 @@ export function useLikeMutation({ onSuccess }: { onSuccess?: onSuccessType } = {
       const queryKeys = [
         ['homeFeed'],
         ['fetchNetworkFeed'],
+        ['getSelfBookmarks'],
         ['getStatusById', variables.id],
       ]
 
