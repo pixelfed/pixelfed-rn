@@ -1,31 +1,29 @@
-import { BottomSheetModal, BottomSheetModalProps } from "@gorhom/bottom-sheet";
-import React from "react";
-import { useEffect, useRef } from "react";
+import { BottomSheetModal, BottomSheetModalProps, useBottomSheetModal } from "@gorhom/bottom-sheet";
+import React, { useCallback } from "react";
+import { useEffect } from "react";
 import { BackHandler } from "react-native";
-
 
 export const PixelfedBottomSheetModal = React.forwardRef<BottomSheetModal, BottomSheetModalProps>((
   props, ref?
 ) => {
   const { children } = props
-  const localRef = ref || useRef<BottomSheetModal | null>(null)
+  const { dismissAll } = useBottomSheetModal()
+
+  const onBackPressed = useCallback(() => {
+    dismissAll()
+    return true
+  }, [])
 
   useEffect(() => {
-    const backAction = () => {
-      localRef?.current?.close()
-
-      return true
-    }
-
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
-      backAction
+      onBackPressed
     )
 
     return () => backHandler.remove()
   }, [])
 
-  return <BottomSheetModal ref={localRef} {...props}>
+  return <BottomSheetModal ref={ref} {...props}>
     {children}
   </BottomSheetModal>
 })
