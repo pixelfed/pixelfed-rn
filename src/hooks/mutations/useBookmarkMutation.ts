@@ -12,7 +12,6 @@ export function useBookmarkMutation({ onSuccess }: { onSuccess?: onSuccessType }
   const queryClient = useQueryClient()
 
   const updateAPICache = (id: string, isBookmarked: boolean) => {
-
     const queryKeys = [
       ['homeFeed'],
       ['getSelfBookmarks'],
@@ -30,20 +29,20 @@ export function useBookmarkMutation({ onSuccess }: { onSuccess?: onSuccessType }
               if (post.id !== id) return post
               return {
                 ...post,
-                bookmarked: isBookmarked
+                bookmarked: isBookmarked,
               }
             })
             return { ...page, data: newData }
           })
 
-          return { ...old, pages: newPages };
+          return { ...old, pages: newPages }
         })
       } else {
         queryClient.setQueryData(key, (oldData: any) => {
           if (!oldData) return oldData
           return {
             ...oldData,
-            bookmarked: isBookmarked
+            bookmarked: isBookmarked,
           }
         })
       }
@@ -52,11 +51,10 @@ export function useBookmarkMutation({ onSuccess }: { onSuccess?: onSuccessType }
 
   const { mutate, isPending } = useMutation({
     mutationFn: async ({ id, type }: bookmarkMutateType) => {
-      return type ? await postBookmark(id) : await postUnBookmark(id);
+      return type ? await postBookmark(id) : await postUnBookmark(id)
     },
 
     onMutate: async ({ id, type }) => {
-
       const queryKeys = [
         ['homeFeed'],
         ['getSelfBookmarks'],
@@ -78,11 +76,10 @@ export function useBookmarkMutation({ onSuccess }: { onSuccess?: onSuccessType }
 
       updateAPICache(id, type)
 
-      return previousState;
+      return previousState
     },
 
     onError: (err, { id }, context) => {
-
       if (!context) return
 
       Object.entries(context).forEach(([key, value]) => {
@@ -95,10 +92,7 @@ export function useBookmarkMutation({ onSuccess }: { onSuccess?: onSuccessType }
   const handleBookmark = async (id: string, isBookmarked: boolean) => {
     try {
       await mutate({ id, type: isBookmarked })
-    } catch (err) {
-      console.log(err);
-    }
-
+    } catch (err) {}
   }
 
   return { handleBookmark, isBookmarkPending: isPending }

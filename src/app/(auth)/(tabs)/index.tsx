@@ -102,7 +102,7 @@ export default function HomeScreen() {
     []
   )
 
-  const handleSheetChanges = useCallback((index: number) => { }, [])
+  const handleSheetChanges = useCallback((index: number) => {}, [])
   const renderBackdrop = useCallback(
     (props: any) => (
       <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />

@@ -51,8 +51,8 @@ import type {
   HandlerStateChangeEvent,
   PinchGestureHandlerEventPayload,
 } from 'react-native-gesture-handler'
-import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 import { useBookmarkMutation } from 'src/hooks/mutations/useBookmarkMutation'
+import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 import type {
   LoginUserResponse,
   MediaAttachment,
@@ -409,7 +409,7 @@ const PostActions = React.memo(
     handleLike,
     onShare,
     onOpenComments,
-    isLikeFeed
+    isLikeFeed,
   }: PostActionsProps) => {
     const hasAltText =
       post?.media_attachments?.length > 0 &&
@@ -419,16 +419,16 @@ const PostActions = React.memo(
       Alert.alert(
         'Alt Text',
         post?.media_attachments[idx].description ??
-        'Media was not tagged with any alt text.'
+          'Media was not tagged with any alt text.'
       )
     }
 
     const [shareCountCache, setShareCount] = useState(sharesCount)
     const [hasSharedCache, setShared] = useState(hasShared)
 
-    const { handleBookmark, isBookmarkPending } = useBookmarkMutation();
+    const { handleBookmark, isBookmarkPending } = useBookmarkMutation()
     const handleBookmarkAction = useCallback(() => {
-      handleBookmark(post.id, !hasBookmarked);
+      handleBookmark(post.id, !hasBookmarked)
     }, [post.id, post.bookmarked, handleBookmark])
 
     const handleOnShare = () => {
@@ -515,14 +515,17 @@ const PostActions = React.memo(
                   ) : null}
                 </XStack>
               ) : null}
-              {!isLikeFeed && isBookmarkPending ? <ActivityIndicator color="#000" /> : null}
+              {!isLikeFeed && isBookmarkPending ? (
+                <ActivityIndicator color="#000" />
+              ) : null}
               {!isBookmarkPending && !isLikeFeed ? (
                 <PressableOpacity onPress={() => handleBookmarkAction()}>
                   <XStack gap="$4">
-                    {hasBookmarked ?
-                      <Ionicons name="bookmark" size={30} /> :
+                    {hasBookmarked ? (
+                      <Ionicons name="bookmark" size={30} />
+                    ) : (
                       <Feather name="bookmark" size={30} />
-                    }
+                    )}
                   </XStack>
                 </PressableOpacity>
               ) : null}
@@ -703,7 +706,7 @@ const FeedPost = React.memo(
     const handlePresentModalPress = useCallback(() => {
       bottomSheetModalRef.current?.present()
     }, [])
-    const handleSheetChanges = useCallback((_: number) => { }, [])
+    const handleSheetChanges = useCallback((_: number) => {}, [])
     const renderBackdrop = useCallback(
       (props: BottomSheetBackdropProps) => (
         <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
@@ -794,7 +797,7 @@ const FeedPost = React.memo(
         await Share.share({
           message: post.url || post.uri,
         })
-      } catch (error) { }
+      } catch (error) {}
     }
     return (
       <View flex={1} style={{ width }}>
