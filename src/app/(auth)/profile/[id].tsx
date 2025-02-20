@@ -2,7 +2,7 @@ import ProfileHeader from '@components/profile/ProfileHeader'
 import { Feather } from '@expo/vector-icons'
 import {
   BottomSheetBackdrop,
-  BottomSheetModal,
+  type BottomSheetModal,
   BottomSheetScrollView,
 } from '@gorhom/bottom-sheet'
 import Clipboard from '@react-native-clipboard/clipboard'
@@ -43,6 +43,7 @@ import { Storage } from 'src/state/cache'
 import { Button, Separator, Text, View, YStack, ZStack } from 'tamagui'
 
 import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet'
+import { PixelfedBottomSheetModal } from 'src/components/BottomSheets'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
@@ -640,7 +641,7 @@ export default function ProfileScreen() {
           ) : null
         }
       />
-      <BottomSheetModal
+      <PixelfedBottomSheetModal
         ref={bottomSheetModalRef}
         index={1}
         snapPoints={snapPoints}
@@ -691,7 +692,7 @@ export default function ProfileScreen() {
             Cancel
           </Button>
         </BottomSheetScrollView>
-      </BottomSheetModal>
+      </PixelfedBottomSheetModal>
     </SafeAreaView>
   )
 }

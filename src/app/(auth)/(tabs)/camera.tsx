@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons'
 import {
   BottomSheetBackdrop,
-  BottomSheetModal,
+  type BottomSheetModal,
   BottomSheetScrollView,
   BottomSheetTextInput,
   BottomSheetView,
@@ -25,6 +25,7 @@ import {
 import FastImage from 'react-native-fast-image'
 import { FlatList } from 'react-native-gesture-handler'
 import { PressableOpacity } from 'react-native-pressable-opacity'
+import { PixelfedBottomSheetModal } from 'src/components/BottomSheets'
 import { ErrorAlert } from 'src/components/common/ErrorAlert'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { Switch } from 'src/components/form/Switch'
@@ -693,7 +694,7 @@ export default function Camera() {
             </View>
           </ScrollView>
 
-          <BottomSheetModal
+          <PixelfedBottomSheetModal
             ref={bottomSheetModalRef}
             index={1}
             snapPoints={snapPoints}
@@ -724,8 +725,8 @@ export default function Camera() {
                 </Switch>
               </XStack>
             </BottomSheetView>
-          </BottomSheetModal>
-          <BottomSheetModal
+          </PixelfedBottomSheetModal>
+          <PixelfedBottomSheetModal
             ref={altTextRef}
             index={1}
             snapPoints={snapPoints}
@@ -780,7 +781,7 @@ export default function Camera() {
                 Save
               </Button>
             </BottomSheetScrollView>
-          </BottomSheetModal>
+          </PixelfedBottomSheetModal>
         </>
       )}
     </View>

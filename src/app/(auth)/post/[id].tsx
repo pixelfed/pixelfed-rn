@@ -1,10 +1,11 @@
-import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet'
+import { BottomSheetBackdrop, type BottomSheetModal } from '@gorhom/bottom-sheet'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useCallback, useLayoutEffect, useMemo, useRef } from 'react'
 //@ts-check
 import { ActivityIndicator, Platform } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { PixelfedBottomSheetModal } from 'src/components/BottomSheets'
 import CommentFeed from 'src/components/post/CommentFeed'
 import FeedPost from 'src/components/post/FeedPost'
 import { deleteStatusV1, getStatusById, reblogStatus, unreblogStatus } from 'src/lib/api'
@@ -106,7 +107,7 @@ export default function Page() {
           headerBackTitle: 'Back',
         }}
       />
-      <BottomSheetModal
+      <PixelfedBottomSheetModal
         ref={bottomSheetModalRef}
         index={2}
         snapPoints={snapPoints}
@@ -123,7 +124,7 @@ export default function Page() {
           gotoHashtag={handleGotoHashtag}
           gotoUsernameProfile={handleGotoUsernameProfile}
         />
-      </BottomSheetModal>
+      </PixelfedBottomSheetModal>
       <ScrollView flexShrink={1}>
         <FeedPost
           post={data}

@@ -1,4 +1,4 @@
-import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet'
+import { BottomSheetBackdrop, type BottomSheetModal } from '@gorhom/bottom-sheet'
 import { useFocusEffect } from '@react-navigation/native'
 import {
   useInfiniteQuery,
@@ -19,6 +19,7 @@ import {
   StyleSheet,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { PixelfedBottomSheetModal } from 'src/components/BottomSheets'
 import EmptyFeed from 'src/components/common/EmptyFeed'
 import ErrorFeed from 'src/components/common/ErrorFeed'
 import FeedHeader from 'src/components/common/FeedHeader'
@@ -310,7 +311,7 @@ export default function HomeScreen() {
           </XStack>
         </View>
       ) : null}
-      <BottomSheetModal
+      <PixelfedBottomSheetModal
         ref={bottomSheetModalRef}
         index={Platform.OS === 'ios' ? 1 : 0}
         keyboardBehavior={Platform.OS === 'ios' ? 'extend' : 'interactive'}
@@ -328,7 +329,7 @@ export default function HomeScreen() {
           user={user}
           handleReport={handleCommentReport}
         />
-      </BottomSheetModal>
+      </PixelfedBottomSheetModal>
 
       {renderFeed(data?.pages.flatMap((page) => page.data))}
     </SafeAreaView>
