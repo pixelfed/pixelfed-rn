@@ -100,14 +100,27 @@ export type Relationship = {
   blocking: boolean
   domain_blocking
   endorsed: boolean
-  followed_by?
-  following
+  followed_by?: boolean
+  following: boolean
   following_since
   id
-  muting
+  muting: boolean
   muting_notifications
-  requested
+  requested: boolean
   showing_reblogs
+}
+
+export type RelationshipFromFollowAPIResponse = {
+  blocking: boolean
+  domain_blocking: any | null
+  endorsed: boolean
+  followed_by?: boolean
+  following: boolean
+  id: string
+  muting: boolean
+  muting_notifications: any | null
+  requested: boolean
+  showing_reblogs: any | null
 }
 
 export type Account = {
@@ -207,12 +220,28 @@ export type Status = {
 }
 
 export type StatusLikedBy = {
-  id: string,
-  others: boolean,
-  total_count: number,
-  total_count_pretty: number,
-  url: string,
-  username: string,
+  id: string
+  others: boolean
+  total_count: number
+  total_count_pretty: number
+  url: string
+  username: string
+}
+
+type UpdateCredentialsParams = {
+  bio: string
+  website: string
+  display_name: string
+  note: string
+  avatar
+  locked: boolean
+  show_profile_follower_count: boolean
+  show_profile_following_count: boolean
+  crawlable: boolean
+  public_dm: boolean
+  disable_embeds: boolean
+  show_atom: boolean
+  is_suggestable: boolean
 }
 
 /* ========================== Infinite query types ========================== */
@@ -222,3 +251,43 @@ export type PaginatedStatus = {
   nextPage: string | undefined
   prevPage: string | undefined
 }
+
+export type UploadV2Response = {
+  blurhash: string
+  description: string
+  id: string
+  preview_url: string
+  remote_url: string
+  text_url: string
+  type: string
+  url: string
+}
+
+export type UploadV2ErrorResponse = {
+  errors: {
+    file: string[]
+  }
+  message: string
+}
+
+type UploadV2ResponseOrError = UploadV2Response | UploadV2ErrorResponse
+type UploadV2Params =
+  | {
+      file: unknown
+    }
+  | {
+      file: unknown
+      description: string
+    }
+
+interface OpenServer {
+  domain: string
+  header_thumbnail: string
+  mobile_registration: boolean
+  version: string
+  short_description: string
+  user_count: number
+  last_seen_at: string
+}
+
+type OpenServersResponse = Array<OpenServer>

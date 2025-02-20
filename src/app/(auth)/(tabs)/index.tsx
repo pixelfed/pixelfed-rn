@@ -1,40 +1,40 @@
-import { useCallback, useEffect, useState, useRef, useMemo } from 'react'
-import { FlatList, StyleSheet, ActivityIndicator, Platform, ListRenderItemInfo } from 'react-native'
-import { Text, View, XStack, Spinner, YStack } from 'tamagui'
-import FeedPost from 'src/components/post/FeedPost'
-import { StatusBar } from 'expo-status-bar'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import {
-  type ErrorBoundaryProps,
-  Stack,
-  useLocalSearchParams,
-  useNavigation,
-  useRouter,
-} from 'expo-router'
+import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet'
+import { useFocusEffect } from '@react-navigation/native'
 import {
   useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
+import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
+import type { ErrorBoundaryProps } from 'expo-router'
+import { useShareIntentContext } from 'expo-share-intent'
+import { StatusBar } from 'expo-status-bar'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
-  fetchHomeFeed,
+  ActivityIndicator,
+  FlatList,
+  type ListRenderItemInfo,
+  Platform,
+  StyleSheet,
+} from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import EmptyFeed from 'src/components/common/EmptyFeed'
+import ErrorFeed from 'src/components/common/ErrorFeed'
+import FeedHeader from 'src/components/common/FeedHeader'
+import CommentFeed from 'src/components/post/CommentFeed'
+import FeedPost from 'src/components/post/FeedPost'
+import { useVideo } from 'src/hooks/useVideoProvider'
+import {
   deleteStatusV1,
-  postBookmark,
+  fetchHomeFeed,
   getSelfAccount,
   reblogStatus,
   unreblogStatus,
 } from 'src/lib/api'
-import FeedHeader from 'src/components/common/FeedHeader'
-import EmptyFeed from 'src/components/common/EmptyFeed'
-import ErrorFeed from 'src/components/common/ErrorFeed'
-import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet'
-import CommentFeed from 'src/components/post/CommentFeed'
-import { useShareIntentContext } from 'expo-share-intent'
-import { useVideo } from 'src/hooks/useVideoProvider'
-import { useFocusEffect } from '@react-navigation/native'
+import type { Status } from 'src/lib/api-types'
 import { useUserCache } from 'src/state/AuthProvider'
-import { Status } from 'src/lib/api-types'
+import { Spinner, Text, View, XStack, YStack } from 'tamagui'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   return (
@@ -89,6 +89,7 @@ export default function HomeScreen() {
     useCallback(() => {
       const unsubscribe = navigation.addListener('tabPress', () => {
         flatListRef.current?.scrollToOffset({ animated: true, offset: 0 })
+        refetch()
       })
 
       return unsubscribe
@@ -137,28 +138,14 @@ export default function HomeScreen() {
 
   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 })
 
-  const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<Status>) => (
-      <FeedPost
-        post={item}
-        user={user}
-        onOpenComments={() => onOpenComments(item.id)}
-        onDeletePost={() => onDeletePost(item.id)}
-        onBookmark={() => onBookmark(item.id)}
-        onShare={() => onShare(item.id, item.reblogged)}
-      />
-    ),
-    [user]
-  )
-
   const keyExtractor = useCallback((item) => item?.id, [])
 
-  const onDeletePost = (id) => {
+  const onDeletePost = (id: string) => {
     deletePostMutation.mutate(id)
   }
 
   const deletePostMutation = useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async (id: string) => {
       return await deleteStatusV1(id)
     },
     onSuccess: (data, variables) => {
@@ -175,17 +162,7 @@ export default function HomeScreen() {
     },
   })
 
-  const bookmarkMutation = useMutation({
-    mutationFn: async (id) => {
-      return await postBookmark(id)
-    },
-  })
-
-  const onBookmark = (id) => {
-    bookmarkMutation.mutate(id)
-  }
-
-  const onShare = (id, state) => {
+  const onShare = (id: string, state) => {
     try {
       shareMutation.mutate({ type: state == true ? 'unreblog' : 'reblog', id: id })
     } catch (error) {
@@ -214,25 +191,38 @@ export default function HomeScreen() {
     router.push(`/post/likes/${id}`)
   }
 
-  const handleGotoProfile = (id) => {
+  const handleGotoProfile = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/profile/${id}`)
   }
 
-  const handleGotoUsernameProfile = (id) => {
+  const handleGotoUsernameProfile = (username: string) => {
     bottomSheetModalRef.current?.close()
-    router.push(`/profile/0?byUsername=${id}`)
+    router.push(`/profile/0?byUsername=${username}`)
   }
 
-  const gotoHashtag = (id) => {
+  const gotoHashtag = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/hashtag/${id}`)
   }
 
-  const handleCommentReport = (id) => {
+  const handleCommentReport = (id: string) => {
     bottomSheetModalRef.current?.close()
     router.push(`/post/report/${id}`)
   }
+
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<Status>) => (
+      <FeedPost
+        post={item}
+        user={user}
+        onOpenComments={() => onOpenComments(item.id)}
+        onDeletePost={() => onDeletePost(item.id)}
+        onShare={() => onShare(item.id, item.reblogged)}
+      />
+    ),
+    [user, onOpenComments, onDeletePost, onShare]
+  )
 
   const { data: userSelf } = useQuery({
     queryKey: ['getSelfAccount'],
@@ -262,7 +252,6 @@ export default function HomeScreen() {
     getNextPageParam: (lastPage) => lastPage.nextPage,
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
   })
-
   if (isFetching && !isFetchingNextPage && !isRefetching) {
     return (
       <View flexGrow={1} mt="$5" py="$5" justifyContent="center" alignItems="center">
@@ -280,12 +269,17 @@ export default function HomeScreen() {
   }
 
   const renderFeed = (data: Array<Status>) => {
-    return <FlatList
+    return (
+      <FlatList
         ref={flatListRef}
         data={data}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         maxToRenderPerBatch={3}
+        windowSize={5}
+        removeClippedSubviews={true}
+        initialNumToRender={5}
+        updateCellsBatchingPeriod={50}
         refreshing={isRefetching}
         onRefresh={refetch}
         showsVerticalScrollIndicator={false}
@@ -298,6 +292,7 @@ export default function HomeScreen() {
         onEndReachedThreshold={0.5}
         ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}
       />
+    )
   }
 
   return (
@@ -336,7 +331,6 @@ export default function HomeScreen() {
       </BottomSheetModal>
 
       {renderFeed(data?.pages.flatMap((page) => page.data))}
-      
     </SafeAreaView>
   )
 }
@@ -366,5 +360,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'white',
     fontWeight: '800',
-  }
+  },
 })

@@ -1,10 +1,10 @@
-import { Stack, useRouter, Link } from 'expo-router'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Group, ScrollView, Separator, Text, View, XStack, YStack, Button } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { useQuery } from '@tanstack/react-query'
+import { Link, Stack, useRouter } from 'expo-router'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { getAdminStats } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
+import { Button, Group, ScrollView, Separator, Text, View, XStack, YStack } from 'tamagui'
 
 export default function Page() {
   const router = useRouter()

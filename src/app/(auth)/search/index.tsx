@@ -1,19 +1,21 @@
-import { Link, Stack } from 'expo-router'
-import { FlatList, ActivityIndicator, Keyboard, Pressable } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Text, View, YStack, Input, XStack } from 'tamagui'
 import { useQuery } from '@tanstack/react-query'
+import { Link, Stack, useLocalSearchParams } from 'expo-router'
+import { ActivityIndicator, FlatList, Keyboard, Pressable } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { Input, Text, View, XStack, YStack } from 'tamagui'
 
-import { searchQuery } from 'src/lib/api'
+import Feather from '@expo/vector-icons/Feather'
 import { useCallback, useState } from 'react'
 import UserAvatar from 'src/components/common/UserAvatar'
+import { searchQuery } from 'src/lib/api'
 import { getDomain, prettyCount } from 'src/utils'
-import Feather from '@expo/vector-icons/Feather'
 import ReadMore from '../../../components/common/ReadMore'
 import { formatTimestampMonthYear, postCountLabel } from '../../../utils'
 
 export default function SearchScreen() {
-  const [query, setQuery] = useState('')
+  const { initialQuery } = useLocalSearchParams<{ initialQuery?: string }>()
+
+  const [query, setQuery] = useState(initialQuery || '')
 
   const { data, isLoading, isError, error, isFetching } = useQuery({
     queryKey: ['search', query],
@@ -49,38 +51,23 @@ export default function SearchScreen() {
             <Pressable>
               <XStack alignItems="center" gap="$3">
                 <UserAvatar url={item.avatar} width={40} height={40} />
-                <YStack flexGrow={1} gap={4}>
-                  {/* <Text fontSize="$3" color="$gray9">
-                    {item.display_name}
-                  </Text> */}
-                  <XStack
-                    alignItems="center"
-                    flexWrap="wrap"
-                    whiteSpace="break-all"
-                    overflow="hidden"
-                  >
-                    <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
-                      <Text fontSize="$6" fontWeight="bold">
-                        {item.username}
-                      </Text>
+                <YStack flexGrow={1} gap={4} w="50%">
+                  <XStack alignItems="center" gap="$2" flexWrap="wrap">
+                    <Text fontSize="$6" fontWeight="bold">
+                      {item.username}
+                    </Text>
 
-                      {/* { !item.local ? <View bg="$gray3" px={5} py={4} borderRadius={5}>
-                            <Text fontSize="$2" fontWeight="bold" color="#999">{getDomain(item.url)}</Text>
-                          </View> : null } */}
-                      {!item.local ? (
-                        <Text fontSize="$6" color="$gray9">
-                          @{getDomain(item.url)}
+                    {!item.local ? (
+                      <View bg="$gray3" px={5} py={4} borderRadius={5}>
+                        <Text fontSize="$2" fontWeight="bold" color="#999">
+                          {getDomain(item.url)}
                         </Text>
-                      ) : null}
-                    </ReadMore>
+                      </View>
+                    ) : null}
                   </XStack>
                   <XStack gap="$2" alignItems="center">
                     <Text color="$gray9" fontSize="$2">
                       {prettyCount(item.followers_count)} Followers
-                    </Text>
-                    <Text color="$gray8">·</Text>
-                    <Text color="$gray9" fontSize="$2">
-                      {postCountLabel(item.statuses_count)}
                     </Text>
                     <Text color="$gray8">·</Text>
                     <Text color="$gray9" fontSize="$2">
@@ -99,20 +86,26 @@ export default function SearchScreen() {
     if (item._type === 'hashtag') {
       return (
         <Link href={`/hashtag/${item.name}`} asChild>
-          <View p="$3" bg="white">
-            <XStack alignItems="center" gap="$3">
+          <View px="$4" py="$3" bg="white">
+            <XStack alignItems="center" gap="$4">
               <View
-                w={50}
-                h={50}
+                w={30}
+                h={30}
                 borderRadius={50}
                 bg="$gray3"
                 justifyContent="center"
                 alignItems="center"
               >
-                <Feather name="hash" size={30} color="#000" />
+                <Feather name="hash" size={20} color="#000" />
               </View>
-              <YStack gap={4}>
-                <Text fontSize="$6" fontWeight="bold">
+              <XStack
+                flexGrow={1}
+                gap={4}
+                flexWrap="wrap"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Text fontSize="$6" w="70%" fontWeight="bold" flexWrap="wrap">
                   {item.name}
                 </Text>
                 <XStack>
@@ -120,7 +113,7 @@ export default function SearchScreen() {
                     {prettyCount(item.count)} posts
                   </Text>
                 </XStack>
-              </YStack>
+              </XStack>
             </XStack>
           </View>
         </Link>
@@ -196,6 +189,8 @@ export default function SearchScreen() {
           onChangeText={(text) => setQuery(text)}
           value={query}
           bg="white"
+          autoCorrect={false}
+          autoComplete="off"
           autoFocus={true}
           size="$6"
         />

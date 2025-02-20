@@ -1,10 +1,10 @@
 import { Link, Stack } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { ScrollView, Group, YStack, Separator, Button } from 'tamagui'
 import {
   GroupButtonContent,
   type GroupButtonContentProps,
 } from 'src/components/common/GroupButtonContent'
+import { Button, Group, ScrollView, Separator, YStack } from 'tamagui'
 
 export default function Page() {
   type GroupButtonProps = Pick<

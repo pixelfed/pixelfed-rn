@@ -1,14 +1,14 @@
-import { Stack, useRouter } from 'expo-router'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Separator, Text, View, XStack, YStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
-import { adminInstances } from 'src/lib/api'
-import { ActivityIndicator, FlatList } from 'react-native'
-import { enforceLen, prettyCount, _timeAgo } from 'src/utils'
+import { Stack, useRouter } from 'expo-router'
 import { useState } from 'react'
+import { ActivityIndicator, FlatList } from 'react-native'
 import { PressableOpacity } from 'react-native-pressable-opacity'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { adminInstances } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
+import { _timeAgo, enforceLen, prettyCount } from 'src/utils'
+import { Separator, Text, View, XStack, YStack } from 'tamagui'
 
 const keyExtractor = (_, index) => `instance-${_.id}-${index}`
 

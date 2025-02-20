@@ -1,12 +1,12 @@
-import { Stack, useNavigation } from 'expo-router'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Text, View } from 'tamagui'
-import { getSelfLikes } from 'src/lib/api'
-import { ActivityIndicator, FlatList } from 'react-native'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import FeedPost from 'src/components/post/FeedPost'
+import { Stack, useNavigation } from 'expo-router'
 import { useCallback, useLayoutEffect } from 'react'
+import { ActivityIndicator, FlatList } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import FeedPost from 'src/components/post/FeedPost'
+import { getSelfLikes } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
+import { Text, View } from 'tamagui'
 
 export default function LikesScreen() {
   const navigation = useNavigation()
@@ -14,7 +14,7 @@ export default function LikesScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'My Likes', headerBackTitle: 'Back' })
   }, [navigation])
-  
+
   const user = useUserCache()
   const renderItem = useCallback(
     ({ item }) => (
@@ -23,7 +23,6 @@ export default function LikesScreen() {
         user={user}
         onOpenComments={() => onOpenComments(item.id)}
         onDeletePost={() => onDeletePost(item.id)}
-        onBookmark={() => onBookmark(item.id)}
         isLikeFeed={true}
         likedAt={item?.liked_at}
       />

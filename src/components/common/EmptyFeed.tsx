@@ -1,5 +1,5 @@
-import { Text, YStack } from 'tamagui'
 import { StyleSheet } from 'react-native'
+import { Text, YStack } from 'tamagui'
 import GhostIcon from '../icons/GhostIcon'
 
 const almostBlack = 'rgb(64, 64, 64)'
@@ -7,17 +7,15 @@ const almostBlack = 'rgb(64, 64, 64)'
 export default function EmptyFeed() {
   return (
     <YStack
-      p='$4'
-      pt='$12'
-      alignContent='center'
-      justifyContent='center'
-      alignItems='center'
+      p="$4"
+      pt="$12"
+      alignContent="center"
+      justifyContent="center"
+      alignItems="center"
     >
-      <GhostIcon width={200} height={200} color={almostBlack}/>
+      <GhostIcon width={200} height={200} color={almostBlack} />
 
-      <Text style={styles.noPostsHeader}>
-        Ghosts have taken over this timeline! 
-      </Text>
+      <Text style={styles.noPostsHeader}>Ghosts have taken over this timeline!</Text>
       <Text style={styles.noPostsText}>
         Try following some accounts to get rid of them!
       </Text>
@@ -31,10 +29,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 24,
     color: 'darkgray',
-    paddingTop: 24
+    paddingTop: 24,
   },
   noPostsText: {
     textAlign: 'center',
-    color: 'darkgray'
-  }
+    color: 'darkgray',
+  },
 })

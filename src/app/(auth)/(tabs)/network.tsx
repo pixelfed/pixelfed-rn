@@ -1,38 +1,38 @@
-import { useCallback, useState, useRef, useMemo } from 'react'
-import {
-  FlatList,
-  StyleSheet,
-  ActivityIndicator,
-  Platform,
-  type ListRenderItemInfo,
-} from 'react-native'
-import { Text, View } from 'tamagui'
-import FeedPost from 'src/components/post/FeedPost'
-import { StatusBar } from 'expo-status-bar'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { type ErrorBoundaryProps, Stack, useNavigation, useRouter } from 'expo-router'
+import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet'
+import { useFocusEffect } from '@react-navigation/native'
 import {
   useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
+import { type ErrorBoundaryProps, Stack, useNavigation, useRouter } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import {
-  fetchNetworkFeed,
+  ActivityIndicator,
+  FlatList,
+  type ListRenderItemInfo,
+  Platform,
+  StyleSheet,
+} from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import EmptyFeed from 'src/components/common/EmptyFeed'
+import ErrorFeed from 'src/components/common/ErrorFeed'
+import FeedHeader from 'src/components/common/FeedHeader'
+import CommentFeed from 'src/components/post/CommentFeed'
+import FeedPost from 'src/components/post/FeedPost'
+import { useVideo } from 'src/hooks/useVideoProvider'
+import {
   deleteStatusV1,
-  postBookmark,
+  fetchNetworkFeed,
   getSelfAccount,
   reblogStatus,
   unreblogStatus,
 } from 'src/lib/api'
-import FeedHeader from 'src/components/common/FeedHeader'
-import ErrorFeed from 'src/components/common/ErrorFeed'
-import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet'
-import CommentFeed from 'src/components/post/CommentFeed'
-import { useVideo } from 'src/hooks/useVideoProvider'
-import { useFocusEffect } from '@react-navigation/native'
-import { useUserCache } from 'src/state/AuthProvider'
 import type { Status } from 'src/lib/api-types'
+import { useUserCache } from 'src/state/AuthProvider'
+import { Text, View } from 'tamagui'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   return (
@@ -63,6 +63,7 @@ export default function HomeScreen() {
     useCallback(() => {
       const unsubscribe = navigation.addListener('tabPress', () => {
         flatListRef.current?.scrollToOffset({ animated: true, offset: 0 })
+        refetch()
       })
 
       return unsubscribe
@@ -114,20 +115,6 @@ export default function HomeScreen() {
 
   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 })
 
-  const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<Status>) => (
-      <FeedPost
-        post={item}
-        user={user}
-        onOpenComments={() => onOpenComments(item.id)}
-        onDeletePost={() => onDeletePost(item.id)}
-        onBookmark={() => onBookmark(item.id)}
-        onShare={() => onShare(item.id, item.reblogged)}
-      />
-    ),
-    [user]
-  )
-
   const keyExtractor = useCallback((item: Status) => item.id, [])
 
   const onDeletePost = (id: string) => {
@@ -151,16 +138,6 @@ export default function HomeScreen() {
       })
     },
   })
-
-  const bookmarkMutation = useMutation({
-    mutationFn: async (id: string) => {
-      return await postBookmark(id)
-    },
-  })
-
-  const onBookmark = (id: string) => {
-    bookmarkMutation.mutate(id)
-  }
 
   const onShare = (id: string, state) => {
     try {
@@ -211,6 +188,19 @@ export default function HomeScreen() {
     router.push(`/post/report/${id}`)
   }
 
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<Status>) => (
+      <FeedPost
+        post={item}
+        user={user}
+        onOpenComments={() => onOpenComments(item.id)}
+        onDeletePost={() => onDeletePost(item.id)}
+        onShare={() => onShare(item.id, item.reblogged)}
+      />
+    ),
+    [user, onOpenComments, onDeletePost, onShare]
+  )
+
   const { data: userSelf } = useQuery({
     queryKey: ['getSelfAccount'],
     queryFn: getSelfAccount,
@@ -228,6 +218,7 @@ export default function HomeScreen() {
     isRefetching,
     refetch,
     isFetching,
+    status,
     isError,
     error,
   } = useInfiniteQuery({
@@ -256,6 +247,33 @@ export default function HomeScreen() {
     )
   }
 
+  const renderFeed = (data: Array<Status>) => {
+    return (
+      <FlatList
+        ref={flatListRef}
+        data={data}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+        maxToRenderPerBatch={3}
+        windowSize={5}
+        removeClippedSubviews={true}
+        initialNumToRender={5}
+        updateCellsBatchingPeriod={50}
+        refreshing={isRefetching}
+        onRefresh={refetch}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={status === 'success' ? <EmptyFeed /> : <ErrorFeed />}
+        onViewableItemsChanged={onViewRef}
+        viewabilityConfig={viewConfigRef.current}
+        onEndReached={() => {
+          if (hasNextPage && !isFetching && !isFetchingNextPage) fetchNextPage()
+        }}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}
+      />
+    )
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar style="dark" />
@@ -281,24 +299,7 @@ export default function HomeScreen() {
           handleReport={handleCommentReport}
         />
       </BottomSheetModal>
-      <FlatList
-        ref={flatListRef}
-        data={data?.pages.flatMap((page) => page.data)}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-        maxToRenderPerBatch={3}
-        refreshing={isRefetching}
-        onRefresh={refetch}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<ErrorFeed />}
-        onViewableItemsChanged={onViewRef}
-        viewabilityConfig={viewConfigRef.current}
-        onEndReached={() => {
-          if (hasNextPage && !isFetchingNextPage) fetchNextPage()
-        }}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}
-      />
+      {renderFeed(data?.pages.flatMap((page) => page.data))}
     </SafeAreaView>
   )
 }

@@ -1,13 +1,13 @@
-import { ActivityIndicator, Dimensions, FlatList } from 'react-native'
-import { Text, View, Separator, Tabs } from 'tamagui'
-import { Stack, useNavigation } from 'expo-router'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
-import { fetchNotifications } from 'src/lib/api'
-import RenderNotificationItem from 'src/components/notifications/RenderNotificationItem'
-import { _timeAgo } from 'src/utils'
-import { useEffect, useLayoutEffect, useState } from 'react'
 import Feather from '@expo/vector-icons/Feather'
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
+import { Stack, useNavigation } from 'expo-router'
+import { useEffect, useLayoutEffect, useState } from 'react'
+import { ActivityIndicator, Dimensions, FlatList } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import RenderNotificationItem from 'src/components/notifications/RenderNotificationItem'
+import { fetchNotifications } from 'src/lib/api'
+import { _timeAgo } from 'src/utils'
+import { Separator, Tabs, Text, View } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
@@ -23,19 +23,17 @@ export default function NotificationsScreen() {
   const {
     data,
     fetchNextPage,
-    fetchPreviousPage,
     hasNextPage,
-    hasPreviousPage,
     isFetchingNextPage,
     isFetching,
-    isError,
+    isRefetching,
     error,
     refetch,
   } = useInfiniteQuery({
     queryKey: ['notifications', activeTab],
     queryFn: fetchNotifications,
     getNextPageParam: (lastPage) => lastPage.nextPage,
-    getPreviousPageParam: (lastPage) => lastPage.prevPage,
+    getPreviousPageParam: (firstPage) => firstPage.prevPage,
   })
 
   useEffect(() => {
@@ -47,7 +45,19 @@ export default function NotificationsScreen() {
     setActiveTab(value)
   }
 
-  if (isFetching && !isFetchingNextPage) {
+  const handleInfiniteScroll = (_: { distanceFromEnd: number }) => {
+    if (isFetchingNextPage) {
+      return
+    }
+
+    if (hasNextPage) {
+      fetchNextPage()
+    }
+  }
+
+  // Since refetching cause the refetch of all the pages sequentially (longer waits), !isRefetching avoid unmonting of the FlatList and
+  // allow the user to see the past notifications in the meantime
+  if (isFetching && !isFetchingNextPage && !isRefetching) {
     return (
       <View flexGrow={1} mt="$5" p="$3">
         <ActivityIndicator color={'#000'} />
@@ -64,7 +74,7 @@ export default function NotificationsScreen() {
   }
 
   return (
-    <SafeAreaView edges={['left']}>
+    <SafeAreaView edges={['left', 'bottom']}>
       <Stack.Screen
         options={{
           title: 'Notifications',
@@ -81,57 +91,55 @@ export default function NotificationsScreen() {
         width={SCREEN_WIDTH}
         bg="$gray5"
       >
-        <Tabs.List flex={1} separator={<Separator vertical borderColor="$gray5" />}>
+        <Tabs.List flex={1}>
           <Tabs.Tab value="all" px="$0" flexGrow={1}>
-            <Tabs.Trigger value="all">
-              <Text fontSize="$2" fontWeight="bold" allowFontScaling={false}>
-                All
-              </Text>
-            </Tabs.Trigger>
+            <Text fontSize="$2" fontWeight="bold" allowFontScaling={false}>
+              All
+            </Text>
           </Tabs.Tab>
+          <Separator vertical borderColor="$gray5" />
           <Tabs.Tab value="mentions" px="$0" flexGrow={1}>
-            <Tabs.Trigger value="mentions">
-              <Feather name="at-sign" size={20} />
-            </Tabs.Trigger>
+            <Feather name="at-sign" size={20} />
           </Tabs.Tab>
+          <Separator vertical borderColor="$gray5" />
           <Tabs.Tab value="likes" px="$0" flexGrow={1}>
-            <Tabs.Trigger value="likes">
-              <Feather name="heart" size={20} />
-            </Tabs.Trigger>
+            <Feather name="heart" size={20} />
           </Tabs.Tab>
+          <Separator vertical borderColor="$gray5" />
           <Tabs.Tab value="follows" px="$0" flexGrow={1}>
-            <Tabs.Trigger value="follows">
-              <Feather name="user-plus" size={20} />
-            </Tabs.Trigger>
+            <Feather name="user-plus" size={20} />
           </Tabs.Tab>
+          <Separator vertical borderColor="$gray5" />
           <Tabs.Tab value="reblogs" px="$0" flexGrow={1}>
-            <Tabs.Trigger value="reblogs">
-              <Feather name="refresh-cw" size={20} />
-            </Tabs.Trigger>
+            <Feather name="refresh-cw" size={20} />
           </Tabs.Tab>
         </Tabs.List>
       </Tabs>
 
       <FlatList
+        style={{ height: '100%' }}
         data={data?.pages.flatMap((page) => page.data)}
         ItemSeparatorComponent={() => <Separator borderColor="$gray5" />}
         renderItem={({ item }) => <RenderNotificationItem item={item} />}
-        onEndReached={() => {
-          if (hasNextPage) fetchNextPage()
-        }}
-        refreshing={isFetching}
-        onRefresh={() => queryClient.invalidateQueries({ queryKey: ['notifications'] })}
+        // In case of duplicates, discriminate the item with id_index avoid printing errors in console
+        keyExtractor={(item, index) => `${item.id}_${index.toString()}`}
+        onEndReached={handleInfiniteScroll}
+        refreshing={isRefetching}
+        onRefresh={() =>
+          queryClient.invalidateQueries({
+            queryKey: ['notifications'],
+          })
+        }
         onEndReachedThreshold={0.5}
         contentContainerStyle={{ flexGrow: 1 }}
-        ListFooterComponent={() =>
-          isFetchingNextPage ? (
-            <View py="$10">
-              <ActivityIndicator />
-            </View>
-          ) : (
-            <View h={200}></View>
-          )
-        }
+        ListFooterComponent={() => (
+          <View py="$6">
+            {isFetchingNextPage ? <ActivityIndicator /> : null}
+            {!hasNextPage ? (
+              <Text ta="center">No more notifications for now!</Text>
+            ) : null}
+          </View>
+        )}
       />
     </SafeAreaView>
   )

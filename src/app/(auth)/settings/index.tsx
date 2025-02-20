@@ -1,16 +1,16 @@
-import { Alert } from 'react-native'
-import { Group, ScrollView, Separator, Text, XStack, YStack, Button } from 'tamagui'
-import { Storage } from 'src/state/cache'
-import React, { useState, useEffect, useLayoutEffect } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, Link, useNavigation } from 'expo-router'
 import { useAuth, useUserCache } from '@state/AuthProvider'
-import { openBrowserAsync } from 'src/utils'
 import * as Application from 'expo-application'
+import { Link, Stack, useNavigation } from 'expo-router'
+import React, { useState, useEffect, useLayoutEffect } from 'react'
+import { Alert } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import {
   GroupButtonContent,
   type GroupButtonContentProps,
 } from 'src/components/common/GroupButtonContent'
+import { Storage } from 'src/state/cache'
+import { openBrowserAsync } from 'src/utils'
+import { Button, Group, ScrollView, Separator, Text, XStack, YStack } from 'tamagui'
 
 export default function Page() {
   const navigation = useNavigation()
@@ -19,7 +19,7 @@ export default function Page() {
   }, [navigation])
   const { username, locked } = useUserCache()
   const instance = Storage.getString('app.instance')
-  const buildVersion = 74
+  const buildVersion = 78
   const version = Application.nativeApplicationVersion + '.' + buildVersion
 
   const { logout } = useAuth()

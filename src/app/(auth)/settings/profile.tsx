@@ -1,23 +1,30 @@
-import { ActivityIndicator, Alert, type AlertButton, Platform, Pressable, StyleSheet } from 'react-native'
+import { useQueryClient } from '@tanstack/react-query'
+import * as ImagePicker from 'expo-image-picker'
+import { Link, Stack, useNavigation } from 'expo-router'
+import mime from 'mime'
+import { useLayoutEffect } from 'react'
 import {
+  ActivityIndicator,
+  Alert,
+  type AlertButton,
+  Platform,
+  Pressable,
+  StyleSheet,
+} from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { deleteAvatar, updateAvatar } from 'src/lib/api'
+import { useQuerySelfProfile } from 'src/state/AuthProvider'
+import {
+  Avatar,
+  Button,
   ScrollView,
   Separator,
   Text,
   View,
   XStack,
   YStack,
-  Button,
-  Avatar,
   ZStack,
 } from 'tamagui'
-import { useLayoutEffect } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, Link, useNavigation } from 'expo-router'
-import { useQueryClient } from '@tanstack/react-query'
-import { updateAvatar, deleteAvatar } from 'src/lib/api'
-import * as ImagePicker from 'expo-image-picker'
-import mime from 'mime'
-import { useQuerySelfProfile } from 'src/state/AuthProvider'
 
 type LinkFieldProps = {
   label: string
@@ -105,21 +112,25 @@ export default function ProfilePage() {
   }
 
   const LinkField = ({ label, value, placeholder, path }: LinkFieldProps) => (
-    <XStack px='$3' py='$3' alignItems='flex-start' justifyContent='center'>
-      <Text w='25%' fontSize='$5' color='$gray9' paddingTop="$3">
+    <XStack px="$3" py="$3" alignItems="flex-start" justifyContent="center">
+      <Text w="25%" fontSize="$5" color="$gray9" paddingTop="$3">
         {label}
       </Text>
 
       <Link href={path} asChild>
         <View
           flex={1}
-          borderColor='$gray4'
+          borderColor="$gray4"
           borderWidth={1}
-          borderRadius='$4'
-          flexDirection='row'
+          borderRadius="$4"
+          flexDirection="row"
           pressStyle={styles.pressStyle}
         >
-          <Text fontSize='$5' p='$3' style={value ? styles.fieldValue : styles.placeholder}>
+          <Text
+            fontSize="$5"
+            p="$3"
+            style={value ? styles.fieldValue : styles.placeholder}
+          >
             {value || placeholder}
           </Text>
         </View>
@@ -136,22 +147,24 @@ export default function ProfilePage() {
         }}
       />
       <ZStack flex={1}>
-        {isFetching && <ActivityIndicator style={styles.activityIndicator} color='#000'/>}
+        {isFetching && (
+          <ActivityIndicator style={styles.activityIndicator} color="#000" />
+        )}
 
         <ScrollView flexShrink={1}>
-          <XStack padding='$3' gap='$4' alignItems='center'>
-            <Avatar circular size='$10' borderWidth={1} borderColor='$gray6'>
+          <XStack padding="$3" gap="$4" alignItems="center">
+            <Avatar circular size="$10" borderWidth={1} borderColor="$gray6">
               <Avatar.Image accessibilityLabel={user?.username} src={user?.avatar} />
-              <Avatar.Fallback backgroundColor='$gray6' />
+              <Avatar.Fallback backgroundColor="$gray6" />
             </Avatar>
 
             <YStack>
               <Text style={styles.username}>@{user?.username}</Text>
               <Button
-                p='0'
+                p="0"
                 chromeless
-                color='$blue9'
-                fontWeight='bold'
+                color="$blue9"
+                fontWeight="bold"
                 onPress={() => updateProfilePhoto()}
               >
                 {user?.avatar.endsWith('default.jpg')
@@ -163,25 +176,25 @@ export default function ProfilePage() {
 
           <Separator />
 
-          <YStack gap='$0'>
+          <YStack gap="$0">
             <LinkField
-              label='Name'
+              label="Name"
               value={user?.display_name}
-              path='/settings/updateName'
-              placeholder='Real name'
+              path="/settings/updateName"
+              placeholder="Real name"
             />
             <LinkField
-              label='Bio'
+              label="Bio"
               value={user?.note_text}
-              path='settings/updateBio'
-              placeholder='Profile description'
+              path="settings/updateBio"
+              placeholder="Profile description"
             />
 
             <LinkField
-              label='Website'
+              label="Website"
               value={user?.website}
-              path='settings/updateWebsite'
-              placeholder='https://'
+              path="settings/updateWebsite"
+              placeholder="https://"
             />
           </YStack>
 
@@ -194,11 +207,11 @@ export default function ProfilePage() {
 
 const styles = StyleSheet.create({
   activityIndicator: {
-    padding: 8
+    padding: 8,
   },
   background: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   username: {
     fontWeight: 'bold',
@@ -206,14 +219,14 @@ const styles = StyleSheet.create({
   },
   fieldValue: {
     flex: 1,
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   placeholder: {
     flex: 1,
     flexWrap: 'wrap',
-    color: 'gray'
+    color: 'gray',
   },
   pressStyle: {
-    backgroundColor: 'rgba(0, 0, 0, 0.1)'
-  }
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+  },
 })

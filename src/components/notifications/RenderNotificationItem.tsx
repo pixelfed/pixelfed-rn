@@ -1,11 +1,11 @@
+import { Link } from 'expo-router'
 import React, { PureComponent } from 'react'
 import { Pressable } from 'react-native'
-import { Link } from 'expo-router'
-import { Text, View, YStack, XStack } from 'tamagui'
+import FastImage from 'react-native-fast-image'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { _timeAgo } from 'src/utils'
-import FastImage from 'react-native-fast-image'
 import { enforceLen } from 'src/utils'
+import { Text, View, XStack, YStack } from 'tamagui'
 
 interface RenderItemProps {
   item

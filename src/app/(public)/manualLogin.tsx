@@ -1,21 +1,29 @@
-import { Link, router, Stack, useNavigation, useRouter } from 'expo-router'
+import { useAuth } from '@state/AuthProvider'
 import {
+  Link,
+  Stack,
+  router,
+  useLocalSearchParams,
+  useNavigation,
+  useRouter,
+} from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
+import { useEffect, useState } from 'react'
+import { ActivityIndicator, SafeAreaView } from 'react-native'
+import {
+  Button,
+  Form,
+  Input,
+  Label,
+  Separator,
   Text,
   View,
-  Form,
-  Button,
-  YStack,
-  Label,
-  Input,
-  Separator,
   XStack,
+  YStack,
 } from 'tamagui'
-import { useAuth } from '@state/AuthProvider'
-import { ActivityIndicator, SafeAreaView } from 'react-native'
-import { useEffect, useState } from 'react'
-import { StatusBar } from 'expo-status-bar'
 
 export default function Login() {
+  const params = useLocalSearchParams()
   const [server, setServer] = useState('')
   const [loading, setLoading] = useState(true)
   const router = useRouter()
@@ -23,7 +31,7 @@ export default function Login() {
   const { login, isLoading } = useAuth()
 
   const handleLogin = () => {
-    login(server)
+    login(server, params.enabledScopes)
   }
 
   return (

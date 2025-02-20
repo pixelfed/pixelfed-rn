@@ -1,17 +1,17 @@
-import { FlatList, ActivityIndicator, Alert } from 'react-native'
-import { Text, View, YStack, XStack, Button } from 'tamagui'
-import { useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, Stack } from 'expo-router'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+import { ActivityIndicator, Alert, FlatList } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import UserAvatar from 'src/components/common/UserAvatar'
+import { Switch } from 'src/components/form/Switch'
 import {
-  getFollowRequests,
   accountFollowRequestAccept,
   accountFollowRequestReject,
+  getFollowRequests,
 } from 'src/lib/api'
-import UserAvatar from 'src/components/common/UserAvatar'
 import { enforceLen } from 'src/utils'
-import { Switch } from 'src/components/form/Switch'
+import { Button, Text, View, XStack, YStack } from 'tamagui'
 
 export default function FollowersScreen() {
   const queryClient = useQueryClient()

@@ -1,12 +1,13 @@
-import { ActivityIndicator } from 'react-native'
-import { ScrollView, Text, View, XStack, TextArea, Button } from 'tamagui'
-import React, { useEffect, useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { useQuery } from '@tanstack/react-query'
 import { Stack } from 'expo-router'
-import { useQuery, useMutation } from '@tanstack/react-query'
-import { getConfig, updateCredentials } from 'src/lib/api'
 import { router } from 'expo-router'
+import React, { useState } from 'react'
+import { ActivityIndicator } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { useProfileMutation } from 'src/hooks/mutations/useProfileMutation'
+import { getConfig } from 'src/lib/api'
 import { useQuerySelfProfile } from 'src/state/AuthProvider'
+import { Button, ScrollView, Text, TextArea, View, XStack } from 'tamagui'
 
 export default function Page() {
   const { data: config } = useQuery({
@@ -17,21 +18,14 @@ export default function Page() {
   const maxLen = config ? Math.floor(config?.account.max_bio_length) : 0
 
   const { user } = useQuerySelfProfile()
-  const [bio, setBio] = useState(user?.note_text)
-  const [isSubmitting, setSubmitting] = useState(false)
+  const [bio, setBio] = useState(user?.note_text || '')
 
-  const mutation = useMutation({
-    mutationFn: async (data) => {
-      setSubmitting(true)
-      return await updateCredentials(data)
-    },
-    onSuccess: () => {
-      router.back()
-    },
+  const { profileMutation, isSubmitting } = useProfileMutation({
+    onSuccess: () => router.replace('/profile'),
   })
 
   const onSubmit = () => {
-    mutation.mutate({ note: bio })
+    profileMutation.mutate({ note: bio })
   }
 
   return (
@@ -67,12 +61,12 @@ export default function Page() {
             </Text>
           </View>
         </XStack>
-        
+
         <TextArea
           value={bio}
           bg="white"
           placeholder="Add an optional bio"
-          p='0'
+          p="0"
           mx="$3"
           numberOfLines={8}
           maxLength={maxLen}

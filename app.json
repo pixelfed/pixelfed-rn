@@ -2,7 +2,7 @@
   "expo": {
     "name": "Pixelfed",
     "slug": "pixelfed",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "pixelfed",
@@ -55,8 +55,9 @@
             "NSExtensionActivationSupportsWebURLWithMaxCount": 0,
             "NSExtensionActivationSupportsWebPageWithMaxCount": 0,
             "NSExtensionActivationSupportsImageWithMaxCount": 1,
-            "NSExtensionActivationSupportsMovieWithMaxCount": 1
+            "NSExtensionActivationSupportsMovieWithMaxCount": 0
           },
+          "iosShareExtensionName": "Pixelfed Share",
           "androidIntentFilters": [
             "image/*"
           ]
@@ -82,6 +83,15 @@
           "mode": "production",
           "icon": "./assets/notification-icon.png",
           "color": "#ffffff" 
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
+          }
         }
       ]
     ],

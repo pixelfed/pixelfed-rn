@@ -1,8 +1,39 @@
-import { Alert, Share, Pressable, Platform, useWindowDimensions } from 'react-native'
-import { Button, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
-import { Feather } from '@expo/vector-icons'
-import FastImage from 'react-native-fast-image'
+import { Feather, Ionicons } from '@expo/vector-icons'
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+} from '@gorhom/bottom-sheet'
+import { Link, router } from 'expo-router'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
+import {
+  ActivityIndicator,
+  Alert,
+  Platform,
+  Pressable,
+  Share,
+  useWindowDimensions,
+} from 'react-native'
+import { Blurhash } from 'react-native-blurhash'
+import FastImage from 'react-native-fast-image'
+import {
+  Gesture,
+  GestureDetector,
+  PinchGestureHandler,
+  State,
+} from 'react-native-gesture-handler'
+import { PressableOpacity } from 'react-native-pressable-opacity'
+import Animated, {
+  runOnJS,
+  type SharedValue,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated'
+import Carousel, { Pagination } from 'react-native-reanimated-carousel'
+import AutolinkText from 'src/components/common/AutolinkText'
+import LikeButton from 'src/components/common/LikeButton'
+import { Storage } from 'src/state/cache'
 import {
   _timeAgo,
   enforceLen,
@@ -11,38 +42,27 @@ import {
   openBrowserAsync,
   prettyCount,
 } from 'src/utils'
-import { Link, router } from 'expo-router'
-import {
-  BottomSheetModal,
-  BottomSheetScrollView,
-  BottomSheetBackdrop,
-  BottomSheetBackdropProps,
-} from '@gorhom/bottom-sheet'
-import Carousel, { Pagination } from 'react-native-reanimated-carousel'
+import { Button, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
 import ReadMore from '../common/ReadMore'
-import LikeButton from 'src/components/common/LikeButton'
-import AutolinkText from 'src/components/common/AutolinkText'
-import { Blurhash } from 'react-native-blurhash'
-import { PressableOpacity } from 'react-native-pressable-opacity'
 import VideoPlayer from './VideoPlayer'
-import { Storage } from 'src/state/cache'
-import { State, PinchGestureHandler, GestureDetector, Gesture } from 'react-native-gesture-handler'
-import Animated, {
-  runOnJS,
-  type SharedValue,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated'
 
 import type {
   GestureEvent,
   HandlerStateChangeEvent,
   PinchGestureHandlerEventPayload,
 } from 'react-native-gesture-handler'
-import type { LoginUserResponse, MediaAttachment, Status, StatusLikedBy, Tag, Timestamp, Visibility } from 'src/lib/api-types'
+import { useBookmarkMutation } from 'src/hooks/mutations/useBookmarkMutation'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 import { PixelfedBottomSheetModal } from '../BottomSheets'
+import type {
+  LoginUserResponse,
+  MediaAttachment,
+  Status,
+  StatusLikedBy,
+  Tag,
+  Timestamp,
+  Visibility,
+} from 'src/lib/api-types'
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
 
@@ -124,65 +144,63 @@ const BorderlessSection = React.memo(({ children }: React.PropsWithChildren) => 
 ))
 
 interface PostHeaderProps {
-  avatar: string,
-  username: string,
-  displayName: string,
-  userId: string,
+  avatar: string
+  username: string
+  displayName: string
+  userId: string
   onOpenMenu: () => void
 }
 
-const PostHeader = React.memo(({
-  avatar,
-  username,
-  displayName,
-  userId,
-  onOpenMenu
-}: PostHeaderProps) => (
-  <Section>
-    <XStack
-      flexGrow={1}
-      justifyContent="space-between"
-      alignSelf="stretch"
-      alignItems="center"
-      py="$2"
-    >
-      <View flexGrow={1}>
-        <Link href={`/profile/${userId}`} asChild>
-          <Pressable>
-            <XStack gap="$3" alignItems="center" flexGrow={1}>
-              <FastImage
-                source={{ uri: avatar }}
-                style={{
-                  width: AVATAR_WIDTH,
-                  height: AVATAR_WIDTH,
-                  borderRadius: AVATAR_WIDTH,
-                  borderWidth: 1,
-                  borderColor: '#eee',
-                }}
-              />
-              <YStack gap={3}>
-                <Text fontWeight="bold" fontSize="$5">
-                  {enforceLen(username, 20, true)}
-                </Text>
-                <Text fontWeight="300" fontSize="$3" color="$gray9">
-                  {enforceLen(displayName, 25, true)}
-                </Text>
-              </YStack>
-            </XStack>
-          </Pressable>
-        </Link>
-      </View>
-      <Pressable onPress={() => onOpenMenu()}>
-        <View px="$3">
-          <Feather
-            name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
-            size={25}
-          />
+const PostHeader = React.memo(
+  ({ avatar, username, displayName, userId, onOpenMenu }: PostHeaderProps) => (
+    <Section>
+      <XStack
+        flexGrow={1}
+        justifyContent="space-between"
+        alignSelf="stretch"
+        alignItems="center"
+        py="$2"
+      >
+        <View flexGrow={1}>
+          <Link href={`/profile/${userId}`} asChild>
+            <Pressable>
+              <XStack gap="$3" alignItems="center" flexGrow={1}>
+                <FastImage
+                  source={{ uri: avatar }}
+                  style={{
+                    width: AVATAR_WIDTH,
+                    height: AVATAR_WIDTH,
+                    borderRadius: AVATAR_WIDTH,
+                    borderWidth: 1,
+                    borderColor: '#eee',
+                  }}
+                />
+                <YStack gap={3}>
+                  <XStack gap="$2" alignItems="center">
+                    <Text fontWeight="bold" fontSize="$5">
+                      {enforceLen(username, 20, true)}
+                    </Text>
+                  </XStack>
+                  <Text fontWeight="300" fontSize="$3" color="$gray9">
+                    {enforceLen(displayName, 25, true)}
+                  </Text>
+                </YStack>
+              </XStack>
+            </Pressable>
+          </Link>
         </View>
-      </Pressable>
-    </XStack>
-  </Section>
-))
+        <Pressable onPress={() => onOpenMenu()}>
+          <View px="$3">
+            <Feather
+              name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
+              size={25}
+            />
+          </View>
+        </Pressable>
+      </XStack>
+    </Section>
+  )
+)
 
 interface PostMediaProps {
   media: Array<MediaAttachment>
@@ -330,14 +348,13 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
         renderItem={({ index }) => {
           const media = mediaList[0]
           return (
-            <FastImage
+            <ZoomableImage
               style={{
                 width: width,
                 height: height,
                 backgroundColor: '#000',
               }}
               source={{ uri: mediaList[index].url }}
-              resizeMode={FastImage.resizeMode.contain}
             />
           )
         }}
@@ -364,6 +381,7 @@ interface PostActionsProps {
   hasLiked: boolean
   hasShared: boolean
   likesCount: number
+  isLikePending: boolean
   likedBy: StatusLikedBy | null
   sharesCount: number
   onOpenComments: () => void
@@ -372,8 +390,8 @@ interface PostActionsProps {
   handleLike: () => void
   showAltText: boolean
   commentsCount: number
-  onBookmark: () => void
   hasBookmarked: boolean
+  isLikeFeed: boolean
   onShare: () => void
 }
 
@@ -382,6 +400,7 @@ const PostActions = React.memo(
     post,
     hasLiked,
     likesCount,
+    isLikePending,
     likedBy,
     hasShared,
     sharesCount,
@@ -392,7 +411,7 @@ const PostActions = React.memo(
     handleLike,
     onShare,
     onOpenComments,
-    onBookmark,
+    isLikeFeed,
   }: PostActionsProps) => {
     const hasAltText =
       post?.media_attachments?.length > 0 &&
@@ -408,6 +427,11 @@ const PostActions = React.memo(
 
     const [shareCountCache, setShareCount] = useState(sharesCount)
     const [hasSharedCache, setShared] = useState(hasShared)
+
+    const { handleBookmark, isBookmarkPending } = useBookmarkMutation()
+    const handleBookmarkAction = useCallback(() => {
+      handleBookmark(post.id, !hasBookmarked)
+    }, [post.id, post.bookmarked, handleBookmark])
 
     const handleOnShare = () => {
       const labelText = hasSharedCache ? 'Unshare' : 'Share'
@@ -451,7 +475,8 @@ const PostActions = React.memo(
             <XStack gap="$5">
               <XStack justifyContent="center" alignItems="center" gap="$2">
                 <LikeButton hasLiked={hasLiked} handleLike={handleLike} />
-                {likesCount ? (
+                {isLikePending ? <ActivityIndicator color="#000" /> : null}
+                {!isLikePending && likesCount ? (
                   <Link href={`/post/likes/${post.id}`}>
                     <Text fontWeight={'bold'} allowFontScaling={false}>
                       {prettyCount(likesCount)}
@@ -492,14 +517,20 @@ const PostActions = React.memo(
                   ) : null}
                 </XStack>
               ) : null}
-              {/* <PressableOpacity onPress={() => onBookmark()}>
-                <XStack gap="$4">
-                  { hasBookmarked ?
-                    <Ionicons name="bookmark" size={30} /> :
-                    <Feather name="bookmark" size={30} />
-                  }
+              {!isLikeFeed && isBookmarkPending ? (
+                <ActivityIndicator color="#000" />
+              ) : null}
+              {!isBookmarkPending && !isLikeFeed ? (
+                <PressableOpacity onPress={() => handleBookmarkAction()}>
+                  <XStack gap="$4">
+                    {hasBookmarked ? (
+                      <Ionicons name="bookmark" size={30} />
+                    ) : (
+                      <Feather name="bookmark" size={30} />
+                    )}
                   </XStack>
-              </PressableOpacity> */}
+                </PressableOpacity>
+              ) : null}
               {showAltText && hasAltText ? (
                 <PressableOpacity onPress={() => onShowAlt()}>
                   <XStack bg="black" px="$3" py={4} borderRadius={5}>
@@ -551,7 +582,7 @@ const PostCaption = React.memo(
     disableReadMore,
     editedAt,
     isLikeFeed,
-    likedAt
+    likedAt,
   }: PostCaptionProps) => {
     const timeAgo = formatTimestamp(createdAt)
     const captionText = htmlToTextWithLineBreaks(caption)
@@ -649,254 +680,268 @@ interface FeedPostProps {
   user: LoginUserResponse
   onOpenComments: (id: string) => void
   onDeletePost: (id: string) => void
-  onBookmark: (id: string) => void
   disableReadMore?: boolean
   isPermalink?: boolean
   isLikeFeed?: boolean
   onShare: (id: string) => void
 }
 
-export default function FeedPost({
-  post,
-  user,
-  onOpenComments,
-  onDeletePost,
-  onBookmark,
-  disableReadMore = false,
-  isPermalink = false,
-  isLikeFeed = false,
-  onShare,
-}: FeedPostProps) {
-  const { handleLike } = useLikeMutation()
-  const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
-  const progress = useSharedValue(0)
-  const snapPoints = useMemo(() => ['45%', '65%'], [])
-  const { width } = useWindowDimensions()
-  const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
-  const showAltText = Storage.getBoolean('ui.showAltText') == true
+const FeedPost = React.memo(
+  function FeedPost({
+    post,
+    user,
+    onOpenComments,
+    onDeletePost,
+    disableReadMore = false,
+    isPermalink = false,
+    isLikeFeed = false,
+    onShare,
+  }: FeedPostProps) {
+    const { handleLike, isLikePending } = useLikeMutation()
+    const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
+    const progress = useSharedValue(0)
+    const snapPoints = useMemo(() => ['45%', '65%'], [])
+    const { width } = useWindowDimensions()
+    const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
+    const showAltText = Storage.getBoolean('ui.showAltText') == true
 
-  const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present()
-  }, [])
-  const handleSheetChanges = useCallback((index: number) => {}, [])
-  const renderBackdrop = useCallback(
-    (props: BottomSheetBackdropProps) => (
-      <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
-    ),
-    []
-  )
+    const handlePresentModalPress = useCallback(() => {
+      bottomSheetModalRef.current?.present()
+    }, [])
+    const handleSheetChanges = useCallback((_: number) => {}, [])
+    const renderBackdrop = useCallback(
+      (props: BottomSheetBackdropProps) => (
+        <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
+      ),
+      []
+    )
 
-  const [likeCount, setLikeCount] = useState(post?.favourites_count ?? 0);
-  const [hasLiked, setLiked] = useState(post.favourited ?? false);
+    const handleLikeAction = useCallback(() => {
+      const shouldLike = !post.favourited
+      handleLike(post.id, shouldLike)
+    }, [post.id, post.favourited, post.favourites_count, handleLike])
 
-  // toggles 'hasLiked' value, updates states and calls mutation
-  const handleLikeAction = () => {
-    let currentHasLiked = !hasLiked;
-
-    setLiked(currentHasLiked);
-    setLikeCount(currentHasLiked ? likeCount + 1 : likeCount - 1);
-
-    handleLike(post?.id, currentHasLiked);
-  }
-
-  const handleDoubleTap = () => {
-    // only allow liking with double tap, not unliking
-    if (!hasLiked) {
-      handleLikeAction();
+    const handleDoubleTap = () => {
+      // only allow liking with double tap, not unliking
+      if (!post.favourited) {
+        handleLikeAction()
+      }
     }
-  }
 
-  const doubleTap = Gesture.Tap()
-  .maxDuration(250)
-  .numberOfTaps(2)
-  .onStart(() => {
-    runOnJS(handleDoubleTap)();
-  });
-
-  const _onDeletePost = (id: string) => {
-    bottomSheetModalRef.current?.close()
-    Alert.alert('Delete Post', 'Are you sure you want to delete this post?', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () => onDeletePost(id),
-      },
-    ])
-  }
-
-  const goToPost = () => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/post/${post.id}`)
-  }
-
-  const goToProfile = () => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/profile/${post.account.id}`)
-  }
-
-  const goToReport = () => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/post/report/${post.id}`)
-  }
-
-  const openInBrowser = async () => {
-    bottomSheetModalRef.current?.close()
-    await openBrowserAsync(post.url || post.uri)
-  }
-
-  const onGotoHashtag = (tag: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/hashtag/${tag}`)
-  }
-
-  const onGotoMention = (tag: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/profile/0?byUsername=${tag}`)
-  }
-
-  const onGotoAbout = () => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/profile/about/${post.account.id}`)
-  }
-
-  const _onEditPost = (id: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/post/edit/${id}`)
-  }
-
-  const onGotoShare = async () => {
-    try {
-      await Share.share({
-        message: post.url || post.uri,
+    const doubleTap = Gesture.Tap()
+      .maxDuration(250)
+      .numberOfTaps(2)
+      .onStart(() => {
+        try {
+          runOnJS(handleDoubleTap)()
+        } catch (error) {
+          console.error('Double tap error:', error)
+        }
       })
-    } catch (error) {}
-  }
 
-  return (
-    <View flex={1} style={{ width }}>
-      <PostHeader
-        avatar={post.account?.avatar}
-        username={post.account?.acct}
-        displayName={post.account?.display_name}
-        userId={post.account?.id}
-        onOpenMenu={() => handlePresentModalPress()}
-      />
-      <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
-        {post.media_attachments?.length > 1 ? (
-          <PostAlbumMedia media={post.media_attachments} post={post} progress={progress} />
-        ) : post.media_attachments?.length === 1 ? (
-          <PostMedia media={post.media_attachments} post={post} />
+    const _onDeletePost = (id: string) => {
+      bottomSheetModalRef.current?.close()
+      Alert.alert('Delete Post', 'Are you sure you want to delete this post?', [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => onDeletePost(id),
+        },
+      ])
+    }
+
+    const goToPost = () => {
+      bottomSheetModalRef.current?.close()
+      router.push(`/post/${post.id}`)
+    }
+
+    const goToProfile = () => {
+      bottomSheetModalRef.current?.close()
+      router.push(`/profile/${post.account.id}`)
+    }
+
+    const goToReport = () => {
+      bottomSheetModalRef.current?.close()
+      router.push(`/post/report/${post.id}`)
+    }
+
+    const openInBrowser = async () => {
+      bottomSheetModalRef.current?.close()
+      await openBrowserAsync(post.url || post.uri)
+    }
+
+    const onGotoHashtag = (tag: string) => {
+      bottomSheetModalRef.current?.close()
+      router.push(`/hashtag/${tag}`)
+    }
+
+    const onGotoMention = (tag: string) => {
+      bottomSheetModalRef.current?.close()
+      router.push(`/profile/0?byUsername=${tag}`)
+    }
+
+    const onGotoAbout = () => {
+      bottomSheetModalRef.current?.close()
+      router.push(`/profile/about/${post.account.id}`)
+    }
+
+    const _onEditPost = (id: string) => {
+      bottomSheetModalRef.current?.close()
+      router.push(`/post/edit/${id}`)
+    }
+
+    const onGotoShare = async () => {
+      try {
+        await Share.share({
+          message: post.url || post.uri,
+        })
+      } catch (error) {}
+    }
+    return (
+      <View flex={1} style={{ width }}>
+        <PostHeader
+          avatar={post.account?.avatar}
+          username={post.account?.acct}
+          displayName={post.account?.display_name}
+          userId={post.account?.id}
+          onOpenMenu={() => handlePresentModalPress()}
+        />
+        {post.media_attachments?.length > 0 ? (
+          <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
+            {post.media_attachments.length > 1 ? (
+              <PostAlbumMedia
+                media={post.media_attachments}
+                post={post}
+                progress={progress}
+              />
+            ) : (
+              <PostMedia media={post.media_attachments} post={post} />
+            )}
+          </GestureDetector>
         ) : null}
-      </GestureDetector>
-      {!hideCaptions || isPermalink ? (
-        <>
-          <PostActions
-            hasLiked={hasLiked}
-            hasShared={post?.reblogged === true}
-            hasBookmarked={post?.bookmarked === true}
-            post={post}
-            progress={progress}
-            likesCount={post?.favourites_count}
-            likedBy={post?.liked_by}
-            sharesCount={post?.reblogs_count}
-            showAltText={showAltText}
-            commentsCount={post.replies_count}
-            handleLike={handleLikeAction}
-            onOpenComments={() => onOpenComments(post?.id)}
-            onBookmark={() => onBookmark(post?.id)}
-            onShare={() => onShare(post?.id)}
-          />
+        {!hideCaptions || isPermalink ? (
+          <>
+            <PostActions
+              hasLiked={post.favourited}
+              hasShared={post?.reblogged === true}
+              hasBookmarked={post?.bookmarked === true}
+              isLikeFeed={isLikeFeed}
+              post={post}
+              progress={progress}
+              isLikePending={isLikePending}
+              likesCount={post?.favourites_count}
+              likedBy={post?.liked_by}
+              sharesCount={post?.reblogs_count}
+              showAltText={showAltText}
+              commentsCount={post.replies_count}
+              handleLike={handleLikeAction}
+              onOpenComments={() => onOpenComments(post?.id)}
+              onShare={() => onShare(post?.id)}
+            />
 
-          <PostCaption
-            postId={post.id}
-            username={post.account?.username}
-            caption={post.content}
-            commentsCount={post.replies_count}
-            createdAt={post.created_at}
-            tags={post.tags}
-            visibility={post.visibility}
-            disableReadMore={disableReadMore}
-            onOpenComments={() => onOpenComments(post.id)}
-            onHashtagPress={(tag) => onGotoHashtag(tag)}
-            onMentionPress={(tag) => onGotoMention(tag)}
-            onUsernamePress={() => goToProfile()}
-            editedAt={post.edited_at}
-            isLikeFeed={isLikeFeed}
-            likedAt={post.liked_at}
-          />
-        </>
-      ) : null}
-      <PixelfedBottomSheetModal
-        ref={bottomSheetModalRef}
-        index={1}
-        snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-        backdropComponent={renderBackdrop}
-      >
-        <BottomSheetScrollView>
-          <Button size="$6" chromeless onPress={() => onGotoShare()}>
-            Share
-          </Button>
-          <Separator />
-          {!isPermalink ? (
-            <>
-              <Button size="$6" chromeless onPress={() => goToPost()}>
-                View Post
-              </Button>
-              <Separator />
-            </>
-          ) : null}
-          <Button size="$6" chromeless onPress={() => goToProfile()}>
-            View Profile
-          </Button>
-          <Separator />
-          <Button size="$6" chromeless onPress={() => onGotoAbout()}>
-            About this account
-          </Button>
-          <Separator />
-          <Button size="$6" chromeless onPress={() => openInBrowser()}>
-            Open in browser
-          </Button>
-          <Separator />
-          {user && user?.id != post?.account?.id ? (
-            <>
-              <Button size="$6" chromeless color="red" onPress={() => goToReport()}>
-                Report
-              </Button>
-              <Separator />
-            </>
-          ) : null}
-          {user && user?.id === post?.account?.id ? (
-            <>
-              <Button size="$6" chromeless onPress={() => _onEditPost(post.id)}>
-                Edit Post
-              </Button>
-              <Separator />
-              <Button
-                size="$6"
-                chromeless
-                color="red"
-                onPress={() => _onDeletePost(post.id)}
-              >
-                Delete Post
-              </Button>
-              <Separator />
-            </>
-          ) : null}
-          <Button
-            size="$6"
-            chromeless
-            color="$gray8"
-            onPress={() => bottomSheetModalRef.current?.close()}
-          >
-            Cancel
-          </Button>
-        </BottomSheetScrollView>
-      </PixelfedBottomSheetModal>
-    </View>
-  )
-}
+            <PostCaption
+              postId={post.id}
+              username={post.account?.username}
+              caption={post.content}
+              commentsCount={post.replies_count}
+              createdAt={post.created_at}
+              tags={post.tags}
+              visibility={post.visibility}
+              disableReadMore={disableReadMore}
+              onOpenComments={() => onOpenComments(post.id)}
+              onHashtagPress={(tag) => onGotoHashtag(tag)}
+              onMentionPress={(tag) => onGotoMention(tag)}
+              onUsernamePress={() => goToProfile()}
+              editedAt={post.edited_at}
+              isLikeFeed={isLikeFeed}
+              likedAt={post.liked_at}
+            />
+          </>
+        ) : null}
+        <PixelfedBottomSheetModal
+          ref={bottomSheetModalRef}
+          index={1}
+          snapPoints={snapPoints}
+          onChange={handleSheetChanges}
+          backdropComponent={renderBackdrop}
+        >
+          <BottomSheetScrollView>
+            <Button size="$6" chromeless onPress={() => onGotoShare()}>
+              Share
+            </Button>
+            <Separator />
+            {!isPermalink ? (
+              <>
+                <Button size="$6" chromeless onPress={() => goToPost()}>
+                  View Post
+                </Button>
+                <Separator />
+              </>
+            ) : null}
+            <Button size="$6" chromeless onPress={() => goToProfile()}>
+              View Profile
+            </Button>
+            <Separator />
+            <Button size="$6" chromeless onPress={() => onGotoAbout()}>
+              About this account
+            </Button>
+            <Separator />
+            <Button size="$6" chromeless onPress={() => openInBrowser()}>
+              Open in browser
+            </Button>
+            <Separator />
+            {user && user?.id != post?.account?.id ? (
+              <>
+                <Button size="$6" chromeless color="red" onPress={() => goToReport()}>
+                  Report
+                </Button>
+                <Separator />
+              </>
+            ) : null}
+            {user && user?.id === post?.account?.id ? (
+              <>
+                <Button size="$6" chromeless onPress={() => _onEditPost(post.id)}>
+                  Edit Post
+                </Button>
+                <Separator />
+                <Button
+                  size="$6"
+                  chromeless
+                  color="red"
+                  onPress={() => _onDeletePost(post.id)}
+                >
+                  Delete Post
+                </Button>
+                <Separator />
+              </>
+            ) : null}
+            <Button
+              size="$6"
+              chromeless
+              color="$gray8"
+              onPress={() => bottomSheetModalRef.current?.close()}
+            >
+              Cancel
+            </Button>
+          </BottomSheetScrollView>
+        </PixelfedBottomSheetModal>
+      </View>
+    )
+  },
+  (prevProps, nextProps) => {
+    // Custom comparison to prevent unnecessary re-renders
+    return (
+      prevProps.post.id === nextProps.post.id &&
+      prevProps.post.favourited === nextProps.post.favourited &&
+      prevProps.post.favourites_count === nextProps.post.favourites_count &&
+      prevProps.post.reblogged === nextProps.post.reblogged &&
+      prevProps.post.bookmarked === nextProps.post.bookmarked
+    )
+  }
+)
+
+export default FeedPost

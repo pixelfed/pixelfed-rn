@@ -1,4 +1,7 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons'
+import * as Haptics from 'expo-haptics'
 import React, { useEffect } from 'react'
+import { Pressable, StyleSheet } from 'react-native'
 import Animated, {
   useSharedValue,
   withSpring,
@@ -6,9 +9,6 @@ import Animated, {
   Extrapolate,
   interpolate,
 } from 'react-native-reanimated'
-import { Pressable, StyleSheet } from 'react-native'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
-import * as Haptics from 'expo-haptics'
 
 type LikeButtonProps = {
   hasLiked: boolean
@@ -16,10 +16,10 @@ type LikeButtonProps = {
 }
 
 export default function LikeButton(props: LikeButtonProps) {
-  const likeAnimation = useSharedValue(props.hasLiked ? 1 : 0);
+  const likeAnimation = useSharedValue(props.hasLiked ? 1 : 0)
 
   useEffect(() => {
-    likeAnimation.value = withSpring<number>(props.hasLiked ? 1 : 0);
+    likeAnimation.value = withSpring<number>(props.hasLiked ? 1 : 0)
   }, [props.hasLiked])
 
   const outlineStyle = useAnimatedStyle(() => {

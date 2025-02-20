@@ -1,5 +1,9 @@
+import { Feather } from '@expo/vector-icons'
+import { useAuth } from '@state/AuthProvider'
+import { useQuery } from '@tanstack/react-query'
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
 import React, { useState, useMemo } from 'react'
-import { Text, View, Button, YStack, Image, XStack } from 'tamagui'
 import {
   ActivityIndicator,
   Alert,
@@ -9,19 +13,16 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native'
-import { StatusBar } from 'expo-status-bar'
-import { useQuery } from '@tanstack/react-query'
-import { Stack, useRouter } from 'expo-router'
-import { useAuth } from '@state/AuthProvider'
-import { Feather } from '@expo/vector-icons'
-import { getOpenServers } from 'src/lib/api'
-import { enforceLen, prettyCount } from 'src/utils'
 import FastImage from 'react-native-fast-image'
 import { PressableOpacity } from 'react-native-pressable-opacity'
+import { getOpenServers } from 'src/lib/api'
+import { enforceLen, prettyCount } from 'src/utils'
+import { Button, Image, Text, View, XStack, YStack } from 'tamagui'
 
 export default function Register() {
+  const params = useLocalSearchParams()
   const { data } = useQuery({
-    queryKey: ['openServers'],
+    queryKey: ['openServersSelector'],
     queryFn: getOpenServers,
   })
 
@@ -32,11 +33,11 @@ export default function Register() {
   const [searchQuery, setSearchQuery] = useState('')
 
   const handleLogin = (server) => {
-    login(server)
+    login(server, params.enabledScopes)
   }
 
   const manualLogin = () => {
-    router.push('/manualLogin')
+    router.push(`/manualLogin?enabledScopes=${params.enabledScopes.split(' ').join('+')}`)
   }
 
   const filteredData = useMemo(() => {
@@ -63,7 +64,7 @@ export default function Register() {
         alignItems="center"
         overflow="hidden"
       >
-        {item.user_count > 1400 ? (
+        {item.user_count > 200 ? (
           <FastImage
             source={{ uri: item.header_thumbnail }}
             style={{ width: 100, height: 40, borderRadius: 20 }}
@@ -108,7 +109,34 @@ export default function Register() {
         <Text fontSize={30} mt="$6" letterSpacing={-1} color="white">
           Select your server
         </Text>
+
+        <Text fontSize={17} px="$5" pt="$3" letterSpacing={-0.1} color="$gray9">
+          Pixelfed servers are like neighborhoods in a global photo-sharing community.
+          Each server has its own community and style, but you can connect with people
+          from any server.
+        </Text>
       </View>
+
+      <View mx="$3" mb="$3">
+        <Button
+          size="$5"
+          themeInverse={true}
+          borderRadius={30}
+          onPress={() => manualLogin()}
+        >
+          <Text
+            textAlign="center"
+            color="$blue9"
+            allowFontScaling={false}
+            fontSize="$3"
+            fontWeight={300}
+            py="$2"
+          >
+            Tap here to login with a custom server
+          </Text>
+        </Button>
+      </View>
+
       <View style={styles.searchContainer}>
         <Feather name="search" size={20} color="#000" style={styles.searchIcon} />
         <TextInput
@@ -125,20 +153,6 @@ export default function Register() {
         ) : null}
       </View>
 
-      <View mx="$3" mb="$3">
-        <PressableOpacity onPress={() => manualLogin()}>
-          <Text
-            textAlign="center"
-            color="$gray9"
-            allowFontScaling={false}
-            fontSize="$3"
-            fontWeight="bold"
-            py="$2"
-          >
-            Tap here to login with a server domain
-          </Text>
-        </PressableOpacity>
-      </View>
       <FlatList
         data={filteredData}
         renderItem={RenderItem}

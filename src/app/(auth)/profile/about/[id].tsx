@@ -1,15 +1,15 @@
-import { ActivityIndicator } from 'react-native'
-import { Button, Text, View, XStack, YStack, ScrollView } from 'tamagui'
 import UserAvatar from '@components/common/UserAvatar'
 import { Feather } from '@expo/vector-icons'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
+import { ActivityIndicator } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { getAccountById, getAccountRelationship } from 'src/lib/api'
-import { formatTimestampMonthYear, formatTimestamp, getDomain } from 'src/utils'
+import { formatTimestamp, formatTimestampMonthYear, getDomain } from 'src/utils'
+import { Button, ScrollView, Text, View, XStack, YStack } from 'tamagui'
 
 export default function ProfileScreen() {
-  const { id } = useLocalSearchParams()
+  const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
 
   const {
@@ -18,7 +18,7 @@ export default function ProfileScreen() {
     isFetching: isFetchingUser,
   } = useQuery({
     queryKey: ['getAccountById', id],
-    queryFn: getAccountById,
+    queryFn: () => getAccountById(id),
   })
 
   if (userError) {

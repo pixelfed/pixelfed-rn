@@ -1,13 +1,13 @@
-import { FlatList, Dimensions, ActivityIndicator, Share, Alert } from 'react-native'
-import { Image, View } from 'tamagui'
 import ProfileHeader from '@components/profile/ProfileHeader'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link } from 'expo-router'
-import { useInfiniteQuery } from '@tanstack/react-query'
-import { getAccountStatusesById } from 'src/lib/api'
 import Feather from '@expo/vector-icons/Feather'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { Link } from 'expo-router'
+import { ActivityIndicator, Alert, Dimensions, FlatList, Share } from 'react-native'
 import { Blurhash } from 'react-native-blurhash'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { getAccountStatusesById } from 'src/lib/api'
 import { useQuerySelfProfile } from 'src/state/AuthProvider'
+import { Image, View } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
@@ -40,7 +40,10 @@ export default function ProfileScreen() {
   } = useInfiniteQuery({
     queryKey: ['statusesById', userId],
     queryFn: async ({ pageParam }) => {
-      const data = await getAccountStatusesById(userId, pageParam)
+      if (!userId) {
+        throw new Error('getAccountStatusesById: user id missing')
+      }
+      const data = await getAccountStatusesById(userId, { max_id: pageParam })
       return data.filter((p) => {
         return (
           ['photo', 'photo:album', 'video'].includes(p.pf_type) &&
@@ -96,9 +99,22 @@ export default function ProfileScreen() {
       </Link>
     ) : null
 
+  if (isFetching) {
+    return (
+      <View flexGrow={1} justifyContent="center" alignItems="center">
+        <ActivityIndicator color={'#000'} />
+      </View>
+    )
+  }
+
   return (
-    <SafeAreaView edges={['top']}>
-      {isFetching && <ActivityIndicator color={'#000'} />}
+    <SafeAreaView edges={['top']} flex={1}>
+      {isFetching && (
+        <View flexGrow={1}>
+          <ActivityIndicator color={'#000'} />
+        </View>
+      )}
+
       <FlatList
         data={feed?.pages.flat()}
         keyExtractor={(item, index) => item?.id.toString()}

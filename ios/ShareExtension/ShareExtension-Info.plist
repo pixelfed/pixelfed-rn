@@ -29,7 +29,7 @@
           <key>NSExtensionActivationSupportsImageWithMaxCount</key>
           <integer>1</integer>
           <key>NSExtensionActivationSupportsMovieWithMaxCount</key>
-          <integer>1</integer>
+          <integer>0</integer>
         </dict>
       </dict>
       <key>NSExtensionMainStoryboard</key>

@@ -1,7 +1,7 @@
-import { Platform, Pressable } from 'react-native'
-import { Text, XStack } from 'tamagui'
 import { Feather } from '@expo/vector-icons'
 import { Link } from 'expo-router'
+import { Platform, Pressable } from 'react-native'
+import { Text, XStack } from 'tamagui'
 
 export default function FeedHeader({ title = 'Home', user }) {
   return (
@@ -19,6 +19,7 @@ export default function FeedHeader({ title = 'Home', user }) {
       <XStack alignItems="center" gap="$1">
         <Text
           fontSize={title === 'Pixelfed' ? 25 : 19}
+          lineHeight={30}
           fontWeight="bold"
           letterSpacing={-0.5}
           allowFontScaling={false}

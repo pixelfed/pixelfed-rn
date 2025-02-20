@@ -1,7 +1,11 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.5.1/schema.json",
   "organizeImports": {
-    "enabled": false
+    "enabled": true
+  },
+  "files": {
+    "include": ["src/**/*"],
+    "maxSize": 2000000
   },
   "linter": {
     "enabled": true,
