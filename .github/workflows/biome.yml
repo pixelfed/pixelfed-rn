@@ -2,7 +2,9 @@ name: Biome Lint
 
 on:
   push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
   quality:
@@ -18,3 +20,4 @@ jobs:
 
       - name: Run Biome check
         run: biome check .
+
