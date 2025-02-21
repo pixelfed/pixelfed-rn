@@ -1,10 +1,15 @@
 # Pixelfed (React Native)
 
+The official Pixelfed mobile app source code.
+
+[![Android](https://github.com/pixelfed/pixelfed-rn/actions/workflows/android.yml/badge.svg)](https://github.com/pixelfed/pixelfed-rn/actions/workflows/android.yml)
+[![iOS](https://github.com/pixelfed/pixelfed-rn/actions/workflows/ios.yml/badge.svg)](https://github.com/pixelfed/pixelfed-rn/actions/workflows/ios.yml)
+[![expo](https://github.com/pixelfed/pixelfed-rn/actions/workflows/expo.yml/badge.svg)](https://github.com/pixelfed/pixelfed-rn/actions/workflows/expo.yml)
+[![biome-js](https://github.com/pixelfed/pixelfed-rn/actions/workflows/biome.yml/badge.svg)](https://github.com/pixelfed/pixelfed-rn/actions/workflows/biome.yml)
+
 <p align="center">
 <img src="https://pixelfed.nyc3.cdn.digitaloceanspaces.com/media/pixelfed-app-screenshot-3.jpg" width="400">
 </p>
-
-The official Pixelfed mobile app source code.
 
 ## Download the App
 
