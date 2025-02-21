@@ -1,4 +1,4 @@
-import { BottomSheetBackdrop, BottomSheetModal } from '@gorhom/bottom-sheet'
+import { BottomSheetBackdrop, type BottomSheetModal } from '@gorhom/bottom-sheet'
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query'
 import * as Haptics from 'expo-haptics'
 //@ts-check
@@ -6,6 +6,7 @@ import { Stack, useNavigation, useRouter } from 'expo-router'
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { ActivityIndicator, FlatList, Platform } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { PixelfedBottomSheetModal } from 'src/components/BottomSheets'
 import CommentFeed from 'src/components/post/CommentFeed'
 import FeedPost from 'src/components/post/FeedPost'
 import { getSelfBookmarks, reblogStatus, unreblogStatus } from 'src/lib/api'
@@ -164,7 +165,7 @@ export default function BookmarksScreen() {
         }
       />
 
-      <BottomSheetModal
+      <PixelfedBottomSheetModal
         ref={bottomSheetModalRef}
         index={Platform.OS === 'ios' ? 1 : 0}
         keyboardBehavior={Platform.OS === 'ios' ? 'extend' : 'interactive'}
@@ -182,7 +183,7 @@ export default function BookmarksScreen() {
           user={user}
           handleReport={handleCommentReport}
         />
-      </BottomSheetModal>
+      </PixelfedBottomSheetModal>
     </SafeAreaView>
   )
 }

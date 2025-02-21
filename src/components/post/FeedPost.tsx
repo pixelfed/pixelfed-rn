@@ -1,7 +1,7 @@
 import { Feather, Ionicons } from '@expo/vector-icons'
 import {
   BottomSheetBackdrop,
-  BottomSheetModal,
+  type BottomSheetModal,
   BottomSheetScrollView,
 } from '@gorhom/bottom-sheet'
 import { Link, router } from 'expo-router'
@@ -62,6 +62,8 @@ import type {
   Timestamp,
   Visibility,
 } from 'src/lib/api-types'
+import { PixelfedBottomSheetModal } from '../BottomSheets'
+
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
 
 const ZoomableImage = ({ source, style }) => {
@@ -860,7 +862,7 @@ const FeedPost = React.memo(
             />
           </>
         ) : null}
-        <BottomSheetModal
+        <PixelfedBottomSheetModal
           ref={bottomSheetModalRef}
           index={1}
           snapPoints={snapPoints}
@@ -926,7 +928,7 @@ const FeedPost = React.memo(
               Cancel
             </Button>
           </BottomSheetScrollView>
-        </BottomSheetModal>
+        </PixelfedBottomSheetModal>
       </View>
     )
   },

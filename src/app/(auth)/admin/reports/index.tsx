@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons'
 import {
   BottomSheetBackdrop,
-  BottomSheetModal,
+  type BottomSheetModal,
   BottomSheetView,
 } from '@gorhom/bottom-sheet'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -11,6 +11,7 @@ import { ActivityIndicator, Alert, FlatList, StyleSheet } from 'react-native'
 import FastImage from 'react-native-fast-image'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { PixelfedBottomSheetModal } from 'src/components/BottomSheets'
 import ReadMore from 'src/components/common/ReadMore'
 import { getModReports, postReportHandle, postUserHandle } from 'src/lib/api'
 import { _timeAgo, enforceLen, htmlToTextWithLineBreaks } from 'src/utils'
@@ -194,7 +195,7 @@ export default function Screen() {
         ListEmptyComponent={RenderEmpty}
       />
 
-      <BottomSheetModal
+      <PixelfedBottomSheetModal
         ref={bottomSheetModalRef}
         index={1}
         snapPoints={snapPoints}
@@ -314,7 +315,7 @@ export default function Screen() {
             ) : null}
           </Group>
         </BottomSheetView>
-      </BottomSheetModal>
+      </PixelfedBottomSheetModal>
     </SafeAreaView>
   )
 }
