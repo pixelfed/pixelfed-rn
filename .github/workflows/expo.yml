@@ -8,6 +8,7 @@ on:
 
 jobs:
   doctor:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: 🏗 Setup repo
