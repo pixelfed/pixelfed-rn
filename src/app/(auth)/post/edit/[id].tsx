@@ -131,9 +131,9 @@ export default function Page() {
     return await editPostMedia(media.id, media.description)
   }
 
-  const { isPending, isError, data, error } = useQuery({
+  const { isPending, isLoading, isError, data, error } = useQuery({
     queryKey: ['getStatusById', id],
-    queryFn: async (id) => {
+    queryFn: async () => {
       const res = await getStatusById(id)
       setCaption(res?.content_text)
       setSensitive(res?.sensitive)
@@ -159,7 +159,7 @@ export default function Page() {
     return <ActivityIndicator />
   }
 
-  if (isPending) {
+  if (isPending || isLoading) {
     return (
       <View flexGrow={1} mt="$5">
         <ActivityIndicator color={'#000'} />
