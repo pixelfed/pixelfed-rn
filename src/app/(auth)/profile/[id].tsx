@@ -543,33 +543,28 @@ export default function ProfileScreen() {
           p.media_attachments.length
         )
       })
-      return {
-        items: res,
-        nextCursor: pageParam,
-      }
+      return res
     },
     maxPages: 80,
     initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages) => {
-      if (!lastPage.items.length) {
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      if (lastPage.length === 0) {
         return undefined
       }
-
-      const lowestId = lastPage.items.reduce(
-        (min, obj) => Math.min(min, Number.parseInt(obj.id)),
-        Number.parseInt(lastPage.items[0].id)
-      )
-
-      return lowestId !== lastPage.nextCursor ? lowestId : undefined
+      let lowestId = lastPage.reduce((min, obj) => {
+        if (obj.id < min) {
+          return obj.id
+        }
+        return min
+      }, lastPage[0].id)
+      return lowestId
     },
     enabled: !!userId,
   })
 
   const flattenedData = useMemo(() => {
     if (!feed?.pages) return []
-    const allItems = feed.pages.flatMap((page) => page.items)
-    const uniqueItems = [...new Map(allItems.map((item) => [item.id, item])).values()]
-    return uniqueItems
+    return feed.pages.flat()
   }, [feed?.pages])
 
   if (userError) {
