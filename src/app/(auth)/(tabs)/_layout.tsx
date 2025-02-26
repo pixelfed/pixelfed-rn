@@ -20,7 +20,20 @@ export default function AppLayout() {
     return <Redirect href="/login" />
   }
   return (
-    <Tabs initialRouteName={TabName.Index} backBehavior="order">
+    <Tabs
+      initialRouteName={TabName.Index}
+      backBehavior="order"
+      screenOptions={{
+        tabBarStyle: {
+          height: 70,
+          paddingBottom: 8,
+          paddingTop: 8,
+        },
+        tabBarIconStyle: {
+          marginTop: 0,
+        },
+      }}
+    >
       <Tabs.Screen
         name={TabName.Index}
         options={{
