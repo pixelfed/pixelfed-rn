@@ -1,4 +1,6 @@
 name: 🐞 Bug report
+title: "[Bug]: "
+labels: ["bug", "triage"]
 description: Report an issue with the Pixelfed app here
 body:
   - type: markdown
