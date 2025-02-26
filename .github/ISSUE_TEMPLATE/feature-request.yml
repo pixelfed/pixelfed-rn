@@ -1,4 +1,6 @@
 name: 💡 Feature request
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
 description: Suggest a new feature for the Pixelfed app here
 body:
   - type: markdown
