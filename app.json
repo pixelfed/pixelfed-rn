@@ -81,7 +81,7 @@
         {
           "mode": "production",
           "icon": "./assets/notification-icon.png",
-          "color": "#ffffff" 
+          "color": "#ffffff"
         }
       ],
       [
@@ -92,7 +92,8 @@
             "enableShrinkResourcesInReleaseBuilds": true
           }
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true

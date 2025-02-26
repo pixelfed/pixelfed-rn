@@ -93,11 +93,11 @@ function RootLayoutNav() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthProvider>
         <QueryClientProvider client={queryClient}>
-          <BottomSheetModalProvider>
-            <TamaguiProvider config={config} defaultTheme={'light'}>
+          <TamaguiProvider config={config} defaultTheme={'light'}>
+            <ThemeProvider value={DefaultTheme}>
               <ToastProvider native={false}>
-                <ThemeProvider value={DefaultTheme}>
-                  <VideoProvider>
+                <VideoProvider>
+                  <BottomSheetModalProvider>
                     <ToastViewport padding="$6" bottom={0} left={0} right={0} />
                     <GlobalToast />
                     <Stack>
@@ -114,11 +114,11 @@ function RootLayoutNav() {
                         options={{ headerShown: false }}
                       />
                     </Stack>
-                  </VideoProvider>
-                </ThemeProvider>
+                  </BottomSheetModalProvider>
+                </VideoProvider>
               </ToastProvider>
-            </TamaguiProvider>
-          </BottomSheetModalProvider>
+            </ThemeProvider>
+          </TamaguiProvider>
         </QueryClientProvider>
       </AuthProvider>
     </GestureHandlerRootView>

@@ -1,4 +1,9 @@
-// Learn more https://docs.expo.io/guides/customizing-metro
+/**
+ * Metro configuration
+ * https://reactnative.dev/docs/metro
+ *
+ * @type {import('metro-config').MetroConfig}
+ */
 const { getDefaultConfig } = require('expo/metro-config')
 
 /** @type {import('expo/metro-config').MetroConfig} */
