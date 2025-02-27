@@ -62,7 +62,7 @@ import type {
   Timestamp,
   Visibility,
 } from 'src/lib/api-types'
-import { PixelfedBottomSheetModal } from '../BottomSheets'
+import { PixelfedBottomSheetModal } from '../common/BottomSheets'
 
 const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
 
