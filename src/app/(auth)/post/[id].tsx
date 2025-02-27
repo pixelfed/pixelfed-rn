@@ -5,7 +5,7 @@ import { useCallback, useLayoutEffect, useMemo, useRef } from 'react'
 //@ts-check
 import { ActivityIndicator, Platform } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { PixelfedBottomSheetModal } from 'src/components/BottomSheets'
+import { PixelfedBottomSheetModal } from 'src/components/common/BottomSheets'
 import CommentFeed from 'src/components/post/CommentFeed'
 import FeedPost from 'src/components/post/FeedPost'
 import { deleteStatusV1, getStatusById, reblogStatus, unreblogStatus } from 'src/lib/api'
