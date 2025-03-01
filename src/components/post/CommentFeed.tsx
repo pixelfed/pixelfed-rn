@@ -399,12 +399,43 @@ export default function CommentFeed({
   })
 
   const likeMutation = useMutation({
-    mutationFn: ({ id, type }) =>
-      type === 'like' ? likeStatus({ id }) : unlikeStatus({ id }),
-    onSuccess: () => {
-      setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: ['getStatusRepliesById'] })
-      }, 500)
+    mutationFn: async ({ id, type }) => {
+      const res = type === 'like' ? await likeStatus({ id }) : await unlikeStatus({ id });
+      return { res, id, type };
+    },
+    onSuccess: ({ res, id, type }) => {
+      let isIdChildren = true;
+      queryClient.setQueriesData({ queryKey: ['getStatusRepliesById'] }, (old) => {
+        if (!old?.pages) return old
+        const newPages = old.pages.map((page) => {
+          const newData = page.data.map((post: any) => {
+            if (post.id !== id) return post
+            isIdChildren = false;
+            post.favourited = res.favourited;
+            post.favourites_count = res.favourites_count;
+            post.liked_by = res.liked_by;
+            return post;
+          })
+          return { ...page, data: newData }
+        })
+        return { ...old, pages: newPages }
+      })
+
+      if (isIdChildren) {
+        let oldChildrenData = childComments;
+        for (const [key, value] of Object.entries(oldChildrenData)) {
+          const newValue = value.map(childValue => {
+            if (childValue.id === id) {
+              childValue.favourited = res.favourited;
+              childValue.favourites_count = res.favourites_count;
+              childValue.liked_by = res.liked_by;
+            }
+            return childValue;
+          })
+          oldChildrenData[key] = newValue;
+        }
+        setChildComments(oldChildrenData);
+      }
     },
   })
 
