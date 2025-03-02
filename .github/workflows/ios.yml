@@ -45,7 +45,7 @@ jobs:
       - name: 🔧 Install CocoaPods
         run: |
           cd ios
-          pod install --repo-update
+          NO_FLIPPER=1 pod install --repo-update
 
       - name: 🚀 Build app
         run: |
