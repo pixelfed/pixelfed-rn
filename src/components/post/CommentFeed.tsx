@@ -400,21 +400,21 @@ export default function CommentFeed({
 
   const likeMutation = useMutation({
     mutationFn: async ({ id, type }) => {
-      const res = type === 'like' ? await likeStatus({ id }) : await unlikeStatus({ id });
-      return { res, id, type };
+      const res = type === 'like' ? await likeStatus({ id }) : await unlikeStatus({ id })
+      return { res, id, type }
     },
     onSuccess: ({ res, id, type }) => {
-      let isIdChildren = true;
+      let isIdChildren = true
       queryClient.setQueriesData({ queryKey: ['getStatusRepliesById'] }, (old) => {
         if (!old?.pages) return old
         const newPages = old.pages.map((page) => {
           const newData = page.data.map((post: any) => {
             if (post.id !== id) return post
-            isIdChildren = false;
-            post.favourited = res.favourited;
-            post.favourites_count = res.favourites_count;
-            post.liked_by = res.liked_by;
-            return post;
+            isIdChildren = false
+            post.favourited = res.favourited
+            post.favourites_count = res.favourites_count
+            post.liked_by = res.liked_by
+            return post
           })
           return { ...page, data: newData }
         })
@@ -422,20 +422,23 @@ export default function CommentFeed({
       })
 
       if (isIdChildren) {
-        let oldChildrenData = childComments;
+        let oldChildrenData = childComments
         for (const [key, value] of Object.entries(oldChildrenData)) {
-          const newValue = value.map(childValue => {
+          const newValue = value.map((childValue) => {
             if (childValue.id === id) {
-              childValue.favourited = res.favourited;
-              childValue.favourites_count = res.favourites_count;
-              childValue.liked_by = res.liked_by;
+              childValue.favourited = res.favourited
+              childValue.favourites_count = res.favourites_count
+              childValue.liked_by = res.liked_by
             }
-            return childValue;
+            return childValue
           })
-          oldChildrenData[key] = newValue;
+          oldChildrenData[key] = newValue
         }
-        setChildComments(oldChildrenData);
+        setChildComments(oldChildrenData)
       }
+    },
+    onError: (err) => {
+      console.log('Error in like/unlike comment', err)
     },
   })
 
