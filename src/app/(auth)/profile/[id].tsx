@@ -266,6 +266,7 @@ export default function ProfileScreen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
+      queryClient.invalidateQueries({ queryKey: ['blockedAccounts'] })
     },
   })
 
@@ -275,6 +276,7 @@ export default function ProfileScreen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
+      queryClient.invalidateQueries({ queryKey: ['blockedAccounts'] })
     },
   })
 
@@ -284,6 +286,7 @@ export default function ProfileScreen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
+      queryClient.invalidateQueries({ queryKey: ['mutedAccounts'] })
     },
   })
 
@@ -293,6 +296,7 @@ export default function ProfileScreen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
+      queryClient.invalidateQueries({ queryKey: ['mutedAccounts'] })
     },
   })
 
