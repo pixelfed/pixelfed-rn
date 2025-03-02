@@ -64,8 +64,16 @@ export default function Page() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {relatedTags.map((tag) => (
               <Link key={tag.name} href={`/hashtag/${tag.name}`} asChild>
-                <View bg="$gray6" px="$3" py="$2" mr="$2" borderRadius={10}>
-                  <Text>{tag.name}</Text>
+                <View
+                  bg="transparent"
+                  px="$3"
+                  py="$1.5"
+                  mr="$2"
+                  borderRadius={10}
+                  borderWidth={1}
+                  borderColor="$gray8"
+                >
+                  <Text color="$gray11">#{tag.name}</Text>
                 </View>
               </Link>
             ))}
