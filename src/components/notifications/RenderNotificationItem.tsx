@@ -8,7 +8,7 @@ import { enforceLen } from 'src/utils'
 import { Text, View, XStack, YStack } from 'tamagui'
 
 interface RenderItemProps {
-  item
+  item: Object
 }
 
 class RenderItem extends PureComponent<RenderItemProps> {
@@ -37,16 +37,18 @@ class RenderItem extends PureComponent<RenderItemProps> {
       <View px="$4" py="$2" key={item.id}>
         <XStack justifyContent="space-between" alignItems="center">
           <XStack gap="$3" alignItems="center">
-            <Link href={`/profile/${item.account.id}`} asChild>
-              <Pressable>
-                <UserAvatar url={item.account.avatar} />
-              </Pressable>
-            </Link>
+            {item && item.account && item.account?.id && (
+              <Link href={`/profile/${item.account.id}`} asChild>
+                <Pressable>
+                  <UserAvatar url={item.account.avatar} />
+                </Pressable>
+              </Link>
+            )}
 
             <YStack gap={5}>
               <XStack gap="$1" alignItems="center">
                 <Text fontSize="$2" fontWeight={'bold'} allowFontScaling={false}>
-                  {enforceLen(item.account.acct, 25, true)}{' '}
+                  {enforceLen(item.account?.acct, 25, true)}{' '}
                 </Text>
               </XStack>
               <XStack gap="$1" alignItems="center">
