@@ -36,10 +36,20 @@ jobs:
       - name: 📦 Install dependencies
         run: npm install
 
+      - name: 🔄 Clear Derived Data
+        run: |
+          rm -rf ~/Library/Developer/Xcode/DerivedData
+          rm -rf ios/Pods
+          rm -rf ios/build
+
+      - name: 🔧 Install CocoaPods
+        run: |
+          cd ios
+          pod install --repo-update
+
       - name: 🚀 Build app
         run: |
           sudo xcode-select --switch /Applications/Xcode_16.1.app/Contents/Developer
           npx expo prebuild --platform ios
           cd ios
           set -o pipefail && xcodebuild -workspace pixelfed.xcworkspace -scheme Pixelfed -destination "platform=iOS Simulator,name=iPhone SE (3rd generation)" | xcbeautify --renderer github-actions
-
