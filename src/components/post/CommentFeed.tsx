@@ -437,9 +437,6 @@ export default function CommentFeed({
         setChildComments(oldChildrenData)
       }
     },
-    onError: (err) => {
-      console.log('Error in like/unlike comment', err)
-    },
   })
 
   const commentDeleteMutation = useMutation({
