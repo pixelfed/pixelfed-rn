@@ -470,13 +470,13 @@ export default function ProfileScreen() {
   const { data: user, error: userError } = useQuery(
     byUsername !== undefined && id === '0'
       ? {
-        queryKey: ['getAccountByUsername', byUsername],
-        queryFn: () => getAccountByUsername(byUsername),
-      }
+          queryKey: ['getAccountByUsername', byUsername],
+          queryFn: () => getAccountByUsername(byUsername),
+        }
       : {
-        queryKey: ['getAccountById', id],
-        queryFn: () => getAccountById(id),
-      }
+          queryKey: ['getAccountById', id],
+          queryFn: () => getAccountById(id),
+        }
   )
 
   const userId = user?.id
@@ -543,10 +543,10 @@ export default function ProfileScreen() {
           p.media_attachments.length
         )
       })
-      return res;
+      return res
     },
     initialPageParam: {
-      limit: 40
+      limit: 40,
     },
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
       if (lastPage.length < 40) {
@@ -560,7 +560,7 @@ export default function ProfileScreen() {
       }, lastPage[0].id)
       return {
         max_id: lowestId,
-        limit: 40
+        limit: 40,
       }
     },
     enabled: !!userId,
