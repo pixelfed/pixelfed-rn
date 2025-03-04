@@ -1,4 +1,5 @@
 import { Feather } from '@expo/vector-icons'
+import { FlashList } from '@shopify/flash-list'
 import {
   useInfiniteQuery,
   useMutation,
@@ -6,11 +7,10 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { Link, Stack, useLocalSearchParams } from 'expo-router'
-import { useCallback } from 'react'
+import { memo, useCallback, useMemo } from 'react'
 import { ActivityIndicator, Dimensions, FlatList } from 'react-native'
-import { Blurhash } from 'react-native-blurhash'
-import FastImage from 'react-native-fast-image'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import ImageComponent from 'src/components/ImageComponent'
 import {
   followHashtag,
   getHashtagByName,
@@ -23,35 +23,38 @@ import { prettyCount } from '../../../utils'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 const IMAGE_WIDTH = SCREEN_WIDTH / 3 - 2
+const IMAGE_HEIGHT = IMAGE_WIDTH
+const ITEM_HEIGHT = IMAGE_HEIGHT
 
-const RenderItem = ({ item }) =>
-  item && item.media_attachments && item.media_attachments[0].url ? (
+const RenderItem = memo(({ item }) => {
+  if (!item?.media_attachments?.[0]?.url) return null
+
+  return (
     <Link href={`/post/${item.id}`} asChild>
       <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
-        {item.media_attachments[0]?.blurhash ? (
-          <Blurhash
-            blurhash={item.media_attachments[0].blurhash}
-            style={{
-              flex: 1,
-              position: 'absolute',
-              width: IMAGE_WIDTH,
-              height: IMAGE_WIDTH,
-            }}
-          />
-        ) : null}
-        <FastImage
+        <ImageComponent
+          placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
           source={{
             uri: item.media_attachments[0].url,
           }}
           style={{
             width: IMAGE_WIDTH,
-            height: IMAGE_WIDTH,
+            height: IMAGE_HEIGHT,
           }}
-          resizeMode={FastImage.resizeMode.cover}
+          contentFit={'cover'}
         />
       </View>
     </Link>
+  )
+})
+
+const ListFooter = memo(({ loading }) =>
+  loading ? (
+    <View p="$5">
+      <ActivityIndicator />
+    </View>
   ) : null
+)
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -179,6 +182,27 @@ export default function Page() {
     enabled: !!feed && !!hashtag,
   })
 
+  const flattenedData = useMemo(() => {
+    return feed?.pages.flat() || []
+  }, [feed?.pages])
+
+  const keyExtractor = useCallback((item) => item?.id.toString(), [])
+
+  const getItemLayout = useCallback((data, index) => {
+    const row = Math.floor(index / 3)
+    return {
+      length: ITEM_HEIGHT,
+      offset: ITEM_HEIGHT * row,
+      index,
+    }
+  }, [])
+
+  const handleEndReached = useCallback(() => {
+    if (hasNextPage && !isFetching) {
+      fetchNextPage()
+    }
+  }, [hasNextPage, isFetching, fetchNextPage])
+
   const Header = useCallback(
     ({ hashtag, feed, onUnfollow, onFollow }) => {
       return (
@@ -187,7 +211,7 @@ export default function Page() {
             <XStack alignItems="center" gap="$4">
               <View w={100} h={100}>
                 {feed?.pages[0].length ? (
-                  <FastImage
+                  <ImageComponent
                     source={{ uri: feed.pages[0][0].media_attachments[0].url }}
                     style={{
                       width: 100,
@@ -196,7 +220,7 @@ export default function Page() {
                       borderWidth: 1,
                       borderColor: '#eee',
                     }}
-                    resizeMode={FastImage.resizeMode.cover}
+                    resizeMode={'cover'}
                   />
                 ) : (
                   <View w={100} h={100} borderRadius={100} bg="$gray6"></View>
@@ -293,7 +317,7 @@ export default function Page() {
   }
 
   return (
-    <SafeAreaView edges={['left']}>
+    <SafeAreaView style={{ flex: 1 }} edges={['left']}>
       <Stack.Screen
         options={{
           title: `#${id}`,
@@ -301,20 +325,17 @@ export default function Page() {
         }}
       />
       {/* <Header hashtag={hashtag} feed={feed} /> */}
-      <FlatList
-        data={feed?.pages.flat()}
+      <FlashList
+        data={flattenedData}
         extraData={hashtag}
-        keyExtractor={(item, index) => item?.id}
-        renderItem={RenderItem}
+        keyExtractor={keyExtractor}
+        renderItem={({ item }) => <RenderItem item={item} />}
+        horizontal={false}
+        estimatedItemSize={IMAGE_HEIGHT}
         numColumns={3}
         showsVerticalScrollIndicator={false}
-        onEndReached={() => {
-          if (hasNextPage) {
-            if (!isFetching) {
-              fetchNextPage()
-            }
-          }
-        }}
+        maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
+        onEndReached={handleEndReached}
         onEndReachedThreshold={0.4}
         ListEmptyComponent={RenderEmpty}
         ListHeaderComponent={
@@ -325,23 +346,8 @@ export default function Page() {
             onUnfollow={handleOnUnfollow}
           />
         }
-        ListFooterComponent={
-          isFetchingNextPage ? (
-            <View p="$5">
-              <ActivityIndicator />
-            </View>
-          ) : null
-        }
-        getItemLayout={(data, index) => {
-          const column = index % 3
-          const row = Math.floor(index / 3)
-
-          return {
-            length: IMAGE_WIDTH,
-            offset: (IMAGE_WIDTH + 2) * column,
-            index,
-          }
-        }}
+        ListFooterComponent={<ListFooter loading={isFetchingNextPage} />}
+        getItemLayout={getItemLayout}
       />
     </SafeAreaView>
   )
