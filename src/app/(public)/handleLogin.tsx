@@ -338,7 +338,7 @@ export default function LoginScreen() {
             </XStack>
 
             <View style={{ flex: 1 }} />
-            
+
             <YStack mt="$4" alignItems="center" gap="$3">
               <XStack gap="$2">
                 <Text fontSize="$6" color="$gray6">
