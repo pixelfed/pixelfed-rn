@@ -2,7 +2,7 @@
   "expo": {
     "name": "Pixelfed",
     "slug": "pixelfed",
-    "version": "1.0.2",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "pixelfed",
@@ -24,7 +24,8 @@
       "bundleIdentifier": "com.pixelfed",
       "infoPlist": {
         "NSCameraUsageDescription": "$(PRODUCT_NAME) needs access to your Camera.",
-        "NSMicrophoneUsageDescription": "$(PRODUCT_NAME) needs access to your Microphone."
+        "NSMicrophoneUsageDescription": "$(PRODUCT_NAME) needs access to your Microphone.",
+        "NSLocationWhenInUseUsageDescription": "Pixelfed may use your location to provide location-based features or improve user experience."
       }
     },
     "android": {
@@ -90,6 +91,9 @@
           "android": {
             "enableProguardInReleaseBuilds": true,
             "enableShrinkResourcesInReleaseBuilds": true
+          },
+          "ios": {
+            "useFrameworks": "static"
           }
         }
       ],
