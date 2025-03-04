@@ -339,7 +339,9 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
   return (
     <YStack zIndex={1}>
       <Carousel
-        onConfigurePanGesture={(gestureChain) => gestureChain.activeOffsetX([-10, 10])}
+        onConfigurePanGesture={(gestureChain) =>
+          gestureChain.activeOffsetX([-10, 10]).runOnJS(true)
+        }
         width={width}
         height={height}
         vertical={false}
@@ -732,11 +734,8 @@ const FeedPost = React.memo(
       .maxDuration(250)
       .numberOfTaps(2)
       .onStart(() => {
-        try {
-          runOnJS(handleDoubleTap)()
-        } catch (error) {
-          console.error('Double tap error:', error)
-        }
+        'worklet'
+        runOnJS(handleDoubleTap)()
       })
 
     const _onDeletePost = (id: string) => {
