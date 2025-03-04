@@ -140,7 +140,6 @@ export default function SignupScreen() {
 
         handleDeepLink(server, result.url)
       } else {
-        console.log('Sign up cancelled or failed', result)
       }
     } catch (error) {
       console.error('Error in signup process:', error)
@@ -180,7 +179,6 @@ export default function SignupScreen() {
         if (res.type === 'success') {
           Alert.alert('Success', 'Verification email has been resent')
         } else {
-          console.log('Resend verification cancelled or failed', res)
         }
       })
     } catch (error) {
