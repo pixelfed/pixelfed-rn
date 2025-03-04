@@ -68,7 +68,7 @@ export default function ProfileScreen() {
 
   const RenderItem = ({ item }) =>
     item && item.media_attachments[0].url ? (
-      <Link href={`/post/${item.id}`}>
+      <Link key={item?.id} href={`/post/${item.id}`}>
         <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
           <ImageComponent
             placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}

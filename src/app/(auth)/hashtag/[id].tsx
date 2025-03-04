@@ -158,13 +158,12 @@ export default function Page() {
       if (lastPage.length === 0) {
         return undefined
       }
-      let lowestId = lastPage.reduce((min, obj) => {
-        if (obj.id < min) {
-          return obj.id
-        }
-        return min
+
+      const lowestId = lastPage.reduce((min, post) => {
+        return BigInt(post.id) < BigInt(min) ? post.id : min
       }, lastPage[0].id)
-      return lowestId
+
+      return String(BigInt(lowestId) - 1n)
     },
   })
 
@@ -329,7 +328,7 @@ export default function Page() {
         data={flattenedData}
         extraData={hashtag}
         keyExtractor={keyExtractor}
-        renderItem={({ item }) => <RenderItem item={item} />}
+        renderItem={({ item }) => <RenderItem key={item?.id} item={item} />}
         horizontal={false}
         estimatedItemSize={IMAGE_HEIGHT}
         numColumns={3}
