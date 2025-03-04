@@ -27,6 +27,7 @@
     "@react-native-community/hooks": "^2.8.0",
     "@react-native-community/netinfo": "^11.3.3",
     "@react-native-picker/picker": "2.9.0",
+    "@react-navigation/material-top-tabs": "^7.1.1",
     "@react-navigation/native": "^7.0.14",
     "@shopify/flash-list": "1.7.3",
     "@tamagui/config": "^1.125.17",
@@ -42,6 +43,7 @@
     "expo-device": "~7.0.2",
     "expo-font": "~13.0.4",
     "expo-haptics": "~14.0.1",
+    "expo-image": "~2.0.6",
     "expo-image-picker": "~16.0.6",
     "expo-linking": "~7.0.5",
     "expo-notifications": "~0.29.13",
@@ -79,7 +81,7 @@
     "tamagui": "^1.125.17",
     "typescript": "~5.3.3",
     "util": "^0.12.5",
-    "expo-image": "~2.0.6"
+    "react-native-pager-view": "6.5.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
