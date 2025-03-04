@@ -211,7 +211,9 @@ export default function Page() {
               <View w={100} h={100}>
                 {feed?.pages[0].length ? (
                   <ImageComponent
-                    placeholder={{ blurhash: feed.pages[0][0]?.media_attachments[0]?.blurhash || '' }}
+                    placeholder={{
+                      blurhash: feed.pages[0][0]?.media_attachments[0]?.blurhash || '',
+                    }}
                     source={{ uri: feed.pages[0][0].media_attachments[0].url }}
                     style={{
                       width: 100,

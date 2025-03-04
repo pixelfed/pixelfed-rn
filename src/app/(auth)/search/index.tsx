@@ -18,7 +18,9 @@ const RenderEmptyResults = ({ message = 'No results found' }) => (
   <View flex={1} flexGrow={1} justifyContent="center" alignItems="center" py="$5">
     <YStack justifyContent="center" alignItems="center" gap="$5">
       <Feather name="alert-circle" size={50} />
-      <Text fontSize="$6" color="#444">{message}</Text>
+      <Text fontSize="$6" color="#444">
+        {message}
+      </Text>
     </YStack>
   </View>
 )
@@ -78,7 +80,13 @@ const AccountResultsTab = ({ accounts, isFetching, query }) => {
         onScrollBeginDrag={() => Keyboard.dismiss()}
         ListEmptyComponent={EmptyAccountsList}
         ListFooterComponent={() =>
-          isFetching ? <View mt="$3"><ActivityIndicator /></View> : <View h={200} />
+          isFetching ? (
+            <View mt="$3">
+              <ActivityIndicator />
+            </View>
+          ) : (
+            <View h={200} />
+          )
         }
       />
     </View>
@@ -138,14 +146,19 @@ const HashtagResultsTab = ({ hashtags, isFetching, query }) => {
         onScrollBeginDrag={() => Keyboard.dismiss()}
         ListEmptyComponent={EmptyHashtagsList}
         ListFooterComponent={() =>
-          isFetching ? <View mt="$3"><ActivityIndicator /></View> : <View h={200} />
+          isFetching ? (
+            <View mt="$3">
+              <ActivityIndicator />
+            </View>
+          ) : (
+            <View h={200} />
+          )
         }
       />
     </View>
   )
 }
 
-// Component for Post results
 const PostResultsTab = ({ posts, isFetching, query }) => {
   const RenderPostItem = useCallback(
     ({ item }) => (
@@ -213,7 +226,13 @@ const PostResultsTab = ({ posts, isFetching, query }) => {
         onScrollBeginDrag={() => Keyboard.dismiss()}
         ListEmptyComponent={EmptyPostsList}
         ListFooterComponent={() =>
-          isFetching ? <View mt="$3"><ActivityIndicator /></View> : <View h={200} />
+          isFetching ? (
+            <View mt="$3">
+              <ActivityIndicator />
+            </View>
+          ) : (
+            <View h={200} />
+          )
         }
       />
     </View>
@@ -227,7 +246,7 @@ export default function SearchScreen() {
 
   const { data, isLoading, isError, error, isFetching } = useQuery({
     queryKey: ['search', query],
-    queryFn: () => searchQuery(query),
+    queryFn: () => searchQuery(query.toLowerCase()),
     keepPreviousData: true,
   })
 
@@ -236,7 +255,11 @@ export default function SearchScreen() {
   const posts = data?.filter((item) => item._type === 'status') || []
 
   if (isLoading && !isFetching) {
-    return <View mt="$4"><ActivityIndicator /></View>
+    return (
+      <View mt="$4">
+        <ActivityIndicator />
+      </View>
+    )
   }
 
   if (isError) {
@@ -269,7 +292,12 @@ export default function SearchScreen() {
             screenOptions={{
               tabBarLabelStyle: { fontSize: 12, fontWeight: 'bold' },
               tabBarIndicatorStyle: { backgroundColor: 'black' },
-              tabBarStyle: { elevation: 0, shadowOpacity: 0, borderBottomColor: '#eee', borderBottomWidth: 1 },
+              tabBarStyle: {
+                elevation: 0,
+                shadowOpacity: 0,
+                borderBottomColor: '#eee',
+                borderBottomWidth: 1,
+              },
             }}
           >
             <Tab.Screen name="Accounts" options={{ tabBarLabel: 'Accounts' }}>
@@ -290,11 +318,11 @@ export default function SearchScreen() {
                 />
               )}
             </Tab.Screen>
-            <Tab.Screen name="Posts" options={{ tabBarLabel: 'Posts' }}>
+            {/* <Tab.Screen name="Posts" options={{ tabBarLabel: 'Posts' }}>
               {() => (
                 <PostResultsTab posts={posts} isFetching={isFetching} query={query} />
               )}
-            </Tab.Screen>
+            </Tab.Screen> */}
           </Tab.Navigator>
         </View>
       </View>
