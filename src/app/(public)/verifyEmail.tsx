@@ -19,7 +19,8 @@ import {
 } from 'react-native'
 import FastImage from 'react-native-fast-image'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { updateAvatar, updateCredentials } from 'src/lib/api'
+import { useProfileMutation } from 'src/hooks/mutations/useProfileMutation'
+import { updateAvatar } from 'src/lib/api'
 import { objectToForm } from 'src/requests'
 import { useAuth } from 'src/state/AuthProvider'
 import { Storage } from 'src/state/cache'
@@ -238,7 +239,7 @@ const WelcomeStep = ({ onSubmit, isLoading, domain }) => {
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [1, 1],
       exif: false,
@@ -262,17 +263,7 @@ const WelcomeStep = ({ onSubmit, isLoading, domain }) => {
   const handleSubmit = async () => {
     setError('')
     try {
-      if (avatar) {
-        await updateAvatar({
-          avatar: avatarPayload,
-        })
-      }
-
-      if (bio) {
-        await updateCredentials({ note: bio })
-      }
-
-      onSubmit(avatarPayload, bio)
+      onSubmit(avatarPayload, bio.length > 0 ? bio : false)
     } catch (error) {
       setError('Failed to update profile. Please try again.')
     }
@@ -345,6 +336,7 @@ const SignUp = ({ navigation }) => {
   const router = useRouter()
   const [authToken, setAuthToken] = useState(null)
   const [registeredDomain, setRegisteredDomain] = useState(null)
+  const { profileMutation } = useProfileMutation()
 
   const slideAnim = React.useRef(new Animated.Value(0)).current
 
@@ -375,7 +367,6 @@ const SignUp = ({ navigation }) => {
       setRegisteredDomain(details.domain)
       setCurrentStep(2)
       slideToNext()
-      // router.replace('/(auth)/(tabs)/')
     } catch (error) {
       console.error(error)
     } finally {
@@ -388,10 +379,10 @@ const SignUp = ({ navigation }) => {
     try {
       const updatePromises = []
       if (avatar) {
-        updatePromises.push(updateAvatar({ avatar }))
+        updatePromises.push(updateAvatar({ avatar: avatar }))
       }
       if (bio && bio.length) {
-        updatePromises.push(updateCredentials({ note: bio }))
+        updatePromises.push(profileMutation.mutate({ note: bio }))
       }
       if (updatePromises.length) {
         await Promise.all(updatePromises)
@@ -399,7 +390,7 @@ const SignUp = ({ navigation }) => {
 
       await handleRegistration(registeredDomain, authToken)
 
-      router.replace('/(app)/(tabs)/')
+      router.replace('/(auth)/(tabs)/')
     } catch (error) {
       console.error(error)
     } finally {
