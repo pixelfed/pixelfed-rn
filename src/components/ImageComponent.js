@@ -5,6 +5,7 @@ const ImageComponent = ({ source, style, resizeMode = false, ...props }) => {
     <Image
       source={source}
       style={style}
+      cachePolicy={'memory-disk'}
       contentFit={resizeMode ? mapResizeMode(resizeMode) : 'cover'}
       {...props}
     />
