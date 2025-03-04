@@ -408,6 +408,21 @@ export async function getOpenServers() {
   return (await response.json()) as OpenServersResponse
 }
 
+export async function getRegisterServers() {
+  const response = await fetch(
+    'https://pixelfed.org/api/v1/mobile-app/servers/register.json',
+    {
+      method: 'get',
+      headers: new Headers({
+        Accept: 'application/json',
+        'X-Pixelfed-App': '1',
+        'Content-Type': 'application/json',
+      }),
+    }
+  )
+  return (await response.json()) as OpenServersResponse
+}
+
 export async function getStatusLikes(id: string, cursor) {
   let url
   const instance = Storage.getString('app.instance')
