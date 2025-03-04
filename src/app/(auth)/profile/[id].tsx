@@ -528,7 +528,7 @@ export default function ProfileScreen() {
   } = useInfiniteQuery({
     queryKey: ['statusesById', user?.id],
     queryFn: async ({ pageParam }) => {
-      const data = await getAccountStatusesById(user?.id, pageParam)
+      const data = await getAccountStatusesById(user?.id, { max_id: pageParam })
       const res = data.filter((p) => {
         return (
           ['photo', 'photo:album', 'video'].includes(p.pf_type) &&
@@ -543,13 +543,12 @@ export default function ProfileScreen() {
       if (lastPage.length === 0) {
         return undefined
       }
-      let lowestId = lastPage.reduce((min, obj) => {
-        if (obj.id < min) {
-          return obj.id
-        }
-        return min
+
+      const lowestId = lastPage.reduce((min, post) => {
+        return BigInt(post.id) < BigInt(min) ? post.id : min
       }, lastPage[0].id)
-      return lowestId
+
+      return String(BigInt(lowestId) - 1n)
     },
     enabled: !!userId,
   })
