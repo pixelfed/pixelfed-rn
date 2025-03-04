@@ -87,7 +87,7 @@ export default function ProfilePage() {
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [1, 1],
       exif: false,
@@ -161,7 +161,7 @@ export default function ProfilePage() {
             <YStack>
               <Text style={styles.username}>@{user?.username}</Text>
               <Button
-                p="0"
+                p="$0"
                 chromeless
                 color="$blue9"
                 fontWeight="bold"
@@ -176,7 +176,7 @@ export default function ProfilePage() {
 
           <Separator />
 
-          <YStack gap="$0">
+          <YStack gap="$1">
             <LinkField
               label="Name"
               value={user?.display_name}

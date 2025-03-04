@@ -93,7 +93,7 @@ export default function ProfileHeader({
       )
     }
     if (relationship && !relationship.following) {
-      return <FollowProfile onPress={() => onFollow()} />
+      return <FollowProfile onPress={() => onFollow()} userId={profile?.id} />
     }
     return null
   }

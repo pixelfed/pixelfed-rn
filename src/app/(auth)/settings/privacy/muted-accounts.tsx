@@ -1,9 +1,9 @@
 import { Feather } from '@expo/vector-icons'
 import { useQuery } from '@tanstack/react-query'
 import { Link, Stack } from 'expo-router'
-import { FlatList } from 'react-native'
-import FastImage from 'react-native-fast-image'
+import { ActivityIndicator, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import ImageComponent from 'src/components/ImageComponent'
 import { getMutes } from 'src/lib/api'
 import { Separator, Text, View, XStack, YStack } from 'tamagui'
 
@@ -11,7 +11,7 @@ export default function Page() {
   const RenderItem = ({ item }) => (
     <Link href={`/profile/${item.id}`} asChild>
       <XStack px="$5" py="$3" bg="white" alignItems="center" gap="$3" flexWrap="wrap">
-        <FastImage
+        <ImageComponent
           source={{ uri: item?.avatar }}
           style={{
             width: 40,
@@ -41,6 +41,14 @@ export default function Page() {
     </View>
   )
 
+  const RenderLoading = () => (
+    <View flexGrow={1} justifyContent="center" alignItems="center" py="$5">
+      <YStack flexShrink={1} justifyContent="center" alignItems="center">
+        <ActivityIndicator size="large" />
+      </YStack>
+    </View>
+  )
+
   const { isPending, isError, data, error } = useQuery({
     queryKey: ['mutedAccounts'],
     queryFn: getMutes,
@@ -58,7 +66,7 @@ export default function Page() {
         data={data}
         renderItem={RenderItem}
         ItemSeparatorComponent={RenderSeparator}
-        ListEmptyComponent={RenderEmpty}
+        ListEmptyComponent={isPending ? RenderLoading : RenderEmpty}
         contentContainerStyle={{ flexGrow: 1 }}
       />
     </SafeAreaView>

@@ -3,11 +3,11 @@ import Feather from '@expo/vector-icons/Feather'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Link } from 'expo-router'
 import { ActivityIndicator, Alert, Dimensions, FlatList, Share } from 'react-native'
-import { Blurhash } from 'react-native-blurhash'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import ImageComponent from 'src/components/ImageComponent'
 import { getAccountStatusesById } from 'src/lib/api'
 import { useQuerySelfProfile } from 'src/state/AuthProvider'
-import { Image, View } from 'tamagui'
+import { View } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
@@ -56,39 +56,30 @@ export default function ProfileScreen() {
       if (lastPage.length === 0) {
         return undefined
       }
-      let lowestId = lastPage.reduce((min, obj) => {
-        if (obj.id < min) {
-          return obj.id
-        }
-        return min
+
+      const lowestId = lastPage.reduce((min, post) => {
+        return BigInt(post.id) < BigInt(min) ? post.id : min
       }, lastPage[0].id)
-      return lowestId
+
+      return String(BigInt(lowestId) - 1n)
     },
     enabled: !!userId,
   })
 
   const RenderItem = ({ item }) =>
     item && item.media_attachments[0].url ? (
-      <Link href={`/post/${item.id}`}>
+      <Link key={item?.id} href={`/post/${item.id}`}>
         <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
-          {item.media_attachments[0]?.blurhash ? (
-            <Blurhash
-              blurhash={item.media_attachments[0]?.blurhash}
-              style={{
-                flex: 1,
-                position: 'absolute',
-                width: SCREEN_WIDTH / 3 - 2,
-                height: SCREEN_WIDTH / 3 - 2,
-              }}
-            />
-          ) : null}
-          <Image
+          <ImageComponent
+            placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
             source={{
               uri: item.media_attachments[0].url,
+            }}
+            style={{
               width: SCREEN_WIDTH / 3 - 2,
               height: SCREEN_WIDTH / 3 - 2,
             }}
-            resizeMode="cover"
+            containFit="cover"
           />
           {item.pf_type === 'photo:album' ? (
             <View position="absolute" right={5} top={5}>

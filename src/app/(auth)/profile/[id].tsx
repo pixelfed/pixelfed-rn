@@ -24,8 +24,8 @@ import {
   Share,
 } from 'react-native'
 import { Blurhash } from 'react-native-blurhash'
-import FastImage from 'react-native-fast-image'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import ImageComponent from 'src/components/ImageComponent'
 import {
   blockProfileById,
   followAccountById,
@@ -65,7 +65,7 @@ export default function ProfileScreen() {
 
   const RenderItem = useCallback(({ item }) => {
     if (!item || !item.media_attachments) {
-      return <View bg="$gray4"></View>
+      return <View key={item?.id} bg="$gray4"></View>
     }
     const forceSensitive = Storage.getBoolean('ui.forceSensitive') === true
     const med = item.media_attachments[0]
@@ -79,7 +79,7 @@ export default function ProfileScreen() {
 
       if (!bh || bh === 'U4Rfzst8?bt7ogayj[j[~pfQ9Goe%Mj[WBay') {
         return (
-          <Link href={`/post/${item.id}`} asChild>
+          <Link key={item?.id} href={`/post/${item.id}`} asChild>
             <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
               <ZStack w={SCREEN_WIDTH / 3 - 2} h={SCREEN_WIDTH / 3 - 2}>
                 <View
@@ -99,7 +99,7 @@ export default function ProfileScreen() {
         )
       }
       return (
-        <Link href={`/post/${item.id}`} asChild>
+        <Link key={item?.id} href={`/post/${item.id}`} asChild>
           <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
             <ZStack w={SCREEN_WIDTH / 3 - 2} h={SCREEN_WIDTH / 3 - 2}>
               <Blurhash
@@ -121,11 +121,11 @@ export default function ProfileScreen() {
 
     if (med?.type === 'video') {
       return (
-        <Link href={`/post/${item.id}`} asChild>
+        <Link key={item?.id} href={`/post/${item.id}`} asChild>
           <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
             <ZStack w={SCREEN_WIDTH / 3 - 2} h={SCREEN_WIDTH / 3 - 2}>
               {hasPreview && med.preview_url ? (
-                <FastImage
+                <ImageComponent
                   style={{
                     width: SCREEN_WIDTH / 3 - 2,
                     height: SCREEN_WIDTH / 3 - 2,
@@ -133,9 +133,8 @@ export default function ProfileScreen() {
                   }}
                   source={{
                     uri: med.preview_url,
-                    priority: FastImage.priority.normal,
                   }}
-                  resizeMode={FastImage.resizeMode.cover}
+                  contentFit={'cover'}
                 />
               ) : (
                 <Blurhash
@@ -156,7 +155,7 @@ export default function ProfileScreen() {
       )
     }
     return item && item.media_attachments && item.media_attachments[0].url ? (
-      <Link href={`/post/${item.id}`} asChild>
+      <Link key={item?.id} href={`/post/${item.id}`} asChild>
         <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
           {item.sensitive && !forceSensitive ? (
             <ZStack w={SCREEN_WIDTH / 3 - 2} h={SCREEN_WIDTH / 3 - 2}>
@@ -173,28 +172,17 @@ export default function ProfileScreen() {
               </View>
             </ZStack>
           ) : (
-            <>
-              <Blurhash
-                blurhash={item.media_attachments[0]?.blurhash}
-                style={{
-                  flex: 1,
-                  position: 'absolute',
-                  width: SCREEN_WIDTH / 3 - 2,
-                  height: SCREEN_WIDTH / 3 - 2,
-                }}
-              />
-              <FastImage
-                style={{
-                  width: SCREEN_WIDTH / 3 - 2,
-                  height: SCREEN_WIDTH / 3 - 2,
-                }}
-                source={{
-                  uri: item.media_attachments[0].url,
-                  priority: FastImage.priority.normal,
-                }}
-                resizeMode={FastImage.resizeMode.cover}
-              />
-            </>
+            <ImageComponent
+              placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
+              style={{
+                width: SCREEN_WIDTH / 3 - 2,
+                height: SCREEN_WIDTH / 3 - 2,
+              }}
+              source={{
+                uri: item.media_attachments[0].url,
+              }}
+              contentFit={'cover'}
+            />
           )}
           {item.pf_type === 'photo:album' ? (
             <View position="absolute" right={5} top={5}>
@@ -266,6 +254,7 @@ export default function ProfileScreen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
+      queryClient.invalidateQueries({ queryKey: ['blockedAccounts'] })
     },
   })
 
@@ -275,6 +264,7 @@ export default function ProfileScreen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
+      queryClient.invalidateQueries({ queryKey: ['blockedAccounts'] })
     },
   })
 
@@ -284,6 +274,7 @@ export default function ProfileScreen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
+      queryClient.invalidateQueries({ queryKey: ['mutedAccounts'] })
     },
   })
 
@@ -293,6 +284,7 @@ export default function ProfileScreen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
+      queryClient.invalidateQueries({ queryKey: ['mutedAccounts'] })
     },
   })
 
@@ -444,7 +436,7 @@ export default function ProfileScreen() {
   }
 
   const handleFollow = () => {
-    followMutation.mutate()
+    //followMutation.mutate()
   }
 
   const handleUnfollow = () => {
@@ -536,7 +528,7 @@ export default function ProfileScreen() {
   } = useInfiniteQuery({
     queryKey: ['statusesById', user?.id],
     queryFn: async ({ pageParam }) => {
-      const data = await getAccountStatusesById(user?.id, pageParam)
+      const data = await getAccountStatusesById(user?.id, { max_id: pageParam })
       const res = data.filter((p) => {
         return (
           ['photo', 'photo:album', 'video'].includes(p.pf_type) &&
@@ -551,13 +543,12 @@ export default function ProfileScreen() {
       if (lastPage.length === 0) {
         return undefined
       }
-      let lowestId = lastPage.reduce((min, obj) => {
-        if (obj.id < min) {
-          return obj.id
-        }
-        return min
+
+      const lowestId = lastPage.reduce((min, post) => {
+        return BigInt(post.id) < BigInt(min) ? post.id : min
       }, lastPage[0].id)
-      return lowestId
+
+      return String(BigInt(lowestId) - 1n)
     },
     enabled: !!userId,
   })
@@ -621,7 +612,7 @@ export default function ProfileScreen() {
         numColumns={3}
         showsVerticalScrollIndicator={false}
         onEndReached={() => {
-          if (!userError && !isFetching && hasNextPage) {
+          if (!userError && !isFetching && !isFetchingNextPage && hasNextPage) {
             fetchNextPage()
           }
         }}

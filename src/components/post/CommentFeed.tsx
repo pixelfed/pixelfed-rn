@@ -12,7 +12,7 @@ import {
 import { Feather, Ionicons } from '@expo/vector-icons'
 import { BottomSheetFlatList, BottomSheetTextInput } from '@gorhom/bottom-sheet'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import FastImage from 'react-native-fast-image'
+import ImageComponent from 'src/components/ImageComponent'
 import {
   deleteStatus,
   getStatusRepliesById,
@@ -82,7 +82,7 @@ const CommentItem = ({
           <XStack flexShrink={1}>
             <XStack gap="$3" flexGrow={1}>
               <Pressable onPress={() => gotoProfile(item.account.id)}>
-                <FastImage
+                <ImageComponent
                   source={{
                     uri: item.account.avatar,
                     width: level ? 15 : 30,
@@ -93,7 +93,7 @@ const CommentItem = ({
                     height: level ? 35 : 50,
                     borderRadius: 40,
                   }}
-                  resizeMode={FastImage.resizeMode.cover}
+                  resizeMode={'cover'}
                 />
               </Pressable>
 
@@ -110,14 +110,14 @@ const CommentItem = ({
                 </XStack>
 
                 {postType === 'photo' && (
-                  <FastImage
+                  <ImageComponent
                     source={{
                       uri: item?.media_attachments[0].url,
                       width: 200,
                       height: 200,
                     }}
                     style={{ width: 200, height: 200, borderRadius: 10 }}
-                    resizeMode={FastImage.resizeMode.cover}
+                    resizeMode={'cover'}
                   />
                 )}
 
