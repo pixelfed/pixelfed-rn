@@ -103,6 +103,7 @@ export default function Page() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getHashtagByName'] })
+      queryClient.invalidateQueries({ queryKey: ['getFollowedTags'] })
     },
   })
 
@@ -117,7 +118,13 @@ export default function Page() {
   const RenderEmpty = () => (
     <View flex={1}>
       <Separator borderColor="#ccc" />
-      <YStack flexGrow={1} justifyContent="center" alignItems="center" gap="$3">
+      <YStack 
+        flex={1} 
+        justifyContent="center" 
+        alignItems="center" 
+        padding="$4"
+        gap="$3"
+      >
         <Feather name="alert-circle" size={40} color="#aaa" />
         <Text fontSize="$8">No posts with this tag.</Text>
       </YStack>
