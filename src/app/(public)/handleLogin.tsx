@@ -326,7 +326,7 @@ export default function LoginScreen() {
               </View>
             </YStack>
 
-            <XStack space="$2" mt="$4">
+            <XStack gap="$2">
               <Text fontSize="$6" color="$gray6">
                 Forgot your instance?
               </Text>
@@ -338,17 +338,22 @@ export default function LoginScreen() {
             </XStack>
 
             <View style={{ flex: 1 }} />
-
-            <XStack justifyContent="center" gap="$4" my="$2">
-              <Pressable onPress={navigateToSignup}>
-                <Text fontSize="$6" color="$blue9" fontWeight="bold">
-                  Sign Up
+            
+            <YStack mt="$4" alignItems="center" gap="$3">
+              <XStack gap="$2">
+                <Text fontSize="$6" color="$gray6">
+                  Don't have an account yet?
                 </Text>
-              </Pressable>
-            </XStack>
+                <Pressable onPress={navigateToSignup}>
+                  <Text fontSize="$6" color="$blue9" fontWeight="bold">
+                    Sign up
+                  </Text>
+                </Pressable>
+              </XStack>
+            </YStack>
 
             <Button
-              mt="$4"
+              my="$2"
               backgroundColor="$blue9"
               theme="blue"
               themeInverse={true}
