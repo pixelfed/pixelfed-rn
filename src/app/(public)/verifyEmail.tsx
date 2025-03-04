@@ -17,8 +17,8 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native'
-import FastImage from 'react-native-fast-image'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import ImageComponent from 'src/components/ImageComponent'
 import { useProfileMutation } from 'src/hooks/mutations/useProfileMutation'
 import { updateAvatar } from 'src/lib/api'
 import { objectToForm } from 'src/requests'
@@ -280,7 +280,7 @@ const WelcomeStep = ({ onSubmit, isLoading, domain }) => {
 
       <TouchableOpacity onPress={pickImage} style={styles.avatarContainer}>
         {avatar ? (
-          <FastImage source={{ uri: avatar }} style={styles.avatar} />
+          <ImageComponent source={{ uri: avatar }} style={styles.avatar} />
         ) : (
           <View style={styles.avatarPlaceholder}>
             <Text style={styles.avatarPlaceholderText}>Add Photo</Text>

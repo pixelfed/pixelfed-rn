@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link, Stack } from 'expo-router'
 import { ActivityIndicator } from 'react-native'
-import FastImage from 'react-native-fast-image'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import ImageComponent from 'src/components/ImageComponent'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { getInstanceV1 } from 'src/lib/api'
 import { Storage } from 'src/state/cache'
@@ -64,10 +64,10 @@ export default function Screen() {
 
       <ScrollView>
         <YStack gap="$3">
-          <FastImage
+          <ImageComponent
             source={{ uri: data.thumbnail, width: '100%', height: 300 }}
             style={{ width: '100%', height: 300 }}
-            resizeMode={FastImage.resizeMode.cover}
+            resizeMode={'cover'}
           />
 
           <View marginHorizontal="$3" p="$5" bg="white" borderRadius={20} marginTop={-50}>

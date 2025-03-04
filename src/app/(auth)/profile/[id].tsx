@@ -24,8 +24,8 @@ import {
   Share,
 } from 'react-native'
 import { Blurhash } from 'react-native-blurhash'
-import FastImage from 'react-native-fast-image'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import ImageComponent from 'src/components/ImageComponent'
 import {
   blockProfileById,
   followAccountById,
@@ -125,7 +125,7 @@ export default function ProfileScreen() {
           <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
             <ZStack w={SCREEN_WIDTH / 3 - 2} h={SCREEN_WIDTH / 3 - 2}>
               {hasPreview && med.preview_url ? (
-                <FastImage
+                <ImageComponent
                   style={{
                     width: SCREEN_WIDTH / 3 - 2,
                     height: SCREEN_WIDTH / 3 - 2,
@@ -133,9 +133,8 @@ export default function ProfileScreen() {
                   }}
                   source={{
                     uri: med.preview_url,
-                    priority: FastImage.priority.normal,
                   }}
-                  resizeMode={FastImage.resizeMode.cover}
+                  contentFit={'cover'}
                 />
               ) : (
                 <Blurhash
@@ -173,28 +172,17 @@ export default function ProfileScreen() {
               </View>
             </ZStack>
           ) : (
-            <>
-              <Blurhash
-                blurhash={item.media_attachments[0]?.blurhash}
-                style={{
-                  flex: 1,
-                  position: 'absolute',
-                  width: SCREEN_WIDTH / 3 - 2,
-                  height: SCREEN_WIDTH / 3 - 2,
-                }}
-              />
-              <FastImage
-                style={{
-                  width: SCREEN_WIDTH / 3 - 2,
-                  height: SCREEN_WIDTH / 3 - 2,
-                }}
-                source={{
-                  uri: item.media_attachments[0].url,
-                  priority: FastImage.priority.normal,
-                }}
-                resizeMode={FastImage.resizeMode.cover}
-              />
-            </>
+            <ImageComponent
+              placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
+              style={{
+                width: SCREEN_WIDTH / 3 - 2,
+                height: SCREEN_WIDTH / 3 - 2,
+              }}
+              source={{
+                uri: item.media_attachments[0].url,
+              }}
+              contentFit={'cover'}
+            />
           )}
           {item.pf_type === 'photo:album' ? (
             <View position="absolute" right={5} top={5}>

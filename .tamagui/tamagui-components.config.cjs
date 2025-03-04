@@ -4407,7 +4407,7 @@ var require_useMergeRef = __commonJS({
     var useRef_1 = require_useRef();
     var useIsomorphicLayoutEffect3 = typeof window !== "undefined" ? React83.useLayoutEffect : React83.useEffect;
     var currentValues = /* @__PURE__ */ new WeakMap();
-    function useMergeRefs2(refs, defaultValue2) {
+    function useMergeRefs(refs, defaultValue2) {
       var callbackRef = (0, useRef_1.useCallbackRef)(defaultValue2 || null, function(newValue) {
         return refs.forEach(function(ref) {
           return (0, assignRef_1.assignRef)(ref, newValue);
@@ -4434,8 +4434,8 @@ var require_useMergeRef = __commonJS({
       }, [refs]);
       return callbackRef;
     }
-    __name(useMergeRefs2, "useMergeRefs");
-    exports2.useMergeRefs = useMergeRefs2;
+    __name(useMergeRefs, "useMergeRefs");
+    exports2.useMergeRefs = useMergeRefs;
   }
 });
 
@@ -10770,10 +10770,10 @@ var require_useMergeRefs = __commonJS({
     var _interopRequireDefault = require_interopRequireDefault().default;
     var _interopRequireWildcard = require_interopRequireWildcard().default;
     exports2.__esModule = true;
-    exports2.default = useMergeRefs2;
+    exports2.default = useMergeRefs;
     var React83 = _interopRequireWildcard(require("react"));
     var _mergeRefs = _interopRequireDefault(require_mergeRefs());
-    function useMergeRefs2() {
+    function useMergeRefs() {
       for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
         args[_key] = arguments[_key];
       }
@@ -10783,7 +10783,7 @@ var require_useMergeRefs = __commonJS({
         [...args]
       );
     }
-    __name(useMergeRefs2, "useMergeRefs");
+    __name(useMergeRefs, "useMergeRefs");
     module2.exports = exports2.default;
   }
 });
@@ -17850,9 +17850,9 @@ var require_useMergeRefs2 = __commonJS({
   "node_modules/react-native-web/dist/cjs/vendor/react-native/Utilities/useMergeRefs.js"(exports2, module2) {
     "use strict";
     exports2.__esModule = true;
-    exports2.default = useMergeRefs2;
+    exports2.default = useMergeRefs;
     var _react = require("react");
-    function useMergeRefs2() {
+    function useMergeRefs() {
       for (var _len = arguments.length, refs = new Array(_len), _key = 0; _key < _len; _key++) {
         refs[_key] = arguments[_key];
       }
@@ -17873,7 +17873,7 @@ var require_useMergeRefs2 = __commonJS({
         // eslint-disable-line react-hooks/exhaustive-deps
       );
     }
-    __name(useMergeRefs2, "useMergeRefs");
+    __name(useMergeRefs, "useMergeRefs");
     module2.exports = exports2.default;
   }
 });
@@ -30164,22 +30164,26 @@ var DialogPortalItem = /* @__PURE__ */ __name((props) => {
     space,
     spaceDirection,
     separator
-  } = props, themeName = (0, import_core12.useThemeName)(), context2 = useDialogContext(PORTAL_NAME, props.__scopeDialog);
+  } = props, themeName = (0, import_core12.useThemeName)(), context2 = useDialogContext(PORTAL_NAME, props.__scopeDialog), isAdapted = useAdaptIsActive();
   let childrenSpaced = children;
-  return (space || separator) && (childrenSpaced = (0, import_core12.spacedChildren)({
+  (space || separator) && (childrenSpaced = (0, import_core12.spacedChildren)({
     children,
     separator,
     space,
     direction: spaceDirection
-  })), /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(AdaptPortalContents, {
-    children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(DialogProvider, {
-      scope: __scopeDialog,
-      ...context2,
-      children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(import_core12.Theme, {
-        name: themeName,
-        children: childrenSpaced
-      })
+  }));
+  const content = /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(DialogProvider, {
+    scope: __scopeDialog,
+    ...context2,
+    children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(import_core12.Theme, {
+      name: themeName,
+      children: childrenSpaced
     })
+  });
+  return isAdapted ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(AdaptPortalContents, {
+    children: content
+  }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(GorhomPortalItem, {
+    children: content
   });
 }, "DialogPortalItem");
 var DialogPortal = /* @__PURE__ */ __name((props) => {
@@ -30217,7 +30221,10 @@ var DialogPortal = /* @__PURE__ */ __name((props) => {
       children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(PassthroughTheme, {
         children: framedContents
       })
-    }) : framedContents;
+    }) : isAdapted ? framedContents : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(DialogPortalItem, {
+      __scopeDialog,
+      children: framedContents
+    });
   }
   return children;
 }, "DialogPortal");
@@ -31413,24 +31420,25 @@ function useFocusable({
     onChangeText,
     value,
     defaultValue: defaultValue2
-  } = props, inputValue = import_react29.default.useRef(value || defaultValue2 || ""), unregisterFocusable = import_react29.default.useRef(), inputRef = import_react29.default.useCallback((input) => {
-    id && input && (unregisterFocusable.current?.(), unregisterFocusable.current = registerFocusable(id, {
+  } = props, inputValue = import_react29.default.useRef(value || defaultValue2 || ""), unregisterFocusable = import_react29.default.useRef(), focusAndSelect = import_react29.default.useCallback((input) => {
+    input.focus(), input.setSelection && typeof inputValue.current == "string" && input.setSelection(0, inputValue.current.length);
+  }, []), registerFocusableHandler = import_react29.default.useCallback((input) => {
+    !id || !input || (unregisterFocusable.current?.(), unregisterFocusable.current = registerFocusable(id, {
       focus: input.focus,
       ...isInput && {
-        // react-native doesn't support programmatic .select()
-        focusAndSelect() {
-          input.focus(), input.setSelection && typeof inputValue.current == "string" && input.setSelection(0, inputValue.current.length);
-        }
+        focusAndSelect: /* @__PURE__ */ __name(() => focusAndSelect(input), "focusAndSelect")
       }
     }));
-  }, [isInput, id]), combinedRefs = composeRefs(ref, inputRef);
+  }, [id, isInput, focusAndSelect]), inputRef = import_react29.default.useCallback((input) => {
+    input && registerFocusableHandler(input);
+  }, [registerFocusableHandler]), handleChangeText = (0, import_web12.useEvent)((value2) => {
+    inputValue.current = value2, onChangeText?.(value2);
+  });
   return import_react29.default.useEffect(() => () => {
     unregisterFocusable.current?.();
   }, []), {
-    ref: combinedRefs,
-    onChangeText: (0, import_web12.useEvent)((value2) => {
-      inputValue.current = value2, onChangeText?.(value2);
-    })
+    ref: import_react29.default.useMemo(() => composeRefs(ref, inputRef), [ref, inputRef]),
+    onChangeText: handleChangeText
   };
 }
 __name(useFocusable, "useFocusable");
@@ -33750,11 +33758,11 @@ function rectsAreEqual(a, b) {
 __name(rectsAreEqual, "rectsAreEqual");
 function observeMove(element, onMove) {
   let io = null;
-  let timeoutId2;
+  let timeoutId;
   const root = getDocumentElement(element);
   function cleanup2() {
     var _io;
-    clearTimeout(timeoutId2);
+    clearTimeout(timeoutId);
     (_io = io) == null || _io.disconnect();
     io = null;
   }
@@ -33797,7 +33805,7 @@ function observeMove(element, onMove) {
           return refresh();
         }
         if (!ratio) {
-          timeoutId2 = setTimeout(() => {
+          timeoutId = setTimeout(() => {
             refresh(false, 1e-7);
           }, 1e3);
         } else {
@@ -34935,6 +34943,13 @@ function createAttribute(name) {
   return "data-floating-ui-" + name;
 }
 __name(createAttribute, "createAttribute");
+function clearTimeoutIfSet(timeoutRef) {
+  if (timeoutRef.current !== -1) {
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = -1;
+  }
+}
+__name(clearTimeoutIfSet, "clearTimeoutIfSet");
 function useLatestRef3(value) {
   const ref = (0, import_react36.useRef)(value);
   index3(() => {
@@ -34999,8 +35014,8 @@ function useHover(context2, props) {
         open: open2
       } = _ref;
       if (!open2) {
-        clearTimeout(timeoutRef.current);
-        clearTimeout(restTimeoutRef.current);
+        clearTimeoutIfSet(timeoutRef);
+        clearTimeoutIfSet(restTimeoutRef);
         blockMouseMoveRef.current = true;
         restTimeoutPendingRef.current = false;
       }
@@ -35036,10 +35051,10 @@ function useHover(context2, props) {
     }
     const closeDelay = getDelay(delayRef.current, "close", pointerTypeRef.current);
     if (closeDelay && !handlerRef.current) {
-      clearTimeout(timeoutRef.current);
+      clearTimeoutIfSet(timeoutRef);
       timeoutRef.current = window.setTimeout(() => onOpenChange(false, event, reason), closeDelay);
     } else if (runElseBranch) {
-      clearTimeout(timeoutRef.current);
+      clearTimeoutIfSet(timeoutRef);
       onOpenChange(false, event, reason);
     }
   }, [delayRef, onOpenChange]);
@@ -35061,7 +35076,7 @@ function useHover(context2, props) {
   React47.useEffect(() => {
     if (!enabled) return;
     function onMouseEnter(event) {
-      clearTimeout(timeoutRef.current);
+      clearTimeoutIfSet(timeoutRef);
       blockMouseMoveRef.current = false;
       if (mouseOnly && !isMouseLikePointerType(pointerTypeRef.current) || restMs > 0 && !getDelay(delayRef.current, "open")) {
         return;
@@ -35082,11 +35097,11 @@ function useHover(context2, props) {
       if (isClickLikeOpenEvent()) return;
       unbindMouseMoveRef.current();
       const doc = getDocument(elements.floating);
-      clearTimeout(restTimeoutRef.current);
+      clearTimeoutIfSet(restTimeoutRef);
       restTimeoutPendingRef.current = false;
       if (handleCloseRef.current && dataRef.current.floatingContext) {
         if (!open) {
-          clearTimeout(timeoutRef.current);
+          clearTimeoutIfSet(timeoutRef);
         }
         handlerRef.current = handleCloseRef.current({
           ...dataRef.current.floatingContext,
@@ -35189,8 +35204,8 @@ function useHover(context2, props) {
   React47.useEffect(() => {
     return () => {
       cleanupMouseMoveHandler();
-      clearTimeout(timeoutRef.current);
-      clearTimeout(restTimeoutRef.current);
+      clearTimeoutIfSet(timeoutRef);
+      clearTimeoutIfSet(restTimeoutRef);
       clearPointerEvents();
     };
   }, [enabled, elements.domReference, cleanupMouseMoveHandler, clearPointerEvents]);
@@ -35221,7 +35236,7 @@ function useHover(context2, props) {
         if (restTimeoutPendingRef.current && event.movementX ** 2 + event.movementY ** 2 < 2) {
           return;
         }
-        clearTimeout(restTimeoutRef.current);
+        clearTimeoutIfSet(restTimeoutRef);
         if (pointerTypeRef.current === "touch") {
           handleMouseMove();
         } else {
@@ -35233,7 +35248,7 @@ function useHover(context2, props) {
   }, [mouseOnly, onOpenChange, open, openRef, restMs]);
   const floating = React47.useMemo(() => ({
     onMouseEnter() {
-      clearTimeout(timeoutRef.current);
+      clearTimeoutIfSet(timeoutRef);
     },
     onMouseLeave(event) {
       if (!isClickLikeOpenEvent()) {
@@ -35689,7 +35704,7 @@ function useFocus(context2, props) {
     visibleOnly = true
   } = props;
   const blockFocusRef = React47.useRef(false);
-  const timeoutRef = React47.useRef();
+  const timeoutRef = React47.useRef(-1);
   const keyboardModalityRef = React47.useRef(true);
   React47.useEffect(() => {
     if (!enabled) return;
@@ -35729,7 +35744,7 @@ function useFocus(context2, props) {
   }, [events, enabled]);
   React47.useEffect(() => {
     return () => {
-      clearTimeout(timeoutRef.current);
+      clearTimeoutIfSet(timeoutRef);
     };
   }, []);
   const reference = React47.useMemo(() => ({
@@ -35747,7 +35762,7 @@ function useFocus(context2, props) {
         try {
           if (isSafari() && isMac()) throw Error();
           if (!target.matches(":focus-visible")) return;
-        } catch (e) {
+        } catch (_e) {
           if (!keyboardModalityRef.current && !isTypeableElement(target)) {
             return;
           }
@@ -35989,7 +36004,7 @@ function safePolygon(options) {
     blockPointerEvents = false,
     requireIntent = true
   } = options;
-  let timeoutId2;
+  let timeoutId;
   let hasLanded = false;
   let lastX = null;
   let lastY = null;
@@ -36025,11 +36040,11 @@ function safePolygon(options) {
     } = _ref;
     return /* @__PURE__ */ __name(function onMouseMove(event) {
       function close() {
-        clearTimeout(timeoutId2);
+        clearTimeout(timeoutId);
         onClose();
       }
       __name(close, "close");
-      clearTimeout(timeoutId2);
+      clearTimeout(timeoutId);
       if (!elements.domReference || !elements.floating || placement == null || x == null || y == null) {
         return;
       }
@@ -36142,7 +36157,7 @@ function safePolygon(options) {
       if (!isPointInPolygon([clientX, clientY], getPolygon([x, y]))) {
         close();
       } else if (!hasLanded && requireIntent) {
-        timeoutId2 = window.setTimeout(close, 40);
+        timeoutId = window.setTimeout(close, 40);
       }
     }, "onMouseMove");
   }, "fn");
@@ -36228,26 +36243,21 @@ var PopoverTrigger = React49.forwardRef(function(props, forwardedRef) {
     ...rest,
     ref: composedTriggerRef,
     onPress: composeEventHandlers(props.onPress, context2.onOpenToggle)
-  });
-  if (anchorTo) {
-    const virtualRef = {
-      current: {
-        getBoundingClientRect: /* @__PURE__ */ __name(() => isWeb ? DOMRect.fromRect(anchorTo) : anchorTo, "getBoundingClientRect"),
-        ...!isWeb && {
-          measure: /* @__PURE__ */ __name((c) => c(anchorTo?.x, anchorTo?.y, anchorTo?.width, anchorTo?.height), "measure"),
-          measureInWindow: /* @__PURE__ */ __name((c) => c(anchorTo?.x, anchorTo?.y, anchorTo?.width, anchorTo?.height), "measureInWindow")
-        }
+  }), virtualRef = React49.useMemo(() => anchorTo ? {
+    current: {
+      getBoundingClientRect: /* @__PURE__ */ __name(() => isWeb ? DOMRect.fromRect(anchorTo) : anchorTo, "getBoundingClientRect"),
+      ...!isWeb && {
+        measure: /* @__PURE__ */ __name((c) => c(anchorTo?.x, anchorTo?.y, anchorTo?.width, anchorTo?.height), "measure"),
+        measureInWindow: /* @__PURE__ */ __name((c) => c(anchorTo?.x, anchorTo?.y, anchorTo?.width, anchorTo?.height), "measureInWindow")
       }
-    };
-    return /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(PopperAnchor, {
-      virtualRef,
-      __scopePopper: __scopePopover || POPOVER_SCOPE,
-      children: trigger
-    });
-  }
+    }
+  } : null, [context2.anchorTo, anchorTo?.x, anchorTo?.y, anchorTo?.x, anchorTo?.height, anchorTo?.width]);
   return context2.hasCustomAnchor ? trigger : /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(PopperAnchor, {
+    ...virtualRef && {
+      virtualRef
+    },
     __scopePopper: __scopePopover || POPOVER_SCOPE,
-    asChild: true,
+    asChild: rest.asChild,
     children: trigger
   });
 });
@@ -37947,23 +37957,6 @@ var size4 = /* @__PURE__ */ __name((options, deps) => ({
 }), "size");
 
 // node_modules/@tamagui/select/node_modules/@floating-ui/react/dist/floating-ui.react.mjs
-function useMergeRefs(refs) {
-  return React59.useMemo(() => {
-    if (refs.every((ref) => ref == null)) {
-      return null;
-    }
-    return (value) => {
-      refs.forEach((ref) => {
-        if (typeof ref === "function") {
-          ref(value);
-        } else if (ref != null) {
-          ref.current = value;
-        }
-      });
-    };
-  }, refs);
-}
-__name(useMergeRefs, "useMergeRefs");
 var SafeReact2 = {
   ...React59
 };
@@ -38310,6 +38303,13 @@ function createAttribute2(name) {
   return "data-floating-ui-" + name;
 }
 __name(createAttribute2, "createAttribute");
+function clearTimeoutIfSet2(timeoutRef) {
+  if (timeoutRef.current !== -1) {
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = -1;
+  }
+}
+__name(clearTimeoutIfSet2, "clearTimeoutIfSet");
 function useLatestRef5(value) {
   const ref = (0, import_react44.useRef)(value);
   index5(() => {
@@ -38564,24 +38564,12 @@ var HIDDEN_STYLES = {
   top: 0,
   left: 0
 };
-var timeoutId;
-function setActiveElementOnTab(event) {
-  if (event.key === "Tab") {
-    event.target;
-    clearTimeout(timeoutId);
-  }
-}
-__name(setActiveElementOnTab, "setActiveElementOnTab");
 var FocusGuard = /* @__PURE__ */ React59.forwardRef(/* @__PURE__ */ __name(function FocusGuard2(props, ref) {
   const [role, setRole] = React59.useState();
   index5(() => {
     if (isSafari2()) {
       setRole("button");
     }
-    document.addEventListener("keydown", setActiveElementOnTab);
-    return () => {
-      document.removeEventListener("keydown", setActiveElementOnTab);
-    };
   }, []);
   const restProps = {
     ref,
@@ -38755,6 +38743,18 @@ function getFloatingFocusElement(floatingElement) {
   return floatingElement.hasAttribute(FOCUSABLE_ATTRIBUTE2) ? floatingElement : floatingElement.querySelector("[" + FOCUSABLE_ATTRIBUTE2 + "]") || floatingElement;
 }
 __name(getFloatingFocusElement, "getFloatingFocusElement");
+function useLiteMergeRefs(refs) {
+  return React59.useMemo(() => {
+    return (value) => {
+      refs.forEach((ref) => {
+        if (ref) {
+          ref.current = value;
+        }
+      });
+    };
+  }, refs);
+}
+__name(useLiteMergeRefs, "useLiteMergeRefs");
 var LIST_LIMIT = 20;
 var previouslyFocusedElements = [];
 function addPreviouslyFocusedElement(element) {
@@ -38953,8 +38953,8 @@ function FloatingFocusManager(props) {
   }, [disabled, domReference, floating, floatingFocusElement, modal, tree, portalContext, onOpenChange, closeOnFocusOut, restoreFocus, getTabbableContent, isUntrappedTypeableCombobox, getNodeId]);
   const beforeGuardRef = React59.useRef(null);
   const afterGuardRef = React59.useRef(null);
-  const mergedBeforeGuardRef = useMergeRefs([beforeGuardRef, portalContext == null ? void 0 : portalContext.beforeInsideRef]);
-  const mergedAfterGuardRef = useMergeRefs([afterGuardRef, portalContext == null ? void 0 : portalContext.afterInsideRef]);
+  const mergedBeforeGuardRef = useLiteMergeRefs([beforeGuardRef, portalContext == null ? void 0 : portalContext.beforeInsideRef]);
+  const mergedAfterGuardRef = useLiteMergeRefs([afterGuardRef, portalContext == null ? void 0 : portalContext.afterInsideRef]);
   React59.useEffect(() => {
     var _portalContext$portal;
     if (disabled) return;
@@ -38989,6 +38989,7 @@ function FloatingFocusManager(props) {
   index5(() => {
     if (disabled || !floatingFocusElement) return;
     let preventReturnFocusScroll = false;
+    let focusReference = false;
     const doc = getDocument2(floatingFocusElement);
     const previouslyFocusedElement = activeElement2(doc);
     const contextData = dataRef.current;
@@ -39004,8 +39005,8 @@ function FloatingFocusManager(props) {
       if (open2) {
         openEvent = event;
       }
-      if (reason === "escape-key" && domReference) {
-        addPreviouslyFocusedElement(domReference);
+      if (reason === "escape-key") {
+        focusReference = true;
       }
       if (["hover", "safe-polygon"].includes(reason) && event.type === "mouseleave") {
         preventReturnFocusRef.current = true;
@@ -39014,8 +39015,22 @@ function FloatingFocusManager(props) {
       if (nested) {
         preventReturnFocusRef.current = false;
         preventReturnFocusScroll = true;
+      } else if (isVirtualClick2(event) || isVirtualPointerEvent2(event)) {
+        preventReturnFocusRef.current = false;
       } else {
-        preventReturnFocusRef.current = !(isVirtualClick2(event) || isVirtualPointerEvent2(event));
+        let isPreventScrollSupported = false;
+        document.createElement("div").focus({
+          get preventScroll() {
+            isPreventScrollSupported = true;
+            return false;
+          }
+        });
+        if (isPreventScrollSupported) {
+          preventReturnFocusRef.current = false;
+          preventReturnFocusScroll = true;
+        } else {
+          preventReturnFocusRef.current = true;
+        }
       }
     }
     __name(onOpenChange2, "onOpenChange");
@@ -39029,7 +39044,7 @@ function FloatingFocusManager(props) {
     }
     function getReturnElement() {
       if (typeof returnFocusRef.current === "boolean") {
-        return getPreviouslyFocusedElement() || fallbackEl;
+        return focusReference && domReference ? domReference : getPreviouslyFocusedElement() || fallbackEl;
       }
       return returnFocusRef.current.current || fallbackEl;
     }
@@ -39041,9 +39056,8 @@ function FloatingFocusManager(props) {
         var _node$context7;
         return contains2((_node$context7 = node.context) == null ? void 0 : _node$context7.elements.floating, activeEl);
       });
-      const shouldFocusReference = isFocusInsideFloatingTree || openEvent && ["click", "mousedown"].includes(openEvent.type);
-      if (shouldFocusReference && domReference) {
-        addPreviouslyFocusedElement(domReference);
+      if (isFocusInsideFloatingTree || !!openEvent && ["click", "mousedown"].includes(openEvent.type)) {
+        focusReference = true;
       }
       const returnElement = getReturnElement();
       queueMicrotask(() => {
@@ -40483,7 +40497,7 @@ function useTypeahead(context2, props) {
     ignoreKeys = [],
     selectedIndex = null
   } = props;
-  const timeoutIdRef = React59.useRef();
+  const timeoutIdRef = React59.useRef(-1);
   const stringRef = React59.useRef("");
   const prevIndexRef = React59.useRef((_ref = selectedIndex != null ? selectedIndex : activeIndex) != null ? _ref : -1);
   const matchIndexRef = React59.useRef(null);
@@ -40493,7 +40507,7 @@ function useTypeahead(context2, props) {
   const ignoreKeysRef = useLatestRef5(ignoreKeys);
   index5(() => {
     if (open) {
-      clearTimeout(timeoutIdRef.current);
+      clearTimeoutIfSet2(timeoutIdRef);
       matchIndexRef.current = null;
       stringRef.current = "";
     }
@@ -40549,8 +40563,8 @@ function useTypeahead(context2, props) {
       prevIndexRef.current = matchIndexRef.current;
     }
     stringRef.current += event.key;
-    clearTimeout(timeoutIdRef.current);
-    timeoutIdRef.current = setTimeout(() => {
+    clearTimeoutIfSet2(timeoutIdRef);
+    timeoutIdRef.current = window.setTimeout(() => {
       stringRef.current = "";
       prevIndexRef.current = matchIndexRef.current;
       setTypingChange(false);
@@ -42056,7 +42070,8 @@ var RANGE_NAME = "SliderTrackActive";
 var SliderTrackActiveFrame = (0, import_core40.styled)(SliderFrame, {
   name: "SliderTrackActive",
   backgroundColor: "$background",
-  position: "absolute"
+  position: "absolute",
+  pointerEvents: "box-none"
 });
 var SliderTrackActive = React68.forwardRef((props, forwardedRef) => {
   const {
@@ -43020,7 +43035,7 @@ function insertThemeCSS(themes, batch = false) {
     cssRules = [...cssRules, ...rules], batch || updateStyle(`t_theme_style_${themeName}`, rules);
   }
   if (batch) {
-    const id = (0, import_web20.simpleHash)(typeof batch == "string" ? batch : Object.keys(themes).join(""));
+    const id = typeof batch == "string" ? batch : (0, import_web20.simpleHash)(Object.keys(themes).join(""));
     updateStyle(`t_theme_style_${id}`, cssRules);
   }
   return cssRules;
@@ -43849,6 +43864,13 @@ function createAttribute3(name) {
   return "data-floating-ui-" + name;
 }
 __name(createAttribute3, "createAttribute");
+function clearTimeoutIfSet3(timeoutRef) {
+  if (timeoutRef.current !== -1) {
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = -1;
+  }
+}
+__name(clearTimeoutIfSet3, "clearTimeoutIfSet");
 function useLatestRef7(value) {
   const ref = (0, import_react52.useRef)(value);
   index7(() => {
@@ -43913,8 +43935,8 @@ function useHover2(context2, props) {
         open: open2
       } = _ref;
       if (!open2) {
-        clearTimeout(timeoutRef.current);
-        clearTimeout(restTimeoutRef.current);
+        clearTimeoutIfSet3(timeoutRef);
+        clearTimeoutIfSet3(restTimeoutRef);
         blockMouseMoveRef.current = true;
         restTimeoutPendingRef.current = false;
       }
@@ -43950,10 +43972,10 @@ function useHover2(context2, props) {
     }
     const closeDelay = getDelay2(delayRef.current, "close", pointerTypeRef.current);
     if (closeDelay && !handlerRef.current) {
-      clearTimeout(timeoutRef.current);
+      clearTimeoutIfSet3(timeoutRef);
       timeoutRef.current = window.setTimeout(() => onOpenChange(false, event, reason), closeDelay);
     } else if (runElseBranch) {
-      clearTimeout(timeoutRef.current);
+      clearTimeoutIfSet3(timeoutRef);
       onOpenChange(false, event, reason);
     }
   }, [delayRef, onOpenChange]);
@@ -43975,7 +43997,7 @@ function useHover2(context2, props) {
   React76.useEffect(() => {
     if (!enabled) return;
     function onMouseEnter(event) {
-      clearTimeout(timeoutRef.current);
+      clearTimeoutIfSet3(timeoutRef);
       blockMouseMoveRef.current = false;
       if (mouseOnly && !isMouseLikePointerType3(pointerTypeRef.current) || restMs > 0 && !getDelay2(delayRef.current, "open")) {
         return;
@@ -43996,11 +44018,11 @@ function useHover2(context2, props) {
       if (isClickLikeOpenEvent()) return;
       unbindMouseMoveRef.current();
       const doc = getDocument3(elements.floating);
-      clearTimeout(restTimeoutRef.current);
+      clearTimeoutIfSet3(restTimeoutRef);
       restTimeoutPendingRef.current = false;
       if (handleCloseRef.current && dataRef.current.floatingContext) {
         if (!open) {
-          clearTimeout(timeoutRef.current);
+          clearTimeoutIfSet3(timeoutRef);
         }
         handlerRef.current = handleCloseRef.current({
           ...dataRef.current.floatingContext,
@@ -44103,8 +44125,8 @@ function useHover2(context2, props) {
   React76.useEffect(() => {
     return () => {
       cleanupMouseMoveHandler();
-      clearTimeout(timeoutRef.current);
-      clearTimeout(restTimeoutRef.current);
+      clearTimeoutIfSet3(timeoutRef);
+      clearTimeoutIfSet3(restTimeoutRef);
       clearPointerEvents();
     };
   }, [enabled, elements.domReference, cleanupMouseMoveHandler, clearPointerEvents]);
@@ -44135,7 +44157,7 @@ function useHover2(context2, props) {
         if (restTimeoutPendingRef.current && event.movementX ** 2 + event.movementY ** 2 < 2) {
           return;
         }
-        clearTimeout(restTimeoutRef.current);
+        clearTimeoutIfSet3(restTimeoutRef);
         if (pointerTypeRef.current === "touch") {
           handleMouseMove();
         } else {
@@ -44147,7 +44169,7 @@ function useHover2(context2, props) {
   }, [mouseOnly, onOpenChange, open, openRef, restMs]);
   const floating = React76.useMemo(() => ({
     onMouseEnter() {
-      clearTimeout(timeoutRef.current);
+      clearTimeoutIfSet3(timeoutRef);
     },
     onMouseLeave(event) {
       if (!isClickLikeOpenEvent()) {
@@ -44729,7 +44751,7 @@ function useFocus2(context2, props) {
     visibleOnly = true
   } = props;
   const blockFocusRef = React76.useRef(false);
-  const timeoutRef = React76.useRef();
+  const timeoutRef = React76.useRef(-1);
   const keyboardModalityRef = React76.useRef(true);
   React76.useEffect(() => {
     if (!enabled) return;
@@ -44769,7 +44791,7 @@ function useFocus2(context2, props) {
   }, [events, enabled]);
   React76.useEffect(() => {
     return () => {
-      clearTimeout(timeoutRef.current);
+      clearTimeoutIfSet3(timeoutRef);
     };
   }, []);
   const reference = React76.useMemo(() => ({
@@ -44787,7 +44809,7 @@ function useFocus2(context2, props) {
         try {
           if (isSafari3() && isMac3()) throw Error();
           if (!target.matches(":focus-visible")) return;
-        } catch (e) {
+        } catch (_e) {
           if (!keyboardModalityRef.current && !isTypeableElement3(target)) {
             return;
           }
@@ -45513,22 +45535,21 @@ var Input = InputFrame.styleable((propsIn, forwardedRef) => {
   });
 });
 function useInputProps(props, ref) {
-  const theme = (0, import_core51.useTheme)(), {
-    onChangeText,
-    ref: combinedRef
-  } = useFocusable({
-    // @ts-ignore
+  const theme = (0, import_core51.useTheme)(), focusableProps = useFocusable({
     props,
     ref,
     isInput: true
-  }), placeholderColorProp = props.placeholderTextColor, placeholderTextColor = theme[placeholderColorProp]?.get() ?? placeholderColorProp ?? theme.placeholderColor?.get();
-  return {
-    ref: combinedRef,
+  }), placeholderTextColor = import_react55.default.useMemo(() => {
+    const placeholderColorProp = props.placeholderTextColor;
+    return theme[placeholderColorProp]?.get() ?? placeholderColorProp ?? theme.placeholderColor?.get();
+  }, [props.placeholderTextColor, theme]);
+  return import_react55.default.useMemo(() => ({
+    ref: focusableProps.ref,
     readOnly: props.disabled,
     ...props,
     placeholderTextColor,
-    onChangeText
-  };
+    onChangeText: focusableProps.onChangeText
+  }), [focusableProps.ref, focusableProps.onChangeText, props.disabled, props, placeholderTextColor]);
 }
 __name(useInputProps, "useInputProps");
 

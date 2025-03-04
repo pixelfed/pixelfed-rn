@@ -2,8 +2,8 @@ import { Feather } from '@expo/vector-icons'
 import { useQuery } from '@tanstack/react-query'
 import { Link, Stack } from 'expo-router'
 import { ActivityIndicator, FlatList } from 'react-native'
-import FastImage from 'react-native-fast-image'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import ImageComponent from 'src/components/ImageComponent'
 import { getMutes } from 'src/lib/api'
 import { Separator, Text, View, XStack, YStack } from 'tamagui'
 
@@ -11,7 +11,7 @@ export default function Page() {
   const RenderItem = ({ item }) => (
     <Link href={`/profile/${item.id}`} asChild>
       <XStack px="$5" py="$3" bg="white" alignItems="center" gap="$3" flexWrap="wrap">
-        <FastImage
+        <ImageComponent
           source={{ uri: item?.avatar }}
           style={{
             width: 40,

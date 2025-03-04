@@ -8,9 +8,9 @@ import {
   Platform,
   StyleSheet,
 } from 'react-native'
-import FastImage from 'react-native-fast-image'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import ImageComponent from 'src/components/ImageComponent'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { Switch } from 'src/components/form/Switch'
 import { editPostMedia, getInstanceV1, getStatusById, putEditPost } from 'src/lib/api'
@@ -23,10 +23,11 @@ const SCREEN_HEIGHT = Dimensions.get('screen').height
 const RenderItem = React.memo(({ item, onUpdateMediaAlt }) => (
   <XStack m="$3" gap="$3">
     {item.type === 'image' ? (
-      <FastImage
+      <ImageComponent
+        placeholder={{ blurhash: item?.blurhash || '' }}
         source={{ uri: item.url }}
         style={{ width: 100, height: 160, borderRadius: 5 }}
-        resizeMode={FastImage.resizeMode.cover}
+        contentFit={'cover'}
       />
     ) : (
       <View w={100} h={160} bg="$gray8"></View>

@@ -1,7 +1,7 @@
 import { Link } from 'expo-router'
 import React, { PureComponent } from 'react'
 import { Pressable } from 'react-native'
-import FastImage from 'react-native-fast-image'
+import ImageComponent from 'src/components/ImageComponent'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { _timeAgo } from 'src/utils'
 import { enforceLen } from 'src/utils'
@@ -90,10 +90,13 @@ class RenderItem extends PureComponent<RenderItemProps> {
             <Link
               href={`/post/${item.status.in_reply_to_id ? item.status.in_reply_to_id : item.status.id}`}
             >
-              <FastImage
+              <ImageComponent
+                placeholder={{
+                  blurhash: item?.status?.media_attachments[0]?.blurhash || '',
+                }}
                 source={{ uri: item.status.media_attachments[0].url }}
                 style={{ width: 50, height: 50, borderRadius: 5 }}
-                resizeMode={FastImage.resizeMode.cover}
+                contentFit={'cover'}
               />
             </Link>
           ) : null}

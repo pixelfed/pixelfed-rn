@@ -14,7 +14,6 @@ import {
   ScrollView as RNScrollView,
   TouchableWithoutFeedback,
 } from 'react-native'
-import FastImage from 'react-native-fast-image'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { getRegisterServers } from 'src/lib/api'
 import type { OpenServer } from 'src/lib/api-types'
@@ -40,7 +39,7 @@ export default function SignupScreen() {
   const [signupEmail, setSignupEmail] = useState('')
   const infoHeight = useRef(new Animated.Value(0)).current
   const scrollViewRef = useRef(null)
-  const { login } = useAuth() // We'll reuse this for redirect handling
+  const { login } = useAuth()
   const router = useRouter()
 
   // Animation for info section
@@ -355,8 +354,6 @@ export default function SignupScreen() {
                 </YStack>
               </View>
             </YStack>
-
-            {/* {selectedServerData && showServerInfo && renderServerInfo()} */}
 
             {server && (
               <Button

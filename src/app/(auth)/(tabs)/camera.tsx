@@ -22,10 +22,10 @@ import {
   Platform,
   StyleSheet,
 } from 'react-native'
-import FastImage from 'react-native-fast-image'
 import { FlatList } from 'react-native-gesture-handler'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import { PixelfedBottomSheetModal } from 'src/components/BottomSheets'
+import ImageComponent from 'src/components/ImageComponent'
 import { ErrorAlert } from 'src/components/common/ErrorAlert'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { Switch } from 'src/components/form/Switch'
@@ -262,9 +262,9 @@ export default function Camera() {
       <YStack alignItems="center">
         {item.type === 'image' ? (
           <ZStack w={120} h={200}>
-            <FastImage
+            <ImageComponent
               source={{ uri: item.path }}
-              resizeMode={FastImage.resizeMode.cover}
+              resizeMode={'cover'}
               style={{
                 width: 120,
                 height: 200,
@@ -742,13 +742,13 @@ export default function Camera() {
               {activeIndex >= 0 ? (
                 <>
                   <Separator />
-                  <FastImage
+                  <ImageComponent
                     source={{ uri: media[activeIndex].path }}
                     style={{
                       width: '100%',
                       height: Keyboard.isVisible() ? 140 : 240,
                     }}
-                    resizeMode={FastImage.resizeMode.contain}
+                    resizeMode={'contain'}
                   />
                 </>
               ) : null}
