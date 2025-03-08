@@ -14,7 +14,7 @@ export default function UserAvatar({ url, width = 40, height = 40, size = '$4' }
         backgroundColor="$gray10"
         width={width}
         height={height}
-        delayMs={600}
+        delayMs={300}
       />
     </Avatar>
   )

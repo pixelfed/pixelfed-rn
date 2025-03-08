@@ -313,8 +313,7 @@ export type NewReport = {
 
 export async function report(report: NewReport) {
   const api = ContextFromStorage()
-  const response = await api.jsonRequest('POST', 'api/v1.1/report', {}, report)
-  return await response.json()
+  return await api.jsonRequest('POST', 'api/v1.1/report', {}, report)
 }
 
 export async function getAccountByUsername(username: string): Promise<Account> {
@@ -396,6 +395,21 @@ export async function getStatusRepliesById(id: string, page) {
 export async function getOpenServers() {
   const response = await fetch(
     'https://pixelfed.org/api/v1/mobile-app/servers/open.json',
+    {
+      method: 'get',
+      headers: new Headers({
+        Accept: 'application/json',
+        'X-Pixelfed-App': '1',
+        'Content-Type': 'application/json',
+      }),
+    }
+  )
+  return (await response.json()) as OpenServersResponse
+}
+
+export async function getRegisterServers() {
+  const response = await fetch(
+    'https://pixelfed.org/api/v1/mobile-app/servers/register.json',
     {
       method: 'get',
       headers: new Headers({

@@ -8,10 +8,10 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { Stack, useRouter } from 'expo-router'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { ActivityIndicator, Alert, FlatList, StyleSheet } from 'react-native'
-import FastImage from 'react-native-fast-image'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { PixelfedBottomSheetModal } from 'src/components/common/BottomSheets'
+import ImageComponent from 'src/components/ImageComponent'
 import ReadMore from 'src/components/common/ReadMore'
 import { getModReports, postReportHandle, postUserHandle } from 'src/lib/api'
 import { _timeAgo, enforceLen, htmlToTextWithLineBreaks } from 'src/utils'
@@ -89,7 +89,7 @@ export default function Screen() {
       {activeReport?.object_type === 'App\\Status' ? (
         <PressableOpacity onPress={() => gotoProfile(activeReport?.status?.account?.id)}>
           <XStack bg="$gray4" p="$2" gap="$2" alignItems="center" borderRadius={10}>
-            <FastImage
+            <ImageComponent
               source={{ uri: activeReport?.status?.account?.avatar }}
               style={{ width: 20, height: 20, borderRadius: 30 }}
             />
@@ -103,7 +103,7 @@ export default function Screen() {
       {activeReport?.object_type === 'App\\Profile' ? (
         <PressableOpacity onPress={() => gotoProfile(activeReport?.account?.id)}>
           <XStack bg="$gray4" p="$2" gap="$2" alignItems="center" borderRadius={10}>
-            <FastImage
+            <ImageComponent
               source={{ uri: activeReport?.account?.avatar }}
               style={{ width: 20, height: 20, borderRadius: 30 }}
             />
@@ -221,7 +221,7 @@ export default function Screen() {
                 onPress={() => gotoProfile(activeReport?.reported_by_account?.id)}
               >
                 <XStack bg="$gray4" p="$2" gap="$2" alignItems="center" borderRadius={10}>
-                  <FastImage
+                  <ImageComponent
                     source={{ uri: activeReport?.reported_by_account?.avatar }}
                     style={{ width: 20, height: 20, borderRadius: 30 }}
                   />

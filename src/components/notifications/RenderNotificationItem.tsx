@@ -1,14 +1,14 @@
 import { Link } from 'expo-router'
 import React, { PureComponent } from 'react'
 import { Pressable } from 'react-native'
-import FastImage from 'react-native-fast-image'
+import ImageComponent from 'src/components/ImageComponent'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { _timeAgo } from 'src/utils'
 import { enforceLen } from 'src/utils'
 import { Text, View, XStack, YStack } from 'tamagui'
 
 interface RenderItemProps {
-  item
+  item: Object
 }
 
 class RenderItem extends PureComponent<RenderItemProps> {
@@ -37,16 +37,18 @@ class RenderItem extends PureComponent<RenderItemProps> {
       <View px="$4" py="$2" key={item.id}>
         <XStack justifyContent="space-between" alignItems="center">
           <XStack gap="$3" alignItems="center">
-            <Link href={`/profile/${item.account.id}`} asChild>
-              <Pressable>
-                <UserAvatar url={item.account.avatar} />
-              </Pressable>
-            </Link>
+            {item && item.account && item.account?.id && (
+              <Link href={`/profile/${item.account.id}`} asChild>
+                <Pressable>
+                  <UserAvatar url={item.account.avatar} />
+                </Pressable>
+              </Link>
+            )}
 
             <YStack gap={5}>
               <XStack gap="$1" alignItems="center">
                 <Text fontSize="$2" fontWeight={'bold'} allowFontScaling={false}>
-                  {enforceLen(item.account.acct, 25, true)}{' '}
+                  {enforceLen(item.account?.acct, 25, true)}{' '}
                 </Text>
               </XStack>
               <XStack gap="$1" alignItems="center">
@@ -88,10 +90,13 @@ class RenderItem extends PureComponent<RenderItemProps> {
             <Link
               href={`/post/${item.status.in_reply_to_id ? item.status.in_reply_to_id : item.status.id}`}
             >
-              <FastImage
+              <ImageComponent
+                placeholder={{
+                  blurhash: item?.status?.media_attachments[0]?.blurhash || '',
+                }}
                 source={{ uri: item.status.media_attachments[0].url }}
                 style={{ width: 50, height: 50, borderRadius: 5 }}
-                resizeMode={FastImage.resizeMode.cover}
+                contentFit={'cover'}
               />
             </Link>
           ) : null}

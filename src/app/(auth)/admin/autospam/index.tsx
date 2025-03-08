@@ -8,10 +8,10 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { Stack, useRouter } from 'expo-router'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { ActivityIndicator, Alert, FlatList, StyleSheet } from 'react-native'
-import FastImage from 'react-native-fast-image'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { PixelfedBottomSheetModal } from 'src/components/common/BottomSheets'
+import ImageComponent from 'src/components/ImageComponent'
 import ReadMore from 'src/components/common/ReadMore'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { getAutospamReports, postAutospamHandle } from 'src/lib/api'
@@ -185,7 +185,7 @@ export default function Screen() {
                     alignItems="center"
                     borderRadius={10}
                   >
-                    <FastImage
+                    <ImageComponent
                       source={{ uri: activeReport?.status?.account?.avatar }}
                       style={{ width: 20, height: 20, borderRadius: 30 }}
                     />

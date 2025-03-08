@@ -15,7 +15,6 @@ import {
   useWindowDimensions,
 } from 'react-native'
 import { Blurhash } from 'react-native-blurhash'
-import FastImage from 'react-native-fast-image'
 import {
   Gesture,
   GestureDetector,
@@ -31,6 +30,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated'
 import Carousel, { Pagination } from 'react-native-reanimated-carousel'
+import ImageComponent from 'src/components/ImageComponent'
 import AutolinkText from 'src/components/common/AutolinkText'
 import LikeButton from 'src/components/common/LikeButton'
 import { Storage } from 'src/state/cache'
@@ -46,6 +46,7 @@ import { Button, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
 import ReadMore from '../common/ReadMore'
 import VideoPlayer from './VideoPlayer'
 
+import { Image } from 'expo-image'
 import type {
   GestureEvent,
   HandlerStateChangeEvent,
@@ -64,9 +65,9 @@ import type {
 } from 'src/lib/api-types'
 import { PixelfedBottomSheetModal } from '../common/BottomSheets'
 
-const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
+const AnimatedFastImage = Animated.createAnimatedComponent(Image)
 
-const ZoomableImage = ({ source, style }) => {
+const ZoomableImage = ({ source, placeholder, style }) => {
   const scale = useSharedValue(1)
   const savedScale = useSharedValue(1)
   const translateX = useSharedValue(0)
@@ -121,8 +122,9 @@ const ZoomableImage = ({ source, style }) => {
       <Animated.View>
         <AnimatedFastImage
           source={source}
+          placeholder={placeholder}
           style={[style, animatedStyle]}
-          resizeMode={FastImage.resizeMode.contain}
+          contentFit={'cover'}
         />
       </Animated.View>
     </PinchGestureHandler>
@@ -165,7 +167,7 @@ const PostHeader = React.memo(
           <Link href={`/profile/${userId}`} asChild>
             <Pressable>
               <XStack gap="$3" alignItems="center" flexGrow={1}>
-                <FastImage
+                <ImageComponent
                   source={{ uri: avatar }}
                   style={{
                     width: AVATAR_WIDTH,
@@ -219,14 +221,6 @@ const PostMedia = React.memo(({ media, post }: PostMediaProps) => {
   if (!forceSensitive && post.sensitive && !showSensitive) {
     return (
       <ZStack w={width} h={height}>
-        <Blurhash
-          blurhash={media[0]?.blurhash || ''}
-          style={{
-            flex: 1,
-            width: width,
-            height: height,
-          }}
-        />
         <YStack justifyContent="center" alignItems="center" flexGrow={1}>
           <YStack
             justifyContent="center"
@@ -267,6 +261,7 @@ const PostMedia = React.memo(({ media, post }: PostMediaProps) => {
   return (
     <View flex={1} borderBottomWidth={1} borderBottomColor="$gray5" zIndex={100}>
       <ZoomableImage
+        placeholder={{ blurhash: media[0]?.blurhash || '' }}
         source={{ uri: mediaUrl }}
         style={{ width: width, height: height, backgroundColor: '#000' }}
       />
@@ -339,7 +334,9 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
   return (
     <YStack zIndex={1}>
       <Carousel
-        onConfigurePanGesture={(gestureChain) => gestureChain.activeOffsetX([-10, 10])}
+        onConfigurePanGesture={(gestureChain) =>
+          gestureChain.activeOffsetX([-10, 10]).runOnJS(true)
+        }
         width={width}
         height={height}
         vertical={false}
@@ -732,11 +729,8 @@ const FeedPost = React.memo(
       .maxDuration(250)
       .numberOfTaps(2)
       .onStart(() => {
-        try {
-          runOnJS(handleDoubleTap)()
-        } catch (error) {
-          console.error('Double tap error:', error)
-        }
+        'worklet'
+        runOnJS(handleDoubleTap)()
       })
 
     const _onDeletePost = (id: string) => {

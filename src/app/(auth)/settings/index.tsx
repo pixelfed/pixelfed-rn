@@ -19,17 +19,13 @@ export default function Page() {
   }, [navigation])
   const { username, locked } = useUserCache()
   const instance = Storage.getString('app.instance')
-  const buildVersion = 78
+  const buildVersion = 1
   const version = Application.nativeApplicationVersion + '.' + buildVersion
 
   const { logout } = useAuth()
 
   const cacheClear = () => {
     logout()
-  }
-
-  const onFeedback = async () => {
-    openBrowserAsync('https://github.com/pixelfed/pixelfed-rn/discussions')
   }
 
   const openLink = async (path: string) => {
@@ -96,9 +92,6 @@ export default function Page() {
               title="Avatar, Bio and Display Name"
               path="/settings/profile"
             />
-          </Group>
-
-          <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
             {locked ? (
               <GroupButton
                 icon="user-plus"
@@ -106,7 +99,6 @@ export default function Page() {
                 path="/profile/follow-requests/"
               />
             ) : null}
-            <GroupButton icon="grid" title="Collections" path="/collections/" />
             <GroupButton
               icon="tag"
               title="Followed Hashtags"
@@ -134,11 +126,6 @@ export default function Page() {
           </Group>
 
           <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
-            <GroupButton
-              icon="server"
-              title={instance || ''}
-              path="/settings/instance/"
-            />
             <GroupButton icon="align-left" title="Legal" path="/settings/legal/" />
             <GroupUrlButton
               icon="trash"

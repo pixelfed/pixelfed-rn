@@ -3,8 +3,8 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import { Link, Stack, useNavigation } from 'expo-router'
 import { useLayoutEffect } from 'react'
 import { ActivityIndicator, FlatList } from 'react-native'
-import FastImage from 'react-native-fast-image'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import ImageComponent from 'src/components/ImageComponent'
 import { getSelfCollections } from 'src/lib/api'
 import { formatTimestamp } from 'src/utils'
 import { Button, ScrollView, Text, View, XStack, YStack } from 'tamagui'
@@ -43,7 +43,7 @@ export default function Screen() {
               return (
                 <Link key={post.id} href={`/post/${post.id}`} asChild>
                   <View>
-                    <FastImage
+                    <ImageComponent
                       source={{ uri: post.media_attachments[0].url }}
                       style={{
                         width: 100,
@@ -51,7 +51,7 @@ export default function Screen() {
                         borderRadius: 10,
                         marginRight: 10,
                       }}
-                      resizeMode={FastImage.resizeMode.cover}
+                      resizeMode={'cover'}
                     />
                   </View>
                 </Link>

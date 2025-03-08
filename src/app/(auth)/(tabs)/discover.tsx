@@ -8,8 +8,8 @@ import {
   Platform,
   SafeAreaView,
 } from 'react-native'
-import FastImage from 'react-native-fast-image'
 import { PressableOpacity } from 'react-native-pressable-opacity'
+import ImageComponent from 'src/components/ImageComponent'
 import UserAvatar from 'src/components/common/UserAvatar'
 import {
   getTrendingHashtags,
@@ -64,10 +64,11 @@ export default function DiscoverScreen() {
       <Link href={`/post/${item.id}`} asChild>
         <YStack justifyContent="center" alignItems="center" gap="$2" mr="$3">
           <View borderRadius={10} overflow="hidden" bg="black">
-            <FastImage
+            <ImageComponent
+              placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
               source={{ uri: item.media_attachments[0].url }}
               style={{ width: SCREEN_WIDTH / 1.3, height: SCREEN_WIDTH / 1.3 }}
-              resizeMode={FastImage.resizeMode.cover}
+              contentFit={'cover'}
             />
             <Text
               color="white"
@@ -89,13 +90,16 @@ export default function DiscoverScreen() {
     <Link href={`/post/${item.id}`} asChild>
       <YStack justifyContent="center" alignItems="center" gap="$2" mr="$3">
         <View borderRadius={10} overflow="hidden" bg="black">
-          <Image
+          <ImageComponent
+            placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
             source={{
               uri: item.media_attachments[0].url,
+            }}
+            style={{
               width: 160,
               height: 160,
             }}
-            resizeMode="cover"
+            contentFit="cover"
           />
           <Text
             color="white"
