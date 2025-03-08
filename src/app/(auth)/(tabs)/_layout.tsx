@@ -22,7 +22,7 @@ export default function AppLayout() {
   return (
     <Tabs
       initialRouteName={TabName.Index}
-      backBehavior="order"
+      backBehavior="history"
       screenOptions={{
         tabBarStyle: {
           height: 70,
