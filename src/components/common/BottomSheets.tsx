@@ -1,21 +1,30 @@
 import { BottomSheetModal, useBottomSheetModal } from '@gorhom/bottom-sheet'
-import type { BottomSheetModalProps } from '@gorhom/bottom-sheet'
+import type { BottomSheetModalProps, SNAP_POINT_TYPE } from '@gorhom/bottom-sheet'
 import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useEffect } from 'react'
 import { BackHandler } from 'react-native'
 
 export const PixelfedBottomSheetModal = React.forwardRef<
   BottomSheetModalMethods,
-  BottomSheetModalProps
+  Omit<BottomSheetModalProps, 'onChange'>
 >((props, ref?) => {
+  const [openPosition, setOpenPosition] = useState(-1)
   const { children } = props
   const { dismissAll } = useBottomSheetModal()
 
   const onBackPressed = useCallback(() => {
+    if (openPosition < 0) {
+      return false
+    }
+
     dismissAll()
     return true
-  }, [dismissAll])
+  }, [openPosition])
+
+  const onChange = (index: number) => {
+    setOpenPosition(index)
+  }
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPressed)
@@ -23,7 +32,7 @@ export const PixelfedBottomSheetModal = React.forwardRef<
   }, [onBackPressed])
 
   return (
-    <BottomSheetModal ref={ref} {...props}>
+    <BottomSheetModal ref={ref} {...props} onChange={onChange}>
       {children}
     </BottomSheetModal>
   )
