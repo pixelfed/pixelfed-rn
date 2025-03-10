@@ -1,5 +1,4 @@
 import { Storage } from 'src/state/cache'
-import { parseLinkHeader } from 'src/utils'
 import { randomKey } from './randomKey'
 
 type ApiRequestOptions = {

@@ -1,6 +1,5 @@
 import { objectToForm } from 'src/requests'
 import { Storage } from 'src/state/cache'
-import { parseLinkHeader } from 'src/utils'
 import { ContextFromStorage } from './api-context'
 import type {
   Account,
@@ -71,25 +70,6 @@ export async function selfPost<
   })
 
   return (rawRes ? resp : resp.json()) as ActualResponse
-}
-
-async function fetchPaginatedData(url: string) {
-  const token = Storage.getString('app.token')
-
-  const response = await fetch(url, {
-    method: 'get',
-    headers: new Headers({
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    }),
-  })
-  const data = await response.json()
-
-  const linkHeader = response.headers.get('Link')
-  const links = parseLinkHeader(linkHeader)
-
-  return { data, nextPage: links?.next, prevPage: links?.prev }
 }
 
 async function fetchCursorPagination(url: string) {

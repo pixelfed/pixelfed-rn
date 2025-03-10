@@ -99,23 +99,6 @@ export function _timeAgo(ts: string) {
   return Math.floor(seconds) + 's'
 }
 
-export function parseLinkHeader(header: string | null) {
-  if (!header || header.length === 0) {
-    return null
-  }
-
-  const parts = header.split(',')
-  const links: Record<string, string> = {}
-  parts.forEach((p) => {
-    const section = p.split(';')
-    const url = section[0].replace(/<(.*)>/, '$1').trim()
-    const name = section[1].replace(/rel="(.*)"/, '$1').trim()
-    links[name] = url
-  })
-
-  return links
-}
-
 export function prettyCount(number: number) {
   if (!number) {
     return 0
