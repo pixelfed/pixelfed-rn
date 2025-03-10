@@ -3,9 +3,9 @@ import { Link, useRouter } from 'expo-router'
 import { useCallback, useState } from 'react'
 import {
   Dimensions,
+  Modal,
   Platform,
   Pressable,
-  Modal,
   TouchableWithoutFeedback,
 } from 'react-native'
 import { PressableOpacity } from 'react-native-pressable-opacity'
