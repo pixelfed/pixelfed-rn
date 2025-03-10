@@ -169,16 +169,10 @@ export async function fetchNotifications(filter_type?: NotificationType, cursor?
   return await api.getPaginated("/api/v1/notifications", query)
 }
 
-export async function fetchHomeFeed(cursor?: string): Promise<PaginatedStatus> {
+export async function fetchTimeline(feed: 'home' | 'public', cursor?: string): Promise<PaginatedStatus> {
   const api = ContextFromStorage()
 
-  return await api.getPaginated("/api/v1/timelines/home", { limit: 20, cursor }) as PaginatedStatus
-}
-
-export async function fetchNetworkFeed(cursor?: string): Promise<PaginatedStatus> {
-  const api = ContextFromStorage()
-
-  return await api.getPaginated("/api/v1/timelines/public", { limit: 20, cursor }) as PaginatedStatus
+  return await api.getPaginated(`/api/v1/timelines/${feed}`, { limit: 20, cursor }) as PaginatedStatus
 }
 
 export async function getAccountFollowers(id: string, cursor) {
