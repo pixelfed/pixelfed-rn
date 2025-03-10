@@ -169,15 +169,10 @@ export async function fetchNotifications(filter_type?: NotificationType, cursor?
   return await api.getPaginated("/api/v1/notifications", query)
 }
 
-export async function fetchHomeFeed({ pageParam = false }): Promise<PaginatedStatus> {
-  let url
-  if (!pageParam) {
-    const instance = Storage.getString('app.instance')
-    url = `https://${instance}/api/v1/timelines/home?_pe=1&limit=20`
-  } else {
-    url = pageParam + '&_pe=1&limit=20'
-  }
-  return await fetchPaginatedData(url)
+export async function fetchHomeFeed(cursor?: string): Promise<PaginatedStatus> {
+  const api = ContextFromStorage()
+
+  return await api.getPaginated("/api/v1/timelines/home", { limit: 20, cursor }) as PaginatedStatus
 }
 
 export async function fetchNetworkFeed({ pageParam = false }): Promise<PaginatedStatus> {

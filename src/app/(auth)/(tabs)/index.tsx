@@ -247,8 +247,8 @@ export default function HomeScreen() {
     error,
   } = useInfiniteQuery({
     queryKey: ['homeFeed'],
-    queryFn: fetchHomeFeed,
-    initialPageParam: 0,
+    queryFn: ({ pageParam }) => fetchHomeFeed(pageParam),
+    initialPageParam: '',
     refetchOnWindowFocus: false,
     getNextPageParam: (lastPage) => lastPage.nextPage,
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
