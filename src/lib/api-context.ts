@@ -1,6 +1,6 @@
 import { Storage } from 'src/state/cache'
-import { randomKey } from './randomKey'
 import { parseLinkHeader } from 'src/utils'
+import { randomKey } from './randomKey'
 
 type ApiRequestOptions = {
   idempotency?: true
@@ -32,7 +32,7 @@ export class ApiContext {
       let { searchParams } = options
       for (const key in searchParams) {
         if (Object.prototype.hasOwnProperty.call(searchParams, key)) {
-          if (typeof searchParams[key] !== "undefined") {
+          if (typeof searchParams[key] !== 'undefined') {
             url.searchParams.append(key, String(searchParams[key]))
           }
         }
@@ -41,7 +41,7 @@ export class ApiContext {
 
     // Tell the API that we want the extra pixelfed specific fields
     // (that would not be in the mastodon api)
-    url.searchParams.append("_pe", "1")
+    url.searchParams.append('_pe', '1')
 
     fetch_options.headers = {
       ...fetch_options.headers,
@@ -113,8 +113,10 @@ export class ApiContext {
     return await response.json()
   }
 
-  async getPaginated<ResponseType>(url: string, searchParams: ApiRequestOptions['searchParams'] = {}):
-    Promise<{ data: ResponseType, nextPage?: string, prevPage?: string }> {
+  async getPaginated<ResponseType>(
+    url: string,
+    searchParams: ApiRequestOptions['searchParams'] = {}
+  ): Promise<{ data: ResponseType; nextPage?: string; prevPage?: string }> {
     const response = await this.request(
       url,
       {
@@ -127,11 +129,12 @@ export class ApiContext {
     )
     const data = await response.json()
 
-    const linkHeader = response.headers.get('Link')
-    const links = parseLinkHeader(linkHeader)
+    if (!data.data) {
+      console.warn(`getPaginated for this did not return pagination cursor info`, response.url)
+      return { data, nextPage: undefined, prevPage: undefined }
+    }
 
-    console.log("link-headers", { linkHeader, links })
-    return { data, nextPage: links?.next, prevPage: links?.prev }
+    return { data: data.data, nextPage: data?.links?.next, prevPage: data?.links?.prev }
   }
 }
 
