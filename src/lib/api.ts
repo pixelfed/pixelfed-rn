@@ -175,22 +175,20 @@ export async function fetchTimeline(feed: 'home' | 'public', cursor?: string): P
   return await api.getPaginated(`/api/v1/timelines/${feed}`, { limit: 20, cursor }) as PaginatedStatus
 }
 
-export async function getAccountFollowers(id: string, cursor) {
-  let url
-  const instance = Storage.getString('app.instance')
-  url = cursor
-    ? `https://${instance}/api/v1/accounts/${id}/followers?_pe=1&limit=20&cursor=${cursor}`
-    : `https://${instance}/api/v1/accounts/${id}/followers?_pe=1&limit=20`
-  return await fetchPaginatedData(url)
+export async function getAccountFollowers(id: string, cursor?: string) {
+  const api = ContextFromStorage()
+  return await api.getPaginated(`/api/v1/accounts/${id}/followers`, {
+    limit: 20,
+    cursor,
+  })
 }
 
-export async function getAccountFollowing(id: string, cursor) {
-  let url
-  const instance = Storage.getString('app.instance')
-  url = cursor
-    ? `https://${instance}/api/v1/accounts/${id}/following?_pe=1&limit=20&cursor=${cursor}`
-    : `https://${instance}/api/v1/accounts/${id}/following?_pe=1&limit=20`
-  return await fetchPaginatedData(url)
+export async function getAccountFollowing(id: string, cursor?: string) {
+  const api = ContextFromStorage()
+  return await api.getPaginated(`/api/v1/accounts/${id}/following`, {
+    limit: 20,
+    cursor,
+  })
 }
 
 export async function getStatusById(id: string) {
