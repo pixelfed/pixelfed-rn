@@ -735,26 +735,14 @@ export async function getMutualFollowing(userId: string) {
   return await api.get(`api/v1.1/accounts/mutuals/${userId}`)
 }
 
-export async function getSelfLikes({ pageParam = false }) {
-  let url
-  const instance = Storage.getString('app.instance')
-  if (!pageParam) {
-    url = `https://${instance}/api/v1/favourites`
-  } else {
-    url = pageParam
-  }
-  return await fetchPaginatedData(url)
+export async function getSelfLikes(cursor?: string) {
+  const api = ContextFromStorage()
+  return await api.getPaginated('api/v1/favourites', { cursor })
 }
 
-export async function getSelfBookmarks({ pageParam = false }) {
-  let url
-  const instance = Storage.getString('app.instance')
-  if (!pageParam) {
-    url = `https://${instance}/api/v1/bookmarks`
-  } else {
-    url = pageParam
-  }
-  return await fetchPaginatedData(url)
+export async function getSelfBookmarks(cursor?: string) {
+  const api = ContextFromStorage()
+  return await api.getPaginated('api/v1/bookmarks', { cursor })
 }
 
 export async function putEditPost(id: string, params) {
