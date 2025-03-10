@@ -4,12 +4,12 @@ import { parseLinkHeader } from 'src/utils'
 import { ContextFromStorage } from './api-context'
 import type {
   Account,
-  OpenServersResponse,
   AdminInstancesOptions,
+  OpenServersResponse,
   PaginatedStatus,
+  PushState,
   PushStateCompareParams,
   PushStateCompareResponse,
-  PushState,
   PushStateParams,
   PushStateResponse,
   Relationship,
@@ -150,25 +150,23 @@ export async function searchQuery(query: string) {
   return mapd
 }
 
-export async function fetchNotifications({ queryKey, pageParam = false }) {
-  let url
-  const filterMap = {
-    likes: 'favourite',
-    follows: 'follow',
-    mentions: 'mention',
-    reblogs: 'reblog',
+export enum NotificationType {
+  all = 'all',
+  likes = 'favourite',
+  follows = 'follow',
+  mentions = 'mention',
+  reblogs = 'reblog',
+}
+export async function fetchNotifications(filter_type?: NotificationType, cursor?: string) {
+  const api = ContextFromStorage()
+
+  let query: { cursor?: string, "types[]"?: string } = { cursor }
+
+  if (filter_type && filter_type != NotificationType.all) {
+    query["types[]"] = filter_type
   }
-  if (!pageParam) {
-    const instance = Storage.getString('app.instance')
-    if (queryKey[1] != 'all') {
-      url = `https://${instance}/api/v1/notifications?types[]=${filterMap[queryKey[1]]}`
-    } else {
-      url = `https://${instance}/api/v1/notifications`
-    }
-  } else {
-    url = pageParam
-  }
-  return await fetchPaginatedData(url)
+
+  return await api.getPaginated("/api/v1/notifications", query)
 }
 
 export async function fetchHomeFeed({ pageParam = false }): Promise<PaginatedStatus> {
@@ -285,11 +283,9 @@ export async function getHashtagByName(id: string) {
 
 export async function getHashtagByNameFeed(id: string, page: number) {
   const api = ContextFromStorage()
-  return await api.getPaginated(`/api/v1/timelines/tag/${id}`,
-    {
-      max_id: page
-    }
-  )
+  return await api.getPaginated(`/api/v1/timelines/tag/${id}`, {
+    max_id: page,
+  })
 }
 
 export async function getHashtagRelated(id: string) {
@@ -316,7 +312,7 @@ export async function getConfig() {
 export async function getStatusRepliesById(id: string, page: number) {
   const api = ContextFromStorage()
   let res = await api.getPaginated(`api/v1/statuses/${id}/context`, {
-    max_id: page
+    max_id: page,
   })
   // TODO: investigate - link header is also empty
   //  -> does this need really paginated or could use plain api.get instead?
@@ -360,15 +356,15 @@ export async function getStatusLikes(id: string, cursor?: number) {
   //  -> does this need really paginated or could use plain api.get instead?
   return await api.getPaginated(`api/v1/statuses/${id}/favourited_by`, {
     limit: 20,
-    cursor
+    cursor,
   })
 }
 
 export async function getStatusReblogs(id: string, cursor?: number) {
   const api = ContextFromStorage()
   return await api.getPaginated(`api/v1/statuses/${id}/reblogged_by`, {
-    limit: 20,
-    cursor
+    limit: 10,
+    cursor,
   })
 }
 
@@ -389,7 +385,7 @@ export async function getTrendingPopularPosts(range: 'daily' | 'monthly' | 'year
 
 export async function getAccountRelationship(id: string): Promise<Relationship> {
   const api = ContextFromStorage()
-  return (await api.get('api/v1/accounts/relationships', { "id[]": id }))[0]
+  return (await api.get('api/v1/accounts/relationships', { 'id[]': id }))[0]
 }
 
 export async function postComment({ postId, commentText, scope = 'public', cw = false }) {
@@ -474,7 +470,7 @@ export async function deleteStatus({ id }: { id: string }) {
 
 export async function getMutes() {
   const api = ContextFromStorage()
-  return await api.get("api/v1/mutes")
+  return await api.get('api/v1/mutes')
 }
 
 export async function muteProfileById(id: string) {
@@ -489,7 +485,7 @@ export async function unmuteProfileById(id: string) {
 
 export async function getBlocks() {
   const api = ContextFromStorage()
-  return await api.get("api/v1/blocks")
+  return await api.get('api/v1/blocks')
 }
 
 export async function blockProfileById(id: string) {
@@ -504,27 +500,27 @@ export async function unblockProfileById(id: string) {
 
 export async function getSelfCollections({ pageParam = 1 }) {
   const api = ContextFromStorage()
-  return await api.get("api/v1.1/collections/self", { page: pageParam })
+  return await api.get('api/v1.1/collections/self', { page: pageParam })
 }
 
 export async function getFollowedTags() {
   const api = ContextFromStorage()
-  return await api.get("api/v1/followed_tags")
+  return await api.get('api/v1/followed_tags')
 }
 
 export async function getInstanceV1() {
   const api = ContextFromStorage()
-  return await api.get("api/v1/instance")
+  return await api.get('api/v1/instance')
 }
 
 export async function getAppSettings() {
   const api = ContextFromStorage()
-  return await api.get("api/pixelfed/v1/app/settings")
+  return await api.get('api/pixelfed/v1/app/settings')
 }
 
 export async function getFollowRequests() {
   const api = ContextFromStorage()
-  return await api.get("api/v1/follow_requests")
+  return await api.get('api/v1/follow_requests')
 }
 
 export async function getSelfAccount() {
@@ -560,7 +556,7 @@ export async function updateAvatar(data: {
   return await api.request(`api/v1/accounts/update_credentials`, {
     method: 'POST',
     headers: { 'Content-Type': 'multipart/form-data' },
-    body: objectToForm(data as { [key: string | number]: any })
+    body: objectToForm(data as { [key: string | number]: any }),
   })
 }
 
@@ -586,7 +582,9 @@ export async function fetchChatThread(pid: string) {
 
 export async function deleteChatMessage(id: string) {
   const api = ContextFromStorage()
-  return await api.jsonRequest('DELETE', 'api/v1.1/direct/thread/message', undefined, { id })
+  return await api.jsonRequest('DELETE', 'api/v1.1/direct/thread/message', undefined, {
+    id,
+  })
 }
 
 export async function sendChatMessage(id: string, message: string) {
@@ -621,7 +619,7 @@ export async function getAdminStats() {
 
 export async function adminInstances(options: AdminInstancesOptions) {
   const api = ContextFromStorage()
-  return await api.getPaginated("api/admin/instances/list", { ...options })
+  return await api.getPaginated('api/admin/instances/list', { ...options })
 }
 
 export async function adminInstanceGet() {
@@ -803,12 +801,16 @@ export async function pushStateDisable(): Promise<PushState> {
   return await api.jsonRequest('POST', 'api/v1.1/push/disable')
 }
 
-export async function pushStateCompare(params: PushStateCompareParams): Promise<PushStateCompareResponse> {
+export async function pushStateCompare(
+  params: PushStateCompareParams
+): Promise<PushStateCompareResponse> {
   const api = ContextFromStorage()
   return await api.jsonRequest('POST', 'api/v1.1/push/compare', params)
 }
 
-export async function pushStateUpdate(params: PushStateParams): Promise<PushStateResponse> {
+export async function pushStateUpdate(
+  params: PushStateParams
+): Promise<PushStateResponse> {
   const api = ContextFromStorage()
   return await api.jsonRequest('POST', 'api/v1.1/push/update', params)
 }
