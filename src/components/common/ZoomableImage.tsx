@@ -1,16 +1,16 @@
+import { Image } from 'expo-image'
+import {
+  type GestureEvent,
+  type HandlerStateChangeEvent,
+  PinchGestureHandler,
+  type PinchGestureHandlerEventPayload,
+  State,
+} from 'react-native-gesture-handler'
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated'
-import {
-  GestureEvent,
-  HandlerStateChangeEvent,
-  PinchGestureHandler,
-  PinchGestureHandlerEventPayload,
-  State,
-} from 'react-native-gesture-handler'
-import { Image } from 'expo-image'
 
 interface ZoomableImageProps {
   source: any

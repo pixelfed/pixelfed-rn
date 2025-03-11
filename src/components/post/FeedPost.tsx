@@ -17,7 +17,7 @@ import {
 import { Blurhash } from 'react-native-blurhash'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import { PressableOpacity } from 'react-native-pressable-opacity'
-import { runOnJS, type SharedValue, useSharedValue } from 'react-native-reanimated'
+import { type SharedValue, runOnJS, useSharedValue } from 'react-native-reanimated'
 import Carousel, { Pagination } from 'react-native-reanimated-carousel'
 import ImageComponent from 'src/components/ImageComponent'
 import AutolinkText from 'src/components/common/AutolinkText'
