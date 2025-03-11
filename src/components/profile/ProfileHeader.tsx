@@ -7,6 +7,7 @@ import {
   Platform,
   Pressable,
   TouchableWithoutFeedback,
+  useWindowDimensions,
 } from 'react-native'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import AutolinkText from 'src/components/common/AutolinkText'
@@ -22,6 +23,7 @@ import FollowingProfile from './actionButtons/FollowingProfile'
 const SCREEN_WIDTH = Dimensions.get('screen').width
 import type { Relationship } from 'src/lib/api-types'
 import { useUserCache } from 'src/state/AuthProvider'
+import ZoomableImage from '../common/ZoomableImage'
 
 type todo = any
 
@@ -53,6 +55,8 @@ export default function ProfileHeader({
   const router = useRouter()
   const [usernameTruncated, setUsernameTruncated] = useState(profile?.acct?.length > 40)
   const [modalVisible, setModalVisible] = useState(false)
+  let { width } = useWindowDimensions()
+  width = width * (70 / 100)
 
   const { id: selfId } = useUserCache()
 
@@ -292,15 +296,15 @@ export default function ProfileHeader({
                   backgroundColor: 'rgba(0, 0, 0, 0.7)',
                 }}
               >
-                <Avatar
-                  circular
-                  size="$18"
-                  borderWidth={1}
-                  borderColor={profile?.local ? '$gray5' : '$gray3'}
-                >
-                  <Avatar.Image src={profile?.avatar} />
-                  <Avatar.Fallback backgroundColor="$gray4" />
-                </Avatar>
+                <ZoomableImage
+                  source={{ uri: profile?.avatar }}
+                  style={{
+                    width: width,
+                    height: width,
+                    backgroundColor: profile?.local ? '$gray5' : '$gray3',
+                    borderRadius: width,
+                  }}
+                />
               </View>
             </TouchableWithoutFeedback>
           </Modal>
