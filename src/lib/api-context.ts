@@ -6,6 +6,8 @@ type ApiRequestOptions = {
   searchParams?: Record<string, string | number | boolean | undefined>
 }
 
+export type PaginatedData<ResponseType> = { data: ResponseType; nextCursor?: string; prevCursor?: string }
+
 export class ApiContext {
   constructor(
     public readonly instanceHostName: string,
@@ -115,7 +117,11 @@ export class ApiContext {
   async getPaginated<ResponseType>(
     url: string,
     searchParams: ApiRequestOptions['searchParams'] = {}
-  ): Promise<{ data: ResponseType; nextPage?: string; prevPage?: string }> {
+  ): Promise<PaginatedData<ResponseType>> {
+    if (searchParams.cursor == '' || typeof searchParams.cursor == "undefined") {
+      delete searchParams.cursor
+    }
+
     const response = await this.request(
       url,
       {
@@ -130,10 +136,10 @@ export class ApiContext {
 
     if (!data.data) {
       console.warn(`getPaginated for this did not return pagination cursor info`, response.url)
-      return { data, nextPage: undefined, prevPage: undefined }
+      return { data, nextCursor: undefined, prevCursor: undefined }
     }
 
-    return { data: data.data, nextPage: data?.links?.next, prevPage: data?.links?.prev }
+    return { data: data.data, nextCursor: data.meta.next_cursor, prevCursor: data.links.prev_cursor }
   }
 }
 

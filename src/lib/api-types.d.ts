@@ -246,11 +246,7 @@ type UpdateCredentialsParams = {
 
 /* ========================== Infinite query types ========================== */
 
-export type PaginatedStatus = {
-  data: Array<Status>
-  nextPage: string | undefined
-  prevPage: string | undefined
-}
+export type PaginatedStatus = PaginatedData<Array<Status>>
 
 export type UploadV2Response = {
   blurhash: string
@@ -273,12 +269,12 @@ export type UploadV2ErrorResponse = {
 type UploadV2ResponseOrError = UploadV2Response | UploadV2ErrorResponse
 type UploadV2Params =
   | {
-      file: unknown
-    }
+    file: unknown
+  }
   | {
-      file: unknown
-      description: string
-    }
+    file: unknown
+    description: string
+  }
 
 interface OpenServer {
   domain: string

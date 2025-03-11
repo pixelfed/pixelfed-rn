@@ -72,22 +72,6 @@ export async function selfPost<
   return (rawRes ? resp : resp.json()) as ActualResponse
 }
 
-async function fetchCursorPagination(url: string) {
-  const token = Storage.getString('app.token')
-
-  const response = await fetch(url, {
-    method: 'get',
-    headers: new Headers({
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    }),
-  })
-  const data = await response.json()
-
-  return { data: data.data, nextPage: data?.links?.next, prevPage: data?.links?.prev }
-}
-
 export async function searchQuery(query: string) {
   if (!query || query.trim() === '') return []
   const instance = Storage.getString('app.instance')
@@ -242,17 +226,16 @@ export async function getHashtagByName(id: string) {
   return await api.get(`api/v1/tags/${id}/`)
 }
 
-export async function getHashtagByNameFeed(id: string, page: number) {
+export async function getHashtagByNameFeed(id: string, cursor?: string) {
   const api = ContextFromStorage()
   return await api.getPaginated(`/api/v1/timelines/tag/${id}`, {
-    max_id: page,
+    cursor,
   })
 }
 
 export async function getHashtagRelated(id: string) {
   const api = ContextFromStorage()
-  // TODO do we need pagination here? it is not used currently
-  return await api.getPaginated(`api/v1/tags/${id}/related`)
+  return await api.get(`api/v1/tags/${id}/related`)
 }
 
 export async function getConversations() {
@@ -270,13 +253,15 @@ export async function getConfig() {
   return await api.get('api/v2/config')
 }
 
-export async function getStatusRepliesById(id: string, page: number) {
+export async function getStatusRepliesById(id: string, cursor?: string) {
   const api = ContextFromStorage()
-  let res = await api.getPaginated(`api/v1/statuses/${id}/context`, {
-    max_id: page,
-  })
+  console.info("getStatusRepliesById")
+  let res = await api.getPaginated(`api/v1/statuses/${id}/context`)
+  console.info({ res })
   // TODO: investigate - link header is also empty
   //  -> does this need really paginated or could use plain api.get instead?
+  // also server code seems to have a hardcoded limit of 20
+  // https://github.com/pixelfed/pixelfed/blob/33bb021c1d4bda28342e38c4aa41122cc9a8df0b/app/Http/Controllers/Api/ApiV1Controller.php#L3186
   res.data = res.data.descendants
   return res
 }
@@ -311,17 +296,15 @@ export async function getRegisterServers() {
   return (await response.json()) as OpenServersResponse
 }
 
-export async function getStatusLikes(id: string, cursor?: number) {
+export async function getStatusLikes(id: string, cursor?: string) {
   const api = ContextFromStorage()
-  // TODO: investigate - link header is also empty
-  //  -> does this need really paginated or could use plain api.get instead?
   return await api.getPaginated(`api/v1/statuses/${id}/favourited_by`, {
     limit: 20,
     cursor,
   })
 }
 
-export async function getStatusReblogs(id: string, cursor?: number) {
+export async function getStatusReblogs(id: string, cursor?: string) {
   const api = ContextFromStorage()
   return await api.getPaginated(`api/v1/statuses/${id}/reblogged_by`, {
     limit: 10,
@@ -578,9 +561,9 @@ export async function getAdminStats() {
   return await api.get('api/admin/stats')
 }
 
-export async function adminInstances(options: AdminInstancesOptions) {
+export async function adminInstances(options: AdminInstancesOptions, cursor?: string) {
   const api = ContextFromStorage()
-  return await api.getPaginated('api/admin/instances/list', { ...options })
+  return await api.getPaginated('api/admin/instances/list', { ...options, cursor })
 }
 
 export async function adminInstanceGet() {
@@ -668,11 +651,9 @@ export async function updateAdminConfig(params) {
   return await api.jsonRequest('POST', 'api/admin/config/update', params)
 }
 
-export async function getAdminUsers(cursor) {
-  let url
-  const instance = Storage.getString('app.instance')
-  url = cursor != null ? cursor : `https://${instance}/api/admin/users/list?sort=desc`
-  return await fetchCursorPagination(url)
+export async function getAdminUsers(cursor?: string) {
+  const api = ContextFromStorage()
+  return await api.getPaginated('api/admin/users/list', { sort: 'desc', cursor })
 }
 
 export async function getAdminUser(user_id: string) {

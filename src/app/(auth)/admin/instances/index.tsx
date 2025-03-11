@@ -103,12 +103,12 @@ export default function Page() {
   const { data, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
     useInfiniteQuery({
       queryKey: ['instances'],
-      queryFn: async () => {
-        return await adminInstances({ sort, sort_by: sortBy })
+      queryFn: async ({ pageParam }) => {
+        return await adminInstances({ sort, sort_by: sortBy }, pageParam)
       },
-      initialPageParam: null,
-      getNextPageParam: (lastPage) => lastPage.nextPage,
-      getPreviousPageParam: (lastPage) => lastPage.prevPage,
+      initialPageParam: '',
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      getPreviousPageParam: (lastPage) => lastPage.prevCursor,
     })
 
   if (isFetching && !isFetchingNextPage) {

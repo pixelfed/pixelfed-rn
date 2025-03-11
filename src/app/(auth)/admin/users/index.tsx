@@ -61,8 +61,8 @@ export default function Screen() {
     queryFn: async ({ pageParam }) => {
       return await getAdminUsers(pageParam)
     },
-    initialPageParam: null,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
+    initialPageParam: '',
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
   })
 
   if (status === 'pending' && !isFetchingNextPage) {

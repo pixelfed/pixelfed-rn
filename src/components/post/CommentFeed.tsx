@@ -328,7 +328,7 @@ export default function CommentFeed({
   const fetchChildren = async (parentId: string) => {
     setLoadingChildId(parentId)
     try {
-      const childrenData = await getStatusRepliesById(parentId, 0)
+      const childrenData = await getStatusRepliesById(parentId, '0')
       setChildComments((prev) => ({
         ...prev,
         [parentId]: childrenData.data,
@@ -450,14 +450,14 @@ export default function CommentFeed({
 
   const { data, isFetchingNextPage, isFetching, isError, error } = useInfiniteQuery({
     queryKey: ['getStatusRepliesById', id],
-    initialPageParam: null,
+    initialPageParam: '',
     refetchOnWindowFocus: false,
     queryFn: async ({ pageParam }) => {
-      const data = await getStatusRepliesById(id, 0)
+      const data = await getStatusRepliesById(id, '0')
       return data
     },
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-    getPreviousPageParam: (lastPage) => lastPage.prevPage,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getPreviousPageParam: (lastPage) => lastPage.prevCursor,
   })
 
   if (isFetching && !isFetchingNextPage) {

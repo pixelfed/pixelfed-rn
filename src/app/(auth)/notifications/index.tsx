@@ -33,9 +33,9 @@ export default function NotificationsScreen() {
     queryKey: ['notifications', activeTab],
     queryFn: ({ queryKey: [_, tab], pageParam }) =>
       fetchNotifications(tab as NotificationType, pageParam),
-    initialPageParam: undefined,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-    getPreviousPageParam: (firstPage) => firstPage.prevPage,
+    initialPageParam: '',
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getPreviousPageParam: (firstPage) => firstPage.prevCursor,
   })
 
   useEffect(() => {
