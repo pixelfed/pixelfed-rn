@@ -1,4 +1,3 @@
-import { BottomSheetBackdrop, type BottomSheetModal } from '@gorhom/bottom-sheet'
 import { useFocusEffect } from '@react-navigation/native'
 import {
   useInfiniteQuery,
@@ -15,15 +14,12 @@ import {
   ActivityIndicator,
   FlatList,
   type ListRenderItemInfo,
-  Platform,
   StyleSheet,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { PixelfedBottomSheetModal } from 'src/components/common/BottomSheets'
 import EmptyFeed from 'src/components/common/EmptyFeed'
 import ErrorFeed from 'src/components/common/ErrorFeed'
 import FeedHeader from 'src/components/common/FeedHeader'
-import CommentFeed from 'src/components/post/CommentFeed'
 import FeedPost from 'src/components/post/FeedPost'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import {
@@ -97,28 +93,9 @@ export default function HomeScreen() {
     }, [navigation])
   )
 
-  const [replyId, setReplyId] = useState<string | undefined>()
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null)
-  const snapPoints = useMemo(
-    () => (Platform.OS === 'ios' ? ['50%', '85%'] : ['64%', '65%', '66%']),
-    []
-  )
-
-  const handleSheetChanges = useCallback((index: number) => {}, [])
-  const renderBackdrop = useCallback(
-    (props: any) => (
-      <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
-    ),
-    []
-  )
-
-  const onOpenComments = useCallback(
-    (id: string) => {
-      setReplyId(id)
-      bottomSheetModalRef.current?.present()
-    },
-    [replyId]
-  )
+  const onOpenComments = (id: string) => {
+    router.push(`/post/comments/${id}`)
+  }
 
   const user = useUserCache()
   const { playVideo, currentVideoId } = useVideo()
@@ -187,34 +164,10 @@ export default function HomeScreen() {
     },
   })
 
-  const handleShowLikes = (id) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/post/likes/${id}`)
-  }
-
-  const handleGotoProfile = (id: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/profile/${id}`)
-  }
-
-  const handleGotoUsernameProfile = (username: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/profile/0?byUsername=${username}`)
-  }
-
-  const gotoHashtag = (id: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/hashtag/${id}`)
-  }
-
-  const handleCommentReport = (id: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/post/report/${id}`)
-  }
-
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<Status>) => (
       <FeedPost
+        key={`homep-${item.id}`}
         post={item}
         user={user}
         onOpenComments={() => onOpenComments(item.id)}
@@ -239,6 +192,7 @@ export default function HomeScreen() {
     hasNextPage,
     hasPreviousPage,
     isFetchingNextPage,
+    isFetchingPreviousPage,
     isRefetching,
     refetch,
     isFetching,
@@ -253,7 +207,7 @@ export default function HomeScreen() {
     getNextPageParam: (lastPage) => lastPage.nextPage,
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
   })
-  if (isFetching && !isFetchingNextPage && !isRefetching) {
+  if (isFetching && !isFetchingNextPage && !isFetchingPreviousPage && !isRefetching) {
     return (
       <View flexGrow={1} mt="$5" py="$5" justifyContent="center" alignItems="center">
         <ActivityIndicator color={'#000'} />
@@ -311,26 +265,6 @@ export default function HomeScreen() {
           </XStack>
         </View>
       ) : null}
-      <PixelfedBottomSheetModal
-        ref={bottomSheetModalRef}
-        index={Platform.OS === 'ios' ? 1 : 0}
-        keyboardBehavior={Platform.OS === 'ios' ? 'extend' : 'interactive'}
-        android_keyboardInputMode="adjustResize"
-        snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-        backdropComponent={renderBackdrop}
-      >
-        <CommentFeed
-          id={replyId}
-          showLikes={handleShowLikes}
-          gotoProfile={handleGotoProfile}
-          gotoUsernameProfile={handleGotoUsernameProfile}
-          gotoHashtag={gotoHashtag}
-          user={user}
-          handleReport={handleCommentReport}
-        />
-      </PixelfedBottomSheetModal>
-
       {renderFeed(data?.pages.flatMap((page) => page.data))}
     </SafeAreaView>
   )

@@ -436,7 +436,7 @@ export default function ProfileScreen() {
   }
 
   const handleFollow = () => {
-    //followMutation.mutate()
+    followMutation.mutate()
   }
 
   const handleUnfollow = () => {
