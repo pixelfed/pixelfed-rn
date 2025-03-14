@@ -85,11 +85,11 @@ export default function LoginScreen() {
 
   const handleSearchInputChange = (text) => {
     setSearchValue(text)
-    
+
     // Validate if the entered text is a valid domain
     const valid = validateDomain(text)
     setIsValidDomain(valid)
-    
+
     // If it's a valid domain, update the server state
     if (valid) {
       setServer(text)
@@ -375,7 +375,7 @@ export default function LoginScreen() {
             </XStack>
 
             <View style={{ flex: 1 }} />
-            
+
             <YStack mt="$4" alignItems="center" gap="$3">
               <XStack gap="$2">
                 <Text fontSize="$6" color="$gray6">
@@ -401,8 +401,15 @@ export default function LoginScreen() {
               borderRadius={8}
               height={50}
               onPress={handleLogin}
-              disabled={loading || !(selectedOption === 0 || (selectedOption === 1 && isValidDomain))}
-              opacity={!(selectedOption === 0 || (selectedOption === 1 && isValidDomain)) ? 0.5 : 1}
+              disabled={
+                loading ||
+                !(selectedOption === 0 || (selectedOption === 1 && isValidDomain))
+              }
+              opacity={
+                !(selectedOption === 0 || (selectedOption === 1 && isValidDomain))
+                  ? 0.5
+                  : 1
+              }
             >
               {loading ? <ActivityIndicator color="white" /> : 'Continue'}
             </Button>
