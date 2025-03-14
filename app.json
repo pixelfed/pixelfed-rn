@@ -37,7 +37,8 @@
       "package": "com.pixelfed",
       "permissions": [
         "android.permission.RECORD_AUDIO",
-        "android.permission.CAMERA"
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_COARSE_LOCATION"
       ],
       "googleServicesFile": "./google-services.json"
     },
