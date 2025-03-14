@@ -5,7 +5,7 @@ import { useEffect, useLayoutEffect, useState } from 'react'
 import { ActivityIndicator, Dimensions, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import RenderNotificationItem from 'src/components/notifications/RenderNotificationItem'
-import { fetchNotifications } from 'src/lib/api'
+import { NotificationType, fetchNotifications } from 'src/lib/api'
 import { _timeAgo } from 'src/utils'
 import { Separator, Tabs, Text, View } from 'tamagui'
 
@@ -18,7 +18,7 @@ export default function NotificationsScreen() {
     navigation.setOptions({ title: 'Notifications', headerBackTitle: 'Back' })
   }, [navigation])
 
-  const [activeTab, setActiveTab] = useState('all')
+  const [activeTab, setActiveTab] = useState<NotificationType>(NotificationType.all)
 
   const {
     data,
@@ -31,18 +31,20 @@ export default function NotificationsScreen() {
     refetch,
   } = useInfiniteQuery({
     queryKey: ['notifications', activeTab],
-    queryFn: fetchNotifications,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-    getPreviousPageParam: (firstPage) => firstPage.prevPage,
+    queryFn: ({ queryKey: [_, tab], pageParam }) =>
+      fetchNotifications(tab as NotificationType, pageParam),
+    initialPageParam: '',
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getPreviousPageParam: (firstPage) => firstPage.prevCursor,
   })
 
   useEffect(() => {
     refetch()
   }, [activeTab, refetch])
 
-  const handleTabChange = (value) => {
+  const handleTabChange = (value: string) => {
     queryClient.invalidateQueries(['notifications', value])
-    setActiveTab(value)
+    setActiveTab(value as NotificationType)
   }
 
   const handleInfiniteScroll = (_: { distanceFromEnd: number }) => {
@@ -92,25 +94,25 @@ export default function NotificationsScreen() {
         bg="$gray5"
       >
         <Tabs.List flex={1}>
-          <Tabs.Tab value="all" px="$0" flexGrow={1}>
+          <Tabs.Tab value={NotificationType.all} px="$0" flexGrow={1}>
             <Text fontSize="$2" fontWeight="bold" allowFontScaling={false}>
               All
             </Text>
           </Tabs.Tab>
           <Separator vertical borderColor="$gray5" />
-          <Tabs.Tab value="mentions" px="$0" flexGrow={1}>
+          <Tabs.Tab value={NotificationType.mentions} px="$0" flexGrow={1}>
             <Feather name="at-sign" size={20} />
           </Tabs.Tab>
           <Separator vertical borderColor="$gray5" />
-          <Tabs.Tab value="likes" px="$0" flexGrow={1}>
+          <Tabs.Tab value={NotificationType.likes} px="$0" flexGrow={1}>
             <Feather name="heart" size={20} />
           </Tabs.Tab>
           <Separator vertical borderColor="$gray5" />
-          <Tabs.Tab value="follows" px="$0" flexGrow={1}>
+          <Tabs.Tab value={NotificationType.follows} px="$0" flexGrow={1}>
             <Feather name="user-plus" size={20} />
           </Tabs.Tab>
           <Separator vertical borderColor="$gray5" />
-          <Tabs.Tab value="reblogs" px="$0" flexGrow={1}>
+          <Tabs.Tab value={NotificationType.reblogs} px="$0" flexGrow={1}>
             <Feather name="refresh-cw" size={20} />
           </Tabs.Tab>
         </Tabs.List>

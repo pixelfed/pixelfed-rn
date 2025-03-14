@@ -76,11 +76,11 @@ export default function BookmarksScreen() {
     error,
   } = useInfiniteQuery({
     queryKey: ['getSelfBookmarks'],
-    initialPageParam: null,
-    queryFn: getSelfBookmarks,
+    initialPageParam: '',
+    queryFn: ({ pageParam }) => getSelfBookmarks(pageParam),
     refetchOnWindowFocus: false,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-    getPreviousPageParam: (lastPage) => lastPage.prevPage,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getPreviousPageParam: (lastPage) => lastPage.prevCursor,
   })
 
   if (isFetching && !isFetchingNextPage && !isRefetching) {

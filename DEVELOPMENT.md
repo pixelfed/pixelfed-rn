@@ -98,6 +98,7 @@ When you are not part of the pixelfed apple developer team, then you need to mak
    - change bundle identifier by preprending your own domain in reverse notation
    - disable/remove app group
    - delete push notification capability
+- Also change the bundle id for app and share extension in `app.json` accordingly (sometime you might even need to remove the share extention in this file)
 
 ### iOS: "CommandError: ApplicationVerificationFailed"
 

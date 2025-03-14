@@ -56,11 +56,10 @@ export default function Page() {
     error,
   } = useInfiniteQuery({
     queryKey: ['getStatusLikes', statusId],
-    queryFn: async ({ pageParam }) => {
-      return await getStatusLikes(statusId, pageParam)
-    },
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-    getPreviousPageParam: (lastPage) => lastPage.prevPage,
+    queryFn: ({ pageParam }) => getStatusLikes(statusId, pageParam),
+    initialPageParam: '',
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getPreviousPageParam: (lastPage) => lastPage.prevCursor,
     select: (data) => ({
       pages: [...data.pages].reverse(),
       pageParams: [...data.pageParams].reverse(),

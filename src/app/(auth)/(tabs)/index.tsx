@@ -24,7 +24,7 @@ import FeedPost from 'src/components/post/FeedPost'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import {
   deleteStatusV1,
-  fetchHomeFeed,
+  fetchTimeline,
   getSelfAccount,
   reblogStatus,
   unreblogStatus,
@@ -201,11 +201,11 @@ export default function HomeScreen() {
     error,
   } = useInfiniteQuery({
     queryKey: ['homeFeed'],
-    queryFn: fetchHomeFeed,
-    initialPageParam: 0,
+    queryFn: ({ pageParam }) => fetchTimeline('home', pageParam),
+    initialPageParam: '',
     refetchOnWindowFocus: false,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-    getPreviousPageParam: (lastPage) => lastPage.prevPage,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getPreviousPageParam: (lastPage) => lastPage.prevCursor,
   })
   if (isFetching && !isFetchingNextPage && !isFetchingPreviousPage && !isRefetching) {
     return (
