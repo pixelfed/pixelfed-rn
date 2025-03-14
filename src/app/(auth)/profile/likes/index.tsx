@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { Stack, useNavigation } from 'expo-router'
+import { Stack, useNavigation, useRouter } from 'expo-router'
 import { useCallback, useLayoutEffect } from 'react'
 import { ActivityIndicator, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -10,10 +10,15 @@ import { Text, View } from 'tamagui'
 
 export default function LikesScreen() {
   const navigation = useNavigation()
+  const router = useRouter()
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'My Likes', headerBackTitle: 'Back' })
   }, [navigation])
+
+  const onOpenComments = (id) => {
+    router.push(`/post/comments/${id}`)
+  }
 
   const user = useUserCache()
   const renderItem = useCallback(
