@@ -6,8 +6,6 @@ import { Stack, useNavigation, useRouter } from 'expo-router'
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { ActivityIndicator, FlatList, Platform } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { PixelfedBottomSheetModal } from 'src/components/common/BottomSheets'
-import CommentFeed from 'src/components/post/CommentFeed'
 import FeedPost from 'src/components/post/FeedPost'
 import { getSelfBookmarks, reblogStatus, unreblogStatus } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
@@ -16,33 +14,14 @@ import { Text, View } from 'tamagui'
 export default function BookmarksScreen() {
   const navigation = useNavigation()
   const router = useRouter()
-  const [replyId, setReplyId] = useState<string | undefined>()
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'My Bookmarks', headerBackTitle: 'Back' })
   }, [navigation])
   const user = useUserCache()
 
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null)
-  const snapPoints = useMemo(
-    () => (Platform.OS === 'ios' ? ['50%', '85%'] : ['64%', '65%', '66%']),
-    []
-  )
-
-  const handleSheetChanges = useCallback((index: number) => {}, [])
-  const renderBackdrop = useCallback(
-    (props: any) => (
-      <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
-    ),
-    []
-  )
-
-  const onOpenComments = useCallback(
-    (id: string) => {
-      setReplyId(id)
-      bottomSheetModalRef.current?.present()
-    },
-    [replyId]
-  )
+  const onOpenComments = useCallback((id: string) => {
+    router.push(`/post/comments/${id}`)
+  }, [])
 
   const onShare = (id: string, state: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
@@ -51,31 +30,6 @@ export default function BookmarksScreen() {
     } catch (error) {
       console.error('Error occurred during share:', error)
     }
-  }
-
-  const handleShowLikes = (id) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/post/likes/${id}`)
-  }
-
-  const handleGotoProfile = (id: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/profile/${id}`)
-  }
-
-  const handleGotoUsernameProfile = (username: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/profile/0?byUsername=${username}`)
-  }
-
-  const gotoHashtag = (id: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/hashtag/${id}`)
-  }
-
-  const handleCommentReport = (id: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/post/report/${id}`)
   }
 
   const shareMutation = useMutation({
@@ -164,26 +118,6 @@ export default function BookmarksScreen() {
           isFetchingNextPage ? <ActivityIndicator /> : <View h={200} />
         }
       />
-
-      <PixelfedBottomSheetModal
-        ref={bottomSheetModalRef}
-        index={Platform.OS === 'ios' ? 1 : 0}
-        keyboardBehavior={Platform.OS === 'ios' ? 'extend' : 'interactive'}
-        android_keyboardInputMode="adjustResize"
-        snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-        backdropComponent={renderBackdrop}
-      >
-        <CommentFeed
-          id={replyId}
-          showLikes={handleShowLikes}
-          gotoProfile={handleGotoProfile}
-          gotoUsernameProfile={handleGotoUsernameProfile}
-          gotoHashtag={gotoHashtag}
-          user={user}
-          handleReport={handleCommentReport}
-        />
-      </PixelfedBottomSheetModal>
     </SafeAreaView>
   )
 }

@@ -35,6 +35,7 @@ export default function LoginScreen() {
   const [server, setServer] = useState(params.server || 'pixelfed.social')
   const [loading, setLoading] = useState(false)
   const [searchValue, setSearchValue] = useState('')
+  const [isValidDomain, setIsValidDomain] = useState(false)
   const [selectedOption, setSelectedOption] = useState(0)
   const scrollViewRef = useRef(null)
   const inputRef = useRef(null)
@@ -75,13 +76,35 @@ export default function LoginScreen() {
       .map((s) => s.domain)
   }, [serversData, searchValue])
 
+  const validateDomain = (domain) => {
+    // Regular expression to validate domain format
+    // This checks for a valid domain structure with at least one dot and valid characters
+    const domainRegex = /^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/
+    return domainRegex.test(domain)
+  }
+
+  const handleSearchInputChange = (text) => {
+    setSearchValue(text)
+
+    // Validate if the entered text is a valid domain
+    const valid = validateDomain(text)
+    setIsValidDomain(valid)
+
+    // If it's a valid domain, update the server state
+    if (valid) {
+      setServer(text)
+    }
+  }
+
   const handleOptionSelect = (option) => {
     setSelectedOption(option)
     if (option === 0) {
       setServer('pixelfed.social')
       setSearchValue('')
+      setIsValidDomain(false)
     } else {
       setServer('')
+      setIsValidDomain(false)
       setTimeout(() => {
         inputRef.current?.focus()
       }, 100)
@@ -91,6 +114,7 @@ export default function LoginScreen() {
   const handleSuggestionSelect = (suggestion) => {
     setServer(suggestion)
     setSearchValue(suggestion)
+    setIsValidDomain(true)
     Keyboard.dismiss()
     login(suggestion, 'read write follow push')
   }
@@ -117,7 +141,7 @@ export default function LoginScreen() {
 
   const handleFindInstance = async () => {
     await WebBrowser.openAuthSessionAsync(
-      'https://recovery.pixelfed.org',
+      'https://recovery.pixelfed.org/forgot-instance',
       'pixelfed://login'
     ).then((res) => {
       if (res.type === 'success' && res.url) {
@@ -127,6 +151,7 @@ export default function LoginScreen() {
         const curDomain = searchParams.get('domain')
         setServer(curDomain)
         setSearchValue(curDomain)
+        setIsValidDomain(validateDomain(curDomain))
         login(curDomain, 'read write follow push')
       } else {
         // todo: handle error
@@ -300,12 +325,12 @@ export default function LoginScreen() {
                       placeholder="pixelfed.example.com"
                       placeholderTextColor="#666"
                       value={searchValue}
-                      onChangeText={setSearchValue}
+                      onChangeText={handleSearchInputChange}
                       autoCapitalize="none"
                       autoCorrect={false}
                     />
 
-                    {/* Suggestions */}
+                    {/* Server Suggestions */}
                     {filteredServers.length > 0 && (
                       <View style={{ marginTop: 8 }}>
                         {filteredServers.map((suggestion) => (
@@ -319,6 +344,18 @@ export default function LoginScreen() {
                             </Text>
                           </Pressable>
                         ))}
+                      </View>
+                    )}
+
+                    {/* Valid domain but not in suggestions */}
+                    {isValidDomain && searchValue && filteredServers.length === 0 && (
+                      <View style={{ marginTop: 8 }}>
+                        <Text color="white" fontSize="$6" style={{ paddingVertical: 12 }}>
+                          Continue with{' '}
+                          <Text color="#3F8FF7" fontWeight="bold">
+                            {searchValue}
+                          </Text>
+                        </Text>
                       </View>
                     )}
                   </View>
@@ -364,8 +401,15 @@ export default function LoginScreen() {
               borderRadius={8}
               height={50}
               onPress={handleLogin}
-              disabled={loading || !server}
-              opacity={!server && selectedOption != 2 ? 0.5 : 1}
+              disabled={
+                loading ||
+                !(selectedOption === 0 || (selectedOption === 1 && isValidDomain))
+              }
+              opacity={
+                !(selectedOption === 0 || (selectedOption === 1 && isValidDomain))
+                  ? 0.5
+                  : 1
+              }
             >
               {loading ? <ActivityIndicator color="white" /> : 'Continue'}
             </Button>
