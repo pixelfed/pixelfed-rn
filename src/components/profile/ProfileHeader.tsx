@@ -1,7 +1,14 @@
 import { Feather } from '@expo/vector-icons'
 import { Link, useRouter } from 'expo-router'
 import { useCallback, useState } from 'react'
-import { Dimensions, Platform, Pressable } from 'react-native'
+import {
+  Dimensions,
+  Modal,
+  Platform,
+  Pressable,
+  TouchableWithoutFeedback,
+  useWindowDimensions,
+} from 'react-native'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import AutolinkText from 'src/components/common/AutolinkText'
 import ReadMore from 'src/components/common/ReadMore'
@@ -16,6 +23,7 @@ import FollowingProfile from './actionButtons/FollowingProfile'
 const SCREEN_WIDTH = Dimensions.get('screen').width
 import type { Relationship } from 'src/lib/api-types'
 import { useUserCache } from 'src/state/AuthProvider'
+import ZoomableImage from '../common/ZoomableImage'
 
 type todo = any
 
@@ -46,6 +54,9 @@ export default function ProfileHeader({
 }: ProfileHeaderProps) {
   const router = useRouter()
   const [usernameTruncated, setUsernameTruncated] = useState(profile?.acct?.length > 40)
+  const [modalVisible, setModalVisible] = useState(false)
+  let { width } = useWindowDimensions()
+  width = width * (70 / 100)
 
   const { id: selfId } = useUserCache()
 
@@ -265,6 +276,44 @@ export default function ProfileHeader({
 
   return (
     <View flex={1}>
+      {modalVisible && (
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: '#333',
+          }}
+        >
+          <Modal
+            animationType="fade"
+            visible={modalVisible}
+            transparent={true}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                }}
+              >
+                <ZoomableImage
+                  source={{ uri: profile?.avatar }}
+                  style={{
+                    width: width,
+                    height: width,
+                    backgroundColor: profile?.local ? '$gray5' : '$gray3',
+                    borderRadius: width,
+                  }}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
+        </View>
+      )}
       <View mx="$4" mt={Platform.OS === 'ios' ? '$3' : 0}>
         {isSelf ? <RenderSelfHeader /> : <RenderGuestHeader />}
 
@@ -274,17 +323,19 @@ export default function ProfileHeader({
           alignItems="center"
           mt={Platform.OS === 'ios' ? '$3' : 0}
         >
-          <View style={{ borderRadius: 100, overflow: 'hidden' }}>
-            <Avatar
-              circular
-              size={SCREEN_WIDTH > 400 ? '$10' : '$8'}
-              borderWidth={1}
-              borderColor={profile?.local ? '$gray5' : '$gray3'}
-            >
-              <Avatar.Image src={profile?.avatar} />
-              <Avatar.Fallback backgroundColor="$gray4" />
-            </Avatar>
-          </View>
+          <Pressable onPress={() => setModalVisible(true)}>
+            <View style={{ borderRadius: 100, overflow: 'hidden' }}>
+              <Avatar
+                circular
+                size={SCREEN_WIDTH > 400 ? '$10' : '$8'}
+                borderWidth={1}
+                borderColor={profile?.local ? '$gray5' : '$gray3'}
+              >
+                <Avatar.Image src={profile?.avatar} />
+                <Avatar.Fallback backgroundColor="$gray4" />
+              </Avatar>
+            </View>
+          </Pressable>
 
           <XStack gap={SCREEN_WIDTH > 400 ? '$7' : '$5'} mx="$5" alignItems="flex-start">
             <YStack alignItems="center" gap="$1">
