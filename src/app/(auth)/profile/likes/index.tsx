@@ -26,6 +26,7 @@ export default function LikesScreen() {
       <FeedPost
         post={item}
         user={user}
+        handleLikeProfileId={true}
         onOpenComments={() => onOpenComments(item.id)}
         onDeletePost={() => onDeletePost(item.id)}
         isLikeFeed={true}

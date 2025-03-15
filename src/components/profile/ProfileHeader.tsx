@@ -73,6 +73,10 @@ export default function ProfileHeader({
     router.navigate(`/profile/bookmarks`)
   }
 
+  const gotoProfileFeed = () => {
+    router.push(`/profile/feed/${profile?.id}}`)
+  }
+
   const ActionButton = () => {
     if (isSelf || selfId == profile?.id) {
       return <EditProfile onPress={() => onGotoSettings()} />
@@ -410,6 +414,10 @@ export default function ProfileHeader({
           <XStack justifyContent="space-around" px="$5" py="$3" mb="$1">
             <Feather name="grid" size={20} />
 
+            <PressableOpacity onPress={() => gotoProfileFeed()}>
+              <Feather name="list" size={20} color="#999" />
+            </PressableOpacity>
+
             <PressableOpacity onPress={() => gotoSelfLikes()}>
               <Feather name="heart" size={20} color="#999" />
             </PressableOpacity>
@@ -419,7 +427,18 @@ export default function ProfileHeader({
             </PressableOpacity>
           </XStack>
         </>
-      ) : null}
+      ) : (
+        <>
+          <Separator borderColor="$gray6" />
+          <XStack justifyContent="space-around" px="$5" py="$3" mb="$1">
+            <Feather name="grid" size={20} />
+
+            <PressableOpacity onPress={() => gotoProfileFeed()}>
+              <Feather name="list" size={20} color="#999" />
+            </PressableOpacity>
+          </XStack>
+        </>
+      )}
     </View>
   )
 }

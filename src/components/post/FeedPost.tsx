@@ -4,6 +4,8 @@ import {
   type BottomSheetModal,
   BottomSheetScrollView,
 } from '@gorhom/bottom-sheet'
+import * as Haptics from 'expo-haptics'
+import { Image } from 'expo-image'
 import { Link, router } from 'expo-router'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import {
@@ -21,6 +23,11 @@ import {
   PinchGestureHandler,
   State,
 } from 'react-native-gesture-handler'
+import type {
+  GestureEvent,
+  HandlerStateChangeEvent,
+  PinchGestureHandlerEventPayload,
+} from 'react-native-gesture-handler'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import Animated, {
   runOnJS,
@@ -33,25 +40,6 @@ import Carousel, { Pagination } from 'react-native-reanimated-carousel'
 import ImageComponent from 'src/components/ImageComponent'
 import AutolinkText from 'src/components/common/AutolinkText'
 import LikeButton from 'src/components/common/LikeButton'
-import { Storage } from 'src/state/cache'
-import {
-  _timeAgo,
-  enforceLen,
-  formatTimestamp,
-  htmlToTextWithLineBreaks,
-  openBrowserAsync,
-  prettyCount,
-} from 'src/utils'
-import { Button, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
-import ReadMore from '../common/ReadMore'
-import VideoPlayer from './VideoPlayer'
-
-import { Image } from 'expo-image'
-import type {
-  GestureEvent,
-  HandlerStateChangeEvent,
-  PinchGestureHandlerEventPayload,
-} from 'react-native-gesture-handler'
 import { useBookmarkMutation } from 'src/hooks/mutations/useBookmarkMutation'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 import type {
@@ -63,7 +51,19 @@ import type {
   Timestamp,
   Visibility,
 } from 'src/lib/api-types'
+import { Storage } from 'src/state/cache'
+import {
+  _timeAgo,
+  enforceLen,
+  formatTimestamp,
+  htmlToTextWithLineBreaks,
+  openBrowserAsync,
+  prettyCount,
+} from 'src/utils'
+import { Button, Circle, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
 import { PixelfedBottomSheetModal } from '../common/BottomSheets'
+import ReadMore from '../common/ReadMore'
+import VideoPlayer from './VideoPlayer'
 
 const AnimatedFastImage = Animated.createAnimatedComponent(Image)
 
@@ -135,6 +135,12 @@ const AVATAR_WIDTH = 45
 
 const Section = React.memo(({ children }: React.PropsWithChildren) => (
   <View px="$3" bg="white" borderTopWidth={1} borderBottomWidth={1} borderColor="$gray7">
+    {children}
+  </View>
+))
+
+const SectionTopBorder = React.memo(({ children }: React.PropsWithChildren) => (
+  <View px="$3" bg="white" borderTopWidth={1} borderBottomWidth={0} borderColor="$gray7">
     {children}
   </View>
 ))
@@ -681,7 +687,154 @@ interface FeedPostProps {
   isPermalink?: boolean
   isLikeFeed?: boolean
   onShare: (id: string) => void
+  handleLikeProfileId?: boolean
 }
+
+const TextPost = React.memo(
+  ({
+    post,
+    avatar,
+    username,
+    displayName,
+    handleLike,
+    userId,
+    onOpenMenu,
+    disableReadMore,
+    likesCount,
+    caption,
+    commentsCount,
+    createdAt,
+    onHashtagPress,
+    onMentionPress,
+    onUsernamePress,
+    onOpenComments,
+    hasLiked,
+    isLikePending,
+  }) => {
+    const timeAgo = formatTimestamp(createdAt)
+    const captionText = htmlToTextWithLineBreaks(caption)
+    return (
+      <SectionTopBorder>
+        <XStack alignItems="flex-start" gap="$3" paddingVertical="$3">
+          <Link href={`/profile/${userId}`} asChild>
+            <Pressable>
+              <Circle size={40} overflow="hidden" borderWidth={1} borderColor="#eee">
+                <ImageComponent
+                  source={{ uri: avatar }}
+                  style={{
+                    width: AVATAR_WIDTH,
+                    height: AVATAR_WIDTH,
+                    borderRadius: AVATAR_WIDTH,
+                    borderWidth: 1,
+                    borderColor: '#eee',
+                  }}
+                />
+              </Circle>
+            </Pressable>
+          </Link>
+          <YStack flex={1}>
+            {post.in_reply_to_id ? (
+              <XStack>
+                <Text color="$gray10">In reply to this </Text>
+                <Link href={`/post/${post.in_reply_to_id}`}>
+                  <Text color="$blue9" fontWeight="bold">
+                    post
+                  </Text>
+                </Link>
+              </XStack>
+            ) : null}
+            <XStack
+              alignItems="center"
+              paddingHorizontal="$1"
+              justifyContent="space-between"
+              flex={1}
+              flexWrap="wrap"
+            >
+              <XStack alignItems="center" space="$2" flex={1}>
+                <Text
+                  fontWeight="bold"
+                  fontSize={16}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {enforceLen(username, 20, true)}
+                </Text>
+                <Text
+                  color="#8e8e8e"
+                  fontSize={14}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {timeAgo}
+                </Text>
+              </XStack>
+
+              <Pressable onPress={() => onOpenMenu()}>
+                <View px="$3">
+                  <Feather
+                    name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
+                    size={25}
+                  />
+                </View>
+              </Pressable>
+            </XStack>
+
+            <YStack paddingHorizontal="$1" marginBottom="$2">
+              <XStack flexWrap="wrap" pr="$3">
+                {disableReadMore ? (
+                  <AutolinkText
+                    text={captionText}
+                    username={''}
+                    onHashtagPress={onHashtagPress}
+                    onMentionPress={onMentionPress}
+                    onUsernamePress={onUsernamePress}
+                  />
+                ) : (
+                  <ReadMore numberOfLines={3}>
+                    <AutolinkText
+                      text={captionText}
+                      username={''}
+                      onHashtagPress={onHashtagPress}
+                      onMentionPress={onMentionPress}
+                      onUsernamePress={onUsernamePress}
+                    />
+                  </ReadMore>
+                )}
+              </XStack>
+            </YStack>
+
+            <YStack>
+              <XStack alignItems="center" marginTop="$2">
+                <XStack flex={1} alignItems="center" space="$6">
+                  <XStack justifyContent="center" alignItems="center" gap="$2">
+                    <LikeButton hasLiked={hasLiked} handleLike={handleLike} size={23} />
+                    {isLikePending ? <ActivityIndicator color="#000" /> : null}
+                    {!isLikePending && likesCount ? (
+                      <Link href={`/post/likes/${post.id}`}>
+                        <Text fontWeight={'bold'} allowFontScaling={false} fontSize={13}>
+                          {prettyCount(likesCount)}
+                        </Text>
+                      </Link>
+                    ) : null}
+                  </XStack>
+
+                  <XStack gap="$2" alignItems="center">
+                    <Pressable onPress={() => onOpenComments()}>
+                      <Feather name="message-circle" size={20} />
+                    </Pressable>
+                    <Text fontSize={13} fontWeight="bold">
+                      {prettyCount(commentsCount)}
+                    </Text>
+                  </XStack>
+                </XStack>
+              </XStack>
+            </YStack>
+          </YStack>
+        </XStack>
+      </SectionTopBorder>
+    )
+  }
+)
 
 const FeedPost = React.memo(
   function FeedPost({
@@ -693,6 +846,7 @@ const FeedPost = React.memo(
     isPermalink = false,
     isLikeFeed = false,
     onShare,
+    handleLikeProfileId = false,
   }: FeedPostProps) {
     const { handleLike, isLikePending } = useLikeMutation()
     const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
@@ -715,12 +869,17 @@ const FeedPost = React.memo(
 
     const handleLikeAction = useCallback(() => {
       const shouldLike = !post.favourited
-      handleLike(post.id, shouldLike)
+      handleLike(
+        post.id,
+        shouldLike,
+        handleLikeProfileId ? post.account.id.toString() : ''
+      )
     }, [post.id, post.favourited, post.favourites_count, handleLike])
 
     const handleDoubleTap = () => {
       // only allow liking with double tap, not unliking
       if (!post.favourited) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
         handleLikeAction()
       }
     }
@@ -797,62 +956,88 @@ const FeedPost = React.memo(
     }
     return (
       <View flex={1} style={{ width }}>
-        <PostHeader
-          avatar={post.account?.avatar}
-          username={post.account?.acct}
-          displayName={post.account?.display_name}
-          userId={post.account?.id}
-          onOpenMenu={() => handlePresentModalPress()}
-        />
         {post.media_attachments?.length > 0 ? (
-          <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
-            {post.media_attachments.length > 1 ? (
-              <PostAlbumMedia
-                media={post.media_attachments}
-                post={post}
-                progress={progress}
-              />
-            ) : (
-              <PostMedia media={post.media_attachments} post={post} />
-            )}
-          </GestureDetector>
-        ) : null}
-        {!hideCaptions || isPermalink ? (
           <>
-            <PostActions
-              hasLiked={post.favourited}
-              hasShared={post?.reblogged === true}
-              hasBookmarked={post?.bookmarked === true}
-              isLikeFeed={isLikeFeed}
-              post={post}
-              progress={progress}
-              isLikePending={isLikePending}
-              likesCount={post?.favourites_count}
-              likedBy={post?.liked_by}
-              sharesCount={post?.reblogs_count}
-              showAltText={showAltText}
-              commentsCount={post.replies_count}
-              handleLike={handleLikeAction}
-              onOpenComments={() => onOpenComments(post?.id)}
-              onShare={() => onShare(post?.id)}
+            <PostHeader
+              avatar={post.account?.avatar}
+              username={post.account?.acct}
+              displayName={post.account?.display_name}
+              userId={post.account?.id}
+              onOpenMenu={() => handlePresentModalPress()}
             />
 
-            <PostCaption
-              postId={post.id}
-              username={post.account?.username}
+            <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
+              {post.media_attachments.length > 1 ? (
+                <PostAlbumMedia
+                  media={post.media_attachments}
+                  post={post}
+                  progress={progress}
+                />
+              ) : (
+                <PostMedia media={post.media_attachments} post={post} />
+              )}
+            </GestureDetector>
+            {!hideCaptions || isPermalink ? (
+              <>
+                <PostActions
+                  hasLiked={post.favourited}
+                  hasShared={post?.reblogged === true}
+                  hasBookmarked={post?.bookmarked === true}
+                  isLikeFeed={isLikeFeed}
+                  post={post}
+                  progress={progress}
+                  isLikePending={isLikePending}
+                  likesCount={post?.favourites_count}
+                  likedBy={post?.liked_by}
+                  sharesCount={post?.reblogs_count}
+                  showAltText={showAltText}
+                  commentsCount={post.replies_count}
+                  handleLike={handleLikeAction}
+                  onOpenComments={() => onOpenComments(post?.id)}
+                  onShare={() => onShare(post?.id)}
+                />
+
+                <PostCaption
+                  postId={post.id}
+                  username={post.account?.username}
+                  caption={post.content}
+                  commentsCount={post.replies_count}
+                  createdAt={post.created_at}
+                  tags={post.tags}
+                  visibility={post.visibility}
+                  disableReadMore={disableReadMore}
+                  onOpenComments={() => onOpenComments(post.id)}
+                  onHashtagPress={(tag) => onGotoHashtag(tag)}
+                  onMentionPress={(tag) => onGotoMention(tag)}
+                  onUsernamePress={() => goToProfile()}
+                  editedAt={post.edited_at}
+                  isLikeFeed={isLikeFeed}
+                  likedAt={post.liked_at}
+                />
+              </>
+            ) : null}
+          </>
+        ) : !hideCaptions || isPermalink ? (
+          <>
+            <TextPost
+              post={post}
+              avatar={post.account?.avatar}
+              username={post.account?.acct}
+              displayName={post.account?.display_name}
+              userId={post.account?.id}
+              disableReadMore={disableReadMore}
+              hasLiked={post.favourited}
+              isLikePending={isLikePending}
+              likesCount={post?.favourites_count}
               caption={post.content}
               commentsCount={post.replies_count}
               createdAt={post.created_at}
-              tags={post.tags}
-              visibility={post.visibility}
-              disableReadMore={disableReadMore}
-              onOpenComments={() => onOpenComments(post.id)}
+              onOpenMenu={() => handlePresentModalPress()}
               onHashtagPress={(tag) => onGotoHashtag(tag)}
               onMentionPress={(tag) => onGotoMention(tag)}
               onUsernamePress={() => goToProfile()}
-              editedAt={post.edited_at}
-              isLikeFeed={isLikeFeed}
-              likedAt={post.liked_at}
+              onOpenComments={() => onOpenComments(post?.id)}
+              handleLike={handleLikeAction}
             />
           </>
         ) : null}
