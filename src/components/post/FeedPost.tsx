@@ -56,8 +56,8 @@ import {
 } from 'src/utils'
 import { Button, Circle, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
 import { PixelfedBottomSheetModal } from '../common/BottomSheets'
-import ZoomableImage from '../common/ZoomableImage'
 import ReadMore from '../common/ReadMore'
+import ZoomableImage from '../common/ZoomableImage'
 import VideoPlayer from './VideoPlayer'
 
 const AVATAR_WIDTH = 45
