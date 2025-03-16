@@ -69,11 +69,10 @@ export default function FollowingScreen() {
     error,
   } = useInfiniteQuery({
     queryKey: ['getAccountFollowing', profileId],
-    queryFn: async ({ pageParam }) => {
-      return await getAccountFollowing(profileId, pageParam)
-    },
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-    getPreviousPageParam: (lastPage) => lastPage.prevPage,
+    queryFn: ({ pageParam }) => getAccountFollowing(profileId, pageParam),
+    initialPageParam: '',
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getPreviousPageParam: (lastPage) => lastPage.prevCursor,
     select: (data) => ({
       pages: [...data.pages].reverse(),
       pageParams: [...data.pageParams].reverse(),

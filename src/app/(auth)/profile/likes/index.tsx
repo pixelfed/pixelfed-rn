@@ -51,11 +51,11 @@ export default function LikesScreen() {
     error,
   } = useInfiniteQuery({
     queryKey: ['getSelfLikes'],
-    initialPageParam: null,
-    queryFn: getSelfLikes,
+    initialPageParam: '',
+    queryFn: ({ pageParam }) => getSelfLikes(pageParam),
     refetchOnWindowFocus: false,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-    getPreviousPageParam: (lastPage) => lastPage.prevPage,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getPreviousPageParam: (lastPage) => lastPage.prevCursor,
   })
 
   if (isFetching && !isFetchingNextPage && !isRefetching) {

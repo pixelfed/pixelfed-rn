@@ -130,7 +130,7 @@ export default function Page() {
 
   const { data: hashtag, isPending } = useQuery({
     queryKey: ['getHashtagByName', id],
-    queryFn: getHashtagByName,
+    queryFn: () => getHashtagByName(id),
   })
 
   const {
@@ -149,22 +149,15 @@ export default function Page() {
     queryFn: async ({ pageParam }) => {
       const data = await getHashtagByNameFeed(id, pageParam)
 
-      return data.data?.filter((p) => {
-        return p.pf_type == 'photo' && p.media_attachments.length && !p.sensitive
-      })
-    },
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages, lastPageParam) => {
-      if (lastPage.length === 0) {
-        return undefined
+      return {
+        ...data,
+        data: data.data?.filter((p) => {
+          return p.pf_type == 'photo' && p.media_attachments.length && !p.sensitive
+        }),
       }
-
-      const lowestId = lastPage.reduce((min, post) => {
-        return BigInt(post.id) < BigInt(min) ? post.id : min
-      }, lastPage[0].id)
-
-      return String(BigInt(lowestId) - 1n)
     },
+    initialPageParam: '',
+    getNextPageParam: (lastPage, allPages, lastPageParam) => lastPage.nextCursor,
   })
 
   const {
@@ -182,7 +175,7 @@ export default function Page() {
   })
 
   const flattenedData = useMemo(() => {
-    return feed?.pages.flat() || []
+    return feed?.pages.flatMap(({ data }) => data) || []
   }, [feed?.pages])
 
   const keyExtractor = useCallback((item) => item?.id.toString(), [])

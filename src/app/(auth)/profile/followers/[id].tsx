@@ -69,11 +69,10 @@ export default function FollowersScreen() {
     error,
   } = useInfiniteQuery({
     queryKey: ['getAccountFollowers', profileId],
-    queryFn: async ({ pageParam }) => {
-      return await getAccountFollowers(profileId, pageParam)
-    },
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-    getPreviousPageParam: (lastPage) => lastPage.prevPage,
+    queryFn: ({ pageParam }) => getAccountFollowers(profileId, pageParam),
+    initialPageParam: '',
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getPreviousPageParam: (lastPage) => lastPage.nextCursor,
     select: (data) => ({
       pages: [...data.pages].reverse(),
       pageParams: [...data.pageParams].reverse(),

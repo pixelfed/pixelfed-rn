@@ -488,13 +488,13 @@ export default function ProfileScreen() {
 
   const { data: relationship, isError: relationshipError } = useQuery({
     queryKey: ['getAccountRelationship', userId],
-    queryFn: getAccountRelationship,
+    queryFn: () => getAccountRelationship(userId),
     enabled: !!userId && !userError,
   })
 
   const { data: mutuals, isError: mutualsError } = useQuery({
     queryKey: ['getMutualFollowing', userId],
-    queryFn: getMutualFollowing,
+    queryFn: () => getMutualFollowing(userId),
     enabled: !!relationship,
   })
 

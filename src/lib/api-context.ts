@@ -3,8 +3,10 @@ import { randomKey } from './randomKey'
 
 type ApiRequestOptions = {
   idempotency?: true
-  searchParams?: Record<string, string | number | boolean>
+  searchParams?: Record<string, string | number | boolean | undefined>
 }
+
+export type PaginatedData<ResponseType> = { data: ResponseType; nextCursor?: string; prevCursor?: string }
 
 export class ApiContext {
   constructor(
@@ -31,15 +33,22 @@ export class ApiContext {
       let { searchParams } = options
       for (const key in searchParams) {
         if (Object.prototype.hasOwnProperty.call(searchParams, key)) {
-          url.searchParams.append(key, String(searchParams[key]))
+          if (typeof searchParams[key] !== 'undefined') {
+            url.searchParams.append(key, String(searchParams[key]))
+          }
         }
       }
     }
+
+    // Tell the API that we want the extra pixelfed specific fields
+    // (that would not be in the mastodon api)
+    url.searchParams.append('_pe', '1')
 
     fetch_options.headers = {
       ...fetch_options.headers,
       Accept: 'application/json',
       Authorization: `Bearer ${this.token}`,
+      'X-PIXELFED-APP': '1',
       ...(options?.idempotency ? { 'Idempotency-Key': randomKey(40) } : {}),
     }
 
@@ -75,7 +84,8 @@ export class ApiContext {
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     path: string,
     data = {},
-    searchParams: ApiRequestOptions['searchParams'] = {}
+    searchParams: ApiRequestOptions['searchParams'] = {},
+    idempotency?: true
   ) {
     return await (
       await this.request(
@@ -85,7 +95,7 @@ export class ApiContext {
           body: JSON.stringify(data),
           headers: { 'Content-Type': 'application/json' },
         },
-        { searchParams }
+        { searchParams, idempotency }
       )
     ).json()
   }
@@ -103,6 +113,34 @@ export class ApiContext {
     )
     return await response.json()
   }
+
+  async getPaginated<ResponseType>(
+    url: string,
+    searchParams: ApiRequestOptions['searchParams'] = {}
+  ): Promise<PaginatedData<ResponseType>> {
+    if (searchParams.cursor == '' || typeof searchParams.cursor == "undefined") {
+      delete searchParams.cursor
+    }
+
+    const response = await this.request(
+      url,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+      { searchParams }
+    )
+    const data = await response.json()
+
+    if (!data.data) {
+      console.warn(`getPaginated for this did not return pagination cursor info`, response.url)
+      return { data, nextCursor: undefined, prevCursor: undefined }
+    }
+
+    return { data: data.data, nextCursor: data.meta.next_cursor, prevCursor: data.links.prev_cursor }
+  }
 }
 
 export function ContextFromStorage(): ApiContext {
@@ -114,4 +152,4 @@ export function ContextFromStorage(): ApiContext {
   return new ApiContext(instance, token)
 }
 // For debugging
-;(global as any).API = ContextFromStorage
+; (global as any).API = ContextFromStorage

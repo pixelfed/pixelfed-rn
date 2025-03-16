@@ -1,11 +1,16 @@
 import { objectToForm } from 'src/requests'
 import { Storage } from 'src/state/cache'
-import { parseLinkHeader } from 'src/utils'
 import { ContextFromStorage } from './api-context'
 import type {
   Account,
+  AdminInstancesOptions,
   OpenServersResponse,
   PaginatedStatus,
+  PushState,
+  PushStateCompareParams,
+  PushStateCompareResponse,
+  PushStateParams,
+  PushStateResponse,
   Relationship,
   RelationshipFromFollowAPIResponse,
   Status,
@@ -67,116 +72,6 @@ export async function selfPost<
   return (rawRes ? resp : resp.json()) as ActualResponse
 }
 
-export async function selfDelete(
-  path: string,
-  params = {},
-  rawRes = false,
-  idempotency = false
-) {
-  let headers: Record<string, string> = {}
-  const instance = Storage.getString('app.instance')
-  const token = Storage.getString('app.token')
-  const url = `https://${instance}/${path}`
-
-  headers['Authorization'] = `Bearer ${token}`
-  headers['Accept'] = 'application/json'
-  headers['Content-Type'] = 'application/json'
-
-  if (idempotency) {
-    headers['Idempotency-Key'] = randomKey(40)
-  }
-
-  const resp = await fetch(url, {
-    method: 'DELETE',
-    body: JSON.stringify(params),
-    headers,
-  })
-
-  return rawRes ? resp : resp.json()
-}
-
-export async function selfGet(
-  path: string,
-  rawRes = false,
-  idempotency = false,
-  appHeader = false
-) {
-  let headers: Record<string, string> = {}
-  const instance = Storage.getString('app.instance')
-  const token = Storage.getString('app.token')
-  const url = `https://${instance}/${path}`
-
-  headers['Authorization'] = `Bearer ${token}`
-  headers['Accept'] = 'application/json'
-  headers['Content-Type'] = 'application/json'
-
-  if (idempotency) {
-    headers['Idempotency-Key'] = randomKey(40)
-  }
-
-  if (appHeader) {
-    headers['X-PIXELFED-APP'] = '1'
-  }
-
-  const resp = await fetch(url, {
-    method: 'GET',
-    headers,
-  })
-
-  return rawRes ? resp : resp.json()
-}
-
-async function fetchPaginatedData(url: string) {
-  const token = Storage.getString('app.token')
-
-  const response = await fetch(url, {
-    method: 'get',
-    headers: new Headers({
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    }),
-  })
-  const data = await response.json()
-
-  const linkHeader = response.headers.get('Link')
-  const links = parseLinkHeader(linkHeader)
-
-  return { data, nextPage: links?.next, prevPage: links?.prev }
-}
-
-async function fetchCursorPagination(url: string) {
-  const token = Storage.getString('app.token')
-
-  const response = await fetch(url, {
-    method: 'get',
-    headers: new Headers({
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    }),
-  })
-  const data = await response.json()
-
-  return { data: data.data, nextPage: data?.links?.next, prevPage: data?.links?.prev }
-}
-
-async function fetchData(url: string) {
-  const token = Storage.getString('app.token')
-
-  const response = await fetch(url, {
-    method: 'get',
-    headers: new Headers({
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    }),
-  })
-  const data = await response.json()
-
-  return data
-}
-
 export async function searchQuery(query: string) {
   if (!query || query.trim() === '') return []
   const instance = Storage.getString('app.instance')
@@ -219,76 +114,55 @@ export async function searchQuery(query: string) {
   return mapd
 }
 
-export async function fetchNotifications({ queryKey, pageParam = false }) {
-  let url
-  const filterMap = {
-    likes: 'favourite',
-    follows: 'follow',
-    mentions: 'mention',
-    reblogs: 'reblog',
-  }
-  if (!pageParam) {
-    const instance = Storage.getString('app.instance')
-    if (queryKey[1] != 'all') {
-      url = `https://${instance}/api/v1/notifications?types[]=${filterMap[queryKey[1]]}`
-    } else {
-      url = `https://${instance}/api/v1/notifications`
-    }
-  } else {
-    url = pageParam
-  }
-  return await fetchPaginatedData(url)
+export enum NotificationType {
+  all = 'all',
+  likes = 'favourite',
+  follows = 'follow',
+  mentions = 'mention',
+  reblogs = 'reblog',
 }
+export async function fetchNotifications(filter_type?: NotificationType, cursor?: string) {
+  const api = ContextFromStorage()
 
-export async function fetchHomeFeed({ pageParam = false }): Promise<PaginatedStatus> {
-  let url
-  if (!pageParam) {
-    const instance = Storage.getString('app.instance')
-    url = `https://${instance}/api/v1/timelines/home?_pe=1&limit=20`
-  } else {
-    url = pageParam + '&_pe=1&limit=20'
-  }
-  return await fetchPaginatedData(url)
-}
+  let query: { cursor?: string, "types[]"?: string } = { cursor }
 
-export async function fetchNetworkFeed({ pageParam = false }): Promise<PaginatedStatus> {
-  let url
-  if (!pageParam) {
-    const instance = Storage.getString('app.instance')
-    url = `https://${instance}/api/v1/timelines/public?_pe=1&limit=20`
-  } else {
-    url = pageParam + '&_pe=1&limit=20'
+  if (filter_type && filter_type != NotificationType.all) {
+    query["types[]"] = filter_type
   }
 
-  return await fetchPaginatedData(url)
+  return await api.getPaginated("/api/v1/notifications", query)
 }
 
-export async function getAccountFollowers(id: string, cursor) {
-  let url
-  const instance = Storage.getString('app.instance')
-  url = cursor
-    ? `https://${instance}/api/v1/accounts/${id}/followers?_pe=1&limit=20&cursor=${cursor}`
-    : `https://${instance}/api/v1/accounts/${id}/followers?_pe=1&limit=20`
-  return await fetchPaginatedData(url)
+export async function fetchTimeline(feed: 'home' | 'public', cursor?: string): Promise<PaginatedStatus> {
+  const api = ContextFromStorage()
+
+  return await api.getPaginated(`/api/v1/timelines/${feed}`, { limit: 20, cursor }) as PaginatedStatus
 }
 
-export async function getAccountFollowing(id: string, cursor) {
-  let url
-  const instance = Storage.getString('app.instance')
-  url = cursor
-    ? `https://${instance}/api/v1/accounts/${id}/following?_pe=1&limit=20&cursor=${cursor}`
-    : `https://${instance}/api/v1/accounts/${id}/following?_pe=1&limit=20`
-  return await fetchPaginatedData(url)
+export async function getAccountFollowers(id: string, cursor?: string) {
+  const api = ContextFromStorage()
+  return await api.getPaginated(`/api/v1/accounts/${id}/followers`, {
+    limit: 20,
+    cursor,
+  })
+}
+
+export async function getAccountFollowing(id: string, cursor?: string) {
+  const api = ContextFromStorage()
+  return await api.getPaginated(`/api/v1/accounts/${id}/following`, {
+    limit: 20,
+    cursor,
+  })
 }
 
 export async function getStatusById(id: string) {
   const api = ContextFromStorage()
-  return await api.get(`api/v1/statuses/${id}?_pe=1`)
+  return await api.get(`api/v1/statuses/${id}`)
 }
 
 export async function getAccountById(id: string) {
   const api = ContextFromStorage()
-  return await api.get(`api/v1/accounts/${id}?_pe=1`)
+  return await api.get(`api/v1/accounts/${id}`)
 }
 
 export async function followAccountById(
@@ -318,7 +192,7 @@ export async function report(report: NewReport) {
 
 export async function getAccountByUsername(username: string): Promise<Account> {
   const api = ContextFromStorage()
-  let account = await api.get(`api/v1.1/accounts/username/${username}?_pe=1`)
+  let account = await api.get(`api/v1.1/accounts/username/${username}`)
   if (Array.isArray(account) && account.length === 0) {
     throw new Error(`Account "${username}" not found`)
   }
@@ -343,51 +217,51 @@ export async function getAccountStatusesById(
 ): Promise<Status[]> {
   const api = ContextFromStorage()
   return await api.get(`api/v1/accounts/${id}/statuses`, {
-    _pe: 1, // todo document what _pe means
     ...parameters,
   })
 }
 
-export async function getHashtagByName({ queryKey }) {
-  const instance = Storage.getString('app.instance')
-  const url = `https://${instance}/api/v1/tags/${queryKey[1]}/?_pe=1`
-  return await fetchData(url)
+export async function getHashtagByName(id: string) {
+  const api = ContextFromStorage()
+  return await api.get(`api/v1/tags/${id}/`)
 }
 
-export async function getHashtagByNameFeed(id: string, page) {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/timelines/tag/${id}?_pe=1&max_id=${page}`
-  return await fetchPaginatedData(url)
+export async function getHashtagByNameFeed(id: string, cursor?: string) {
+  const api = ContextFromStorage()
+  return await api.getPaginated(`/api/v1/timelines/tag/${id}`, {
+    cursor,
+  })
 }
 
 export async function getHashtagRelated(id: string) {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/tags/${id}/related`
-  return await fetchPaginatedData(url)
+  const api = ContextFromStorage()
+  return await api.get(`api/v1/tags/${id}/related`)
 }
 
 export async function getConversations() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/conversations`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get('api/v1/conversations')
 }
 
 export async function getComposeSettings() {
-  const path = `api/v1.1/compose/settings`
-  return await selfGet(path)
+  const api = ContextFromStorage()
+  return await api.get('api/v1.1/compose/settings')
 }
 
 export async function getConfig() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v2/config`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get('api/v2/config')
 }
 
-export async function getStatusRepliesById(id: string, page) {
-  const instance = Storage.getString('app.instance')
-  const url = `https://${instance}/api/v1/statuses/${id}/context?_pe=1&max_id=${page}`
-  let res = await fetchPaginatedData(url)
-
+export async function getStatusRepliesById(id: string, cursor?: string) {
+  const api = ContextFromStorage()
+  console.info("getStatusRepliesById")
+  let res = await api.getPaginated(`api/v1/statuses/${id}/context`)
+  console.info({ res })
+  // TODO: investigate - link header is also empty
+  //  -> does this need really paginated or could use plain api.get instead?
+  // also server code seems to have a hardcoded limit of 20
+  // https://github.com/pixelfed/pixelfed/blob/33bb021c1d4bda28342e38c4aa41122cc9a8df0b/app/Http/Controllers/Api/ApiV1Controller.php#L3186
   res.data = res.data.descendants
   return res
 }
@@ -422,59 +296,40 @@ export async function getRegisterServers() {
   return (await response.json()) as OpenServersResponse
 }
 
-export async function getStatusLikes(id: string, cursor) {
-  let url
-  const instance = Storage.getString('app.instance')
-  url = cursor
-    ? `https://${instance}/api/v1/statuses/${id}/favourited_by?_pe=1&limit=20&cursor=${cursor}`
-    : `https://${instance}/api/v1/statuses/${id}/favourited_by?_pe=1&limit=20`
-  return await fetchPaginatedData(url)
+export async function getStatusLikes(id: string, cursor?: string) {
+  const api = ContextFromStorage()
+  return await api.getPaginated(`api/v1/statuses/${id}/favourited_by`, {
+    limit: 20,
+    cursor,
+  })
 }
 
-export async function getStatusReblogs(id: string, cursor) {
-  let url
-  const instance = Storage.getString('app.instance')
-  url = cursor
-    ? `https://${instance}/api/v1/statuses/${id}/reblogged_by?_pe=1&limit=20&cursor=${cursor}`
-    : `https://${instance}/api/v1/statuses/${id}/reblogged_by?_pe=1&limit=20`
-  return await fetchPaginatedData(url)
+export async function getStatusReblogs(id: string, cursor?: string) {
+  const api = ContextFromStorage()
+  return await api.getPaginated(`api/v1/statuses/${id}/reblogged_by`, {
+    limit: 10,
+    cursor,
+  })
 }
 
 export async function getTrendingHashtags() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1.1/discover/posts/hashtags`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get('api/v1.1/discover/posts/hashtags')
 }
 
 export async function getTrendingPopularAccounts() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1.1/discover/accounts/popular`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get('api/v1.1/discover/accounts/populars')
 }
 
-export async function getTrendingPopularPosts() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1.1/discover/posts/trending?range=daily`
-  return await fetchData(url)
+export async function getTrendingPopularPosts(range: 'daily' | 'monthly' | 'yearly') {
+  const api = ContextFromStorage()
+  return await api.get('api/v1.1/discover/posts/trending', { range })
 }
 
-export async function getTrendingPopularPostsMonthly() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1.1/discover/posts/trending?range=monthly`
-  return await fetchData(url)
-}
-
-export async function getTrendingPopularPostsYearly() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1.1/discover/posts/trending?range=yearly`
-  return await fetchData(url)
-}
-
-export async function getAccountRelationship({ queryKey }): Promise<Relationship> {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/accounts/relationships?id[]=${queryKey[1]}&_pe=1`
-  const res = await fetchData(url)
-  return res[0]
+export async function getAccountRelationship(id: string): Promise<Relationship> {
+  const api = ContextFromStorage()
+  return (await api.get('api/v1/accounts/relationships', { 'id[]': id }))[0]
 }
 
 export async function postComment({ postId, commentText, scope = 'public', cw = false }) {
@@ -532,11 +387,13 @@ export async function unlikeStatus({ id }: { id: string }) {
 }
 
 export async function reblogStatus({ id }: { id: string }) {
-  return await selfPost(`api/v1/statuses/${id}/reblog`)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/statuses/${id}/reblog`)
 }
 
 export async function unreblogStatus({ id }: { id: string }) {
-  return await selfPost(`api/v1/statuses/${id}/unreblog`)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/statuses/${id}/unreblog`)
 }
 
 export async function deleteStatus({ id }: { id: string }) {
@@ -556,72 +413,63 @@ export async function deleteStatus({ id }: { id: string }) {
 }
 
 export async function getMutes() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/mutes`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get('api/v1/mutes')
 }
 
 export async function muteProfileById(id: string) {
-  let path = `api/v1/accounts/${id}/mute`
-  return await selfPost(path)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/accounts/${id}/mute`)
 }
 
 export async function unmuteProfileById(id: string) {
-  let path = `api/v1/accounts/${id}/unmute`
-  return await selfPost(path)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/accounts/${id}/unmute`)
 }
 
 export async function getBlocks() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/blocks`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get('api/v1/blocks')
 }
 
 export async function blockProfileById(id: string) {
-  let path = `api/v1/accounts/${id}/block`
-  return await selfPost(path)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/accounts/${id}/block`)
 }
 
 export async function unblockProfileById(id: string) {
-  let path = `api/v1/accounts/${id}/unblock`
-  return await selfPost(path)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/accounts/${id}/unblock`)
 }
 
 export async function getSelfCollections({ pageParam = 1 }) {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1.1/collections/self?page=${pageParam}`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get('api/v1.1/collections/self', { page: pageParam })
 }
 
 export async function getFollowedTags() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/followed_tags`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get('api/v1/followed_tags')
 }
 
 export async function getInstanceV1() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/instance`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get('api/v1/instance')
 }
 
 export async function getAppSettings() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/pixelfed/v1/app/settings`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get('api/pixelfed/v1/app/settings')
 }
 
 export async function getFollowRequests() {
-  const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/follow_requests`
-  return await fetchData(url)
+  const api = ContextFromStorage()
+  return await api.get('api/v1/follow_requests')
 }
 
 export async function getSelfAccount() {
   const api = ContextFromStorage()
-  return await api.get('api/v1/accounts/verify_credentials', {
-    _pe: 1, // todo document what _pe means
-  })
+  return await api.get('api/v1/accounts/verify_credentials')
 }
 
 export async function updateCredentials(params: URLSearchParams) {
@@ -648,48 +496,44 @@ export async function updateAvatar(data: {
     }
   }
 }) {
-  let path = `api/v1/accounts/update_credentials`
-  return await selfPost(path, data, true)
+  const api = ContextFromStorage()
+  return await api.request(`api/v1/accounts/update_credentials`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'multipart/form-data' },
+    body: objectToForm(data as { [key: string | number]: any }),
+  })
 }
 
 export async function accountFollowRequestAccept(id: string) {
-  let path = `api/v1/follow_requests/${id}/authorize`
-  return await selfPost(path)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/follow_requests/${id}/authorize`)
 }
 
 export async function accountFollowRequestReject(id: string) {
-  let path = `api/v1/follow_requests/${id}/reject`
-  return await selfPost(path)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/follow_requests/${id}/reject`)
 }
 
 export async function deleteAvatar() {
-  const instance = Storage.getString('app.instance')
-  const token = Storage.getString('app.token')
-  let url = `https://${instance}/api/v1.1/accounts/avatar`
-  const response = await fetch(url, {
-    method: 'DELETE',
-    headers: new Headers({
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    }),
-  })
-  return await response.json()
+  const api = ContextFromStorage()
+  return await api.jsonRequest('DELETE', 'api/v1.1/accounts/avatar')
 }
 
-export async function fetchChatThread(id: string) {
-  const path = `api/v1.1/direct/thread?pid=${id}`
-  return await selfGet(path)
+export async function fetchChatThread(pid: string) {
+  const api = ContextFromStorage()
+  return await api.get('api/v1.1/direct/thread', { pid })
 }
 
 export async function deleteChatMessage(id: string) {
-  const path = `api/v1.1/direct/thread/message?id=${id}`
-  return await selfDelete(path)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('DELETE', 'api/v1.1/direct/thread/message', undefined, {
+    id,
+  })
 }
 
 export async function sendChatMessage(id: string, message: string) {
-  const path = `api/v1.1/direct/thread/send`
-  return await selfPost(path, {
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1.1/direct/thread/send`, {
     to_id: id,
     message: message,
     type: 'text',
@@ -708,30 +552,28 @@ export async function uploadMediaV2(params: UploadV2Params) {
 }
 
 export async function postNewStatus(params) {
-  const path = `api/v1/statuses`
-  return await selfPost(path, params, false, false, true)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/statuses`, params, undefined, true)
 }
 
 export async function getAdminStats() {
-  const path = `api/admin/stats`
-  return await selfGet(path)
+  const api = ContextFromStorage()
+  return await api.get('api/admin/stats')
 }
 
-export async function adminInstances(queryKey?: { pageParam?: string }, sort, sortBy) {
-  const instance = Storage.getString('app.instance')
-  let path = queryKey?.pageParam
-    ? queryKey.pageParam
-    : `https://${instance}/api/admin/instances/list?order_by=sort=${sort}&sort_by=${sortBy}`
-  const res = await fetchData(path)
-  return { data: res.data, nextPage: res.links?.next, prevPage: res.links?.prev }
+export async function adminInstances(options: AdminInstancesOptions, cursor?: string) {
+  const api = ContextFromStorage()
+  return await api.getPaginated('api/admin/instances/list', { ...options, cursor })
 }
 
 export async function adminInstanceGet() {
-  return await selfGet('api/admin/instances/get')
+  const api = ContextFromStorage()
+  return await api.get('api/admin/instances/get')
 }
 
 export async function getDomainBlocks() {
-  return await selfGet('api/v1/domain_blocks')
+  const api = ContextFromStorage()
+  return await api.get('api/v1/domain_blocks')
 }
 
 export async function deleteStatusV1(id: string) {
@@ -768,7 +610,8 @@ export async function editPostMedia(id: string, description: string) {
 }
 
 export async function getTrendingPostsV1() {
-  const res = await selfGet('api/v1.1/discover/posts/network/trending')
+  const api = ContextFromStorage()
+  const res = await api.get('api/v1.1/discover/posts/network/trending')
   const accounts = removeDuplicateObjects(
     res.map((s) => s.account),
     ['id']
@@ -780,7 +623,8 @@ export async function getTrendingPostsV1() {
 }
 
 export async function postBookmark(id: string) {
-  return await selfPost(`api/v1/statuses/${id}/bookmark`)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/statuses/${id}/bookmark`)
 }
 
 export async function postUnBookmark(id: string) {
@@ -788,80 +632,78 @@ export async function postUnBookmark(id: string) {
 }
 
 export async function followHashtag(id: string) {
-  return await selfPost(`api/v1/tags/${id}/follow`)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/tags/${id}/follow`)
 }
 
 export async function unfollowHashtag(id: string) {
-  return await selfPost(`api/v1/tags/${id}/unfollow`)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', `api/v1/tags/${id}/unfollow`)
 }
 
 export async function getAdminConfig() {
-  return await selfGet('api/admin/config')
+  const api = ContextFromStorage()
+  return await api.get('api/admin/config')
 }
 
 export async function updateAdminConfig(params) {
-  return await selfPost('api/admin/config/update', params)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', 'api/admin/config/update', params)
 }
 
-export async function getAdminUsers(cursor) {
-  let url
-  const instance = Storage.getString('app.instance')
-  url = cursor != null ? cursor : `https://${instance}/api/admin/users/list?sort=desc`
-  return await fetchCursorPagination(url)
+export async function getAdminUsers(cursor?: string) {
+  const api = ContextFromStorage()
+  return await api.getPaginated('api/admin/users/list', { sort: 'desc', cursor })
 }
 
-export async function getAdminUser(id: string) {
-  return await selfGet(`api/admin/users/get?user_id=${id}`)
+export async function getAdminUser(user_id: string) {
+  const api = ContextFromStorage()
+  return await api.get('api/admin/users/get', { user_id })
 }
 
 export async function getModReports() {
-  return await selfGet('api/admin/mod-reports/list')
+  const api = ContextFromStorage()
+  return await api.get('api/admin/mod-reports/list')
 }
 
 export async function getAutospamReports() {
-  return await selfGet('api/admin/autospam/list')
+  const api = ContextFromStorage()
+  return await api.get('api/admin/autospam/list')
 }
 
 export async function postUserHandle(params) {
-  return await selfPost('api/admin/users/action', params)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', 'api/admin/users/action', params)
 }
 
 export async function postReportHandle(params) {
-  return await selfPost('api/admin/mod-reports/handle', params)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', 'api/admin/mod-reports/handle', params)
 }
 
 export async function postAutospamHandle(params) {
-  return await selfPost('api/admin/autospam/handle', params)
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', 'api/admin/autospam/handle', params)
 }
 
-export async function getStatusHistory(id) {
-  return await selfGet(`api/v1/statuses/${id}/history`)
+export async function getStatusHistory(id: number) {
+  const api = ContextFromStorage()
+  return await api.get(`api/v1/statuses/${id}/history`)
 }
 
-export async function getMutualFollowing({ queryKey }) {
-  return await selfGet(`api/v1.1/accounts/mutuals/${queryKey[1]}`)
+export async function getMutualFollowing(userId: string) {
+  const api = ContextFromStorage()
+  return await api.get(`api/v1.1/accounts/mutuals/${userId}`)
 }
 
-export async function getSelfLikes({ pageParam = false }) {
-  let url
-  const instance = Storage.getString('app.instance')
-  if (!pageParam) {
-    url = `https://${instance}/api/v1/favourites`
-  } else {
-    url = pageParam
-  }
-  return await fetchPaginatedData(url)
+export async function getSelfLikes(cursor?: string) {
+  const api = ContextFromStorage()
+  return await api.getPaginated('api/v1/favourites', { cursor })
 }
 
-export async function getSelfBookmarks({ pageParam = false }) {
-  let url
-  const instance = Storage.getString('app.instance')
-  if (!pageParam) {
-    url = `https://${instance}/api/v1/bookmarks`
-  } else {
-    url = pageParam
-  }
-  return await fetchPaginatedData(url)
+export async function getSelfBookmarks(cursor?: string) {
+  const api = ContextFromStorage()
+  return await api.getPaginated('api/v1/bookmarks', { cursor })
 }
 
 export async function putEditPost(id: string, params) {
@@ -870,25 +712,35 @@ export async function putEditPost(id: string, params) {
 }
 
 export async function getStoryCarousel() {
-  return await selfGet(`api/v1.1/stories/carousel`)
+  const api = ContextFromStorage()
+  return await api.get(`api/v1.1/stories/carousel`)
 }
 
-export async function pushNotificationSupported() {
-  return await selfGet(`api/v1.1/nag/state`)
+export async function pushNotificationSupported(): Promise<{ active: boolean }> {
+  const api = ContextFromStorage()
+  return await api.get(`api/v1.1/nag/state`)
 }
 
-export async function pushState() {
-  return await selfGet(`api/v1.1/push/state`, false, false, true)
+export async function pushState(): Promise<PushState> {
+  const api = ContextFromStorage()
+  return await api.get('api/v1.1/push/state')
 }
 
-export async function pushStateDisable() {
-  return await selfPost(`api/v1.1/push/disable`, false, false, false, true)
+export async function pushStateDisable(): Promise<PushState> {
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', 'api/v1.1/push/disable')
 }
 
-export async function pushStateCompare(params) {
-  return await selfPost(`api/v1.1/push/compare`, params, false, false, false, true)
+export async function pushStateCompare(
+  params: PushStateCompareParams
+): Promise<PushStateCompareResponse> {
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', 'api/v1.1/push/compare', params)
 }
 
-export async function pushStateUpdate(params) {
-  return await selfPost(`api/v1.1/push/update`, params, false, false, false, true)
+export async function pushStateUpdate(
+  params: PushStateParams
+): Promise<PushStateResponse> {
+  const api = ContextFromStorage()
+  return await api.jsonRequest('POST', 'api/v1.1/push/update', params)
 }
