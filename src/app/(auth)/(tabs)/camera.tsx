@@ -7,6 +7,8 @@ import {
   BottomSheetView,
 } from '@gorhom/bottom-sheet'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import * as FileSystem from 'expo-file-system'
+import * as ImageManipulator from 'expo-image-manipulator'
 import * as ImagePicker from 'expo-image-picker'
 import { Stack, useNavigation, useRouter } from 'expo-router'
 import { useShareIntentContext } from 'expo-share-intent'
@@ -50,8 +52,6 @@ import {
   YStack,
   ZStack,
 } from 'tamagui'
-import * as FileSystem from 'expo-file-system';
-import * as ImageManipulator from 'expo-image-manipulator';
 
 type MediaAsset = {
   path: string
@@ -60,8 +60,8 @@ type MediaAsset = {
   originalPath?: string
 }
 
-const MAX_IMAGE_SIZE_MB = 5;
-const MAX_IMAGE_WIDTH = 4096;
+const MAX_IMAGE_SIZE_MB = 5
+const MAX_IMAGE_WIDTH = 4096
 
 export default function Camera() {
   const router = useRouter()
@@ -99,63 +99,63 @@ export default function Camera() {
 
   const resizeImageIfNeeded = async (uri: string): Promise<string> => {
     try {
-      const fileInfo = await FileSystem.getInfoAsync(uri, { size: true });
-      const fileSizeInMB = fileInfo.size / (1024 * 1024);
-      
+      const fileInfo = await FileSystem.getInfoAsync(uri, { size: true })
+      const fileSizeInMB = fileInfo.size / (1024 * 1024)
+
       if (fileSizeInMB <= MAX_IMAGE_SIZE_MB) {
-        return uri;
+        return uri
       }
-      
-      console.log(`Resizing image: ${uri} (${fileSizeInMB.toFixed(2)}MB)`);
-      
+
+      console.log(`Resizing image: ${uri} (${fileSizeInMB.toFixed(2)}MB)`)
+
       const manipResult = await ImageManipulator.manipulateAsync(
         uri,
         [{ resize: { width: MAX_IMAGE_WIDTH } }],
         { compress: 0.85, format: ImageManipulator.SaveFormat.JPEG }
-      );
-      
-      const newFileInfo = await FileSystem.getInfoAsync(manipResult.uri, { size: true });
-      const newFileSizeInMB = newFileInfo.size / (1024 * 1024);
-      
-      return manipResult.uri;
+      )
+
+      const newFileInfo = await FileSystem.getInfoAsync(manipResult.uri, { size: true })
+      const newFileSizeInMB = newFileInfo.size / (1024 * 1024)
+
+      return manipResult.uri
     } catch (error) {
-      console.error("Error resizing image:", error);
-      return uri;
+      console.error('Error resizing image:', error)
+      return uri
     }
-  };
+  }
 
   const processImages = async (images: Array<MediaAsset>): Promise<Array<MediaAsset>> => {
-    setIsResizing(true);
+    setIsResizing(true)
     const processedImages = await Promise.all(
       images.map(async (asset) => {
         if (asset.type === 'image') {
-          const resizedUri = await resizeImageIfNeeded(asset.path);
+          const resizedUri = await resizeImageIfNeeded(asset.path)
           if (resizedUri !== asset.path) {
             return {
               ...asset,
               originalPath: asset.path,
               path: resizedUri,
-            };
+            }
           }
         }
-        return asset;
+        return asset
       })
-    );
-    setIsResizing(false);
-    return processedImages;
-  };
+    )
+    setIsResizing(false)
+    return processedImages
+  }
 
   useEffect(() => {
     if (shareIntent.files) {
       let file = shareIntent.files[0]
       const processSharedImage = async () => {
-        const initialMedia = [{ path: file.path, type: 'image', altText: null }];
-        const processedMedia = await processImages(initialMedia);
-        setMedia(processedMedia);
-        setCanPost(true);
-      };
-      
-      processSharedImage();
+        const initialMedia = [{ path: file.path, type: 'image', altText: null }]
+        const processedMedia = await processImages(initialMedia)
+        setMedia(processedMedia)
+        setCanPost(true)
+      }
+
+      processSharedImage()
     }
   }, [hasShareIntent])
 
@@ -219,12 +219,12 @@ export default function Camera() {
         path: asset.uri,
         type: asset.type,
         altText: null,
-      }));
+      }))
 
       // Process and resize images if needed
-      const processedMedia = await processImages(newMedia);
-      setMedia([...media, ...processedMedia]);
-      setCanPost(true);
+      const processedMedia = await processImages(newMedia)
+      setMedia([...media, ...processedMedia])
+      setCanPost(true)
     }
   }
 
@@ -255,16 +255,18 @@ export default function Camera() {
     let result = await ImagePicker.launchCameraAsync()
 
     if (!result.canceled) {
-      const newMedia: Array<MediaAsset> = [{
-        path: result.assets[0].uri,
-        type: result.assets[0].type,
-        altText: null,
-      }];
-      
+      const newMedia: Array<MediaAsset> = [
+        {
+          path: result.assets[0].uri,
+          type: result.assets[0].type,
+          altText: null,
+        },
+      ]
+
       // Process and resize if needed
-      const processedMedia = await processImages(newMedia);
-      setMedia([...media, ...processedMedia]);
-      setCanPost(true);
+      const processedMedia = await processImages(newMedia)
+      setMedia([...media, ...processedMedia])
+      setCanPost(true)
     }
   }
 
@@ -820,7 +822,7 @@ export default function Camera() {
                   <Switch.Thumb animation="quicker" />
                 </Switch>
               </XStack>
-              
+
               <Separator />
               <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
                 <YStack maxWidth="60%" gap="$2">
@@ -828,8 +830,8 @@ export default function Camera() {
                     Auto-Resize Large Images
                   </Text>
                   <Text fontSize="$3" color="$gray9">
-                    Images larger than {MAX_IMAGE_SIZE_MB}MB will be automatically 
-                    resized to {MAX_IMAGE_WIDTH}px max width.
+                    Images larger than {MAX_IMAGE_SIZE_MB}MB will be automatically resized
+                    to {MAX_IMAGE_WIDTH}px max width.
                   </Text>
                 </YStack>
                 <Text fontSize="$5" fontWeight={'bold'} color="$blue9">

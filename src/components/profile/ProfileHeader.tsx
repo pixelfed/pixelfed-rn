@@ -306,12 +306,7 @@ export default function ProfileHeader({
       <View mx="$4" mt={Platform.OS === 'ios' ? '$3' : 0}>
         {isSelf ? <RenderSelfHeader /> : <RenderGuestHeader />}
 
-        <XStack
-          w="100%"
-          justifyContent="space-between"
-          alignItems="center"
-          mt="$3"
-        >
+        <XStack w="100%" justifyContent="space-between" alignItems="center" mt="$3">
           <View style={{ borderRadius: 100, overflow: 'hidden' }}>
             <Avatar
               circular
