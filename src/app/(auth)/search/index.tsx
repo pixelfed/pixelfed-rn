@@ -174,7 +174,6 @@ const PostResultsTab = ({ posts, isFetching, query }) => {
                   whiteSpace="break-all"
                   overflow="hidden"
                 >
-                  <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
                     <Text fontSize="$6" fontWeight="bold">
                       {item.account.username}
                     </Text>
@@ -184,7 +183,6 @@ const PostResultsTab = ({ posts, isFetching, query }) => {
                         @{getDomain(item.account.url)}
                       </Text>
                     ) : null}
-                  </ReadMore>
                 </XStack>
                 <XStack gap="$2" alignItems="center">
                   <Text color="black" fontSize="$2">
@@ -318,11 +316,11 @@ export default function SearchScreen() {
                 />
               )}
             </Tab.Screen>
-            {/* <Tab.Screen name="Posts" options={{ tabBarLabel: 'Posts' }}>
+            <Tab.Screen name="Posts" options={{ tabBarLabel: 'Posts' }}>
               {() => (
                 <PostResultsTab posts={posts} isFetching={isFetching} query={query} />
               )}
-            </Tab.Screen> */}
+            </Tab.Screen>
           </Tab.Navigator>
         </View>
       </View>

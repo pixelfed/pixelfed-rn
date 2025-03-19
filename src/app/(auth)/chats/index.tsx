@@ -63,7 +63,7 @@ export default function Page() {
           <Feather name="plus" size={25} color="#0091ff" />
         </PressableOpacity>
       </Link>
-      <Feather name="settings" size={25} color="#0091ff" />
+      {/* <Feather name="settings" size={25} color="#0091ff" /> */}
     </XStack>
   )
 
