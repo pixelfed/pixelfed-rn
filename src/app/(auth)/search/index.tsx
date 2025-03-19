@@ -174,15 +174,15 @@ const PostResultsTab = ({ posts, isFetching, query }) => {
                   whiteSpace="break-all"
                   overflow="hidden"
                 >
-                    <Text fontSize="$6" fontWeight="bold">
-                      {item.account.username}
-                    </Text>
+                  <Text fontSize="$6" fontWeight="bold">
+                    {item.account.username}
+                  </Text>
 
-                    {!item.account.local ? (
-                      <Text fontSize="$6" color="$gray9">
-                        @{getDomain(item.account.url)}
-                      </Text>
-                    ) : null}
+                  {!item.account.local ? (
+                    <Text fontSize="$6" color="$gray9">
+                      @{getDomain(item.account.url)}
+                    </Text>
+                  ) : null}
                 </XStack>
                 <XStack gap="$2" alignItems="center">
                   <Text color="black" fontSize="$2">
