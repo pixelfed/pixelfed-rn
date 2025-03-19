@@ -9,6 +9,7 @@ enum TabName {
   Camera = 'camera',
   Discover = 'discover',
   Profile = 'profile',
+  Notifications = 'notifications',
 }
 
 export default function AppLayout() {
@@ -64,11 +65,11 @@ export default function AppLayout() {
       />
 
       <Tabs.Screen
-        name={TabName.Discover}
+        name={TabName.Notifications}
         options={{
           tabBarShowLabel: false,
-          headerShown: false,
-          tabBarIcon: ({ color }) => <Feather name="compass" size={26} color={color} />,
+          headerShown: true,
+          tabBarIcon: ({ color }) => <Feather name="bell" size={26} color={color} />,
         }}
       />
 

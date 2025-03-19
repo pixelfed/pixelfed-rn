@@ -28,9 +28,9 @@ export default function FeedHeader({ title = 'Home', user }) {
         </Text>
       </XStack>
       <XStack gap="$5">
-        <Link href="/notifications" asChild>
+        <Link href="/discover" asChild>
           <Pressable>
-            <Feather name="bell" size={26} />
+            <Feather name="compass" size={26} />
           </Pressable>
         </Link>
         <Link href="/chats" asChild>

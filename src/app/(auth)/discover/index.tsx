@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons'
 import { useQuery } from '@tanstack/react-query'
-import { Link, useRouter } from 'expo-router'
+import { Link, Stack, useRouter } from 'expo-router'
 import {
   ActivityIndicator,
   Dimensions,
@@ -154,18 +154,13 @@ export default function DiscoverScreen() {
     )
   }
   return (
-    <SafeAreaView flex={1} edges={['left']} style={{ backgroundColor: '#fff' }}>
-      <ScrollView>
-        <YStack px="$5" py="$3" mt={Platform.OS === 'android' ? '$7' : '$0'}>
-          <XStack justifyContent="space-between" alignItems="center">
-            <Text fontSize="$10" fontWeight="bold" letterSpacing={-1.4}>
-              Discover
-            </Text>
-            <PressableOpacity onPress={() => router.push('/search')}>
-              <Feather name="search" size={30} />
-            </PressableOpacity>
-          </XStack>
-        </YStack>
+    <SafeAreaView flex={1} edges={['top', 'bottom']} style={{ backgroundColor: '#fff' }}>
+      <Stack.Screen
+        options={{
+          title: 'Explore',
+        }}
+      />
+      <ScrollView flexGrow={1}>
         {hashtags && hashtags.length ? (
           <View ml="$5" mt="$5">
             <YStack pb="$4" gap="$3">
