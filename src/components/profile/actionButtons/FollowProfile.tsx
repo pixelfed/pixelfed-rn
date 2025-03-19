@@ -6,9 +6,11 @@ import { Button, Spinner, XStack } from 'tamagui'
 export default function FollowProfile({
   onPress,
   userId,
+  isLocked,
 }: {
   onPress: () => Promise<void> | void
   userId: () => String
+  isLocked: () => Boolean
 }) {
   const queryClient = useQueryClient()
   const [isLoading, setIsLoading] = useState(false)
@@ -38,6 +40,8 @@ export default function FollowProfile({
     }
   }
 
+  const buttonText = isLocked ? 'Request Follow' : 'Follow'
+
   return (
     <XStack w="100%" my="$3" gap="$2">
       <Button
@@ -52,7 +56,7 @@ export default function FollowProfile({
         icon={isLoading ? () => <Spinner color="white" /> : undefined}
         onPress={handlePress}
       >
-        {isLoading ? '' : 'Follow'}
+        {isLoading ? '' : buttonText}
       </Button>
     </XStack>
   )
