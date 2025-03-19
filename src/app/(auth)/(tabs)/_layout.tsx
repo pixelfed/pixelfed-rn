@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons'
 import { useAuth } from '@state/AuthProvider'
 import { Redirect, Tabs } from 'expo-router'
+import { Platform } from 'react-native'
 
 // enum here to prevent typos in id when used in multiple places (typescript checkable)
 enum TabName {
@@ -26,7 +27,7 @@ export default function AppLayout() {
       backBehavior="history"
       screenOptions={{
         tabBarStyle: {
-          height: 70,
+          height: Platform.OS === 'ios' ? 70 : 60,
           paddingBottom: 8,
           paddingTop: 8,
         },
