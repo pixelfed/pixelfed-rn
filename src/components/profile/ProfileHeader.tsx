@@ -310,7 +310,7 @@ export default function ProfileHeader({
           w="100%"
           justifyContent="space-between"
           alignItems="center"
-          mt={Platform.OS === 'ios' ? '$3' : 0}
+          mt="$3"
         >
           <View style={{ borderRadius: 100, overflow: 'hidden' }}>
             <Avatar
