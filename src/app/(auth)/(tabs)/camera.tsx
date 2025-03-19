@@ -50,12 +50,18 @@ import {
   YStack,
   ZStack,
 } from 'tamagui'
+import * as FileSystem from 'expo-file-system';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 type MediaAsset = {
   path: string
   type: string | undefined
   altText: string | null
+  originalPath?: string
 }
+
+const MAX_IMAGE_SIZE_MB = 5;
+const MAX_IMAGE_WIDTH = 4096;
 
 export default function Camera() {
   const router = useRouter()
@@ -78,6 +84,7 @@ export default function Camera() {
   const [isPosting, setIsPosting] = useState(false)
   const [postingError, setPostingError] = useState<string | null>(null)
   const [maxMediaLimit, setMaxMediaLimit] = useState(4)
+  const [isResizing, setIsResizing] = useState(false)
   const queryClient = useQueryClient()
   const scopeLabel = {
     public: 'Anyone can view',
@@ -90,11 +97,65 @@ export default function Camera() {
     private: 'lock',
   }
 
+  const resizeImageIfNeeded = async (uri: string): Promise<string> => {
+    try {
+      const fileInfo = await FileSystem.getInfoAsync(uri, { size: true });
+      const fileSizeInMB = fileInfo.size / (1024 * 1024);
+      
+      if (fileSizeInMB <= MAX_IMAGE_SIZE_MB) {
+        return uri;
+      }
+      
+      console.log(`Resizing image: ${uri} (${fileSizeInMB.toFixed(2)}MB)`);
+      
+      const manipResult = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: MAX_IMAGE_WIDTH } }],
+        { compress: 0.85, format: ImageManipulator.SaveFormat.JPEG }
+      );
+      
+      const newFileInfo = await FileSystem.getInfoAsync(manipResult.uri, { size: true });
+      const newFileSizeInMB = newFileInfo.size / (1024 * 1024);
+      
+      return manipResult.uri;
+    } catch (error) {
+      console.error("Error resizing image:", error);
+      return uri;
+    }
+  };
+
+  const processImages = async (images: Array<MediaAsset>): Promise<Array<MediaAsset>> => {
+    setIsResizing(true);
+    const processedImages = await Promise.all(
+      images.map(async (asset) => {
+        if (asset.type === 'image') {
+          const resizedUri = await resizeImageIfNeeded(asset.path);
+          if (resizedUri !== asset.path) {
+            return {
+              ...asset,
+              originalPath: asset.path,
+              path: resizedUri,
+            };
+          }
+        }
+        return asset;
+      })
+    );
+    setIsResizing(false);
+    return processedImages;
+  };
+
   useEffect(() => {
     if (shareIntent.files) {
       let file = shareIntent.files[0]
-      setMedia([{ path: file.path, type: 'image', altText: null }])
-      setCanPost(true)
+      const processSharedImage = async () => {
+        const initialMedia = [{ path: file.path, type: 'image', altText: null }];
+        const processedMedia = await processImages(initialMedia);
+        setMedia(processedMedia);
+        setCanPost(true);
+      };
+      
+      processSharedImage();
     }
   }, [hasShareIntent])
 
@@ -150,6 +211,7 @@ export default function Camera() {
       selectionLimit: maxMediaLimit,
       quality: 1,
       orderedSelection: true,
+      exif: false,
     })
 
     if (!result.canceled) {
@@ -157,10 +219,12 @@ export default function Camera() {
         path: asset.uri,
         type: asset.type,
         altText: null,
-      }))
+      }));
 
-      setMedia([...media, ...newMedia])
-      setCanPost(true)
+      // Process and resize images if needed
+      const processedMedia = await processImages(newMedia);
+      setMedia([...media, ...processedMedia]);
+      setCanPost(true);
     }
   }
 
@@ -191,15 +255,16 @@ export default function Camera() {
     let result = await ImagePicker.launchCameraAsync()
 
     if (!result.canceled) {
-      setMedia([
-        ...media,
-        {
-          path: result.assets[0].uri,
-          type: result.assets[0].type,
-          altText: null,
-        },
-      ])
-      setCanPost(true)
+      const newMedia: Array<MediaAsset> = [{
+        path: result.assets[0].uri,
+        type: result.assets[0].type,
+        altText: null,
+      }];
+      
+      // Process and resize if needed
+      const processedMedia = await processImages(newMedia);
+      setMedia([...media, ...processedMedia]);
+      setCanPost(true);
     }
   }
 
@@ -297,6 +362,30 @@ export default function Camera() {
                 </Text>
               </View>
             ) : null}
+            {item.originalPath ? (
+              <View
+                position="absolute"
+                opacity={0.5}
+                ml={3}
+                mt={3}
+                top={0}
+                py={3}
+                px={5}
+                borderRadius={10}
+                bg="black"
+                justifyContent="center"
+                alignContent="center"
+              >
+                <Text
+                  fontWeight="bold"
+                  color="white"
+                  allowFontScaling={false}
+                  fontSize={8}
+                >
+                  RESIZED
+                </Text>
+              </View>
+            ) : null}
           </ZStack>
         ) : null}
 
@@ -356,7 +445,7 @@ export default function Camera() {
 
   const HeaderRight = () => (
     <View mr="$3">
-      {isPosting == true ? (
+      {isPosting == true || isResizing ? (
         <ActivityIndicator />
       ) : canPost ? (
         <PressableOpacity onPress={() => _handlePost()}>
@@ -554,6 +643,13 @@ export default function Camera() {
             <Text>Posting, please wait...</Text>
           </YStack>
         </View>
+      ) : isResizing ? (
+        <View flexGrow={1} bg="white" justifyContent="center" alignItems="center">
+          <YStack gap="$3">
+            <ActivityIndicator />
+            <Text>Resizing images, please wait...</Text>
+          </YStack>
+        </View>
       ) : (
         <>
           <ScrollView onScroll={handleOnScroll}>
@@ -723,6 +819,22 @@ export default function Camera() {
                 >
                   <Switch.Thumb animation="quicker" />
                 </Switch>
+              </XStack>
+              
+              <Separator />
+              <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
+                <YStack maxWidth="60%" gap="$2">
+                  <Text fontSize="$5" fontWeight={'bold'}>
+                    Auto-Resize Large Images
+                  </Text>
+                  <Text fontSize="$3" color="$gray9">
+                    Images larger than {MAX_IMAGE_SIZE_MB}MB will be automatically 
+                    resized to {MAX_IMAGE_WIDTH}px max width.
+                  </Text>
+                </YStack>
+                <Text fontSize="$5" fontWeight={'bold'} color="$blue9">
+                  Enabled
+                </Text>
               </XStack>
             </BottomSheetView>
           </PixelfedBottomSheetModal>
