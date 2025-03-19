@@ -233,7 +233,12 @@ export default function ProfileScreen() {
               <View p="$6" borderWidth={2} borderColor="black" borderRadius={100}>
                 <Feather name="lock" size={40} />
               </View>
-              <Text fontSize="$8">This account is private</Text>
+              <YStack justifyContent="center" alignItems="center" gap="$2" px="$5">
+                <Text fontSize="$8">This account is private</Text>
+                <Text fontSize="$5">
+                  Follow this account to see their photos and videos.
+                </Text>
+              </YStack>
             </>
           ) : (
             <View flexGrow={1} alignItems="center" justifyContent="center" gap="$4">
