@@ -366,10 +366,16 @@ export async function getHashtagRelated(id: string) {
   return await fetchPaginatedData(url)
 }
 
-export async function getConversations() {
+export async function getConversations({ pageParam = false }) {
   const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/conversations`
-  return await fetchData(url)
+  let url
+  if (!pageParam) {
+    const instance = Storage.getString('app.instance')
+    url = `https://${instance}/api/v1/conversations`
+  } else {
+    url = pageParam
+  }
+  return await fetchPaginatedData(url)
 }
 
 export async function getComposeSettings() {

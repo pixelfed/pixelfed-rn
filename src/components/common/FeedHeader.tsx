@@ -28,16 +28,9 @@ export default function FeedHeader({ title = 'Home', user }) {
         </Text>
       </XStack>
       <XStack gap="$5">
-        {title === 'Pixelfed' && user?.is_admin ? (
-          <Link href="/admin/" asChild>
-            <Pressable>
-              <Feather name="tool" size={26} color="red" />
-            </Pressable>
-          </Link>
-        ) : null}
-        <Link href="/notifications" asChild>
+        <Link href="/discover" asChild>
           <Pressable>
-            <Feather name="bell" size={26} />
+            <Feather name="compass" size={26} />
           </Pressable>
         </Link>
         <Link href="/chats" asChild>

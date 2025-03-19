@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons'
 import { useAuth } from '@state/AuthProvider'
 import { Redirect, Tabs } from 'expo-router'
+import { Platform } from 'react-native'
 
 // enum here to prevent typos in id when used in multiple places (typescript checkable)
 enum TabName {
@@ -9,6 +10,7 @@ enum TabName {
   Camera = 'camera',
   Discover = 'discover',
   Profile = 'profile',
+  Notifications = 'notifications',
 }
 
 export default function AppLayout() {
@@ -25,7 +27,7 @@ export default function AppLayout() {
       backBehavior="history"
       screenOptions={{
         tabBarStyle: {
-          height: 70,
+          height: Platform.OS === 'ios' ? 70 : 60,
           paddingBottom: 8,
           paddingTop: 8,
         },
@@ -64,11 +66,11 @@ export default function AppLayout() {
       />
 
       <Tabs.Screen
-        name={TabName.Discover}
+        name={TabName.Notifications}
         options={{
           tabBarShowLabel: false,
-          headerShown: false,
-          tabBarIcon: ({ color }) => <Feather name="compass" size={26} color={color} />,
+          headerShown: true,
+          tabBarIcon: ({ color }) => <Feather name="bell" size={26} color={color} />,
         }}
       />
 

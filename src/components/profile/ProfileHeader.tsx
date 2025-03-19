@@ -14,7 +14,7 @@ import AutolinkText from 'src/components/common/AutolinkText'
 import ReadMore from 'src/components/common/ReadMore'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { enforceLen, openBrowserAsync, prettyCount } from 'src/utils'
-import { Avatar, Button, Separator, Text, View, XStack, YStack } from 'tamagui'
+import { Avatar, Button, Separator, Spinner, Text, View, XStack, YStack } from 'tamagui'
 import BlockingProfile from './actionButtons/BlockingProfile'
 import EditProfile from './actionButtons/EditProfile'
 import FollowProfile from './actionButtons/FollowProfile'
@@ -69,7 +69,9 @@ export default function ProfileHeader({
   }
 
   const onSendMessage = () => {
-    router.push(`/chats/conversation/${profile?.id}}`)
+    router.push(
+      `/chats/conversation/${profile.id.toString()}?id=${profile.id.toString()}}`
+    )
   }
 
   const onGotoSettings = () => {
@@ -86,6 +88,22 @@ export default function ProfileHeader({
 
   const gotoProfileFeed = () => {
     router.push(`/profile/feed/${profile?.id}}`)
+  }
+
+  const ShowMenuBar = () => {
+    if (isSelf || selfId == profile?.id) {
+      return true
+    }
+
+    if (profile?.locked == false) {
+      return true
+    }
+
+    if (relationship && relationship.following) {
+      return true
+    }
+
+    return false
   }
 
   const ActionButton = () => {
@@ -108,9 +126,29 @@ export default function ProfileHeader({
       )
     }
     if (relationship && !relationship.following) {
-      return <FollowProfile onPress={() => onFollow()} userId={profile?.id} />
+      return (
+        <FollowProfile
+          onPress={() => onFollow()}
+          userId={profile?.id}
+          isLocked={profile?.locked}
+        />
+      )
     }
-    return null
+    return (
+      <XStack w="100%" my="$3" gap="$2">
+        <Button
+          theme="light"
+          bg="$blue9"
+          size="$4"
+          color="white"
+          fontWeight="bold"
+          fontSize="$6"
+          flexGrow={1}
+          disabled={true}
+          icon={<Spinner color="white" />}
+        ></Button>
+      </XStack>
+    )
   }
 
   const _openWebsite = async () => {
@@ -321,7 +359,7 @@ export default function ProfileHeader({
           w="100%"
           justifyContent="space-between"
           alignItems="center"
-          mt={Platform.OS === 'ios' ? '$3' : 0}
+          mt="$3"
         >
           <Pressable onPress={() => setModalVisible(true)}>
             <View style={{ borderRadius: 100, overflow: 'hidden' }}>
@@ -398,6 +436,9 @@ export default function ProfileHeader({
             <Text fontSize="$6" fontWeight={'bold'} flexWrap="wrap">
               {profile?.display_name}
             </Text>
+            {profile?.locked && (
+              <Feather name="lock" size={14} color="#777" style={{ marginLeft: -5 }} />
+            )}
             {relationship && relationship?.muting ? (
               <View borderWidth={1} borderColor="$red7" borderRadius={5} px={10} py={3}>
                 <Text color="$red10" fontWeight="bold" fontSize="$2">
@@ -481,13 +522,15 @@ export default function ProfileHeader({
       ) : (
         <>
           <Separator borderColor="$gray6" />
-          <XStack justifyContent="space-around" px="$5" py="$3" mb="$1">
-            <Feather name="grid" size={20} />
+          {ShowMenuBar() && (
+            <XStack justifyContent="space-around" px="$5" py="$3" mb="$1">
+              <Feather name="grid" size={20} />
 
-            <PressableOpacity onPress={() => gotoProfileFeed()}>
-              <Feather name="list" size={20} color="#999" />
-            </PressableOpacity>
-          </XStack>
+              <PressableOpacity onPress={() => gotoProfileFeed()}>
+                <Feather name="list" size={20} color="#999" />
+              </PressableOpacity>
+            </XStack>
+          )}
         </>
       )}
     </View>
