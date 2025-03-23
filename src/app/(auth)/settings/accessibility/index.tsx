@@ -5,10 +5,11 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Switch } from 'src/components/form/Switch'
 import { getAppSettings } from 'src/lib/api'
 import { Storage } from 'src/state/cache'
-import { ScrollView, Separator, Text, View, XStack, YStack } from 'tamagui'
+import { ScrollView, Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
 export default function Screen() {
   const showAltText = Storage.getBoolean('ui.showAltText') == true
   const requireSelfAltText = Storage.getBoolean('ui.requireSelfAltText') == true
+  const theme = useTheme()
 
   const { data, isPending, error } = useQuery({
     queryKey: ['getAppSettings'],
@@ -25,7 +26,7 @@ export default function Screen() {
           }}
         />
         <View flexGrow={1} mt="$5">
-          <ActivityIndicator color={'#000'} />
+          <ActivityIndicator color={theme.color?.val.default.val} />
         </View>
       </>
     )
@@ -39,7 +40,10 @@ export default function Screen() {
     )
   }
   return (
-    <SafeAreaView edges={['bottom']}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.background?.val.default.val }}
+      edges={['bottom']}
+    >
       <Stack.Screen
         options={{
           title: 'Accessibility',
@@ -48,12 +52,17 @@ export default function Screen() {
       />
 
       <ScrollView>
-        <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
+        <XStack
+          py="$3"
+          px="$4"
+          bg={theme.background?.val.default.val}
+          justifyContent="space-between"
+        >
           <YStack maxWidth="60%" gap="$2">
-            <Text fontSize="$5" fontWeight={'bold'}>
+            <Text fontSize="$5" fontWeight={'bold'} color={theme.color?.val.default.val}>
               Show Alt Text Button
             </Text>
-            <Text fontSize="$3" color="$gray9">
+            <Text fontSize="$3" color={theme.color?.val.tertiary.val}>
               Adds a tappable button on the bottom right corner of media to easily view
               alt text
             </Text>
@@ -66,13 +75,18 @@ export default function Screen() {
             <Switch.Thumb animation="quicker" />
           </Switch>
         </XStack>
-        <Separator />
-        <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
+        <Separator borderColor={theme.borderColor?.val.default.val} />
+        <XStack
+          py="$3"
+          px="$4"
+          bg={theme.background?.val.default.val}
+          justifyContent="space-between"
+        >
           <YStack maxWidth="60%" gap="$2">
-            <Text fontSize="$5" fontWeight={'bold'}>
+            <Text fontSize="$5" fontWeight={'bold'} color={theme.color?.val.default.val}>
               Require Alt-Text in Compose
             </Text>
-            <Text fontSize="$3" color="$gray9">
+            <Text fontSize="$3" color={theme.color?.val.tertiary.val}>
               Require yourself to add alt-text to posts you compose before they can be
               shared
             </Text>

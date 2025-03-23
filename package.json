@@ -5,8 +5,8 @@
   "scripts": {
     "upgrade:tamagui": "yarn up '*tamagui*'@latest '@tamagui/*'@latest",
     "upgrade:tamagui:canary": "yarn up '*tamagui*'@canary '@tamagui/*'@canary",
-    "start": "expo start --dev-client",
-    "android": "expo run:android",
+    "start": "cross-env NODE_ENV=development expo start --dev-client",
+    "android": "cross-env NODE_ENV=development expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
@@ -41,6 +41,7 @@
     "expo-application": "~6.0.2",
     "expo-constants": "~17.0.7",
     "expo-device": "~7.0.2",
+    "expo-file-system": "~18.0.11",
     "expo-font": "~13.0.4",
     "expo-haptics": "~14.0.1",
     "expo-image": "~2.0.6",
@@ -83,8 +84,7 @@
     "stream-browserify": "^3.0.0",
     "tamagui": "^1.125.17",
     "typescript": "~5.3.3",
-    "util": "^0.12.5",
-    "expo-file-system": "~18.0.11"
+    "util": "^0.12.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -92,6 +92,7 @@
     "@react-native-community/cli": "latest",
     "@types/react": "~18.3.12",
     "babel-plugin-module-resolver": "^5.0.0",
+    "cross-env": "^7.0.3",
     "expo-build-properties": "~0.13.2"
   },
   "private": true,

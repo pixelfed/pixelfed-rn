@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import React, { useState } from 'react'
 import { followAccountById, unfollowAccountById } from 'src/lib/api'
-import { Button, Spinner, XStack } from 'tamagui'
+import { Button, Spinner, XStack, useTheme } from 'tamagui'
 
 export default function FollowProfile({
   onPress,
@@ -14,6 +14,7 @@ export default function FollowProfile({
 }) {
   const queryClient = useQueryClient()
   const [isLoading, setIsLoading] = useState(false)
+  const theme = useTheme()
 
   const followMutation = useMutation({
     mutationFn: () => {
@@ -46,7 +47,7 @@ export default function FollowProfile({
     <XStack w="100%" my="$3" gap="$2">
       <Button
         theme="light"
-        bg="$blue9"
+        bg={theme.colorHover?.val.active.val}
         size="$4"
         color="white"
         fontWeight="bold"

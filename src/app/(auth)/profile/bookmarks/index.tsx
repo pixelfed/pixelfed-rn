@@ -1,3 +1,4 @@
+import Feather from '@expo/vector-icons/Feather'
 import { BottomSheetBackdrop, type BottomSheetModal } from '@gorhom/bottom-sheet'
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query'
 import * as Haptics from 'expo-haptics'
@@ -9,11 +10,12 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import FeedPost from 'src/components/post/FeedPost'
 import { getSelfBookmarks, reblogStatus, unreblogStatus } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
-import { Text, View } from 'tamagui'
+import { Text, View, useTheme } from 'tamagui'
 
 export default function BookmarksScreen() {
   const navigation = useNavigation()
   const router = useRouter()
+  const theme = useTheme()
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'My Bookmarks', headerBackTitle: 'Back' })
   }, [navigation])
@@ -98,8 +100,44 @@ export default function BookmarksScreen() {
       </View>
     )
   }
+
+  // Check if there are no bookmarks to display
+  const bookmarks = data?.pages.flatMap((page) => page.data) || []
+  const hasNoBookmarks = !isFetching && bookmarks.length === 0
+
+  // Render empty state
+  const EmptyBookmarksList = () => (
+    <View flex={1} justifyContent="center" alignItems="center" py="$12">
+      <View
+        p="$6"
+        borderWidth={2}
+        borderColor={theme.borderColor?.val.default.val}
+        borderRadius={100}
+      >
+        <Feather name="bookmark" size={40} color={theme.color?.val.tertiary.val} />
+      </View>
+      <Text
+        fontSize={18}
+        fontWeight="600"
+        mt="$4"
+        textAlign="center"
+        color={theme.color?.val.default.val}
+      >
+        No Bookmarks Found
+      </Text>
+      <Text
+        fontSize={16}
+        mt="$2"
+        textAlign="center"
+        color={theme.color?.val.tertiary.val}
+      >
+        Posts you bookmark will appear here
+      </Text>
+    </View>
+  )
+
   return (
-    <SafeAreaView edges={['left']}>
+    <SafeAreaView style={{ flex: 1 }} edges={['left']}>
       <Stack.Screen
         options={{
           title: 'My Bookmarks',
@@ -107,15 +145,20 @@ export default function BookmarksScreen() {
         }}
       />
       <FlatList
-        data={data?.pages.flatMap((page) => page.data)}
+        data={bookmarks}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) fetchNextPage()
         }}
         onEndReachedThreshold={0.5}
+        ListEmptyComponent={hasNoBookmarks ? <EmptyBookmarksList /> : null}
         ListFooterComponent={() =>
-          isFetchingNextPage ? <ActivityIndicator /> : <View h={200} />
+          isFetchingNextPage || isFetching ? (
+            <ActivityIndicator color={theme.color?.val.default.val} />
+          ) : (
+            <View h={200} />
+          )
         }
       />
     </SafeAreaView>

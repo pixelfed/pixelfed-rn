@@ -10,11 +10,12 @@ import { getConversations } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
 import { Storage } from 'src/state/cache'
 import { _timeAgo, enforceLen } from 'src/utils'
-import { Separator, Text, View, XStack, YStack } from 'tamagui'
+import { Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
 
 export default function Page() {
   const selfUser = useUserCache()
   const navigation = useNavigation()
+  const theme = useTheme()
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Direct Messages', headerBackTitle: 'Back' })
   }, [navigation])
@@ -96,13 +97,13 @@ export default function Page() {
       content = isSelf ? 'You sent multiple photos' : 'Sent multiple photos'
     }
     return (
-      <View p="$3" bg="$gray1">
+      <View p="$3" bg={theme.background?.val.default.val}>
         <Link href={`/chats/conversation/${item.accounts[0].id}`}>
           <XStack alignItems="center" gap="$3">
             <UserAvatar url={item.accounts[0].avatar} size="$3" />
 
             <YStack flexGrow={1} gap={4}>
-              <Text fontSize="$5" fontWeight="bold">
+              <Text fontSize="$5" fontWeight="bold" color={theme.color?.val.default.val}>
                 {enforceLen(item.accounts[0].acct, 40, true)}
               </Text>
               <XStack gap="$2" alignItems="center">
@@ -110,12 +111,16 @@ export default function Page() {
                   fontSize="$2"
                   allowFontScaling={false}
                   flexWrap="wrap"
-                  color={isSelf ? '#999' : '#333'}
+                  color={isSelf ? '#999' : theme.color?.val.tertiary.val}
                   fontWeight={isSelf ? 'normal' : 'bold'}
                 >
                   {content}
                 </Text>
-                <Text fontSize="$2" allowFontScaling={false} color="#aaa">
+                <Text
+                  fontSize="$2"
+                  allowFontScaling={false}
+                  color={theme.color?.val.tertiary.val}
+                >
                   ·
                 </Text>
                 <Text fontSize="$2" allowFontScaling={false} color="#aaa">
@@ -144,7 +149,9 @@ export default function Page() {
         renderItem={RenderItem}
         refreshing={isRefetching}
         onRefresh={refetch}
-        ItemSeparatorComponent={() => <Separator borderColor="$gray2" />}
+        ItemSeparatorComponent={() => (
+          <Separator borderColor={theme.borderColor?.val.default.val} />
+        )}
         onEndReached={() => {
           if (hasNextPage && !isFetching && !isFetchingNextPage) fetchNextPage()
         }}

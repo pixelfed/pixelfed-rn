@@ -5,11 +5,12 @@ import { ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useProfileMutation } from 'src/hooks/mutations/useProfileMutation'
 import { useQuerySelfProfile } from 'src/state/AuthProvider'
-import { Button, Input, ScrollView, Text, View, XStack } from 'tamagui'
+import { Button, Input, ScrollView, Text, View, XStack, useTheme } from 'tamagui'
 
 export default function Page() {
   const { user } = useQuerySelfProfile()
   const [website, setWebsite] = useState(user?.website || '')
+  const theme = useTheme()
 
   const { profileMutation, isSubmitting } = useProfileMutation({
     onSuccess: () => router.replace('/profile'),
@@ -20,20 +21,23 @@ export default function Page() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['bottom']}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.background?.val.secondary.val }}
+      edges={['bottom']}
+    >
       <Stack.Screen
         options={{
           title: 'Website',
           headerBackTitle: 'Back',
           headerRight: () =>
             isSubmitting ? (
-              <ActivityIndicator />
+              <ActivityIndicator color={theme.color?.val.secondary.val} />
             ) : (
               <Button
                 fontSize="$7"
                 p="0"
                 fontWeight={'600'}
-                color="$blue9"
+                color={theme.colorHover.val.active.val}
                 chromeless
                 onPress={() => onSubmit()}
               >
@@ -43,28 +47,28 @@ export default function Page() {
         }}
       />
       <ScrollView flexGrow={1}>
-        <XStack pt="$3" px="$4" justifyContent="space-between">
-          <Text color="$gray8">Website</Text>
+        <XStack py="$3" px="$4" justifyContent="space-between">
+          <Text color={theme.color?.val.secondary.val}>Website</Text>
 
           <View alignItems="flex-end" justifyContent="flex-end">
-            <Text color="$gray9">{website.length}/120</Text>
+            <Text color={theme.color?.val.tertiary.val}>{website.length}/120</Text>
           </View>
         </XStack>
         <Input
           value={website}
-          borderLeftWidth={0}
-          borderRightWidth={0}
-          borderTopWidth={0}
-          bg="white"
+          bg={theme.background?.val.tertiary.val}
+          borderColor={theme.borderColor?.val.default.val}
+          color={theme.color?.val.default.val}
+          placeholderTextColor={theme.color?.val.tertiary.val}
           maxLength={120}
           placeholder="example.com"
           p="0"
-          m="0"
+          mx="$3"
           size="$6"
           onChangeText={setWebsite}
         />
 
-        <Text pl="$3" pr="$10" py="$4" color="$gray9">
+        <Text py="$3" px="$4" color={theme.color?.val.tertiary.val}>
           Add an optional website to your profile that is publicly visible
         </Text>
       </ScrollView>

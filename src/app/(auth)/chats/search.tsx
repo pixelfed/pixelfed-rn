@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, Stack } from 'expo-router'
 import { ActivityIndicator, FlatList, Keyboard, Pressable } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Input, Text, View, XStack, YStack } from 'tamagui'
+import { Input, Text, View, XStack, YStack, useTheme } from 'tamagui'
 
 import Feather from '@expo/vector-icons/Feather'
 import { useCallback, useState } from 'react'
@@ -16,6 +16,7 @@ import { formatTimestampMonthYear, postCountLabel } from 'src/utils'
 export default function SearchScreen() {
   const [query, setQuery] = useState('')
   const { acct } = useUserCache()
+  const theme = useTheme()
 
   const { data, isLoading, isError, error, isFetching } = useQuery({
     queryKey: ['search', query],
@@ -30,7 +31,7 @@ export default function SearchScreen() {
   })
 
   if (isLoading && !isFetching) {
-    return <Text>Loading...</Text>
+    return <ActivityIndicator color={theme.color?.val.default.val} />
   }
 
   if (isError) {
@@ -52,7 +53,7 @@ export default function SearchScreen() {
   const RenderItem = useCallback(({ item }) => {
     if (item._type === 'account') {
       return (
-        <View p="$3" bg="white">
+        <View p="$3" bg={theme.background?.val.secondary.val}>
           <Link href={`/chats/conversation/${item.id}`} asChild>
             <Pressable>
               <XStack alignItems="center" gap="$3">
@@ -68,26 +69,30 @@ export default function SearchScreen() {
                     overflow="hidden"
                   >
                     <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
-                      <Text fontSize="$6" fontWeight="bold">
+                      <Text
+                        fontSize="$6"
+                        fontWeight="bold"
+                        color={theme.color?.val.default.val}
+                      >
                         {item.username}
                       </Text>
                       {!item.local ? (
-                        <Text fontSize="$6" color="$gray9">
+                        <Text fontSize="$6" color={theme.color?.val.tertiary.val}>
                           @{getDomain(item.url)}
                         </Text>
                       ) : null}
                     </ReadMore>
                   </XStack>
                   <XStack gap="$2" alignItems="center">
-                    <Text color="$gray9" fontSize="$2">
+                    <Text color={theme.color?.val.tertiary.val} fontSize="$2">
                       {prettyCount(item.followers_count)} Followers
                     </Text>
-                    <Text color="$gray8">·</Text>
-                    <Text color="$gray9" fontSize="$2">
+                    <Text color={theme.color?.val.tertiary.val}>·</Text>
+                    <Text color={theme.color?.val.tertiary.val} fontSize="$2">
                       {postCountLabel(item.statuses_count)}
                     </Text>
-                    <Text color="$gray8">·</Text>
-                    <Text color="$gray9" fontSize="$2">
+                    <Text color={theme.color?.val.tertiary.val}>·</Text>
+                    <Text color={theme.color?.val.tertiary.val} fontSize="$2">
                       {item.local ? 'Joined' : 'First seen'}{' '}
                       {formatTimestampMonthYear(item.created_at)}
                     </Text>
@@ -117,7 +122,8 @@ export default function SearchScreen() {
           m="$3"
           onChangeText={(text) => setQuery(text)}
           value={query}
-          bg="white"
+          bg={theme.background?.val.tertiary.val}
+          color={theme.color?.val.default.val}
           autoFocus={true}
           size="$6"
         />
