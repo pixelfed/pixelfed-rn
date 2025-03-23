@@ -1,14 +1,6 @@
-import { Feather } from '@expo/vector-icons'
 import { useQuery } from '@tanstack/react-query'
 import { Link, Stack, useRouter } from 'expo-router'
-import {
-  ActivityIndicator,
-  Dimensions,
-  FlatList,
-  Platform,
-  SafeAreaView,
-} from 'react-native'
-import { PressableOpacity } from 'react-native-pressable-opacity'
+import { ActivityIndicator, Dimensions, FlatList, SafeAreaView } from 'react-native'
 import ImageComponent from 'src/components/ImageComponent'
 import UserAvatar from 'src/components/common/UserAvatar'
 import {
@@ -17,7 +9,7 @@ import {
   getTrendingPostsV1,
 } from 'src/lib/api'
 import { enforceLen, prettyCount } from 'src/utils'
-import { Image, ScrollView, Text, View, XStack, YStack } from 'tamagui'
+import { ScrollView, Text, View, YStack } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
@@ -138,92 +130,92 @@ export default function DiscoverScreen() {
     enabled: !!hashtags,
   })
 
-  if (isPending || isPopularPostsPending || isTrendingPostsPending) {
-    return (
-      <View flexGrow={1} justifyContent="center" alignItems="center" py="$10">
-        <ActivityIndicator />
-      </View>
-    )
-  }
+  const isAnyActionPending = isPending || isPopularPostsPending || isTrendingPostsPending
 
-  if (isError) {
-    return (
-      <View>
-        <Text>Error: {error.message}</Text>
-      </View>
-    )
-  }
   return (
     <SafeAreaView flex={1} edges={['top', 'bottom']} style={{ backgroundColor: '#fff' }}>
       <Stack.Screen
         options={{
           title: 'Explore',
+          headerBackTitle: 'Back',
         }}
       />
-      <ScrollView flexGrow={1}>
-        {hashtags && hashtags.length ? (
-          <View ml="$5" mt="$5">
-            <YStack pb="$4" gap="$3">
-              <Text fontSize="$6" allowFontScaling={false}>
-                Trending tags
-              </Text>
-              <FlatList
-                data={hashtags}
-                renderItem={RenderTags}
-                showsHorizontalScrollIndicator={false}
-                horizontal
-              />
-            </YStack>
-          </View>
-        ) : null}
+      {isError && (
+        <View>
+          <Text>Error: {error.message}</Text>
+        </View>
+      )}
+      {isAnyActionPending && (
+        <View flexGrow={1} justifyContent="center" alignItems="center" py="$10">
+          <ActivityIndicator />
+        </View>
+      )}
+      {!isError && !isAnyActionPending && (
+        <ScrollView flexGrow={1}>
+          {hashtags && hashtags.length ? (
+            <View ml="$5" mt="$5">
+              <YStack pb="$4" gap="$3">
+                <Text fontSize="$6" allowFontScaling={false}>
+                  Trending tags
+                </Text>
+                <FlatList
+                  data={hashtags}
+                  renderItem={RenderTags}
+                  showsHorizontalScrollIndicator={false}
+                  horizontal
+                />
+              </YStack>
+            </View>
+          ) : null}
 
-        {trendingPosts && trendingPosts.accounts ? (
-          <View ml="$5" mt="$5">
-            <YStack pb="$4" gap="$3">
-              <Text fontSize="$6" allowFontScaling={false}>
-                Popular accounts
-              </Text>
-              <FlatList
-                data={trendingPosts.accounts}
-                renderItem={RenderAccounts}
-                showsHorizontalScrollIndicator={false}
-                horizontal
-              />
-            </YStack>
-          </View>
-        ) : null}
+          {trendingPosts && trendingPosts.accounts ? (
+            <View ml="$5" mt="$5">
+              <YStack pb="$4" gap="$3">
+                <Text fontSize="$6" allowFontScaling={false}>
+                  Popular accounts
+                </Text>
+                <FlatList
+                  data={trendingPosts.accounts}
+                  renderItem={RenderAccounts}
+                  showsHorizontalScrollIndicator={false}
+                  horizontal
+                />
+              </YStack>
+            </View>
+          ) : null}
 
-        {posts && posts.length ? (
-          <View ml="$5" mt="$5">
-            <YStack pb="$4" gap="$3">
-              <Text fontSize="$6" allowFontScaling={false}>
-                Trending today
-              </Text>
-              <FlatList
-                data={posts}
-                renderItem={RenderPosts}
-                showsHorizontalScrollIndicator={false}
-                horizontal
-              />
-            </YStack>
-          </View>
-        ) : null}
+          {posts && posts.length ? (
+            <View ml="$5" mt="$5">
+              <YStack pb="$4" gap="$3">
+                <Text fontSize="$6" allowFontScaling={false}>
+                  Trending today
+                </Text>
+                <FlatList
+                  data={posts}
+                  renderItem={RenderPosts}
+                  showsHorizontalScrollIndicator={false}
+                  horizontal
+                />
+              </YStack>
+            </View>
+          ) : null}
 
-        {trendingPosts && trendingPosts.posts ? (
-          <View ml="$5" mt="$5">
-            <YStack pb="$4" gap="$3">
-              <Text fontSize="$6" allowFontScaling={false}>
-                Popular around the fediverse
-              </Text>
-              <FlatList
-                data={trendingPosts.posts}
-                renderItem={RenderTrendingPosts}
-                horizontal
-              />
-            </YStack>
-          </View>
-        ) : null}
-      </ScrollView>
+          {trendingPosts && trendingPosts.posts ? (
+            <View ml="$5" mt="$5">
+              <YStack pb="$4" gap="$3">
+                <Text fontSize="$6" allowFontScaling={false}>
+                  Popular around the fediverse
+                </Text>
+                <FlatList
+                  data={trendingPosts.posts}
+                  renderItem={RenderTrendingPosts}
+                  horizontal
+                />
+              </YStack>
+            </View>
+          ) : null}
+        </ScrollView>
+      )}
     </SafeAreaView>
   )
 }
