@@ -304,7 +304,7 @@ export default function SearchScreen() {
           value={query}
           bg={theme.background?.val.default.val}
           borderWidth={1}
-          color={theme.color?.val.default.val}
+          placeholderTextColor={theme.color?.val.default.val}
           borderColor={theme.borderColor?.val.default.val}
           autoCorrect={false}
           autoComplete="off"
