@@ -756,7 +756,6 @@ export default function Camera() {
                   <Button p="$0" chromeless onPress={() => setSensitive(!isSensitive)}>
                     <Feather
                       name={isSensitive ? 'eye-off' : 'eye'}
-                      color={isSensitive ? '#bf9f00' : 'black'}
                       size={24}
                       color={theme.color?.val.default.val}
                     />

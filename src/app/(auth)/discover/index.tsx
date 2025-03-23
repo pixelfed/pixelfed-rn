@@ -180,7 +180,11 @@ export default function DiscoverScreen() {
           {hashtags && hashtags.length ? (
             <View ml="$5" mt="$5">
               <YStack pb="$4" gap="$3">
-                <Text fontSize="$6" allowFontScaling={false} color={theme.color?.val.secondary.val}>
+                <Text
+                  fontSize="$6"
+                  allowFontScaling={false}
+                  color={theme.color?.val.secondary.val}
+                >
                   Trending tags
                 </Text>
                 <FlatList
@@ -196,7 +200,11 @@ export default function DiscoverScreen() {
           {trendingPosts && trendingPosts.accounts ? (
             <View ml="$5" mt="$5">
               <YStack pb="$4" gap="$3">
-                <Text fontSize="$6" allowFontScaling={false} color={theme.color?.val.secondary.val}>
+                <Text
+                  fontSize="$6"
+                  allowFontScaling={false}
+                  color={theme.color?.val.secondary.val}
+                >
                   Popular accounts
                 </Text>
                 <FlatList
@@ -212,7 +220,11 @@ export default function DiscoverScreen() {
           {posts && posts.length ? (
             <View ml="$5" mt="$5">
               <YStack pb="$4" gap="$3">
-                <Text fontSize="$6" allowFontScaling={false} color={theme.color?.val.secondary.val}>
+                <Text
+                  fontSize="$6"
+                  allowFontScaling={false}
+                  color={theme.color?.val.secondary.val}
+                >
                   Trending today
                 </Text>
                 <FlatList
@@ -228,7 +240,11 @@ export default function DiscoverScreen() {
           {trendingPosts && trendingPosts.posts ? (
             <View ml="$5" mt="$5">
               <YStack pb="$4" gap="$3">
-                <Text fontSize="$6" allowFontScaling={false} color={theme.color?.val.secondary.val}>
+                <Text
+                  fontSize="$6"
+                  allowFontScaling={false}
+                  color={theme.color?.val.secondary.val}
+                >
                   Popular around the fediverse
                 </Text>
                 <FlatList
