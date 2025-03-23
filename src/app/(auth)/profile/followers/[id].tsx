@@ -11,7 +11,7 @@ import { Text, View, XStack, YStack, useTheme } from 'tamagui'
 export default function FollowersScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const navigation = useNavigation()
-  const theme = useTheme();
+  const theme = useTheme()
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Followers', headerBackTitle: 'Back' })
@@ -43,7 +43,9 @@ export default function FollowersScreen() {
 
   const profileId = profile?.id
 
-  const ItemSeparator = () => <View h={1} backgroundColor={theme.borderColor?.val.default.val}></View>
+  const ItemSeparator = () => (
+    <View h={1} backgroundColor={theme.borderColor?.val.default.val}></View>
+  )
 
   const RenderEmpty = () => (
     <View flexGrow={1} justifyContent="center" alignItems="center" py="$5">

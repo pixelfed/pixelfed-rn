@@ -10,7 +10,7 @@ import { Button, Image, Text, View, XStack, YStack, useTheme } from 'tamagui'
 export default function Login() {
   const { isLoading } = useAuth()
   const router = useRouter()
-  const theme = useTheme();
+  const theme = useTheme()
 
   const handleDeepLink = (domain: string, url: string) => {
     const parsedUrl = new URL(url)
@@ -28,16 +28,16 @@ export default function Login() {
   }
 
   const clearStorage = () => {
-    Storage.clearAll();
+    Storage.clearAll()
   }
 
   const toggleTheme = () => {
     const curTheme = Storage.getString('ui.theme') || 'light'
     const themeMap = {
-      'light' : 'dark',
-      'dark' : 'slateDark',
-      'slateDark': 'hotPink',
-      'hotPink': 'light'
+      light: 'dark',
+      dark: 'slateDark',
+      slateDark: 'hotPink',
+      hotPink: 'light',
     }
     Storage.set('ui.theme', themeMap[curTheme])
   }
@@ -80,7 +80,12 @@ export default function Login() {
               borderRadius={140}
             />
           </Pressable>
-          <Text color={theme.color.val.default.val} fontSize="$10" mt={10} fontWeight="bold">
+          <Text
+            color={theme.color.val.default.val}
+            fontSize="$10"
+            mt={10}
+            fontWeight="bold"
+          >
             Pixelfed
           </Text>
         </View>

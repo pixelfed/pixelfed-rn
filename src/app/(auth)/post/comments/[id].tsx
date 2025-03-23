@@ -1,9 +1,5 @@
 import { Feather } from '@expo/vector-icons'
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query'
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {
@@ -40,11 +36,11 @@ export default function CommentsScreen() {
   const queryClient = useQueryClient()
   const theme = useTheme()
   const user = useUserCache()
-  
+
   // Refs
   const commentRef = useRef(null)
   const flatListRef = useRef(null)
-  
+
   // State
   const [commentText, setComment] = useState('')
   const [inReplyToId, setInReplyToId] = useState(null)
@@ -69,31 +65,35 @@ export default function CommentsScreen() {
 
   // Keyboard event handlers
   useLayoutEffect(() => {
-    const keyboardWillShowListener = Platform.OS === 'ios' 
-      ? Keyboard.addListener('keyboardWillShow', (e) => {
-          setKeyboardVisible(true)
-          setKeyboardHeight(e.endCoordinates.height)
-        })
-      : { remove: () => {} }
+    const keyboardWillShowListener =
+      Platform.OS === 'ios'
+        ? Keyboard.addListener('keyboardWillShow', (e) => {
+            setKeyboardVisible(true)
+            setKeyboardHeight(e.endCoordinates.height)
+          })
+        : { remove: () => {} }
 
-    const keyboardDidShowListener = Platform.OS === 'android'
-      ? Keyboard.addListener('keyboardDidShow', () => {
-          setKeyboardVisible(true)
-        })
-      : { remove: () => {} }
+    const keyboardDidShowListener =
+      Platform.OS === 'android'
+        ? Keyboard.addListener('keyboardDidShow', () => {
+            setKeyboardVisible(true)
+          })
+        : { remove: () => {} }
 
-    const keyboardWillHideListener = Platform.OS === 'ios'
-      ? Keyboard.addListener('keyboardWillHide', () => {
-          setKeyboardVisible(false)
-          setKeyboardHeight(0)
-        })
-      : { remove: () => {} }
+    const keyboardWillHideListener =
+      Platform.OS === 'ios'
+        ? Keyboard.addListener('keyboardWillHide', () => {
+            setKeyboardVisible(false)
+            setKeyboardHeight(0)
+          })
+        : { remove: () => {} }
 
-    const keyboardDidHideListener = Platform.OS === 'android'
-      ? Keyboard.addListener('keyboardDidHide', () => {
-          setKeyboardVisible(false)
-        })
-      : { remove: () => {} }
+    const keyboardDidHideListener =
+      Platform.OS === 'android'
+        ? Keyboard.addListener('keyboardDidHide', () => {
+            setKeyboardVisible(false)
+          })
+        : { remove: () => {} }
 
     return () => {
       keyboardWillShowListener.remove()
@@ -107,10 +107,13 @@ export default function CommentsScreen() {
   useEffect(() => {
     if (keyboardVisible && flatListRef.current) {
       // Add delay to ensure flatlist is ready
-      const timer = setTimeout(() => {
-        flatListRef.current.scrollToEnd({ animated: true })
-      }, Platform.OS === 'ios' ? 100 : 200)
-      
+      const timer = setTimeout(
+        () => {
+          flatListRef.current.scrollToEnd({ animated: true })
+        },
+        Platform.OS === 'ios' ? 100 : 200
+      )
+
       return () => clearTimeout(timer)
     }
   }, [keyboardVisible])
@@ -139,14 +142,14 @@ export default function CommentsScreen() {
   // Comment actions
   const handleReplyPost = () => {
     if (!commentText.trim()) return
-    
+
     commentMutation.mutate({
       postId: inReplyToId || id,
       commentText,
       scope: replyScope,
       cw: hasCW,
     })
-    
+
     setComment('')
     setInReplyToId(null)
     setReply(undefined)
@@ -155,7 +158,7 @@ export default function CommentsScreen() {
 
   const handleReplyTo = (item) => {
     if (!item?.id || !item?.account?.id) return
-    
+
     commentRef.current?.focus()
     setReply({
       id: item.id,
@@ -178,10 +181,14 @@ export default function CommentsScreen() {
   const toggleScope = () => {
     setReplyScope((current) => {
       switch (current) {
-        case 'public': return 'unlisted'
-        case 'unlisted': return 'private'
-        case 'private': return 'public'
-        default: return 'public'
+        case 'public':
+          return 'unlisted'
+        case 'unlisted':
+          return 'private'
+        case 'private':
+          return 'public'
+        default:
+          return 'public'
       }
     })
   }
@@ -194,18 +201,14 @@ export default function CommentsScreen() {
   }, [])
 
   const handleCommentDelete = useCallback((id) => {
-    Alert.alert(
-      'Confirm Delete', 
-      'Are you sure you want to delete your comment?', 
-      [
-        { text: 'Cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => commentDeleteMutation.mutate({ id }),
-        },
-      ]
-    )
+    Alert.alert('Confirm Delete', 'Are you sure you want to delete your comment?', [
+      { text: 'Cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => commentDeleteMutation.mutate({ id }),
+      },
+    ])
   }, [])
 
   // Fetch child comments
@@ -214,9 +217,9 @@ export default function CommentsScreen() {
       router.push(`/post/comments/${parentId}`)
       return
     }
-    
+
     setLoadingChildId(parentId)
-    
+
     try {
       const childrenData = await getStatusRepliesById(parentId, 0)
       setChildComments((prev) => ({
@@ -284,44 +287,44 @@ export default function CommentsScreen() {
       let isIdChildren = true
       queryClient.setQueriesData({ queryKey: ['getStatusRepliesById'] }, (old) => {
         if (!old?.pages) return old
-        
+
         const newPages = old.pages.map((page) => {
           const newData = page.data.map((post) => {
             if (post.id !== id) return post
-            
+
             isIdChildren = false
             return {
               ...post,
               favourited: res.favourited,
               favourites_count: res.favourites_count,
-              liked_by: res.liked_by
+              liked_by: res.liked_by,
             }
           })
           return { ...page, data: newData }
         })
-        
+
         return { ...old, pages: newPages }
       })
 
       // Update child comments state if necessary
       if (isIdChildren) {
-        setChildComments(prevChildComments => {
+        setChildComments((prevChildComments) => {
           const updatedChildComments = { ...prevChildComments }
-          
-          Object.keys(updatedChildComments).forEach(key => {
-            updatedChildComments[key] = updatedChildComments[key].map(childComment => {
+
+          Object.keys(updatedChildComments).forEach((key) => {
+            updatedChildComments[key] = updatedChildComments[key].map((childComment) => {
               if (childComment.id === id) {
                 return {
                   ...childComment,
                   favourited: res.favourited,
                   favourites_count: res.favourites_count,
-                  liked_by: res.liked_by
+                  liked_by: res.liked_by,
                 }
               }
               return childComment
             })
           })
-          
+
           return updatedChildComments
         })
       }
@@ -338,13 +341,7 @@ export default function CommentsScreen() {
   })
 
   // Query for comments
-  const { 
-    data, 
-    isFetchingNextPage, 
-    isFetching, 
-    isError, 
-    error 
-  } = useInfiniteQuery({
+  const { data, isFetchingNextPage, isFetching, isError, error } = useInfiniteQuery({
     queryKey: ['getStatusRepliesById', id],
     initialPageParam: null,
     refetchOnWindowFocus: false,
@@ -360,10 +357,7 @@ export default function CommentsScreen() {
   if (isFetching && !isFetchingNextPage) {
     return (
       <View flexGrow={1} mt="$5" justifyContent="center" alignItems="center">
-        <ActivityIndicator 
-          color={theme.color?.val.default.val || '#000'} 
-          size="large" 
-        />
+        <ActivityIndicator color={theme.color?.val.default.val || '#000'} size="large" />
       </View>
     )
   }
@@ -407,11 +401,12 @@ export default function CommentsScreen() {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={[
               styles.contentCommentsContainer,
-              { 
-                paddingBottom: Platform.OS === 'android' && keyboardVisible
-                  ? inputContainerHeight + 120
-                  : inputContainerHeight + 40
-              }
+              {
+                paddingBottom:
+                  Platform.OS === 'android' && keyboardVisible
+                    ? inputContainerHeight + 120
+                    : inputContainerHeight + 40,
+              },
             ]}
             onContentSizeChange={() => {
               if (keyboardVisible && flatListRef.current) {
@@ -422,12 +417,12 @@ export default function CommentsScreen() {
         </View>
 
         {/* Input Container with platform-specific styling */}
-        <View 
+        <View
           style={[
-            styles.fixedInputContainer, 
-            { 
-              height: inputContainerHeight, 
-              borderColor: theme.borderColor?.val.default.val, 
+            styles.fixedInputContainer,
+            {
+              height: inputContainerHeight,
+              borderColor: theme.borderColor?.val.default.val,
               backgroundColor: theme.background?.val.default.val,
               // For Android, we need to adjust position when keyboard is visible
               ...(Platform.OS === 'android' && {
@@ -436,18 +431,28 @@ export default function CommentsScreen() {
                 left: 0,
                 right: 0,
                 zIndex: 999,
-              })
-            }
+              }),
+            },
           ]}
         >
           {/* Reply Info */}
           {inReplyToId && replySet ? (
-            <View px="$4" style={[styles.replyContainer, {borderColor: theme.border?.val.default.val}]}>
+            <View
+              px="$4"
+              style={[
+                styles.replyContainer,
+                { borderColor: theme.border?.val.default.val },
+              ]}
+            >
               <XStack justifyContent="space-between">
                 <YStack>
                   <Text color={theme.color?.val.secondary.val}>
                     @
-                    <Text fontWeight="600" fontFamily="system" color={theme.color?.val.secondary.val}>
+                    <Text
+                      fontWeight="600"
+                      fontFamily="system"
+                      color={theme.color?.val.secondary.val}
+                    >
                       {replySet.acct}
                     </Text>
                   </Text>
@@ -465,12 +470,14 @@ export default function CommentsScreen() {
             <TextInput
               ref={commentRef}
               style={[
-                styles.input, 
+                styles.input,
                 {
                   color: theme.color?.val.default.val,
-                  borderColor: theme.borderColor?.val.default.val || 'rgba(151, 151, 151, 0.25)',
-                  backgroundColor: theme.backgroundHover?.val.default.val || 'rgba(151, 151, 151, 0.05)',
-                }
+                  borderColor:
+                    theme.borderColor?.val.default.val || 'rgba(151, 151, 151, 0.25)',
+                  backgroundColor:
+                    theme.backgroundHover?.val.default.val || 'rgba(151, 151, 151, 0.05)',
+                },
               ]}
               value={commentText}
               onChangeText={setComment}
@@ -479,7 +486,7 @@ export default function CommentsScreen() {
               placeholder="Add a comment..."
               placeholderTextColor={theme.color?.val.secondary.val}
             />
-            
+
             {/* Input Controls */}
             <XStack
               px="$5"
@@ -515,7 +522,7 @@ export default function CommentsScreen() {
                   500
                 </Text>
               </XStack>
-              
+
               {/* Visibility Toggle */}
               <XStack alignItems="center" gap={5}>
                 <Pressable onPress={toggleScope} hitSlop={10}>
@@ -540,7 +547,7 @@ export default function CommentsScreen() {
                   color={theme.color?.val.secondary.val}
                 />
               </XStack>
-              
+
               {/* Content Warning Toggle */}
               <XStack alignItems="center" gap={5}>
                 <Text
@@ -560,18 +567,19 @@ export default function CommentsScreen() {
                   <Switch.Thumb width={20} height={20} animation="quicker" />
                 </Switch>
               </XStack>
-              
+
               {/* Post Button */}
-              <Pressable 
+              <Pressable
                 onPress={handleReplyPost}
                 disabled={!commentText.trim()}
                 hitSlop={10}
               >
                 <Text
                   allowFontScaling={false}
-                  color={commentText.trim() 
-                    ? theme.colorHover.val.active.val 
-                    : `${theme.colorHover.val.active.val}80`
+                  color={
+                    commentText.trim()
+                      ? theme.colorHover.val.active.val
+                      : `${theme.colorHover.val.active.val}80`
                   }
                   fontWeight="bold"
                   letterSpacing={-0.41}

@@ -7,7 +7,17 @@ import AutolinkText from 'src/components/common/AutolinkText'
 import ReadMore from 'src/components/common/ReadMore'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { enforceLen, openBrowserAsync, prettyCount } from 'src/utils'
-import { Avatar, Button, Separator, Spinner, Text, View, XStack, YStack, useTheme } from 'tamagui'
+import {
+  Avatar,
+  Button,
+  Separator,
+  Spinner,
+  Text,
+  View,
+  XStack,
+  YStack,
+  useTheme,
+} from 'tamagui'
 import BlockingProfile from './actionButtons/BlockingProfile'
 import EditProfile from './actionButtons/EditProfile'
 import FollowProfile from './actionButtons/FollowProfile'
@@ -48,7 +58,7 @@ export default function ProfileHeader({
 }: ProfileHeaderProps) {
   const router = useRouter()
   const [usernameTruncated, setUsernameTruncated] = useState(profile?.acct?.length > 40)
-  const theme = useTheme();
+  const theme = useTheme()
   const { id: selfId } = useUserCache()
 
   const onHashtagPress = (tag: string) => {
@@ -106,7 +116,7 @@ export default function ProfileHeader({
       return <FollowRequested onPress={() => onCancelFollowRequest()} />
     }
     if (relationship && relationship.blocking) {
-      return <BlockingProfile onPress={() => onUnblock()}/>
+      return <BlockingProfile onPress={() => onUnblock()} />
     }
     if (relationship && relationship.following) {
       return (
@@ -148,11 +158,21 @@ export default function ProfileHeader({
 
   const RenderGuestHeader = () =>
     Platform.OS === 'ios' ? (
-      <XStack bg={theme.background?.val.default.val} w="100%" justifyContent="space-between" alignItems="center" gap="$10">
+      <XStack
+        bg={theme.background?.val.default.val}
+        w="100%"
+        justifyContent="space-between"
+        alignItems="center"
+        gap="$10"
+      >
         <View>
           <Pressable onPress={() => router.back()}>
             <XStack alignItems="center" gap="$5">
-              <Feather name="chevron-left" size={26} color={theme.color?.val.default.val} />
+              <Feather
+                name="chevron-left"
+                size={26}
+                color={theme.color?.val.default.val}
+              />
             </XStack>
           </Pressable>
         </View>
@@ -209,7 +229,7 @@ export default function ProfileHeader({
       justifyContent="space-between"
       alignItems="center"
       gap="$10"
-      bg={theme.background?.val.default.val} 
+      bg={theme.background?.val.default.val}
       my={Platform.OS === 'android' ? '$4' : '$2'}
     >
       <Text
@@ -265,16 +285,29 @@ export default function ProfileHeader({
           ))}
         </XStack>
         <XStack maxWidth="80%" flexWrap="wrap">
-          <Text fontSize="$2" allowFontScaling={false} color={theme.color?.val.secondary.val}>
+          <Text
+            fontSize="$2"
+            allowFontScaling={false}
+            color={theme.color?.val.secondary.val}
+          >
             Followed by{' '}
           </Text>
           {top3.map((t, index) => (
             <Link key={index} href={`/profile/${t.id}`} asChild>
               <XStack>
-                <Text fontWeight="bold" fontSize="$3" allowFontScaling={false} color={theme.color?.val.default.val}>
+                <Text
+                  fontWeight="bold"
+                  fontSize="$3"
+                  allowFontScaling={false}
+                  color={theme.color?.val.default.val}
+                >
                   {t.username}
                 </Text>
-                <Text fontSize="$3" allowFontScaling={false} color={theme.color?.val.secondary.val}>
+                <Text
+                  fontSize="$3"
+                  allowFontScaling={false}
+                  color={theme.color?.val.secondary.val}
+                >
                   {renderMutualSeparator(index)}
                 </Text>
               </XStack>
@@ -282,8 +315,15 @@ export default function ProfileHeader({
           ))}
           {top3.length === 3 && mutuals.length > 3 ? (
             <Link href={`/profile/followers/${profile?.id}`} asChild>
-              <Text fontSize="$3" allowFontScaling={false} color={theme.color?.val.default.val}>
-                and <Text fontWeight="bold" color={theme.color?.val.default.val}>{mutuals.length - top3.length} others</Text>
+              <Text
+                fontSize="$3"
+                allowFontScaling={false}
+                color={theme.color?.val.default.val}
+              >
+                and{' '}
+                <Text fontWeight="bold" color={theme.color?.val.default.val}>
+                  {mutuals.length - top3.length} others
+                </Text>
               </Text>
             </Link>
           ) : null}
@@ -328,10 +368,19 @@ export default function ProfileHeader({
 
           <XStack gap={SCREEN_WIDTH > 400 ? '$7' : '$5'} mx="$5" alignItems="flex-start">
             <YStack alignItems="center" gap="$1">
-              <Text fontWeight="bold" fontSize="$5" allowFontScaling={false} color={theme.color?.val.default.val}>
+              <Text
+                fontWeight="bold"
+                fontSize="$5"
+                allowFontScaling={false}
+                color={theme.color?.val.default.val}
+              >
                 {prettyCount(profile?.statuses_count ? profile.statuses_count : 0)}
               </Text>
-              <Text fontSize="$2" allowFontScaling={false} color={theme.color?.val.secondary.val}>
+              <Text
+                fontSize="$2"
+                allowFontScaling={false}
+                color={theme.color?.val.secondary.val}
+              >
                 Posts
               </Text>
             </YStack>
@@ -339,20 +388,38 @@ export default function ProfileHeader({
             {profile && profile.id ? (
               <Link href={`/profile/following/${profile?.id}`} asChild>
                 <YStack alignItems="center" gap="$1">
-                  <Text fontWeight="bold" fontSize="$5" allowFontScaling={false} color={theme.color?.val.default.val}>
+                  <Text
+                    fontWeight="bold"
+                    fontSize="$5"
+                    allowFontScaling={false}
+                    color={theme.color?.val.default.val}
+                  >
                     {prettyCount(profile?.following_count ? profile.following_count : 0)}
                   </Text>
-                  <Text fontSize="$2" allowFontScaling={false} color={theme.color?.val.secondary.val}>
+                  <Text
+                    fontSize="$2"
+                    allowFontScaling={false}
+                    color={theme.color?.val.secondary.val}
+                  >
                     Following
                   </Text>
                 </YStack>
               </Link>
             ) : (
               <YStack alignItems="center" gap="$1">
-                <Text fontWeight="bold" fontSize="$5" allowFontScaling={false} color={theme.color?.val.default.val}>
+                <Text
+                  fontWeight="bold"
+                  fontSize="$5"
+                  allowFontScaling={false}
+                  color={theme.color?.val.default.val}
+                >
                   0
                 </Text>
-                <Text fontSize="$2" allowFontScaling={false} color={theme.color?.val.secondary.val}>
+                <Text
+                  fontSize="$2"
+                  allowFontScaling={false}
+                  color={theme.color?.val.secondary.val}
+                >
                   Following
                 </Text>
               </YStack>
@@ -361,20 +428,38 @@ export default function ProfileHeader({
             {profile && profile.id ? (
               <Link href={`/profile/followers/${profile?.id}`} asChild>
                 <YStack alignItems="center" gap="$1">
-                  <Text fontWeight="bold" fontSize="$5" allowFontScaling={false} color={theme.color?.val.default.val}>
+                  <Text
+                    fontWeight="bold"
+                    fontSize="$5"
+                    allowFontScaling={false}
+                    color={theme.color?.val.default.val}
+                  >
                     {prettyCount(profile?.followers_count ? profile.followers_count : 0)}
                   </Text>
-                  <Text fontSize="$2" allowFontScaling={false} color={theme.color?.val.secondary.val}>
+                  <Text
+                    fontSize="$2"
+                    allowFontScaling={false}
+                    color={theme.color?.val.secondary.val}
+                  >
                     Followers
                   </Text>
                 </YStack>
               </Link>
             ) : (
               <YStack alignItems="center" gap="$1">
-                <Text fontWeight="bold" fontSize="$6" allowFontScaling={false} color={theme.color?.val.default.val}>
+                <Text
+                  fontWeight="bold"
+                  fontSize="$6"
+                  allowFontScaling={false}
+                  color={theme.color?.val.default.val}
+                >
                   0
                 </Text>
-                <Text fontSize="$3" allowFontScaling={false} color={theme.color?.val.secondary.val}>
+                <Text
+                  fontSize="$3"
+                  allowFontScaling={false}
+                  color={theme.color?.val.secondary.val}
+                >
                   Followers
                 </Text>
               </YStack>
@@ -384,22 +469,46 @@ export default function ProfileHeader({
 
         <YStack w="100%" mt="$3" gap={5}>
           <XStack gap="$2" alignItems="center">
-            <Text fontSize="$6" fontWeight={'bold'} flexWrap="wrap" color={theme.color?.val.default.val}>
+            <Text
+              fontSize="$6"
+              fontWeight={'bold'}
+              flexWrap="wrap"
+              color={theme.color?.val.default.val}
+            >
               {profile?.display_name}
             </Text>
             {profile?.locked && (
-              <Feather name="lock" size={14} color={theme.color?.val.secondary.val} style={{ marginLeft: -5 }} />
+              <Feather
+                name="lock"
+                size={14}
+                color={theme.color?.val.secondary.val}
+                style={{ marginLeft: -5 }}
+              />
             )}
             {relationship && relationship?.muting ? (
-              <View borderWidth={1} borderColor={theme.borderColor?.val.default.val} borderRadius={5} px={10} py={3}>
-                <Text color={theme.color?.val.secondary.val} fontWeight="bold" fontSize="$2">
+              <View
+                borderWidth={1}
+                borderColor={theme.borderColor?.val.default.val}
+                borderRadius={5}
+                px={10}
+                py={3}
+              >
+                <Text
+                  color={theme.color?.val.secondary.val}
+                  fontWeight="bold"
+                  fontSize="$2"
+                >
                   Muted
                 </Text>
               </View>
             ) : null}
             {profile && profile?.is_admin ? (
               <View bg="$red9" borderRadius={5} px={10} py={3}>
-                <Text color={theme.color?.val.default.val} fontWeight="bold" fontSize="$2">
+                <Text
+                  color={theme.color?.val.default.val}
+                  fontWeight="bold"
+                  fontSize="$2"
+                >
                   Admin
                 </Text>
               </View>

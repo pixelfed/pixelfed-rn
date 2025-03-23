@@ -14,7 +14,7 @@ export function GroupButtonContent({
   spacing = 'normal',
   iconColor = '#000',
 }: GroupButtonContentProps) {
-  const theme = useTheme();
+  const theme = useTheme()
   return (
     <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
       <XStack
@@ -23,7 +23,9 @@ export function GroupButtonContent({
         {...(spacing === 'normal' ? { ml: '$1' } : { pl: '$5' })}
       >
         <Feather name={icon} size={17} color={theme.color?.val.tertiary.val} />
-        <Text fontSize="$6" color={theme.color?.val.default.val}>{title}</Text>
+        <Text fontSize="$6" color={theme.color?.val.default.val}>
+          {title}
+        </Text>
       </XStack>
       <Feather name="chevron-right" size={20} color="#ccc" />
     </XStack>

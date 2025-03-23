@@ -186,7 +186,11 @@ const CommentItem = ({
                 {item.favourited ? (
                   <Ionicons name="heart" color="red" size={20} />
                 ) : (
-                  <Ionicons name="heart-outline" color={theme.color?.val.default.val} size={20} />
+                  <Ionicons
+                    name="heart-outline"
+                    color={theme.color?.val.default.val}
+                    size={20}
+                  />
                 )}
                 {item.favourites_count > 0 && (
                   <Text fontSize="$3">{prettyCount(item.favourites_count)}</Text>
@@ -248,7 +252,7 @@ export default function CommentFeed({
   const [childComments, setChildComments] = useState({})
   const queryClient = useQueryClient()
   const commentRef = useRef<TextInput | null>(null)
-  const theme = useTheme();
+  const theme = useTheme()
 
   const handleReplyPost = () => {
     commentMutation.mutate({
@@ -512,7 +516,7 @@ export default function CommentFeed({
           ref={
             commentRef as any /* BottomSheetTextInput is forwarding ref to a normal TextInput, but the typing is wrong, so we need to cast to any here */
           }
-          style={[styles.input, {color: theme.color?.val.default.val} ]}
+          style={[styles.input, { color: theme.color?.val.default.val }]}
           value={commentText}
           onChangeText={setComment}
           multiline={true}
@@ -527,7 +531,12 @@ export default function CommentFeed({
           alignItems="center"
         >
           <XStack>
-            <Text allowFontScaling={false} fontWeight="bold" fontSize={12} color={theme.color?.val.secondary.val}>
+            <Text
+              allowFontScaling={false}
+              fontWeight="bold"
+              fontSize={12}
+              color={theme.color?.val.secondary.val}
+            >
               {commentText.length}
             </Text>
             <Text allowFontScaling={false} fontWeight="bold" fontSize={12} color="$gray9">

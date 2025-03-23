@@ -11,7 +11,7 @@ import { Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const navigation = useNavigation()
-  const theme = useTheme();
+  const theme = useTheme()
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Post History', headerBackTitle: 'Back' })
@@ -91,8 +91,12 @@ export default function Page() {
         <View p="$5" bg={theme.background?.val.tertiary.val}>
           <YStack gap="$2">
             <XStack gap="$3" flexWrap="wrap">
-              <Text fontWeight="bold" color={theme.color?.val.tertiary.val}>Version #{index + 1}</Text>
-              <Text color={theme.color?.val.tertiary.val}>Post edited {_timeAgo(item?.created_at)}</Text>
+              <Text fontWeight="bold" color={theme.color?.val.tertiary.val}>
+                Version #{index + 1}
+              </Text>
+              <Text color={theme.color?.val.tertiary.val}>
+                Post edited {_timeAgo(item?.created_at)}
+              </Text>
             </XStack>
             {index > 0 ? (
               <ReadMore numberOfLines={3}>
@@ -103,7 +107,11 @@ export default function Page() {
               </ReadMore>
             ) : (
               <ReadMore numberOfLines={3}>
-                <Text fontSize="$3" allowFontScaling={false} color={theme.color?.val.default.val}>
+                <Text
+                  fontSize="$3"
+                  allowFontScaling={false}
+                  color={theme.color?.val.default.val}
+                >
                   {htmlToTextWithLineBreaks(item.content)}
                 </Text>
               </ReadMore>

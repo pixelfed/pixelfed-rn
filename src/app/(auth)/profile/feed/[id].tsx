@@ -45,11 +45,11 @@ import { Storage } from 'src/state/cache'
 import { Button, Separator, Text, View, YStack, ZStack, useTheme } from 'tamagui'
 
 import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet'
+import { StatusBar } from 'expo-status-bar'
 import { PixelfedBottomSheetModal } from 'src/components/common/BottomSheets'
 import FeedPost from 'src/components/post/FeedPost'
 import { useUserCache } from 'src/state/AuthProvider'
 import { enforceLen } from 'src/utils'
-import { StatusBar } from 'expo-status-bar'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
@@ -61,7 +61,7 @@ export default function ProfileScreen() {
   // const toast = useToastController();
   const toastController = useToastController()
   const selfUser = useUserCache()
-  const theme = useTheme();
+  const theme = useTheme()
 
   const onOpenComments = (id) => {
     router.push(`/post/comments/${id}`)
@@ -118,10 +118,17 @@ export default function ProfileScreen() {
             </>
           ) : (
             <View flexGrow={1} alignItems="center" justifyContent="center" gap="$4">
-              <View p="$6" borderWidth={2} borderColor={theme.borderColor?.val.default} borderRadius={100}>
+              <View
+                p="$6"
+                borderWidth={2}
+                borderColor={theme.borderColor?.val.default}
+                borderRadius={100}
+              >
                 <Feather name="camera" size={50} color={theme.color?.val.tertiary.val} />
               </View>
-              <Text fontSize="$9" color={theme.color?.val.tertiary.val}>No Posts Yet</Text>
+              <Text fontSize="$9" color={theme.color?.val.tertiary.val}>
+                No Posts Yet
+              </Text>
             </View>
           )}
         </YStack>
@@ -242,14 +249,19 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView edges={['left']} style={{ flex: 1, backgroundColor: theme.background?.val.default.val }}>
+    <SafeAreaView
+      edges={['left']}
+      style={{ flex: 1, backgroundColor: theme.background?.val.default.val }}
+    >
       <Stack.Screen
         options={{
           headerShown: true,
           headerTitle: () => (
             <YStack justifyContent="center" alignItems="center">
               {user && user.username && (
-                <Text color={theme.color?.val.secondary.val}>{enforceLen(user?.acct, 30, true)}</Text>
+                <Text color={theme.color?.val.secondary.val}>
+                  {enforceLen(user?.acct, 30, true)}
+                </Text>
               )}
               <Text fontSize="$6" fontWeight="bold" color={theme.color?.val.default.val}>
                 Posts

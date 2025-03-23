@@ -5,7 +5,7 @@ import GhostIcon from '../icons/GhostIcon'
 const almostBlack = 'rgb(64, 64, 64)'
 
 export default function EmptyFeed() {
-  const theme = useTheme();
+  const theme = useTheme()
   return (
     <YStack
       p="$4"
@@ -16,8 +16,10 @@ export default function EmptyFeed() {
     >
       <GhostIcon width={200} height={200} color={theme.color?.val.default.val} />
 
-      <Text style={[styles.noPostsHeader, {color: theme.color?.val.default.val}]}>Ghosts have taken over this timeline!</Text>
-      <Text style={[styles.noPostsText,{color: theme.color?.val.default.val}]}>
+      <Text style={[styles.noPostsHeader, { color: theme.color?.val.default.val }]}>
+        Ghosts have taken over this timeline!
+      </Text>
+      <Text style={[styles.noPostsText, { color: theme.color?.val.default.val }]}>
         Try following some accounts to get rid of them!
       </Text>
     </YStack>

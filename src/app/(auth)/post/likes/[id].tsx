@@ -8,7 +8,7 @@ import { Text, View, XStack, YStack, useTheme } from 'tamagui'
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const theme = useTheme();
+  const theme = useTheme()
   const RenderItem = ({ item }) => {
     return (
       <View p="$3" bg={theme.background?.val.default.val}>
@@ -104,7 +104,9 @@ export default function Page() {
         }}
         onEndReachedThreshold={0.5}
         ListFooterComponent={() =>
-          isFetchingPreviousPage ? <ActivityIndicator color={theme.color?.val.default.val} /> : null
+          isFetchingPreviousPage ? (
+            <ActivityIndicator color={theme.color?.val.default.val} />
+          ) : null
         }
       />
     </SafeAreaView>

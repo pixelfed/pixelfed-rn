@@ -21,7 +21,7 @@ import { ScrollView, Text, TextArea, View, XStack, YStack, useTheme } from 'tama
 const SCREEN_HEIGHT = Dimensions.get('screen').height
 
 const RenderItem = React.memo(({ item, onUpdateMediaAlt }) => {
-  const theme = useTheme();
+  const theme = useTheme()
   return (
     <XStack m="$3" gap="$3">
       {item.type === 'image' ? (
@@ -65,8 +65,8 @@ const RenderItem = React.memo(({ item, onUpdateMediaAlt }) => {
         </XStack>
       </YStack>
     </XStack>
-  )}
-)
+  )
+})
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -77,7 +77,7 @@ export default function Page() {
   const [spoilerText, setSpoiler] = useState('')
   const [showSpoiler, setShowSpoiler] = useState(false)
   const [isSaving, setSaving] = useState(false)
-  const theme = useTheme();
+  const theme = useTheme()
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Edit Post', headerBackTitle: 'Back' })
@@ -90,7 +90,12 @@ export default function Page() {
       {isSaving ? (
         <ActivityIndicator color={theme.color?.val.default.val} />
       ) : (
-        <Text fontSize="$5" allowFontScaling={false} fontWeight="bold" color={theme.colorHover?.val.active.val}>
+        <Text
+          fontSize="$5"
+          allowFontScaling={false}
+          fontWeight="bold"
+          color={theme.colorHover?.val.active.val}
+        >
           Save
         </Text>
       )}
@@ -179,7 +184,10 @@ export default function Page() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background?.val.default.val }} edges={['bottom']}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.background?.val.default.val }}
+      edges={['bottom']}
+    >
       <Stack.Screen
         options={{
           title: 'Edit Post',
@@ -192,7 +200,11 @@ export default function Page() {
           <XStack gap="$3" justifyContent="space-between" alignItems="center">
             <XStack gap="$3" alignItems="center">
               <UserAvatar url={user?.avatar} size="$3" />
-              <Text fontSize={Platform.OS === 'ios' ? '$7' : '$5'} fontWeight="bold" color={theme.color?.val.default.val}>
+              <Text
+                fontSize={Platform.OS === 'ios' ? '$7' : '$5'}
+                fontWeight="bold"
+                color={theme.color?.val.default.val}
+              >
                 {user?.username}
               </Text>
             </XStack>
@@ -230,10 +242,14 @@ export default function Page() {
             justifyContent="space-between"
           >
             <YStack maxWidth="70%" gap="$2">
-              <Text fontSize="$4" fontWeight={'bold'} color={theme.color?.val.default.val}>
+              <Text
+                fontSize="$4"
+                fontWeight={'bold'}
+                color={theme.color?.val.default.val}
+              >
                 Contains Sensitive Media
               </Text>
-              <Text fontSize="$3"  color={theme.color?.val.tertiary.val}>
+              <Text fontSize="$3" color={theme.color?.val.tertiary.val}>
                 Applies a sensitive content warning.
               </Text>
             </YStack>

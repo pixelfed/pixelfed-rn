@@ -1,7 +1,7 @@
 import { Button, XStack, useTheme } from 'tamagui'
 
 export default function BlockingProfile({ onPress }: { onPress: () => void }) {
-  const theme = useTheme();
+  const theme = useTheme()
 
   return (
     <XStack w="100%" my="$3" gap="$2">

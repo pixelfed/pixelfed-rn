@@ -76,7 +76,12 @@ export default function AutolinkText(
   return (
     <Text fontSize="$5" color={theme.color?.val.default.val}>
       {username ? (
-        <Text fontSize="$5" fontWeight="bold" color={theme.color?.val.default.val} onPress={() => onUsernamePress()}>
+        <Text
+          fontSize="$5"
+          fontWeight="bold"
+          color={theme.color?.val.default.val}
+          onPress={() => onUsernamePress()}
+        >
           {username}{' '}
         </Text>
       ) : null}

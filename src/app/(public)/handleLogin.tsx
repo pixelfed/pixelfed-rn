@@ -211,7 +211,11 @@ export default function LoginScreen() {
           <YStack px="$4" pt="$4" pb="$6" space="$4" flexGrow={1} minHeight="100%">
             <XStack justifyContent="space-between" alignItems="center">
               <Pressable onPress={navigateBack}>
-                <Feather name="arrow-left" size={24} color={theme.color?.val.default.val} />
+                <Feather
+                  name="arrow-left"
+                  size={24}
+                  color={theme.color?.val.default.val}
+                />
               </Pressable>
               <YStack alignItems="center" space="$6">
                 <Text fontSize={28} fontWeight="500" color={theme.color?.val.default.val}>
@@ -219,7 +223,11 @@ export default function LoginScreen() {
                 </Text>
               </YStack>
               <Pressable onPress={showHelpInfo}>
-                <Feather name={'help-circle'} size={24} color={theme.color?.val.default.val} />
+                <Feather
+                  name={'help-circle'}
+                  size={24}
+                  color={theme.color?.val.default.val}
+                />
               </Pressable>
             </XStack>
 
@@ -231,7 +239,8 @@ export default function LoginScreen() {
                   alignItems: 'center',
                   padding: 16,
                   borderWidth: 1,
-                  borderColor: selectedOption === 0 ? '#3F8FF7' : theme.borderColor?.val.default.val,
+                  borderColor:
+                    selectedOption === 0 ? '#3F8FF7' : theme.borderColor?.val.default.val,
                   borderRadius: 8,
                   backgroundColor: theme.background?.val.secondary.val,
                 }}
@@ -267,7 +276,8 @@ export default function LoginScreen() {
               <View
                 style={{
                   borderWidth: 1,
-                  borderColor: selectedOption === 1 ? '#3F8FF7' : theme.borderColor?.val.default.val,
+                  borderColor:
+                    selectedOption === 1 ? '#3F8FF7' : theme.borderColor?.val.default.val,
                   borderRadius: 8,
                   overflow: 'hidden',
                   backgroundColor: theme.background?.val.secondary.val,
@@ -339,7 +349,11 @@ export default function LoginScreen() {
                             onPress={() => handleSuggestionSelect(suggestion)}
                             style={{ paddingVertical: 12 }}
                           >
-                            <Text color={theme.colorHover?.val.active.val} fontSize="$6" fontWeight="bold">
+                            <Text
+                              color={theme.colorHover?.val.active.val}
+                              fontSize="$6"
+                              fontWeight="bold"
+                            >
                               {suggestion}
                             </Text>
                           </Pressable>
@@ -368,7 +382,11 @@ export default function LoginScreen() {
                 Forgot your instance?
               </Text>
               <Pressable onPress={handleFindInstance}>
-                <Text fontSize="$6" color={theme.colorHover?.val.hover.val} fontWeight="bold">
+                <Text
+                  fontSize="$6"
+                  color={theme.colorHover?.val.hover.val}
+                  fontWeight="bold"
+                >
                   Find it
                 </Text>
               </Pressable>
@@ -382,7 +400,11 @@ export default function LoginScreen() {
                   Don't have an account yet?
                 </Text>
                 <Pressable onPress={navigateToSignup}>
-                  <Text fontSize="$6" color={theme.colorHover?.val.hover.val} fontWeight="bold">
+                  <Text
+                    fontSize="$6"
+                    color={theme.colorHover?.val.hover.val}
+                    fontWeight="bold"
+                  >
                     Sign up
                   </Text>
                 </Pressable>

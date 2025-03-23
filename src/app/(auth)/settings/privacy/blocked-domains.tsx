@@ -7,18 +7,31 @@ import { getDomainBlocks } from 'src/lib/api'
 import { Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
 
 export default function Page() {
-  const theme = useTheme();
+  const theme = useTheme()
   const RenderItem = ({ item }) => {
     return (
-      <XStack p="$5" bg={theme.background?.val.secondary.val} alignItems="center" gap="$3" flexWrap="wrap">
-        <Text fontSize="$6" fontWeight={'bold'} flexWrap="wrap" color={theme.color?.val.default.val}>
+      <XStack
+        p="$5"
+        bg={theme.background?.val.secondary.val}
+        alignItems="center"
+        gap="$3"
+        flexWrap="wrap"
+      >
+        <Text
+          fontSize="$6"
+          fontWeight={'bold'}
+          flexWrap="wrap"
+          color={theme.color?.val.default.val}
+        >
           {item}
         </Text>
       </XStack>
     )
   }
 
-  const RenderSeparator = () => <Separator borderColor={theme.borderColor?.val.default.val} />
+  const RenderSeparator = () => (
+    <Separator borderColor={theme.borderColor?.val.default.val} />
+  )
 
   const RenderEmpty = () => (
     <View flexGrow={1} justifyContent="center" alignItems="center" py="$5">

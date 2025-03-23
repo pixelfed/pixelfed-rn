@@ -49,7 +49,14 @@ export function ErrorBoundary(props: ErrorBoundaryProps) {
         Something went wrong!
       </Text>
       <Text color={theme.color?.val.default.val}>{props.error?.message}</Text>
-      <Button theme="blue" size="$4" bg={theme.colorHover.val.hover.val} onPress={props.retry}>Try Again</Button>
+      <Button
+        theme="blue"
+        size="$4"
+        bg={theme.colorHover.val.hover.val}
+        onPress={props.retry}
+      >
+        Try Again
+      </Button>
     </View>
   )
 }
@@ -254,14 +261,21 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor: theme.background.val}]} edges={['top']}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background.val }]}
+      edges={['top']}
+    >
       <Stack.Screen options={{ headerShown: false }} />
       <FeedHeader title="Pixelfed" user={user} />
       {isPosting ? (
         <View p="$5">
           <XStack gap="$3">
             <Spinner color={theme.color?.val.default.val} />
-            <Text fontSize="$5" allowFontScaling={false} color={theme.color?.val.default.val}>
+            <Text
+              fontSize="$5"
+              allowFontScaling={false}
+              color={theme.color?.val.default.val}
+            >
               Uploading new post, please wait...
             </Text>
           </XStack>

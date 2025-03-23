@@ -7,17 +7,25 @@ import { getFollowedTags } from 'src/lib/api'
 import { Text, View, YStack, useTheme } from 'tamagui'
 
 export default function Screen() {
-  const theme = useTheme();
+  const theme = useTheme()
 
   const RenderItem = ({ item }) => (
     <Link href={`/hashtag/${item.name}`} asChild>
       <View p="$5" bg={theme.background?.val.secondary.val}>
-        <Text fontSize="$6" color={theme.color?.val.default.val}>#{item.name}</Text>
+        <Text fontSize="$6" color={theme.color?.val.default.val}>
+          #{item.name}
+        </Text>
       </View>
     </Link>
   )
 
-  const Separator = () => <View h={1} borderBottomWidth={0.1} borderColor={theme.borderColor?.val.default.val} />
+  const Separator = () => (
+    <View
+      h={1}
+      borderBottomWidth={0.1}
+      borderColor={theme.borderColor?.val.default.val}
+    />
+  )
 
   const RenderEmpty = () => (
     <View flexGrow={1} justifyContent="center" alignItems="center" py="$5">

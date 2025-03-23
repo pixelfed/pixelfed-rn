@@ -16,7 +16,7 @@ import { formatTimestampMonthYear, postCountLabel } from 'src/utils'
 export default function SearchScreen() {
   const [query, setQuery] = useState('')
   const { acct } = useUserCache()
-  const theme = useTheme();
+  const theme = useTheme()
 
   const { data, isLoading, isError, error, isFetching } = useQuery({
     queryKey: ['search', query],
@@ -69,7 +69,11 @@ export default function SearchScreen() {
                     overflow="hidden"
                   >
                     <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
-                      <Text fontSize="$6" fontWeight="bold" color={theme.color?.val.default.val}>
+                      <Text
+                        fontSize="$6"
+                        fontWeight="bold"
+                        color={theme.color?.val.default.val}
+                      >
                         {item.username}
                       </Text>
                       {!item.local ? (

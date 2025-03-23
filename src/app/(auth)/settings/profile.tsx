@@ -36,7 +36,7 @@ type LinkFieldProps = {
 
 export default function ProfilePage() {
   const navigation = useNavigation()
-  const theme = useTheme();
+  const theme = useTheme()
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Edit Profile', headerBackTitle: 'Back' })
   }, [navigation])
@@ -142,7 +142,10 @@ export default function ProfilePage() {
   )
 
   return (
-    <SafeAreaView style={[styles.background, {backgroundColor: theme.background?.val.default.val}]} edges={['bottom']}>
+    <SafeAreaView
+      style={[styles.background, { backgroundColor: theme.background?.val.default.val }]}
+      edges={['bottom']}
+    >
       <Stack.Screen
         options={{
           title: 'Edit Profile',
@@ -151,18 +154,28 @@ export default function ProfilePage() {
       />
       <ZStack flex={1}>
         {isFetching && (
-          <ActivityIndicator style={styles.activityIndicator} color={theme.color?.val.default.val} />
+          <ActivityIndicator
+            style={styles.activityIndicator}
+            color={theme.color?.val.default.val}
+          />
         )}
 
         <ScrollView flexShrink={1}>
           <XStack padding="$3" gap="$4" alignItems="center">
-            <Avatar circular size="$10" borderWidth={1} borderColor={theme.borderColor?.val.default.val}>
+            <Avatar
+              circular
+              size="$10"
+              borderWidth={1}
+              borderColor={theme.borderColor?.val.default.val}
+            >
               <Avatar.Image accessibilityLabel={user?.username} src={user?.avatar} />
               <Avatar.Fallback backgroundColor={theme.background?.val.tertiary.val} />
             </Avatar>
 
             <YStack>
-              <Text style={styles.username} color={theme.color?.val.default.val}>@{user?.username}</Text>
+              <Text style={styles.username} color={theme.color?.val.default.val}>
+                @{user?.username}
+              </Text>
               <Button
                 p="$0"
                 chromeless

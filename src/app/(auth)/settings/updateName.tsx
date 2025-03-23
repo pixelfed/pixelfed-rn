@@ -20,7 +20,10 @@ export default function Page() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background?.val.secondary.val }} edges={['bottom']}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.background?.val.secondary.val }}
+      edges={['bottom']}
+    >
       <Stack.Screen
         options={{
           title: 'Name',

@@ -62,7 +62,13 @@ export default function CommentItem({
 
   return (
     <YStack>
-      <View style={[styles.itemContainer, { backgroundColor: theme.background?.val.default.val }, isChild && { paddingLeft: 50 * level }]}>
+      <View
+        style={[
+          styles.itemContainer,
+          { backgroundColor: theme.background?.val.default.val },
+          isChild && { paddingLeft: 50 * level },
+        ]}
+      >
         <YStack flexShrink={1}>
           <XStack flexShrink={1}>
             <XStack gap="$3" flexGrow={1}>
@@ -85,7 +91,11 @@ export default function CommentItem({
               <YStack flexGrow={1} maxWidth={SCREEN_WIDTH - (150 + level * 20)} gap={4}>
                 <XStack gap="$2">
                   <Pressable onPress={() => gotoProfile(item?.account.id)}>
-                    <Text fontSize="$3" fontWeight="bold" color={theme.color?.val.secondary.val}>
+                    <Text
+                      fontSize="$3"
+                      fontWeight="bold"
+                      color={theme.color?.val.secondary.val}
+                    >
                       {item.account.acct}
                     </Text>
                   </Pressable>
@@ -116,7 +126,11 @@ export default function CommentItem({
 
                 <XStack mt="$2" gap="$4">
                   <Pressable onPress={() => onReply(item)}>
-                    <Text fontWeight="bold" fontSize="$3" color={theme.color?.val.secondary.val}>
+                    <Text
+                      fontWeight="bold"
+                      fontSize="$3"
+                      color={theme.color?.val.secondary.val}
+                    >
                       Reply
                     </Text>
                   </Pressable>
@@ -152,8 +166,16 @@ export default function CommentItem({
                     ) : (
                       <Pressable onPress={() => onLoadChildren(item.id, level + 1)}>
                         <XStack gap="$2" alignItems="center">
-                          <View w={20} h={1} backgroundColor={theme.background?.val.secondary.val} />
-                          <Text fontSize="$3" color={theme.color?.val.secondary.val} fontWeight="bold">
+                          <View
+                            w={20}
+                            h={1}
+                            backgroundColor={theme.background?.val.secondary.val}
+                          />
+                          <Text
+                            fontSize="$3"
+                            color={theme.color?.val.secondary.val}
+                            fontWeight="bold"
+                          >
                             View {item.reply_count}{' '}
                             {item.reply_count === 1 ? 'reply' : 'replies'}
                           </Text>
@@ -170,10 +192,16 @@ export default function CommentItem({
                 {item.favourited ? (
                   <Ionicons name="heart" color="red" size={20} />
                 ) : (
-                  <Ionicons name="heart-outline" color={theme.color?.val.default.val} size={20} />
+                  <Ionicons
+                    name="heart-outline"
+                    color={theme.color?.val.default.val}
+                    size={20}
+                  />
                 )}
                 {item.favourites_count > 0 && (
-                  <Text fontSize="$3" color={theme.color?.val.tertiary.val}>{prettyCount(item.favourites_count)}</Text>
+                  <Text fontSize="$3" color={theme.color?.val.tertiary.val}>
+                    {prettyCount(item.favourites_count)}
+                  </Text>
                 )}
               </YStack>
             </Pressable>

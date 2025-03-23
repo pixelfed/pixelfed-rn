@@ -30,7 +30,10 @@ export default function Page() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background?.val.secondary.val }} edges={['bottom']}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.background?.val.secondary.val }}
+      edges={['bottom']}
+    >
       <Stack.Screen
         options={{
           title: 'Bio',
@@ -80,8 +83,8 @@ export default function Page() {
 
         <Text p="$3" color={theme.color?.val.tertiary.val}>
           Add an optional bio to describe yourself. Hashtags and mentions will be linked,
-          make sure you use full webfinger addresses for remote accounts
-          like @pixelfed@mastodon.social
+          make sure you use full webfinger addresses for remote accounts like
+          @pixelfed@mastodon.social
         </Text>
       </ScrollView>
     </SafeAreaView>

@@ -59,7 +59,7 @@ const postRequest = async (
 const VerificationStep = ({ onSubmit, isLoading, email, domain, updateCode }) => {
   const [code, setCode] = useState('')
   const [error, setError] = useState('')
-  const theme = useTheme();
+  const theme = useTheme()
 
   const handleSubmit = async () => {
     if (code.length !== 6) {
@@ -87,7 +87,9 @@ const VerificationStep = ({ onSubmit, isLoading, email, domain, updateCode }) =>
 
   return (
     <View style={styles.stepContainer}>
-      <Text style={styles.title} color={theme.color?.val.default.val}>Check your email</Text>
+      <Text style={styles.title} color={theme.color?.val.default.val}>
+        Check your email
+      </Text>
       <Text style={styles.subtitle} color={theme.color?.val.secondary.val}>
         We've sent a 6-digit code to{' '}
         <Text color={theme.color?.val.default.val} fontWeight="bold">
@@ -110,11 +112,17 @@ const VerificationStep = ({ onSubmit, isLoading, email, domain, updateCode }) =>
 
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      <TouchableOpacity style={[styles.button, {backgroundColor: theme.colorHover?.val.active.val}]} onPress={handleSubmit} disabled={isLoading}>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: theme.colorHover?.val.active.val }]}
+        onPress={handleSubmit}
+        disabled={isLoading}
+      >
         {isLoading ? (
           <ActivityIndicator color={theme.color?.val.default.val} />
         ) : (
-          <Text style={[styles.buttonText, {color: theme.color?.val.inverse.val}]}>Verify</Text>
+          <Text style={[styles.buttonText, { color: theme.color?.val.inverse.val }]}>
+            Verify
+          </Text>
         )}
       </TouchableOpacity>
     </View>
@@ -127,7 +135,7 @@ const DetailsStep = ({ onSubmit, isLoading, domain, code, email, setLoading }) =
   const [displayName, setDisplayName] = useState('')
   const [error, setError] = useState('')
   const router = useRouter()
-  const theme = useTheme();
+  const theme = useTheme()
 
   const handleSubmit = async () => {
     if (!username || !password || !displayName) {
@@ -176,8 +184,12 @@ const DetailsStep = ({ onSubmit, isLoading, domain, code, email, setLoading }) =
 
   return (
     <View style={styles.stepContainer}>
-      <Text style={[styles.title, {color: theme.color?.val.default.val}]}>Complete your profile</Text>
-      <Text style={[styles.subtitle, {color: theme.color?.val.secondary.val}]}>Choose how you'll appear in the community</Text>
+      <Text style={[styles.title, { color: theme.color?.val.default.val }]}>
+        Complete your profile
+      </Text>
+      <Text style={[styles.subtitle, { color: theme.color?.val.secondary.val }]}>
+        Choose how you'll appear in the community
+      </Text>
 
       <TextInput
         style={styles.input}
@@ -193,7 +205,12 @@ const DetailsStep = ({ onSubmit, isLoading, domain, code, email, setLoading }) =
         onChangeText={setUsername}
       />
 
-      <Text style={[styles.subtitle, { fontSize: 14, marginTop: -10, color: theme.color?.val.tertiary.val }]}>
+      <Text
+        style={[
+          styles.subtitle,
+          { fontSize: 14, marginTop: -10, color: theme.color?.val.tertiary.val },
+        ]}
+      >
         Username must be 2-30 characters long, start/end with a letter or number, contain
         at least one letter, and may include a single dash, underscore, or period.
       </Text>
@@ -212,7 +229,12 @@ const DetailsStep = ({ onSubmit, isLoading, domain, code, email, setLoading }) =
         onChangeText={setDisplayName}
       />
 
-      <Text style={[styles.subtitle, { fontSize: 14, marginTop: -10, color: theme.color?.val.tertiary.val }]}>
+      <Text
+        style={[
+          styles.subtitle,
+          { fontSize: 14, marginTop: -10, color: theme.color?.val.tertiary.val },
+        ]}
+      >
         Display names can be up to 30 characters long.
       </Text>
 
@@ -228,17 +250,28 @@ const DetailsStep = ({ onSubmit, isLoading, domain, code, email, setLoading }) =
         onChangeText={setPassword}
       />
 
-      <Text style={[styles.subtitle, { fontSize: 14, marginTop: -10, color: theme.color?.val.tertiary.val }]}>
+      <Text
+        style={[
+          styles.subtitle,
+          { fontSize: 14, marginTop: -10, color: theme.color?.val.tertiary.val },
+        ]}
+      >
         Pick a secure password that is 8 characters or longer.
       </Text>
 
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      <TouchableOpacity style={[styles.button, {backgroundColor: theme.colorHover?.val.hover.val}]} onPress={handleSubmit} disabled={isLoading}>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: theme.colorHover?.val.hover.val }]}
+        onPress={handleSubmit}
+        disabled={isLoading}
+      >
         {isLoading ? (
           <ActivityIndicator color={theme.color?.val.inverse.val} />
         ) : (
-          <Text style={[styles.buttonText, {color: theme.color?.val.inverse.val}]}>Create Account</Text>
+          <Text style={[styles.buttonText, { color: theme.color?.val.inverse.val }]}>
+            Create Account
+          </Text>
         )}
       </TouchableOpacity>
     </View>
@@ -250,7 +283,7 @@ const WelcomeStep = ({ onSubmit, isLoading, domain }) => {
   const [avatarPayload, setAvatarPayload] = useState(null)
   const [bio, setBio] = useState('')
   const [error, setError] = useState('')
-  const theme = useTheme();
+  const theme = useTheme()
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -290,15 +323,31 @@ const WelcomeStep = ({ onSubmit, isLoading, domain }) => {
 
   return (
     <View style={styles.stepContainer}>
-      <Text style={[styles.title, {color: theme.color?.val.default.val}]}>Welcome to Pixelfed!</Text>
-      <Text style={[styles.subtitle, {color: theme.color?.val.tertiary.val}]}>Let's personalize your profile</Text>
+      <Text style={[styles.title, { color: theme.color?.val.default.val }]}>
+        Welcome to Pixelfed!
+      </Text>
+      <Text style={[styles.subtitle, { color: theme.color?.val.tertiary.val }]}>
+        Let's personalize your profile
+      </Text>
 
       <TouchableOpacity onPress={pickImage} style={styles.avatarContainer}>
         {avatar ? (
           <ImageComponent source={{ uri: avatar }} style={styles.avatar} />
         ) : (
-          <View style={[styles.avatarPlaceholder, {borderColor: theme.borderColor?.val.default.val}]}>
-            <Text style={[styles.avatarPlaceholderText, {color: theme.color?.val.tertiary.val}]}>Add Photo</Text>
+          <View
+            style={[
+              styles.avatarPlaceholder,
+              { borderColor: theme.borderColor?.val.default.val },
+            ]}
+          >
+            <Text
+              style={[
+                styles.avatarPlaceholderText,
+                { color: theme.color?.val.tertiary.val },
+              ]}
+            >
+              Add Photo
+            </Text>
           </View>
         )}
       </TouchableOpacity>
@@ -325,11 +374,17 @@ const WelcomeStep = ({ onSubmit, isLoading, domain }) => {
 
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      <TouchableOpacity style={[styles.button, {backgroundColor: theme.colorHover?.val.hover.val}]} onPress={handleSubmit} disabled={isLoading}>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: theme.colorHover?.val.hover.val }]}
+        onPress={handleSubmit}
+        disabled={isLoading}
+      >
         {isLoading ? (
           <ActivityIndicator color={theme.color?.val.inverse.val} />
         ) : (
-          <Text style={[styles.buttonText, {color: theme.color?.val.inverse.val}]}>Complete Profile</Text>
+          <Text style={[styles.buttonText, { color: theme.color?.val.inverse.val }]}>
+            Complete Profile
+          </Text>
         )}
       </TouchableOpacity>
 
@@ -338,7 +393,9 @@ const WelcomeStep = ({ onSubmit, isLoading, domain }) => {
         onPress={handleSkip}
         disabled={isLoading}
       >
-        <Text style={[styles.skipButtonText, {color: theme.color?.val.tertiary.val}]}>Skip for now</Text>
+        <Text style={[styles.skipButtonText, { color: theme.color?.val.tertiary.val }]}>
+          Skip for now
+        </Text>
       </TouchableOpacity>
     </View>
   )
@@ -355,7 +412,7 @@ const SignUp = ({ navigation }) => {
   const [authToken, setAuthToken] = useState(null)
   const [registeredDomain, setRegisteredDomain] = useState(null)
   const { profileMutation } = useProfileMutation()
-  const theme = useTheme();
+  const theme = useTheme()
 
   const slideAnim = React.useRef(new Animated.Value(0)).current
 
@@ -418,7 +475,9 @@ const SignUp = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor: theme.background.val.default.val}]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background.val.default.val }]}
+    >
       <Stack.Screen options={{ headerShown: false }} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

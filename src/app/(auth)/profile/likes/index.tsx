@@ -1,3 +1,4 @@
+import Feather from '@expo/vector-icons/Feather'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Stack, useNavigation, useRouter } from 'expo-router'
 import { useCallback, useLayoutEffect } from 'react'
@@ -7,12 +8,11 @@ import FeedPost from 'src/components/post/FeedPost'
 import { getSelfLikes } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
 import { Text, View, useTheme } from 'tamagui'
-import Feather from '@expo/vector-icons/Feather'
 
 export default function LikesScreen() {
   const navigation = useNavigation()
   const router = useRouter()
-  const theme = useTheme();
+  const theme = useTheme()
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'My Likes', headerBackTitle: 'Back' })
@@ -40,13 +40,29 @@ export default function LikesScreen() {
 
   const EmptyLikesList = () => (
     <View flex={1} justifyContent="center" alignItems="center" py="$12">
-      <View p="$6" borderWidth={2} borderColor={theme.borderColor?.val.default.val} borderRadius={100}>
+      <View
+        p="$6"
+        borderWidth={2}
+        borderColor={theme.borderColor?.val.default.val}
+        borderRadius={100}
+      >
         <Feather name="heart" size={40} color={theme.color?.val.tertiary.val} />
       </View>
-      <Text fontSize={18} fontWeight="600" mt="$4" textAlign="center" color={theme.color?.val.default.val}>
+      <Text
+        fontSize={18}
+        fontWeight="600"
+        mt="$4"
+        textAlign="center"
+        color={theme.color?.val.default.val}
+      >
         No Liked Posts Found
       </Text>
-      <Text fontSize={16} mt="$2" textAlign="center" color={theme.color?.val.tertiary.val}>
+      <Text
+        fontSize={16}
+        mt="$2"
+        textAlign="center"
+        color={theme.color?.val.tertiary.val}
+      >
         Posts you like will appear here
       </Text>
     </View>
@@ -110,7 +126,11 @@ export default function LikesScreen() {
         onEndReachedThreshold={0.5}
         ListEmptyComponent={hasNoLikes ? <EmptyLikesList /> : null}
         ListFooterComponent={() =>
-          isFetchingNextPage ? <ActivityIndicator color={theme.color?.val.default.val} /> : <View h={200} />
+          isFetchingNextPage ? (
+            <ActivityIndicator color={theme.color?.val.default.val} />
+          ) : (
+            <View h={200} />
+          )
         }
       />
     </SafeAreaView>

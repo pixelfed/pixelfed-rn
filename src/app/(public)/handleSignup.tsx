@@ -42,7 +42,7 @@ export default function SignupScreen() {
   const scrollViewRef = useRef(null)
   const { login } = useAuth()
   const router = useRouter()
-  const theme = useTheme();
+  const theme = useTheme()
 
   // Animation for info section
   useEffect(() => {
@@ -249,13 +249,21 @@ export default function SignupScreen() {
           <YStack px="$4" pt="$4" pb="$6" space="$4" flexGrow={1} minHeight="100%">
             <XStack justifyContent="space-between" alignItems="center">
               <Pressable onPress={navigateBack}>
-                <Feather name="arrow-left" size={24} color={theme.color?.val.default.val} />
+                <Feather
+                  name="arrow-left"
+                  size={24}
+                  color={theme.color?.val.default.val}
+                />
               </Pressable>
               <Text fontSize={28} fontWeight="500" color={theme.color?.val.default.val}>
                 Sign Up
               </Text>
               <Pressable onPress={toggleInfo}>
-                <Feather name={showInfo ? 'x' : 'help-circle'} size={24} color={theme.color?.val.default.val} />
+                <Feather
+                  name={showInfo ? 'x' : 'help-circle'}
+                  size={24}
+                  color={theme.color?.val.default.val}
+                />
               </Pressable>
             </XStack>
 
@@ -280,20 +288,45 @@ export default function SignupScreen() {
                 borderColor={theme.borderColor?.val.default.val}
                 borderWidth={1}
               >
-                <Text fontSize="$3" color={theme.color?.val.default.val} mb="$3" allowFontScaling={false}>
+                <Text
+                  fontSize="$3"
+                  color={theme.color?.val.default.val}
+                  mb="$3"
+                  allowFontScaling={false}
+                >
                   Pixelfed is a decentralized photo sharing platform. To join, you'll need
                   to:
                 </Text>
-                <Text fontSize="$3" color={theme.color?.val.secondary.val} mb="$2" allowFontScaling={false}>
+                <Text
+                  fontSize="$3"
+                  color={theme.color?.val.secondary.val}
+                  mb="$2"
+                  allowFontScaling={false}
+                >
                   • Choose a server
                 </Text>
-                <Text fontSize="$3" color={theme.color?.val.secondary.val} mb="$2" allowFontScaling={false}>
+                <Text
+                  fontSize="$3"
+                  color={theme.color?.val.secondary.val}
+                  mb="$2"
+                  allowFontScaling={false}
+                >
                   • Provide your email address for a verification code
                 </Text>
-                <Text fontSize="$3" color={theme.color?.val.secondary.val} mb="$2" allowFontScaling={false}>
+                <Text
+                  fontSize="$3"
+                  color={theme.color?.val.secondary.val}
+                  mb="$2"
+                  allowFontScaling={false}
+                >
                   • Return to this app to finish signing up
                 </Text>
-                <Text fontSize="$3" color={theme.color?.val.secondary.val} mt="$2" allowFontScaling={false}>
+                <Text
+                  fontSize="$3"
+                  color={theme.color?.val.secondary.val}
+                  mt="$2"
+                  allowFontScaling={false}
+                >
                   Your account will work across all of Pixelfed, regardless of which
                   server you join
                 </Text>
@@ -305,7 +338,12 @@ export default function SignupScreen() {
                 Choose a Server to Join
               </Text>
 
-              <View borderWidth={1} borderColor={theme.borderColor?.val.default.val} borderRadius={10} p="$3">
+              <View
+                borderWidth={1}
+                borderColor={theme.borderColor?.val.default.val}
+                borderRadius={10}
+                p="$3"
+              >
                 <YStack space="$3" maxHeight={200}>
                   <ScrollView>
                     {filteredServers.length > 0 ? (
@@ -317,7 +355,9 @@ export default function SignupScreen() {
                             {
                               opacity: pressed ? 0.7 : 1,
                               backgroundColor:
-                                server === item.domain ? theme.background?.val.tertiary.val : 'transparent',
+                                server === item.domain
+                                  ? theme.background?.val.tertiary.val
+                                  : 'transparent',
                               borderRadius: 8,
                               padding: 12,
                               marginBottom: 8,
@@ -326,23 +366,28 @@ export default function SignupScreen() {
                         >
                           <XStack justifyContent="space-between" alignItems="center">
                             <Text
-                              color={server === item.domain ? theme.color?.val.default.val : theme.color?.val.tertiary.val}
+                              color={
+                                server === item.domain
+                                  ? theme.color?.val.default.val
+                                  : theme.color?.val.tertiary.val
+                              }
                               fontSize="$5"
                               fontWeight={server === item.domain ? 'bold' : 'normal'}
                             >
                               {item.domain}
                             </Text>
-                            <Text
-                              fontSize="$3"
-                              color={theme.color?.val.tertiary.val}
-                            >
+                            <Text fontSize="$3" color={theme.color?.val.tertiary.val}>
                               {prettyCount(item.user_count)} users
                             </Text>
                           </XStack>
                         </Pressable>
                       ))
                     ) : (
-                      <Text color={theme.color?.val.default.val}textAlign="center" py="$3">
+                      <Text
+                        color={theme.color?.val.default.val}
+                        textAlign="center"
+                        py="$3"
+                      >
                         No servers with open registration found
                       </Text>
                     )}
@@ -374,7 +419,11 @@ export default function SignupScreen() {
             <YStack space="$2" mt="$2" gap="$3">
               <XStack justifyContent="center" space="$2">
                 <Pressable onPress={handleResendVerification}>
-                  <Text color={theme.colorHover?.val.active.val} fontWeight="bold" fontSize="$6">
+                  <Text
+                    color={theme.colorHover?.val.active.val}
+                    fontWeight="bold"
+                    fontSize="$6"
+                  >
                     Resend email verification
                   </Text>
                 </Pressable>
@@ -382,7 +431,11 @@ export default function SignupScreen() {
 
               <XStack justifyContent="center" space="$2">
                 <Pressable onPress={navigateToVerificationCode}>
-                  <Text color={theme.colorHover?.val.active.val} fontWeight="bold" fontSize="$6">
+                  <Text
+                    color={theme.colorHover?.val.active.val}
+                    fontWeight="bold"
+                    fontSize="$6"
+                  >
                     I have a verification code
                   </Text>
                 </Pressable>

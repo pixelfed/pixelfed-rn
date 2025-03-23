@@ -60,7 +60,18 @@ import {
   openBrowserAsync,
   prettyCount,
 } from 'src/utils'
-import { Button, Circle, Separator, Text, View, XStack, YStack, ZStack, useTheme, useThemeName } from 'tamagui'
+import {
+  Button,
+  Circle,
+  Separator,
+  Text,
+  View,
+  XStack,
+  YStack,
+  ZStack,
+  useTheme,
+  useThemeName,
+} from 'tamagui'
 import { PixelfedBottomSheetModal } from '../common/BottomSheets'
 import ReadMore from '../common/ReadMore'
 import VideoPlayer from './VideoPlayer'
@@ -136,7 +147,13 @@ const AVATAR_WIDTH = 45
 const Section = React.memo(({ children }: React.PropsWithChildren) => {
   const theme = useTheme()
   return (
-    <View px="$3" backgroundColor={theme.background?.val.default.val} borderTopWidth={1} borderBottomWidth={1} borderColor={theme.borderColor.val.default.val}>
+    <View
+      px="$3"
+      backgroundColor={theme.background?.val.default.val}
+      borderTopWidth={1}
+      borderBottomWidth={1}
+      borderColor={theme.borderColor.val.default.val}
+    >
       {children}
     </View>
   )
@@ -145,18 +162,26 @@ const Section = React.memo(({ children }: React.PropsWithChildren) => {
 const SectionTopBorder = React.memo(({ children }: React.PropsWithChildren) => {
   const theme = useTheme()
   return (
-    <View px="$3" backgroundColor={theme.background?.val.default.val} borderTopWidth={1} borderBottomWidth={0} borderColor={theme.borderColor.val.default.val}>
+    <View
+      px="$3"
+      backgroundColor={theme.background?.val.default.val}
+      borderTopWidth={1}
+      borderBottomWidth={0}
+      borderColor={theme.borderColor.val.default.val}
+    >
       {children}
     </View>
-  )}
   )
+})
 
 const BorderlessSection = React.memo(({ children }: React.PropsWithChildren) => {
   const theme = useTheme()
   return (
-  <View px="$3" backgroundColor={theme.background?.val.default.val}>
-    {children}
-  </View>)})
+    <View px="$3" backgroundColor={theme.background?.val.default.val}>
+      {children}
+    </View>
+  )
+})
 
 interface PostHeaderProps {
   avatar: string
@@ -194,12 +219,20 @@ const PostHeader = React.memo(
                   />
                   <YStack gap={3}>
                     <XStack gap="$2" alignItems="center">
-                      <Text fontWeight="bold" fontSize="$5" color={theme.color.val.default.val}>
+                      <Text
+                        fontWeight="bold"
+                        fontSize="$5"
+                        color={theme.color.val.default.val}
+                      >
                         {enforceLen(username, 20, true)}
                       </Text>
                     </XStack>
-                    { displayName && displayName.length && (
-                      <Text fontWeight="300" fontSize="$3" color={theme.color.val.secondary.val}>
+                    {displayName && displayName.length && (
+                      <Text
+                        fontWeight="300"
+                        fontSize="$3"
+                        color={theme.color.val.secondary.val}
+                      >
                         {enforceLen(displayName, 25, true)}
                       </Text>
                     )}
@@ -310,7 +343,7 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
     const height = calculateHeight(item, width)
     return height > max ? height : max
   }, 0)
-  const theme = useTheme();
+  const theme = useTheme()
   const themeName = useThemeName()
   const dotColor = themeName == 'dark' ? 'rgba(255, 255, 255, 0.20)' : 'rgba(0,0,0,0.11)'
   const mediaList = post.media_attachments.slice(0, 10)
@@ -445,7 +478,7 @@ const PostActions = React.memo(
           'Media was not tagged with any alt text.'
       )
     }
-    const theme = useTheme();
+    const theme = useTheme()
     const [shareCountCache, setShareCount] = useState(sharesCount)
     const [hasSharedCache, setShared] = useState(hasShared)
 
@@ -496,10 +529,16 @@ const PostActions = React.memo(
             <XStack gap="$5">
               <XStack justifyContent="center" alignItems="center" gap="$2">
                 <LikeButton hasLiked={hasLiked} handleLike={handleLike} />
-                {isLikePending ? <ActivityIndicator color={theme.color?.val.default.val} /> : null}
+                {isLikePending ? (
+                  <ActivityIndicator color={theme.color?.val.default.val} />
+                ) : null}
                 {!isLikePending && likesCount ? (
                   <Link href={`/post/likes/${post.id}`}>
-                    <Text fontWeight={'bold'} allowFontScaling={false} color={theme.color?.val.secondary.val}>
+                    <Text
+                      fontWeight={'bold'}
+                      allowFontScaling={false}
+                      color={theme.color?.val.secondary.val}
+                    >
                       {prettyCount(likesCount)}
                     </Text>
                   </Link>
@@ -507,10 +546,19 @@ const PostActions = React.memo(
               </XStack>
               <XStack justifyContent="center" alignItems="center" gap="$2">
                 <Pressable onPress={() => onOpenComments()}>
-                  <Feather name="message-circle" size={30} color={theme.color?.val.default.val} />
+                  <Feather
+                    name="message-circle"
+                    size={30}
+                    color={theme.color?.val.default.val}
+                  />
                 </Pressable>
                 {commentsCount ? (
-                  <Text fontWeight={'bold'} allowFontScaling={false} fontSize="$2" color={theme.color?.val.secondary.val}>
+                  <Text
+                    fontWeight={'bold'}
+                    allowFontScaling={false}
+                    fontSize="$2"
+                    color={theme.color?.val.secondary.val}
+                  >
                     {prettyCount(commentsCount)}
                   </Text>
                 ) : null}
@@ -531,7 +579,11 @@ const PostActions = React.memo(
                   </PressableOpacity>
                   {sharesCount ? (
                     <Link href={`/post/shares/${post.id}`}>
-                      <Text fontWeight={'bold'} allowFontScaling={false} color={theme.color?.val.tertiary.val}>
+                      <Text
+                        fontWeight={'bold'}
+                        allowFontScaling={false}
+                        color={theme.color?.val.tertiary.val}
+                      >
                         {prettyCount(shareCountCache)}
                       </Text>
                     </Link>
@@ -545,9 +597,17 @@ const PostActions = React.memo(
                 <PressableOpacity onPress={() => handleBookmarkAction()}>
                   <XStack gap="$4">
                     {hasBookmarked ? (
-                      <Ionicons name="bookmark" size={30} color={theme.color?.val.default.val} />
+                      <Ionicons
+                        name="bookmark"
+                        size={30}
+                        color={theme.color?.val.default.val}
+                      />
                     ) : (
-                      <Feather name="bookmark" size={30} color={theme.color?.val.default.val}  />
+                      <Feather
+                        name="bookmark"
+                        size={30}
+                        color={theme.color?.val.default.val}
+                      />
                     )}
                   </XStack>
                 </PressableOpacity>
@@ -555,7 +615,11 @@ const PostActions = React.memo(
               {showAltText && hasAltText ? (
                 <PressableOpacity onPress={() => onShowAlt()}>
                   <XStack bg="black" px="$3" py={4} borderRadius={5}>
-                    <Text color={theme.color?.val.default.val} fontSize="$5" fontWeight="bold">
+                    <Text
+                      color={theme.color?.val.default.val}
+                      fontSize="$5"
+                      fontWeight="bold"
+                    >
                       ALT
                     </Text>
                   </XStack>
@@ -607,7 +671,7 @@ const PostCaption = React.memo(
   }: PostCaptionProps) => {
     const timeAgo = formatTimestamp(createdAt)
     const captionText = htmlToTextWithLineBreaks(caption)
-    const theme = useTheme();
+    const theme = useTheme()
     return (
       <BorderlessSection>
         <YStack gap="$3" pt="$1" pb="$3" px="$2">
@@ -731,14 +795,19 @@ const TextPost = React.memo(
   }) => {
     const timeAgo = formatTimestamp(createdAt)
     const captionText = htmlToTextWithLineBreaks(caption)
-    const theme = useTheme();
+    const theme = useTheme()
 
     return (
       <SectionTopBorder>
         <XStack alignItems="flex-start" gap="$3" paddingVertical="$3">
           <Link href={`/profile/${userId}`} asChild>
             <Pressable>
-              <Circle size={40} overflow="hidden" borderWidth={1} borderColor={theme.borderColor.val.default.val}>
+              <Circle
+                size={40}
+                overflow="hidden"
+                borderWidth={1}
+                borderColor={theme.borderColor.val.default.val}
+              >
                 <ImageComponent
                   source={{ uri: avatar }}
                   style={{
@@ -830,10 +899,17 @@ const TextPost = React.memo(
                 <XStack flex={1} alignItems="center" space="$6">
                   <XStack justifyContent="center" alignItems="center" gap="$2">
                     <LikeButton hasLiked={hasLiked} handleLike={handleLike} size={23} />
-                    {isLikePending ? <ActivityIndicator color={theme.color.val.default.val} /> : null}
+                    {isLikePending ? (
+                      <ActivityIndicator color={theme.color.val.default.val} />
+                    ) : null}
                     {!isLikePending && likesCount ? (
                       <Link href={`/post/likes/${post.id}`}>
-                        <Text fontWeight={'bold'} allowFontScaling={false} fontSize={13} color={theme.color.val.secondary.val}>
+                        <Text
+                          fontWeight={'bold'}
+                          allowFontScaling={false}
+                          fontSize={13}
+                          color={theme.color.val.secondary.val}
+                        >
                           {prettyCount(likesCount)}
                         </Text>
                       </Link>
@@ -842,9 +918,17 @@ const TextPost = React.memo(
 
                   <XStack gap="$2" alignItems="center">
                     <Pressable onPress={() => onOpenComments()}>
-                      <Feather name="message-circle" size={20} color={theme.color.val.default.val} />
+                      <Feather
+                        name="message-circle"
+                        size={20}
+                        color={theme.color.val.default.val}
+                      />
                     </Pressable>
-                    <Text fontSize={13} fontWeight="bold" color={theme.color.val.secondary.val}>
+                    <Text
+                      fontSize={13}
+                      fontWeight="bold"
+                      color={theme.color.val.secondary.val}
+                    >
                       {prettyCount(commentsCount)}
                     </Text>
                   </XStack>
@@ -877,7 +961,7 @@ const FeedPost = React.memo(
     const { width } = useWindowDimensions()
     const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
     const showAltText = Storage.getBoolean('ui.showAltText') == true
-    const theme = useTheme();
+    const theme = useTheme()
 
     const handlePresentModalPress = useCallback(() => {
       bottomSheetModalRef.current?.present()
@@ -1070,31 +1154,58 @@ const FeedPost = React.memo(
           snapPoints={snapPoints}
           onChange={handleSheetChanges}
           backdropComponent={renderBackdrop}
-          backgroundStyle={{backgroundColor: theme.background.val.default.val}}
-          handleIndicatorStyle={{backgroundColor: theme.background.val.tertiary.val}}
+          backgroundStyle={{ backgroundColor: theme.background.val.default.val }}
+          handleIndicatorStyle={{ backgroundColor: theme.background.val.tertiary.val }}
         >
-          <BottomSheetScrollView style={{backgroundColor: theme.background?.val.default.val}}>
-            <Button size="$6" chromeless onPress={() => onGotoShare()} color={theme.color?.val.default.val}>
+          <BottomSheetScrollView
+            style={{ backgroundColor: theme.background?.val.default.val }}
+          >
+            <Button
+              size="$6"
+              chromeless
+              onPress={() => onGotoShare()}
+              color={theme.color?.val.default.val}
+            >
               Share
             </Button>
             <Separator borderColor={theme.borderColor?.val.default.val} />
             {!isPermalink ? (
               <>
-                <Button size="$6" chromeless onPress={() => goToPost()} color={theme.color?.val.default.val}>
+                <Button
+                  size="$6"
+                  chromeless
+                  onPress={() => goToPost()}
+                  color={theme.color?.val.default.val}
+                >
                   View Post
                 </Button>
                 <Separator borderColor={theme.borderColor?.val.default.val} />
               </>
             ) : null}
-            <Button size="$6" chromeless onPress={() => goToProfile()} color={theme.color?.val.default.val}>
+            <Button
+              size="$6"
+              chromeless
+              onPress={() => goToProfile()}
+              color={theme.color?.val.default.val}
+            >
               View Profile
             </Button>
             <Separator borderColor={theme.borderColor?.val.default.val} />
-            <Button size="$6" chromeless onPress={() => onGotoAbout()} color={theme.color?.val.default.val}>
+            <Button
+              size="$6"
+              chromeless
+              onPress={() => onGotoAbout()}
+              color={theme.color?.val.default.val}
+            >
               About this account
             </Button>
             <Separator borderColor={theme.borderColor?.val.default.val} />
-            <Button size="$6" chromeless onPress={() => openInBrowser()} color={theme.color?.val.default.val}>
+            <Button
+              size="$6"
+              chromeless
+              onPress={() => openInBrowser()}
+              color={theme.color?.val.default.val}
+            >
               Open in browser
             </Button>
             <Separator borderColor={theme.borderColor?.val.default.val} />
@@ -1108,7 +1219,12 @@ const FeedPost = React.memo(
             ) : null}
             {user && user?.id === post?.account?.id ? (
               <>
-                <Button size="$6" chromeless onPress={() => _onEditPost(post.id)} color={theme.color?.val.secondary.val}>
+                <Button
+                  size="$6"
+                  chromeless
+                  onPress={() => _onEditPost(post.id)}
+                  color={theme.color?.val.secondary.val}
+                >
                   Edit Post
                 </Button>
                 <Separator borderColor={theme.borderColor?.val.default.val} />

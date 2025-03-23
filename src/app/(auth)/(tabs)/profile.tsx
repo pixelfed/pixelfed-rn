@@ -13,7 +13,7 @@ const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileScreen() {
   const { user, isFetching } = useQuerySelfProfile()
-  const theme = useTheme();
+  const theme = useTheme()
 
   const userId = user?.id
 
@@ -37,7 +37,14 @@ export default function ProfileScreen() {
     }
 
     return (
-      <View flexGrow={1} bg={theme.background?.val.default.val} borderTopWidth={1} borderColor={theme.borderColor?.val.default.val} alignItems="center" justifyContent="center">
+      <View
+        flexGrow={1}
+        bg={theme.background?.val.default.val}
+        borderTopWidth={1}
+        borderColor={theme.borderColor?.val.default.val}
+        alignItems="center"
+        justifyContent="center"
+      >
         <YStack
           h="100%"
           flexGrow={1}
@@ -46,10 +53,17 @@ export default function ProfileScreen() {
           gap="$5"
         >
           <View flexGrow={1} alignItems="center" justifyContent="center" gap="$4">
-            <View p="$6" borderWidth={2} borderColor={theme.borderColor?.val.default} borderRadius={100}>
+            <View
+              p="$6"
+              borderWidth={2}
+              borderColor={theme.borderColor?.val.default}
+              borderRadius={100}
+            >
               <Feather name="camera" size={50} color={theme.color?.val.tertiary.val} />
             </View>
-            <Text fontSize="$9" color={theme.color?.val.tertiary.val}>No Posts Yet</Text>
+            <Text fontSize="$9" color={theme.color?.val.tertiary.val}>
+              No Posts Yet
+            </Text>
           </View>
         </YStack>
       </View>
@@ -99,7 +113,10 @@ export default function ProfileScreen() {
   const RenderItem = ({ item }) =>
     item && item.media_attachments[0].url ? (
       <Link key={item?.id} href={`/post/${item.id}`}>
-        <View flexShrink={1} style={{ borderWidth: 1, borderColor: theme.borderColor?.val.default.val }}>
+        <View
+          flexShrink={1}
+          style={{ borderWidth: 1, borderColor: theme.borderColor?.val.default.val }}
+        >
           <ImageComponent
             placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
             source={{

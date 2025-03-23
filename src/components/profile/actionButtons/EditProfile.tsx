@@ -1,11 +1,11 @@
 import { Button, useTheme } from 'tamagui'
 
 export default function EditProfile({ onPress }: { onPress: () => void }) {
-  const theme = useTheme();
+  const theme = useTheme()
   return (
     <Button
       theme="light"
-      variant='outlined'
+      variant="outlined"
       my="$3"
       size="$4"
       borderColor={theme.borderColor?.val.default.val}

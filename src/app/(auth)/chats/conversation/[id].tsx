@@ -8,7 +8,13 @@ import {
   Pressable,
   useWindowDimensions,
 } from 'react-native'
-import { Bubble, GiftedChat, Send, Composer, InputToolbar } from 'react-native-gifted-chat'
+import {
+  Bubble,
+  Composer,
+  GiftedChat,
+  InputToolbar,
+  Send,
+} from 'react-native-gifted-chat'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { deleteChatMessage, fetchChatThread, sendChatMessage } from 'src/lib/api'
 import { _timeAgo, enforceLen } from 'src/utils'
@@ -20,12 +26,18 @@ import { useUserCache } from 'src/state/AuthProvider'
 import type { BubbleProps, IMessage } from 'react-native-gifted-chat'
 
 function renderBubble<TMessage extends IMessage>(props: BubbleProps<TMessage>) {
-  const theme = useTheme();
+  const theme = useTheme()
   return (
     <Bubble
       {...props}
-      textStyle={{ left: { color: theme.color?.val.default.val }, right: { color: 'white' } }}
-      wrapperStyle={{ left: { backgroundColor: theme.background?.val.tertiary.val }, right: { backgroundColor: '#0081f1' } }}
+      textStyle={{
+        left: { color: theme.color?.val.default.val },
+        right: { color: 'white' },
+      }}
+      wrapperStyle={{
+        left: { backgroundColor: theme.background?.val.tertiary.val },
+        right: { backgroundColor: '#0081f1' },
+      }}
     />
   )
 }
@@ -41,7 +53,7 @@ export default function Page() {
   const [isTyping, setTyping] = useState(false)
   const selfUser = useUserCache()
   const { width } = useWindowDimensions()
-  const theme = useTheme();
+  const theme = useTheme()
 
   const formattedUsername = useCallback(() => {
     if (!recipientUsername || !recipientUsername.length) {
@@ -60,9 +72,9 @@ export default function Page() {
         Direct Message
       </Text>
       <Link href={`/profile/${id}`} asChild>
-      <Text fontSize="$4"  color={theme.color?.val.tertiary.val}>
-        {enforceLen(formattedUsername(), 40, true)}
-      </Text>
+        <Text fontSize="$4" color={theme.color?.val.tertiary.val}>
+          {enforceLen(formattedUsername(), 40, true)}
+        </Text>
       </Link>
     </YStack>
   )
@@ -251,7 +263,10 @@ export default function Page() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background?.val.default.val }} edges={['bottom']}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.background?.val.default.val }}
+      edges={['bottom']}
+    >
       <Stack.Screen
         options={{
           headerBackTitle: 'Back',
@@ -260,7 +275,11 @@ export default function Page() {
               <ActivityIndicator color={theme.color?.val.default.val} />
             ) : (
               <Pressable onPress={() => reloadChat()}>
-                <Feather name="refresh-cw" size={25} color={theme.color?.val.default.val} />
+                <Feather
+                  name="refresh-cw"
+                  size={25}
+                  color={theme.color?.val.default.val}
+                />
               </Pressable>
             ),
         }}
@@ -270,7 +289,10 @@ export default function Page() {
         renderBubble={renderBubble}
         infiniteScroll
         scrollToBottom
-        messagesContainerStyle={{ backgroundColor: theme.background?.val.default.val, paddingBottom: 20 }}
+        messagesContainerStyle={{
+          backgroundColor: theme.background?.val.default.val,
+          paddingBottom: 20,
+        }}
         user={{
           _id: selfUser.id,
           name: selfUser.username,
@@ -289,7 +311,7 @@ export default function Page() {
         }}
         textInputStyle={{
           backgroundColor: theme.background.val.tertiary.val,
-          color: theme.color.val.default.val
+          color: theme.color.val.default.val,
         }}
         renderComposer={(props) => (
           <Composer
@@ -318,7 +340,7 @@ export default function Page() {
               borderRadius: 10,
               borderTopColor: 'transparent',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
             }}
           />
         )}

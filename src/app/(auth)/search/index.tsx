@@ -15,20 +15,21 @@ import { formatTimestampMonthYear } from '../../../utils'
 const Tab = createMaterialTopTabNavigator()
 
 const RenderEmptyResults = ({ message = 'No results found' }) => {
-  const theme = useTheme();
+  const theme = useTheme()
   return (
-  <View flex={1} flexGrow={1} justifyContent="center" alignItems="center" py="$5">
-    <YStack justifyContent="center" alignItems="center" gap="$5">
-      <Feather name="alert-circle" size={50} color={theme.color?.val.default.val} />
-      <Text fontSize="$6" color={theme.color?.val.secondary.val}>
-        {message}
-      </Text>
-    </YStack>
-  </View>
-)}
+    <View flex={1} flexGrow={1} justifyContent="center" alignItems="center" py="$5">
+      <YStack justifyContent="center" alignItems="center" gap="$5">
+        <Feather name="alert-circle" size={50} color={theme.color?.val.default.val} />
+        <Text fontSize="$6" color={theme.color?.val.secondary.val}>
+          {message}
+        </Text>
+      </YStack>
+    </View>
+  )
+}
 
 const AccountResultsTab = ({ accounts, isFetching, query }) => {
-  const theme = useTheme();
+  const theme = useTheme()
   const RenderAccountItem = useCallback(
     ({ item }) => (
       <View p="$3" bg={theme.background?.val.default.val}>
@@ -38,13 +39,21 @@ const AccountResultsTab = ({ accounts, isFetching, query }) => {
               <UserAvatar url={item.avatar} width={40} height={40} />
               <YStack flexGrow={1} gap={4} w="50%">
                 <XStack alignItems="center" gap="$2" flexWrap="wrap">
-                  <Text fontSize="$6" fontWeight="bold" color={theme.color?.val.default.val}>
+                  <Text
+                    fontSize="$6"
+                    fontWeight="bold"
+                    color={theme.color?.val.default.val}
+                  >
                     {item.username}
                   </Text>
 
                   {!item.local ? (
                     <View bg="$gray3" px={5} py={4} borderRadius={5}>
-                      <Text fontSize="$2" fontWeight="bold"  color={theme.color?.val.tertiary.val}>
+                      <Text
+                        fontSize="$2"
+                        fontWeight="bold"
+                        color={theme.color?.val.tertiary.val}
+                      >
                         {getDomain(item.url)}
                       </Text>
                     </View>
@@ -97,7 +106,7 @@ const AccountResultsTab = ({ accounts, isFetching, query }) => {
 }
 
 const HashtagResultsTab = ({ hashtags, isFetching, query }) => {
-  const theme = useTheme();
+  const theme = useTheme()
 
   const RenderHashtagItem = useCallback(
     ({ item }) => (
@@ -121,7 +130,13 @@ const HashtagResultsTab = ({ hashtags, isFetching, query }) => {
               justifyContent="space-between"
               alignItems="center"
             >
-              <Text fontSize="$6" w="70%" fontWeight="bold" flexWrap="wrap" color={theme.color?.val.default.val}>
+              <Text
+                fontSize="$6"
+                w="70%"
+                fontWeight="bold"
+                flexWrap="wrap"
+                color={theme.color?.val.default.val}
+              >
                 {item.name}
               </Text>
               <XStack>
@@ -147,7 +162,9 @@ const HashtagResultsTab = ({ hashtags, isFetching, query }) => {
       <FlatList
         data={hashtags}
         renderItem={RenderHashtagItem}
-        ItemSeparatorComponent={() => <View h={1} bg={theme.background?.val.tertiary.val} />}
+        ItemSeparatorComponent={() => (
+          <View h={1} bg={theme.background?.val.tertiary.val} />
+        )}
         onScrollBeginDrag={() => Keyboard.dismiss()}
         ListEmptyComponent={EmptyHashtagsList}
         ListFooterComponent={() =>
@@ -165,7 +182,7 @@ const HashtagResultsTab = ({ hashtags, isFetching, query }) => {
 }
 
 const PostResultsTab = ({ posts, isFetching, query }) => {
-  const theme = useTheme();
+  const theme = useTheme()
   const RenderPostItem = useCallback(
     ({ item }) => (
       <View p="$3" bg="white">
@@ -247,7 +264,7 @@ const PostResultsTab = ({ posts, isFetching, query }) => {
 export default function SearchScreen() {
   const { initialQuery } = useLocalSearchParams<{ initialQuery?: string }>()
   const [query, setQuery] = useState(initialQuery || '')
-  const theme = useTheme();
+  const theme = useTheme()
 
   const { data, isLoading, isError, error, isFetching } = useQuery({
     queryKey: ['search', query],
@@ -299,7 +316,9 @@ export default function SearchScreen() {
           <Tab.Navigator
             screenOptions={{
               tabBarLabelStyle: { fontSize: 12, fontWeight: 'bold' },
-              tabBarIndicatorStyle: { backgroundColor: theme.background?.val.inverse.val },
+              tabBarIndicatorStyle: {
+                backgroundColor: theme.background?.val.inverse.val,
+              },
               tabBarStyle: {
                 elevation: 0,
                 shadowOpacity: 0,

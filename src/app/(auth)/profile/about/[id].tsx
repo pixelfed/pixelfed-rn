@@ -24,11 +24,26 @@ export default function ProfileScreen() {
 
   if (userError) {
     return (
-      <View bg={theme.background.val.default.val} flexGrow={1} justifyContent="center" alignItems="center" p="$5">
+      <View
+        bg={theme.background.val.default.val}
+        flexGrow={1}
+        justifyContent="center"
+        alignItems="center"
+        p="$5"
+      >
         <YStack alignItems="center" gap="$2">
-          <Text fontSize="$8" color={theme.color.val.default.val}>Oops, an error occured!</Text>
-          <Text fontSize="$5" color={theme.color.val.secondary.val}>Please try again later</Text>
-          <Button chromeless color={theme.colorHover.val.active.val} size="$6" onPress={() => router.back()}>
+          <Text fontSize="$8" color={theme.color.val.default.val}>
+            Oops, an error occured!
+          </Text>
+          <Text fontSize="$5" color={theme.color.val.secondary.val}>
+            Please try again later
+          </Text>
+          <Button
+            chromeless
+            color={theme.colorHover.val.active.val}
+            size="$6"
+            onPress={() => router.back()}
+          >
             Go back
           </Button>
         </YStack>
@@ -59,7 +74,10 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView edges={['left']} style={{ flex: 1, backgroundColor: theme.background.val.default.val }}>
+    <SafeAreaView
+      edges={['left']}
+      style={{ flex: 1, backgroundColor: theme.background.val.default.val }}
+    >
       <Stack.Screen
         options={{
           title: 'About this account',
@@ -84,13 +102,24 @@ export default function ProfileScreen() {
         >
           <UserAvatar url={user?.avatar} size="$10" />
           <YStack justifyContent="center" alignItems="center" gap="$1" flexWrap="wrap">
-            <Text fontSize="$7" fontWeight="bold" flexWrap="wrap" color={theme.color.val.default.val}>
+            <Text
+              fontSize="$7"
+              fontWeight="bold"
+              flexWrap="wrap"
+              color={theme.color.val.default.val}
+            >
               {user?.acct}
             </Text>
             <Text fontSize="$5" color="#aaa">
               {user?.url.replaceAll('https://', '')}
             </Text>
-            <Text fontSize="$3" mt="$3" px="$3" textAlign="center" color={theme.color.val.tertiary.val}>
+            <Text
+              fontSize="$3"
+              mt="$3"
+              px="$3"
+              textAlign="center"
+              color={theme.color.val.tertiary.val}
+            >
               To help keep our community authentic, we're showing information about
               accounts on Pixelfed and other fediverse servers.
             </Text>
@@ -109,7 +138,12 @@ export default function ProfileScreen() {
             <XStack justifyContent="flex-start" alignItems="flex-start" gap="$4">
               <Feather name="shield" size={36} color="#aaa" />
               <YStack gap={3}>
-                <Text fontSize="$6" fontWeight={600} fontFamily="System" color={theme.color.val.default.val}>
+                <Text
+                  fontSize="$6"
+                  fontWeight={600}
+                  fontFamily="System"
+                  color={theme.color.val.default.val}
+                >
                   Admin Account
                 </Text>
                 <Text fontSize="$5" color={theme.color.val.secondary.val}>
@@ -125,7 +159,12 @@ export default function ProfileScreen() {
             <XStack justifyContent="flex-start" alignItems="flex-start" gap="$4">
               <Feather name="lock" size={36} color="#aaa" />
               <YStack gap={3}>
-                <Text fontSize="$6" fontWeight={600} fontFamily="System" color={theme.color.val.default.val}>
+                <Text
+                  fontSize="$6"
+                  fontWeight={600}
+                  fontFamily="System"
+                  color={theme.color.val.default.val}
+                >
                   Private Account
                 </Text>
                 <Text fontSize="$5" color="$gray10" color={theme.color.val.secondary.val}>
@@ -137,7 +176,12 @@ export default function ProfileScreen() {
           <XStack justifyContent="flex-start" alignItems="flex-start" gap="$4">
             <Feather name="calendar" size={36} color="#aaa" />
             <YStack gap={3}>
-              <Text fontSize="$6" fontWeight={600} fontFamily="System" color={theme.color.val.default.val}>
+              <Text
+                fontSize="$6"
+                fontWeight={600}
+                fontFamily="System"
+                color={theme.color.val.default.val}
+              >
                 Account created
               </Text>
               <Text fontSize="$5" color={theme.color.val.secondary.val}>
@@ -149,7 +193,12 @@ export default function ProfileScreen() {
             <XStack justifyContent="flex-start" alignItems="flex-start" gap="$4">
               <Feather name="user-plus" size={36} color="#aaa" />
               <YStack gap={3}>
-                <Text fontSize="$6" fontWeight={600} fontFamily="System" color={theme.color.val.default.val}>
+                <Text
+                  fontSize="$6"
+                  fontWeight={600}
+                  fontFamily="System"
+                  color={theme.color.val.default.val}
+                >
                   Relationship Status
                 </Text>
                 {relationship?.following_since ? (
@@ -176,7 +225,12 @@ export default function ProfileScreen() {
             <XStack justifyContent="flex-start" alignItems="flex-start" gap="$4">
               <Feather name="users" size={36} color="#aaa" />
               <YStack gap={3}>
-                <Text fontSize="$6" fontWeight={600} fontFamily="System" color={theme.color.val.default.val}>
+                <Text
+                  fontSize="$6"
+                  fontWeight={600}
+                  fontFamily="System"
+                  color={theme.color.val.default.val}
+                >
                   Follower Status
                 </Text>
                 <Text fontSize="$5" color={theme.color.val.secondary.val}>
@@ -188,7 +242,12 @@ export default function ProfileScreen() {
           <XStack justifyContent="flex-start" alignItems="flex-start" gap="$4">
             <Feather name="server" size={36} color="#aaa" />
             <YStack gap={3}>
-              <Text fontSize="$6" fontWeight={600} fontFamily="System" color={theme.color.val.default.val}>
+              <Text
+                fontSize="$6"
+                fontWeight={600}
+                fontFamily="System"
+                color={theme.color.val.default.val}
+              >
                 Server
               </Text>
               <Text fontSize="$5" color={theme.color.val.secondary.val}>
@@ -200,7 +259,12 @@ export default function ProfileScreen() {
             <XStack justifyContent="flex-start" alignItems="flex-start" gap="$4">
               <Feather name="compass" size={36} color="#aaa" />
               <YStack gap={3}>
-                <Text fontSize="$6" fontWeight={600} fontFamily="System" color={theme.color.val.default.val}>
+                <Text
+                  fontSize="$6"
+                  fontWeight={600}
+                  fontFamily="System"
+                  color={theme.color.val.default.val}
+                >
                   Discoverable
                 </Text>
                 <Text fontSize="$5" color={theme.color.val.secondary.val}>
@@ -213,7 +277,12 @@ export default function ProfileScreen() {
             <XStack justifyContent="flex-start" alignItems="flex-start" gap="$4">
               <Feather name="user" size={36} color="#aaa" />
               <YStack gap={3}>
-                <Text fontSize="$6" fontWeight={600} fontFamily="System" color={theme.color.val.default.val}>
+                <Text
+                  fontSize="$6"
+                  fontWeight={600}
+                  fontFamily="System"
+                  color={theme.color.val.default.val}
+                >
                   Pronouns
                 </Text>
                 <Text fontSize="$5" color={theme.color.val.secondary.val}>
@@ -226,7 +295,12 @@ export default function ProfileScreen() {
             <XStack justifyContent="flex-start" alignItems="flex-start" gap="$4">
               <Feather name="clock" size={36} color="#aaa" />
               <YStack gap={3}>
-                <Text fontSize="$6" fontWeight={600} fontFamily="System" color={theme.color.val.default.val}>
+                <Text
+                  fontSize="$6"
+                  fontWeight={600}
+                  fontFamily="System"
+                  color={theme.color.val.default.val}
+                >
                   Last fetched at
                 </Text>
                 <Text fontSize="$5" color={theme.color.val.secondary.val}>

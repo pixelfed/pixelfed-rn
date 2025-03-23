@@ -11,7 +11,7 @@ const Frame = styled(Stack, {
         backgroundColor: '#2563eb',
       },
       false: {
-        backgroundColor: '#777'
+        backgroundColor: '#777',
       },
     },
   } as const,

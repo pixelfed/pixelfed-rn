@@ -15,7 +15,7 @@ import { Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
 export default function Page() {
   const selfUser = useUserCache()
   const navigation = useNavigation()
-  const theme = useTheme();
+  const theme = useTheme()
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Direct Messages', headerBackTitle: 'Back' })
   }, [navigation])
@@ -116,7 +116,11 @@ export default function Page() {
                 >
                   {content}
                 </Text>
-                <Text fontSize="$2" allowFontScaling={false} color={theme.color?.val.tertiary.val}>
+                <Text
+                  fontSize="$2"
+                  allowFontScaling={false}
+                  color={theme.color?.val.tertiary.val}
+                >
                   ·
                 </Text>
                 <Text fontSize="$2" allowFontScaling={false} color="#aaa">
@@ -145,7 +149,9 @@ export default function Page() {
         renderItem={RenderItem}
         refreshing={isRefetching}
         onRefresh={refetch}
-        ItemSeparatorComponent={() => <Separator borderColor={theme.borderColor?.val.default.val} />}
+        ItemSeparatorComponent={() => (
+          <Separator borderColor={theme.borderColor?.val.default.val} />
+        )}
         onEndReached={() => {
           if (hasNextPage && !isFetching && !isFetchingNextPage) fetchNextPage()
         }}

@@ -18,7 +18,16 @@ import {
   getHashtagRelated,
   unfollowHashtag,
 } from 'src/lib/api'
-import { Button, ScrollView, Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
+import {
+  Button,
+  ScrollView,
+  Separator,
+  Text,
+  View,
+  XStack,
+  YStack,
+  useTheme,
+} from 'tamagui'
 import { prettyCount } from '../../../utils'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
@@ -28,10 +37,13 @@ const ITEM_HEIGHT = IMAGE_HEIGHT
 
 const RenderItem = memo(({ item }) => {
   if (!item?.media_attachments?.[0]?.url) return null
-  const theme = useTheme();
+  const theme = useTheme()
   return (
     <Link href={`/post/${item.id}`} asChild>
-      <View flexShrink={1} style={{ borderWidth: 1, borderColor: theme.borderColor?.val.default.val }}>
+      <View
+        flexShrink={1}
+        style={{ borderWidth: 1, borderColor: theme.borderColor?.val.default.val }}
+      >
         <ImageComponent
           placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
           source={{
@@ -49,7 +61,7 @@ const RenderItem = memo(({ item }) => {
 })
 
 const ListFooter = memo(({ loading }) => {
-  const theme = useTheme();
+  const theme = useTheme()
   return loading ? (
     <View p="$5">
       <ActivityIndicator color={theme.color?.val.default.val} />
@@ -57,11 +69,10 @@ const ListFooter = memo(({ loading }) => {
   ) : null
 })
 
-
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const queryClient = useQueryClient()
-  const theme = useTheme();
+  const theme = useTheme()
 
   const RelatedTags = useCallback(
     ({ relatedTags }) =>
@@ -124,9 +135,18 @@ export default function Page() {
   const RenderEmpty = () => (
     <View flexGrow={1}>
       <Separator borderColor={theme.borderColor?.val.default.val} />
-      <YStack h="100%" flexGrow={1} justifyContent="center" alignItems="center" padding="$4" gap="$3">
+      <YStack
+        h="100%"
+        flexGrow={1}
+        justifyContent="center"
+        alignItems="center"
+        padding="$4"
+        gap="$3"
+      >
         <Feather name="alert-circle" size={40} color="#aaa" />
-        <Text fontSize="$8" color={theme.color?.val.default.val}>No posts with this tag.</Text>
+        <Text fontSize="$8" color={theme.color?.val.default.val}>
+          No posts with this tag.
+        </Text>
       </YStack>
     </View>
   )
@@ -228,12 +248,19 @@ export default function Page() {
                     containFit={'cover'}
                   />
                 ) : (
-                  <View w={100} h={100} borderRadius={100} bg={theme.background?.val.tertiary.val}></View>
+                  <View
+                    w={100}
+                    h={100}
+                    borderRadius={100}
+                    bg={theme.background?.val.tertiary.val}
+                  ></View>
                 )}
               </View>
               <YStack flex={1} justifyContent="center" alignItems="center" gap="$2">
                 <Text fontSize="$6" allowFontScaling={false}>
-                  <Text fontWeight="bold" color={theme.color?.val.default.val}>{prettyCount(hashtag?.count ?? 0)}</Text>{' '}
+                  <Text fontWeight="bold" color={theme.color?.val.default.val}>
+                    {prettyCount(hashtag?.count ?? 0)}
+                  </Text>{' '}
                   <Text color={theme.color?.val.default.val}>posts</Text>
                 </Text>
                 {hashtag?.count > 0 ? (
@@ -315,7 +342,9 @@ export default function Page() {
     return (
       <View flexGrow={1}>
         <YStack justifyContent="center" alignItems="center" p="$4">
-          <Text fontSize="$7" color={theme.color?.val.default.val}>Oops! An Error Occured.</Text>
+          <Text fontSize="$7" color={theme.color?.val.default.val}>
+            Oops! An Error Occured.
+          </Text>
           <Text color={theme.color?.val.secondary.val}>{error?.message}</Text>
         </YStack>
       </View>

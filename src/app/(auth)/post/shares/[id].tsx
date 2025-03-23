@@ -105,7 +105,9 @@ export default function Page() {
         }}
         onEndReachedThreshold={0.5}
         ListFooterComponent={() =>
-          isFetchingPreviousPage ? <ActivityIndicator color={theme.color?.val.default.val} /> : null
+          isFetchingPreviousPage ? (
+            <ActivityIndicator color={theme.color?.val.default.val} />
+          ) : null
         }
       />
     </SafeAreaView>

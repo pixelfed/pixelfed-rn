@@ -49,7 +49,14 @@ export function ErrorBoundary(props: ErrorBoundaryProps) {
         Something went wrong!
       </Text>
       <Text color={theme.color?.val.default.val}>{props.error?.message}</Text>
-      <Button theme="blue" size="$4" bg={theme.colorHover.val.hover.val} onPress={props.retry}>Try Again</Button>
+      <Button
+        theme="blue"
+        size="$4"
+        bg={theme.colorHover.val.hover.val}
+        onPress={props.retry}
+      >
+        Try Again
+      </Button>
     </View>
   )
 }
@@ -59,7 +66,7 @@ export default function HomeScreen() {
   const navigation = useNavigation()
   const flatListRef = useRef(null)
   const queryClient = useQueryClient()
-  const theme = useTheme();
+  const theme = useTheme()
 
   useFocusEffect(
     useCallback(() => {
@@ -144,16 +151,17 @@ export default function HomeScreen() {
   })
 
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<Status>) => (
-      item && item.id && (
-      <FeedPost
-        post={item}
-        user={user}
-        onOpenComments={() => onOpenComments(item.id)}
-        onDeletePost={() => onDeletePost(item.id)}
-        onShare={() => onShare(item.id, item.reblogged)}
-      />)
-    ),
+    ({ item }: ListRenderItemInfo<Status>) =>
+      item &&
+      item.id && (
+        <FeedPost
+          post={item}
+          user={user}
+          onOpenComments={() => onOpenComments(item.id)}
+          onDeletePost={() => onDeletePost(item.id)}
+          onShare={() => onShare(item.id, item.reblogged)}
+        />
+      ),
     [user, onOpenComments, onDeletePost, onShare]
   )
 
@@ -225,7 +233,11 @@ export default function HomeScreen() {
           if (hasNextPage && !isFetching && !isFetchingNextPage) fetchNextPage()
         }}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator color={theme.color?.val.default.val} /> : null)}
+        ListFooterComponent={() =>
+          isFetchingNextPage ? (
+            <ActivityIndicator color={theme.color?.val.default.val} />
+          ) : null
+        }
       />
     )
   }

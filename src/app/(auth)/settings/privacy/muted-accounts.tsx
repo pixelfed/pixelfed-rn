@@ -8,10 +8,17 @@ import { getMutes } from 'src/lib/api'
 import { Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
 
 export default function Page() {
-  const theme = useTheme();
+  const theme = useTheme()
   const RenderItem = ({ item }) => (
     <Link href={`/profile/${item.id}`} asChild>
-      <XStack px="$5" py="$3" bg={theme.background?.val.secondary.val} alignItems="center" gap="$3" flexWrap="wrap">
+      <XStack
+        px="$5"
+        py="$3"
+        bg={theme.background?.val.secondary.val}
+        alignItems="center"
+        gap="$3"
+        flexWrap="wrap"
+      >
         <ImageComponent
           source={{ uri: item?.avatar }}
           style={{
@@ -22,14 +29,21 @@ export default function Page() {
             borderColor: '#ccc',
           }}
         />
-        <Text fontWeight={'bold'} flexShrink={1} maxWidth={'80%'} color={theme.color?.val.default.val}>
+        <Text
+          fontWeight={'bold'}
+          flexShrink={1}
+          maxWidth={'80%'}
+          color={theme.color?.val.default.val}
+        >
           {item.acct}
         </Text>
       </XStack>
     </Link>
   )
 
-  const RenderSeparator = () => <Separator borderColor={theme.borderColor?.val.default.val} />
+  const RenderSeparator = () => (
+    <Separator borderColor={theme.borderColor?.val.default.val} />
+  )
 
   const RenderEmpty = () => (
     <View flexGrow={1} justifyContent="center" alignItems="center" py="$5">

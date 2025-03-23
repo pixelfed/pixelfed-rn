@@ -64,7 +64,7 @@ async function registerForPushNotificationsAsync() {
 export default function Page() {
   const queryClient = useQueryClient()
   const [expoPushToken, setExpoPushToken] = useState('')
-  const theme = useTheme();
+  const theme = useTheme()
 
   useEffect(() => {
     registerForPushNotificationsAsync()
@@ -171,7 +171,9 @@ export default function Page() {
           alignItems="center"
         >
           <YStack maxWidth="75%">
-            <Text fontSize="$6" color={theme.color?.val.default.val}>Enable Push Notifications</Text>
+            <Text fontSize="$6" color={theme.color?.val.default.val}>
+              Enable Push Notifications
+            </Text>
           </YStack>
           <Switch
             size="$3"
@@ -183,10 +185,25 @@ export default function Page() {
           </Switch>
         </XStack>
 
-        <YStack m="$3" borderColor={theme.borderColor?.val.default.val} borderWidth={1} borderRadius={10} overflow="hidden">
-          <XStack py="$3" px="$4" bg={theme.background?.val.tertiary.val} justifyContent="space-between">
+        <YStack
+          m="$3"
+          borderColor={theme.borderColor?.val.default.val}
+          borderWidth={1}
+          borderRadius={10}
+          overflow="hidden"
+        >
+          <XStack
+            py="$3"
+            px="$4"
+            bg={theme.background?.val.tertiary.val}
+            justifyContent="space-between"
+          >
             <YStack maxWidth="75%" gap="$2">
-              <Text fontSize="$5" fontWeight={'bold'} color={theme.color?.val.default.val}>
+              <Text
+                fontSize="$5"
+                fontWeight={'bold'}
+                color={theme.color?.val.default.val}
+              >
                 New Follower
               </Text>
               <Text fontSize="$3" color={theme.color?.val.secondary.val}>
@@ -205,9 +222,18 @@ export default function Page() {
             </Switch>
           </XStack>
           <Separator borderColor={theme.borderColor?.val.default.val} />
-          <XStack py="$3" px="$4" bg={theme.background?.val.tertiary.val} justifyContent="space-between">
+          <XStack
+            py="$3"
+            px="$4"
+            bg={theme.background?.val.tertiary.val}
+            justifyContent="space-between"
+          >
             <YStack maxWidth="75%" gap="$2">
-              <Text fontSize="$5" fontWeight={'bold'} color={theme.color?.val.default.val}>
+              <Text
+                fontSize="$5"
+                fontWeight={'bold'}
+                color={theme.color?.val.default.val}
+              >
                 Likes
               </Text>
               <Text fontSize="$3" color={theme.color?.val.secondary.val}>
@@ -226,9 +252,18 @@ export default function Page() {
             </Switch>
           </XStack>
           <Separator borderColor={theme.borderColor?.val.default.val} />
-          <XStack py="$3" px="$4" bg={theme.background?.val.tertiary.val} justifyContent="space-between">
+          <XStack
+            py="$3"
+            px="$4"
+            bg={theme.background?.val.tertiary.val}
+            justifyContent="space-between"
+          >
             <YStack maxWidth="75%" gap="$2">
-              <Text fontSize="$5" fontWeight={'bold'} color={theme.color?.val.default.val}>
+              <Text
+                fontSize="$5"
+                fontWeight={'bold'}
+                color={theme.color?.val.default.val}
+              >
                 Comments
               </Text>
               <Text fontSize="$3" color={theme.color?.val.secondary.val}>
@@ -247,9 +282,18 @@ export default function Page() {
             </Switch>
           </XStack>
           <Separator borderColor={theme.borderColor?.val.default.val} />
-          <XStack py="$3" px="$4" bg={theme.background?.val.tertiary.val} justifyContent="space-between">
+          <XStack
+            py="$3"
+            px="$4"
+            bg={theme.background?.val.tertiary.val}
+            justifyContent="space-between"
+          >
             <YStack maxWidth="75%" gap="$2">
-              <Text fontSize="$5" fontWeight={'bold'} color={theme.color?.val.default.val}>
+              <Text
+                fontSize="$5"
+                fontWeight={'bold'}
+                color={theme.color?.val.default.val}
+              >
                 Mentions
               </Text>
               <Text fontSize="$3" color={theme.color?.val.secondary.val}>

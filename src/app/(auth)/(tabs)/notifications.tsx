@@ -15,7 +15,7 @@ const SCREEN_WIDTH = Dimensions.get('screen').width
 export default function NotificationsScreen() {
   const queryClient = useQueryClient()
   const navigation = useNavigation()
-  const theme = useTheme();
+  const theme = useTheme()
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Notifications', headerBackTitle: 'Back' })
   }, [navigation])
@@ -94,26 +94,92 @@ export default function NotificationsScreen() {
         bg={theme.background?.val.tertiary.val}
       >
         <Tabs.List flex={1}>
-          <Tabs.Tab value="all" px="$0" flexGrow={1} bg={theme.background?.val.tertiary.val}>
-            <Text fontSize="$2" fontWeight="bold" allowFontScaling={false} color={activeTab === "all" ? theme.colorHover?.val.hover.val : theme.color?.val.default.val }>
+          <Tabs.Tab
+            value="all"
+            px="$0"
+            flexGrow={1}
+            bg={theme.background?.val.tertiary.val}
+          >
+            <Text
+              fontSize="$2"
+              fontWeight="bold"
+              allowFontScaling={false}
+              color={
+                activeTab === 'all'
+                  ? theme.colorHover?.val.hover.val
+                  : theme.color?.val.default.val
+              }
+            >
               All
             </Text>
           </Tabs.Tab>
-          <Separator vertical borderColor={theme.borderColor?.val.default.val}/>
-          <Tabs.Tab value="mentions" px="$0" flexGrow={1} bg={theme.background?.val.tertiary.val}>
-            <Feather name="at-sign" size={20} color={activeTab === "mentions" ? theme.colorHover?.val.hover.val : theme.color?.val.default.val } />
+          <Separator vertical borderColor={theme.borderColor?.val.default.val} />
+          <Tabs.Tab
+            value="mentions"
+            px="$0"
+            flexGrow={1}
+            bg={theme.background?.val.tertiary.val}
+          >
+            <Feather
+              name="at-sign"
+              size={20}
+              color={
+                activeTab === 'mentions'
+                  ? theme.colorHover?.val.hover.val
+                  : theme.color?.val.default.val
+              }
+            />
           </Tabs.Tab>
           <Separator vertical borderColor={theme.borderColor?.val.default.val} />
-          <Tabs.Tab value="likes" px="$0" flexGrow={1} bg={theme.background?.val.tertiary.val}>
-            <Feather name="heart" size={20} color={activeTab === "likes" ? theme.colorHover?.val.hover.val : theme.color?.val.default.val } />
-          </Tabs.Tab>
-          <Separator vertical borderColor={theme.borderColor?.val.default.val}/>
-          <Tabs.Tab value="follows" px="$0" flexGrow={1} bg={theme.background?.val.tertiary.val}>
-            <Feather name="user-plus" size={20} color={activeTab === "follows" ? theme.colorHover?.val.hover.val : theme.color?.val.default.val } />
+          <Tabs.Tab
+            value="likes"
+            px="$0"
+            flexGrow={1}
+            bg={theme.background?.val.tertiary.val}
+          >
+            <Feather
+              name="heart"
+              size={20}
+              color={
+                activeTab === 'likes'
+                  ? theme.colorHover?.val.hover.val
+                  : theme.color?.val.default.val
+              }
+            />
           </Tabs.Tab>
           <Separator vertical borderColor={theme.borderColor?.val.default.val} />
-          <Tabs.Tab value="reblogs" px="$0" flexGrow={1} bg={theme.background?.val.tertiary.val}>
-            <Feather name="refresh-cw" size={20} color={activeTab === "reblogs" ? theme.colorHover?.val.hover.val : theme.color?.val.default.val } />
+          <Tabs.Tab
+            value="follows"
+            px="$0"
+            flexGrow={1}
+            bg={theme.background?.val.tertiary.val}
+          >
+            <Feather
+              name="user-plus"
+              size={20}
+              color={
+                activeTab === 'follows'
+                  ? theme.colorHover?.val.hover.val
+                  : theme.color?.val.default.val
+              }
+            />
+          </Tabs.Tab>
+          <Separator vertical borderColor={theme.borderColor?.val.default.val} />
+          <Tabs.Tab
+            value="reblogs"
+            px="$0"
+            flexGrow={1}
+            bg={theme.background?.val.tertiary.val}
+          >
+            <Feather
+              name="refresh-cw"
+              size={20}
+              color={
+                activeTab === 'reblogs'
+                  ? theme.colorHover?.val.hover.val
+                  : theme.color?.val.default.val
+              }
+            />
           </Tabs.Tab>
         </Tabs.List>
       </Tabs>
@@ -121,7 +187,9 @@ export default function NotificationsScreen() {
       <FlatList
         style={{ height: '100%' }}
         data={data?.pages.flatMap((page) => page.data)}
-        ItemSeparatorComponent={() => <Separator borderColor={theme.borderColor?.val.default.val} />}
+        ItemSeparatorComponent={() => (
+          <Separator borderColor={theme.borderColor?.val.default.val} />
+        )}
         renderItem={({ item }) => <RenderNotificationItem item={item} />}
         // In case of duplicates, discriminate the item with id_index avoid printing errors in console
         keyExtractor={(item, index) => `${item.id}_${index.toString()}`}
@@ -136,9 +204,13 @@ export default function NotificationsScreen() {
         contentContainerStyle={{ flexGrow: 1 }}
         ListFooterComponent={() => (
           <View py="$6">
-            {isFetchingNextPage ? <ActivityIndicator color={theme.color?.val.default.val} /> : null}
+            {isFetchingNextPage ? (
+              <ActivityIndicator color={theme.color?.val.default.val} />
+            ) : null}
             {!hasNextPage ? (
-              <Text ta="center" color={theme.color?.val.default.val}>No more notifications for now!</Text>
+              <Text ta="center" color={theme.color?.val.default.val}>
+                No more notifications for now!
+              </Text>
             ) : null}
           </View>
         )}

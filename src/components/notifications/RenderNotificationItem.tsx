@@ -14,8 +14,8 @@ interface RenderItemProps {
 // Convert to functional component
 const RenderItem = ({ item }: RenderItemProps) => {
   // Now we can use hooks correctly
-  const theme = useTheme();
-  
+  const theme = useTheme()
+
   const _msgText = (type) => {
     switch (type) {
       case 'like':
@@ -35,7 +35,7 @@ const RenderItem = ({ item }: RenderItemProps) => {
         return ' unknown notification type'
     }
   }
-  
+
   return (
     <View px="$4" py="$2" key={item.id}>
       <XStack justifyContent="space-between" alignItems="center">
@@ -50,7 +50,12 @@ const RenderItem = ({ item }: RenderItemProps) => {
 
           <YStack gap={5}>
             <XStack gap="$1" alignItems="center">
-              <Text fontSize="$2" fontWeight={'bold'} allowFontScaling={false} color={theme.color?.val.default.val}>
+              <Text
+                fontSize="$2"
+                fontWeight={'bold'}
+                allowFontScaling={false}
+                color={theme.color?.val.default.val}
+              >
                 {enforceLen(item.account?.acct, 25, true)}{' '}
               </Text>
             </XStack>
@@ -70,7 +75,11 @@ const RenderItem = ({ item }: RenderItemProps) => {
                   </Text>
                 </Link>
               ) : (
-                <Text fontSize="$2" allowFontScaling={false} color={theme.color?.val.default.val}>
+                <Text
+                  fontSize="$2"
+                  allowFontScaling={false}
+                  color={theme.color?.val.default.val}
+                >
                   {_msgText(item.type)}
                 </Text>
               )}

@@ -6,7 +6,7 @@ import { Button, Separator, Text, YStack, useTheme } from 'tamagui'
 
 export default function Page() {
   const router = useRouter()
-  const theme = useTheme();
+  const theme = useTheme()
 
   return (
     <SafeAreaView style={{ backgroundColor: theme.background?.val.default.val }}>
@@ -17,11 +17,11 @@ export default function Page() {
         }}
       />
       <YStack flexGrow={1} justifyContent="center" alignItems="center" px="$6" gap="$9">
-        <Text fontSize="$9" fontWeight="bold" color={theme.color?.val.default.val }>
+        <Text fontSize="$9" fontWeight="bold" color={theme.color?.val.default.val}>
           Reported Post
         </Text>
         <Feather name="check-circle" color="#10b981" size={100} />
-        <Text fontSize="$8" color={theme.color?.val.default.val } textAlign="center">
+        <Text fontSize="$8" color={theme.color?.val.default.val} textAlign="center">
           Thanks for keeping our community safe!
         </Text>
       </YStack>

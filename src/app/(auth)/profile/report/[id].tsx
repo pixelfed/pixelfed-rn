@@ -13,7 +13,7 @@ import type { ReportType } from 'src/lib/reportTypes'
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
-  const theme = useTheme();
+  const theme = useTheme()
 
   const RenderOption = ({ title, name }: ReportType) => (
     <Pressable onPress={() => handleAction(name)}>
@@ -26,7 +26,9 @@ export default function Page() {
         justifyContent="space-between"
         alignItems="center"
       >
-        <Text fontSize="$5" color={theme.color?.val.default.val}>{title}</Text>
+        <Text fontSize="$5" color={theme.color?.val.default.val}>
+          {title}
+        </Text>
         <Feather name="chevron-right" size={20} color="#ccc" />
       </XStack>
     </Pressable>

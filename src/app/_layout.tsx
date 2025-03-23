@@ -1,6 +1,6 @@
 import Feather from '@expo/vector-icons/Feather'
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
-import { DefaultTheme, DarkTheme, ThemeProvider } from '@react-navigation/native'
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
 import { ToastProvider, ToastViewport } from '@tamagui/toast'
 import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-query'
 import { useFonts } from 'expo-font'
@@ -8,6 +8,7 @@ import * as Notifications from 'expo-notifications'
 import { Stack, useRouter } from 'expo-router'
 import { ShareIntentProvider } from 'expo-share-intent'
 import * as SplashScreen from 'expo-splash-screen'
+import { StatusBar } from 'expo-status-bar'
 import React, { useEffect, useState } from 'react'
 import { type AppStateStatus, LogBox, Platform, useColorScheme } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -15,11 +16,10 @@ import GlobalToast from 'src/components/notifications/GlobalToast'
 import { useAppState } from 'src/hooks/useAppState'
 import { useOnlineManager } from 'src/hooks/useOnlineManager'
 import { VideoProvider } from 'src/hooks/useVideoProvider'
+import { Storage } from 'src/state/cache'
 import { TamaguiProvider, Theme } from 'tamagui'
 import { config } from '../../tamagui.config'
 import AuthProvider from '../state/AuthProvider'
-import { Storage } from 'src/state/cache'
-import { StatusBar } from 'expo-status-bar'
 
 export const unstable_settings = {
   backBehavior: 'history',
@@ -53,14 +53,14 @@ const customLightTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-  }
+  },
 }
 
 const customDarkTheme = {
   ...DarkTheme,
   colors: {
     ...DarkTheme.colors,
-  }
+  },
 }
 
 const slateTheme = {
@@ -71,7 +71,7 @@ const slateTheme = {
     card: '#3A4050',
     text: '#FFFFFF',
     border: '#4B5563',
-  }
+  },
 }
 
 const hotPinkTheme = {
@@ -83,30 +83,30 @@ const hotPinkTheme = {
     card: '#FDF2F8',
     text: '#831843',
     border: '#F9A8D4',
-  }
+  },
 }
 
 const statusBarMap = {
-  'light': 'dark',
-  'dark': 'light',
-  'slateDark': 'light',
-  'hotPink': 'dark'
-};
+  light: 'dark',
+  dark: 'light',
+  slateDark: 'light',
+  hotPink: 'dark',
+}
 
 const navigationThemeMap = {
-  'auto': customLightTheme,
-  'light': customLightTheme,
-  'dark': customDarkTheme,
-  'slateDark': slateTheme,
-  'hotPink': hotPinkTheme
+  auto: customLightTheme,
+  light: customLightTheme,
+  dark: customDarkTheme,
+  slateDark: slateTheme,
+  hotPink: hotPinkTheme,
 }
 
 const statusBarBackgroundColorMap = {
-  'auto': '#fff',
-  'light': '#fff',
-  'dark': '#000',
-  'slateDark': '#2F3542',
-  'hotPink': '#FFFFFF'
+  auto: '#fff',
+  light: '#fff',
+  dark: '#000',
+  slateDark: '#2F3542',
+  hotPink: '#FFFFFF',
 }
 
 function RootLayout() {
@@ -150,13 +150,12 @@ export default function RootLayoutWithContext() {
   )
 }
 
-
 function RootLayoutNav() {
   const deviceTheme = useColorScheme()
   const [currentTheme, setCurrentTheme] = useState(deviceTheme || 'light')
   const [statusBarStyle, setStatusBarStyle] = useState(
     statusBarMap[currentTheme] || 'auto'
-  );
+  )
 
   // Load the theme from storage on initial render
   useEffect(() => {
@@ -187,9 +186,10 @@ function RootLayoutNav() {
   }, [])
 
   // Select the navigation theme based on current theme
-  const navigationTheme = navigationThemeMap[currentTheme] || 
+  const navigationTheme =
+    navigationThemeMap[currentTheme] ||
     (currentTheme === 'dark' ? customDarkTheme : customLightTheme)
-  
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthProvider>
@@ -200,7 +200,11 @@ function RootLayoutNav() {
                 <ToastProvider native={false}>
                   <VideoProvider>
                     <BottomSheetModalProvider>
-                      <StatusBar style={statusBarStyle} backgroundColor={statusBarBackgroundColorMap[currentTheme]} animated />
+                      <StatusBar
+                        style={statusBarStyle}
+                        backgroundColor={statusBarBackgroundColorMap[currentTheme]}
+                        animated
+                      />
                       <ToastViewport padding="$6" bottom={0} left={0} right={0} />
                       <GlobalToast />
                       <Stack>

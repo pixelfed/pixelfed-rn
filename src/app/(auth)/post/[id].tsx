@@ -14,7 +14,7 @@ import { ScrollView, Text, View, useTheme } from 'tamagui'
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const navigation = useNavigation()
-  const theme = useTheme();
+  const theme = useTheme()
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Post', headerBackTitle: 'Back' })
   }, [navigation])
@@ -67,7 +67,10 @@ export default function Page() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background.val.default.val }} edges={['bottom']}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.background.val.default.val }}
+      edges={['bottom']}
+    >
       <Stack.Screen
         options={{
           title: 'Post',

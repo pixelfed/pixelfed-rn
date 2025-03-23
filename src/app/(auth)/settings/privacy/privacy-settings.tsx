@@ -18,10 +18,15 @@ interface RenderSwitchProps {
 }
 
 const RenderSwitch = (props: RenderSwitchProps) => {
-  const theme = useTheme();
+  const theme = useTheme()
   return (
     <YStack>
-      <XStack py="$3" px="$4" bg={theme.background?.val.default.val} justifyContent="space-between">
+      <XStack
+        py="$3"
+        px="$4"
+        bg={theme.background?.val.default.val}
+        justifyContent="space-between"
+      >
         <YStack maxWidth="75%" gap="$2">
           <Text fontSize="$5" fontWeight={'bold'} color={theme.color?.val.default.val}>
             {props.title}
@@ -46,7 +51,7 @@ const RenderSwitch = (props: RenderSwitchProps) => {
 export default function Page() {
   const instance = Storage.getString('app.instance')!.toLowerCase()
   const queryClient = useQueryClient()
-  const theme = useTheme();
+  const theme = useTheme()
 
   const { profileMutation } = useProfileMutation({
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['getSelfAccount'] }),

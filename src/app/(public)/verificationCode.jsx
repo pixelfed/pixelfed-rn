@@ -17,7 +17,7 @@ export default function VerificationCodeScreen() {
   const router = useRouter()
   const { server } = useLocalSearchParams()
   const { login } = useAuth()
-  const theme = useTheme();
+  const theme = useTheme()
 
   const [email, setEmail] = useState('')
   const [code, setCode] = useState('')
@@ -86,7 +86,12 @@ export default function VerificationCodeScreen() {
 
           <YStack space="$6" mt="$6">
             <YStack>
-              <Text fontSize="$5" fontWeight="bold" color={theme.color.val.default.val} mb="$2">
+              <Text
+                fontSize="$5"
+                fontWeight="bold"
+                color={theme.color.val.default.val}
+                mb="$2"
+              >
                 Enter Verification Details
               </Text>
               <Text color={theme.color.val.tertiary.val} mb="$4">
@@ -130,15 +135,29 @@ export default function VerificationCodeScreen() {
               disabled={loading}
               mt="$4"
             >
-              {loading ? <ActivityIndicator color={theme.color.val.default.val} /> : 'Verify Account'}
+              {loading ? (
+                <ActivityIndicator color={theme.color.val.default.val} />
+              ) : (
+                'Verify Account'
+              )}
             </Button>
 
             <View alignItems="center">
-              <Text color={theme.color.val.tertiary.val} fontSize="$3" textAlign="center" mt="$2">
+              <Text
+                color={theme.color.val.tertiary.val}
+                fontSize="$3"
+                textAlign="center"
+                mt="$2"
+              >
                 Didn't receive a code?
               </Text>
               <Pressable onPress={navigateBack}>
-                <Text color={theme.colorHover.val.hover.val} fontWeight="bold" fontSize="$3" mt="$2">
+                <Text
+                  color={theme.colorHover.val.hover.val}
+                  fontWeight="bold"
+                  fontSize="$3"
+                  mt="$2"
+                >
                   Go back to signup and request a new code
                 </Text>
               </Pressable>

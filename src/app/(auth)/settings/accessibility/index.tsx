@@ -9,7 +9,7 @@ import { ScrollView, Separator, Text, View, XStack, YStack, useTheme } from 'tam
 export default function Screen() {
   const showAltText = Storage.getBoolean('ui.showAltText') == true
   const requireSelfAltText = Storage.getBoolean('ui.requireSelfAltText') == true
-  const theme = useTheme();
+  const theme = useTheme()
 
   const { data, isPending, error } = useQuery({
     queryKey: ['getAppSettings'],
@@ -40,7 +40,10 @@ export default function Screen() {
     )
   }
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: theme.background?.val.default.val}} edges={['bottom']}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.background?.val.default.val }}
+      edges={['bottom']}
+    >
       <Stack.Screen
         options={{
           title: 'Accessibility',
@@ -49,7 +52,12 @@ export default function Screen() {
       />
 
       <ScrollView>
-        <XStack py="$3" px="$4" bg={theme.background?.val.default.val} justifyContent="space-between">
+        <XStack
+          py="$3"
+          px="$4"
+          bg={theme.background?.val.default.val}
+          justifyContent="space-between"
+        >
           <YStack maxWidth="60%" gap="$2">
             <Text fontSize="$5" fontWeight={'bold'} color={theme.color?.val.default.val}>
               Show Alt Text Button
@@ -68,7 +76,12 @@ export default function Screen() {
           </Switch>
         </XStack>
         <Separator borderColor={theme.borderColor?.val.default.val} />
-        <XStack py="$3" px="$4" bg={theme.background?.val.default.val} justifyContent="space-between">
+        <XStack
+          py="$3"
+          px="$4"
+          bg={theme.background?.val.default.val}
+          justifyContent="space-between"
+        >
           <YStack maxWidth="60%" gap="$2">
             <Text fontSize="$5" fontWeight={'bold'} color={theme.color?.val.default.val}>
               Require Alt-Text in Compose

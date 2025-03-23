@@ -11,12 +11,17 @@ export default function Page() {
     GroupButtonContentProps,
     'icon' | 'title' | 'iconColor'
   > & { path: string }
-  const theme = useTheme();
+  const theme = useTheme()
 
   const GroupButton = ({ icon, title, path, iconColor = '#000' }: GroupButtonProps) => (
     <Group.Item>
       <Link href={path} asChild>
-        <Button bg={theme.background?.val.default.val} justifyContent="flex-start" size="$5" px="$0">
+        <Button
+          bg={theme.background?.val.default.val}
+          justifyContent="flex-start"
+          size="$5"
+          px="$0"
+        >
           <GroupButtonContent
             icon={icon}
             title={title}
@@ -38,7 +43,12 @@ export default function Page() {
       />
       <ScrollView flexShrink={1}>
         <YStack p="$5" gap="$3">
-          <Group orientation="vertical" borderWidth={1} borderColor={theme.borderColor?.val.default.val} separator={<Separator borderColor={theme.borderColor?.val.default.val} />}>
+          <Group
+            orientation="vertical"
+            borderWidth={1}
+            borderColor={theme.borderColor?.val.default.val}
+            separator={<Separator borderColor={theme.borderColor?.val.default.val} />}
+          >
             <GroupButton
               icon="lock"
               title="Account Privacy"
@@ -46,7 +56,12 @@ export default function Page() {
             />
           </Group>
 
-          <Group orientation="vertical" borderWidth={1} borderColor={theme.borderColor?.val.default.val} separator={<Separator borderColor={theme.borderColor?.val.default.val} />}>
+          <Group
+            orientation="vertical"
+            borderWidth={1}
+            borderColor={theme.borderColor?.val.default.val}
+            separator={<Separator borderColor={theme.borderColor?.val.default.val} />}
+          >
             <GroupButton
               icon="user-minus"
               title="Muted Accounts"

@@ -6,7 +6,7 @@ import { Text, XStack, useTheme } from 'tamagui'
 export default function FeedHeader({ title = 'Home', user }) {
   const theme = useTheme()
   const textColor = theme.color.val.default.val
-  
+
   return (
     <XStack
       px="$3"
