@@ -329,7 +329,6 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
         onProgressChange={progress}
         data={mediaList}
         renderItem={({ index }) => {
-          const media = mediaList[0]
           return (
             <ZoomableImage
               style={{

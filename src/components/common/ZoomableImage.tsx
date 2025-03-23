@@ -1,89 +1,62 @@
 import { Image } from 'expo-image'
-import {
-  type GestureEvent,
-  type HandlerStateChangeEvent,
-  PinchGestureHandler,
-  type PinchGestureHandlerEventPayload,
-  State,
-} from 'react-native-gesture-handler'
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated'
+import React, { useRef } from 'react'
+import { Animated, StyleSheet, View } from 'react-native'
+import { PinchGestureHandler, State } from 'react-native-gesture-handler'
 
-interface ZoomableImageProps {
-  source: any
-  placeholder?: any
-  style: any
-}
+const AnimatedImage = Animated.createAnimatedComponent(Image)
 
-export default function ZoomableImage({
-  source,
-  placeholder,
-  style,
-}: ZoomableImageProps) {
-  const AnimatedFastImage = Animated.createAnimatedComponent(Image)
+const PinchZoomImage = ({ source, style, placeholder }) => {
+  const scale = useRef(new Animated.Value(1)).current
 
-  const scale = useSharedValue(1)
-  const savedScale = useSharedValue(1)
-  const translateX = useSharedValue(0)
-  const translateY = useSharedValue(0)
-  const originX = useSharedValue(0)
-  const originY = useSharedValue(0)
+  const onPinchGestureEvent = Animated.event([{ nativeEvent: { scale } }], {
+    useNativeDriver: true,
+  })
 
-  const onGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
-    const pinchScale = event.nativeEvent.scale
-    const nextScale = savedScale.value * pinchScale
-    const touchX = event.nativeEvent.focalX
-    const touchY = event.nativeEvent.focalY
-
-    if (scale.value === savedScale.value) {
-      originX.value = touchX
-      originY.value = touchY
-    }
-
-    const focalDeltaX = (touchX - originX.value) * (pinchScale - 1)
-    const focalDeltaY = (touchY - originY.value) * (pinchScale - 1)
-
-    scale.value = nextScale
-    translateX.value = focalDeltaX
-    translateY.value = focalDeltaY
-  }
-
-  const onHandlerStateChange = (
-    event: HandlerStateChangeEvent<PinchGestureHandlerEventPayload>
-  ) => {
+  const onPinchHandlerStateChange = (event) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
-      savedScale.value = scale.value
-      scale.value = withSpring(1)
-      savedScale.value = 1
-      translateX.value = withSpring(0)
-      translateY.value = withSpring(0)
+      Animated.spring(scale, {
+        toValue: 1,
+        useNativeDriver: true,
+        bounciness: 0,
+      }).start()
     }
   }
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateX: translateX.value },
-      { translateY: translateY.value },
-      { scale: scale.value },
-    ],
-  }))
 
   return (
     <PinchGestureHandler
-      onGestureEvent={onGestureEvent}
-      onHandlerStateChange={onHandlerStateChange}
+      onGestureEvent={onPinchGestureEvent}
+      onHandlerStateChange={onPinchHandlerStateChange}
     >
-      <Animated.View>
-        <AnimatedFastImage
+      <Animated.View style={styles.container}>
+        <AnimatedImage
           source={source}
+          style={[
+            style,
+            {
+              transform: [{ scale }],
+            },
+          ]}
           placeholder={placeholder}
-          style={[style, animatedStyle]}
-          contentFit={'cover'}
         />
       </Animated.View>
     </PinchGestureHandler>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+})
+
+const ZoomableImage = ({ source, style, placeholder }) => {
+  return (
+    <View style={{ flex: 1 }}>
+      <PinchZoomImage source={source} style={style} placeholder={placeholder} />
+    </View>
+  )
+}
+
+export default ZoomableImage
