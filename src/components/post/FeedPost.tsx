@@ -320,9 +320,7 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
   return (
     <YStack zIndex={1}>
       <Carousel
-        onConfigurePanGesture={(gestureChain) =>
-          gestureChain.activeOffsetX([-10, 10]).runOnJS(true)
-        }
+        onConfigurePanGesture={(gestureChain) => gestureChain.activeOffsetX([-10, 10])}
         width={width}
         height={height}
         vertical={false}
