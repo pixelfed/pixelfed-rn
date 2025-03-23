@@ -1,8 +1,9 @@
-import { Avatar } from 'tamagui'
+import { Avatar, useTheme } from 'tamagui'
 
 export default function UserAvatar({ url, width = 40, height = 40, size = '$4' }) {
+  const theme = useTheme()
   return (
-    <Avatar circular borderWidth={1} borderColor="$gray6" size={size}>
+    <Avatar circular borderWidth={1} borderColor={theme.borderColor?.val.default.val} size={size}>
       <Avatar.Image
         source={{
           uri: url,
@@ -11,7 +12,7 @@ export default function UserAvatar({ url, width = 40, height = 40, size = '$4' }
         }}
       />
       <Avatar.Fallback
-        backgroundColor="$gray10"
+        backgroundColor={theme.background?.val.tertiary.val}
         width={width}
         height={height}
         delayMs={300}

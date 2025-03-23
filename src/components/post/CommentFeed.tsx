@@ -26,7 +26,7 @@ import {
   likeCountLabel,
   prettyCount,
 } from 'src/utils'
-import { Separator, Text, View, XStack, YStack } from 'tamagui'
+import { Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
 import AutolinkText from '../common/AutolinkText'
 import ReadMore from '../common/ReadMore'
 import { Switch } from '../form/Switch'
@@ -74,6 +74,7 @@ const CommentItem = ({
   const hasChildren = item.reply_count > 0
   const isLoadingChildren = loadingChildId === item.id
   const childrenForComment = childComments?.[item.id] || []
+  const theme = useTheme()
 
   return (
     <YStack>
@@ -185,7 +186,7 @@ const CommentItem = ({
                 {item.favourited ? (
                   <Ionicons name="heart" color="red" size={20} />
                 ) : (
-                  <Ionicons name="heart-outline" color="black" size={20} />
+                  <Ionicons name="heart-outline" color={theme.color?.val.default.val} size={20} />
                 )}
                 {item.favourites_count > 0 && (
                   <Text fontSize="$3">{prettyCount(item.favourites_count)}</Text>
@@ -247,6 +248,7 @@ export default function CommentFeed({
   const [childComments, setChildComments] = useState({})
   const queryClient = useQueryClient()
   const commentRef = useRef<TextInput | null>(null)
+  const theme = useTheme();
 
   const handleReplyPost = () => {
     commentMutation.mutate({
@@ -379,10 +381,10 @@ export default function CommentFeed({
     () => (
       <View flexGrow={1} justifyContent="center" alignItems="center">
         <YStack justifyContent="center" alignItems="center" gap="$3">
-          <Text fontSize="$9" fontWeight="bold">
+          <Text fontSize="$9" fontWeight="bold" color={theme.color?.val.default.val}>
             No comments yet
           </Text>
-          <Text fontSize="$6" color="$gray9">
+          <Text fontSize="$6" color={theme.color?.val.tertiary.val}>
             Start the conversation
           </Text>
         </YStack>
@@ -510,7 +512,7 @@ export default function CommentFeed({
           ref={
             commentRef as any /* BottomSheetTextInput is forwarding ref to a normal TextInput, but the typing is wrong, so we need to cast to any here */
           }
-          style={styles.input}
+          style={[styles.input, {color: theme.color?.val.default.val} ]}
           value={commentText}
           onChangeText={setComment}
           multiline={true}
@@ -525,7 +527,7 @@ export default function CommentFeed({
           alignItems="center"
         >
           <XStack>
-            <Text allowFontScaling={false} fontWeight="bold" fontSize={12} color="$gray9">
+            <Text allowFontScaling={false} fontWeight="bold" fontSize={12} color={theme.color?.val.secondary.val}>
               {commentText.length}
             </Text>
             <Text allowFontScaling={false} fontWeight="bold" fontSize={12} color="$gray9">
@@ -595,7 +597,6 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     padding: 15,
     marginBottom: 0,
-    backgroundColor: '#fff',
   },
   inputGroup: {
     minHeight: 100,

@@ -51,6 +51,7 @@ import {
   XStack,
   YStack,
   ZStack,
+  useTheme,
 } from 'tamagui'
 
 type MediaAsset = {
@@ -86,6 +87,7 @@ export default function Camera() {
   const [maxMediaLimit, setMaxMediaLimit] = useState(4)
   const [isResizing, setIsResizing] = useState(false)
   const queryClient = useQueryClient()
+  const theme = useTheme();
   const scopeLabel = {
     public: 'Anyone can view',
     unlisted: 'Unlisted from feeds',
@@ -337,7 +339,7 @@ export default function Camera() {
                 height: 200,
                 borderRadius: 10,
                 borderWidth: 1,
-                borderColor: '#ccc',
+                borderColor: theme.borderColor?.val.default.val,
               }}
             />
             {item?.altText?.length ? (
@@ -405,7 +407,7 @@ export default function Camera() {
         ) : null}
 
         <PressableOpacity onPress={() => mediaMenu(item)}>
-          <Text color="$gray9" my="$3">
+          <Text color={theme.color?.val.default.val} my="$3">
             <Feather name="sliders" size={20} />
           </Text>
         </PressableOpacity>
@@ -440,7 +442,7 @@ export default function Camera() {
   const HeaderLeft = () => (
     <View ml="$3">
       <PressableOpacity onPress={handlePresentModalPress}>
-        <Feather name="settings" size={20} />
+        <Feather name="settings" size={20} color={theme.color.val.tertiary.val} />
       </PressableOpacity>
     </View>
   )
@@ -451,12 +453,12 @@ export default function Camera() {
         <ActivityIndicator />
       ) : canPost ? (
         <PressableOpacity onPress={() => _handlePost()}>
-          <Text fontSize="$6" fontWeight="bold" color="$blue9">
+          <Text fontSize="$6" fontWeight="bold" color={theme.colorHover.val.hover.val}>
             Post
           </Text>
         </PressableOpacity>
       ) : (
-        <Text fontSize="$6" fontWeight="bold" color="$blue7">
+        <Text fontSize="$6" fontWeight="bold" color={theme.colorHover.val.active.val} opacity={0.4}>
           Post
         </Text>
       )}
@@ -625,7 +627,7 @@ export default function Camera() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: theme.background?.val.default.val}]}>
       <Stack.Screen
         options={{
           title: 'New Post',
@@ -639,17 +641,17 @@ export default function Camera() {
         </View>
       ) : null}
       {isPosting ? (
-        <View flexGrow={1} bg="white" justifyContent="center" alignItems="center">
+        <View flexGrow={1} bg={theme.background?.val.secondary.val} justifyContent="center" alignItems="center">
           <YStack gap="$3">
-            <ActivityIndicator />
-            <Text>Posting, please wait...</Text>
+            <ActivityIndicator color={theme.color?.val.default.val} />
+            <Text color={theme.color?.val.default.val}>Posting, please wait...</Text>
           </YStack>
         </View>
       ) : isResizing ? (
-        <View flexGrow={1} bg="white" justifyContent="center" alignItems="center">
+        <View flexGrow={1} bg={theme.background?.val.secondary.val} justifyContent="center" alignItems="center">
           <YStack gap="$3">
-            <ActivityIndicator />
-            <Text>Resizing images, please wait...</Text>
+            <ActivityIndicator color={theme.color?.val.default.val} />
+            <Text color={theme.color?.val.default.val}>Resizing images, please wait...</Text>
           </YStack>
         </View>
       ) : (
@@ -659,12 +661,12 @@ export default function Camera() {
               <XStack gap="$3" justifyContent="space-between" alignItems="center">
                 <XStack gap="$3" alignItems="center">
                   <UserAvatar url={userCache?.avatar} size="$3" />
-                  <Text fontSize="$7" fontWeight="bold">
+                  <Text fontSize="$7" fontWeight="bold" color={theme.color?.val.default.val}>
                     {userCache?.username}
                   </Text>
                 </XStack>
                 <XStack justifyContent="flex-end" alignItems="center">
-                  <Text color="$gray9">
+                  <Text  color={theme.color?.val.tertiary.val}>
                     {captionInput ? captionInput?.length : '0'}/
                     {serverConfig?.configuration.statuses.max_characters}
                   </Text>
@@ -676,14 +678,16 @@ export default function Camera() {
                   size="$4"
                   fontSize="$7"
                   borderWidth={1}
+                  bg={theme.background?.val.tertiary.val}
+                  color={theme.color?.val.default.val}
+                  borderColor={theme.borderColor?.val.default.val}
                   value={captionInput}
                   onChangeText={setCaption}
                   maxLength={serverConfig?.configuration.statuses.max_characters}
-                  backgroundColor={'white'}
                   numberOfLines={4}
                   multiline={true}
                   placeholder="Share your moment..."
-                  placeholderTextColor={'#ccc'}
+                  placeholderTextColor={theme.color?.val.tertiary.val}
                 />
               </YStack>
 
@@ -691,12 +695,11 @@ export default function Camera() {
                 <View
                   mt="$2"
                   p="$3"
-                  bg="$yellow2"
                   borderWidth={1}
                   borderRadius={10}
-                  borderColor="$yellow3"
+                  borderColor={theme.borderColor?.val.default.val}
                 >
-                  <Text color="$yellow11" fontWeight={'500'} fontFamily={'system'}>
+                  <Text color={theme.color?.val.secondary.val} fontWeight={'500'} fontFamily={'system'}>
                     {warningMessage()}
                   </Text>
                 </View>
@@ -709,10 +712,10 @@ export default function Camera() {
                     serverConfig?.configuration.statuses.max_media_attachments ? (
                     <>
                       <Button p="$0" chromeless onPress={pickImage}>
-                        <Feather name="image" size={24} />
+                        <Feather name="image" size={24} color={theme.color?.val.default.val} />
                       </Button>
                       <Button p="$0" chromeless onPress={openCamera}>
-                        <Feather name="camera" size={24} />
+                        <Feather name="camera" size={24} color={theme.color?.val.default.val} />
                       </Button>
                       {/* <Button p="$0" chromeless><Feather name="map-pin" size={24} /></Button> */}
                     </>
@@ -722,18 +725,19 @@ export default function Camera() {
                       name={isSensitive ? 'eye-off' : 'eye'}
                       color={isSensitive ? '#bf9f00' : 'black'}
                       size={24}
+                      color={theme.color?.val.default.val}
                     />
                   </Button>
                 </XStack>
                 <Button p="$0" chromeless onPress={toggleScope}>
                   <Text
-                    color={scope === 'private' ? '$yellow11' : '$gray9'}
+                    color={theme.color?.val.secondary.val}
                     fontSize="$3"
                     allowFontScaling={false}
                   >
                     {scopeLabel[scope]}
                   </Text>
-                  <Feather name={scopeIcon[scope]} size={24} allowFontScaling={false} />
+                  <Feather name={scopeIcon[scope]} size={24} allowFontScaling={false} color={theme.color?.val.tertiary.val} />
                 </Button>
               </XStack>
             </YStack>
@@ -747,7 +751,7 @@ export default function Camera() {
                   p="$3"
                   bg="$gray2"
                   borderWidth={1}
-                  borderColor="$gray4"
+                  borderColor={theme.borderColor?.val.default.val}
                   mr="$3"
                   borderRadius={10}
                   justifyContent="center"
@@ -757,30 +761,30 @@ export default function Camera() {
                     <Text
                       fontSize="$7"
                       lineHeight={30}
-                      color="$gray12"
+                      color={theme.color?.val.default.val}
                       allowFontScaling={false}
                     >
                       Tap
                     </Text>
                     <PressableOpacity onPress={pickImage}>
-                      <Feather name="image" size={24} color="black" />
+                      <Feather name="image" size={24}  color={theme.color?.val.default.val} />
                     </PressableOpacity>
                     <Text
                       fontSize="$7"
                       lineHeight={30}
-                      color="$gray12"
+                      color={theme.color?.val.default.val}
                       allowFontScaling={false}
                     >
                       {' '}
                       or{' '}
                     </Text>
                     <PressableOpacity onPress={openCamera}>
-                      <Feather name="camera" size={24} color="black" />
+                      <Feather name="camera" size={24}  color={theme.color?.val.default.val} />
                     </PressableOpacity>
                     <Text
                       fontSize="$7"
                       lineHeight={30}
-                      color="$gray12"
+                      color={theme.color?.val.default.val}
                       allowFontScaling={false}
                     >
                       {' '}
@@ -798,18 +802,20 @@ export default function Camera() {
             snapPoints={snapPoints}
             onChange={handleSheetChanges}
             backdropComponent={renderBackdrop}
+            backgroundStyle={{backgroundColor: theme.background.val.default.val}}
+            handleIndicatorStyle={{backgroundColor: theme.background.val.tertiary.val}}
           >
-            <BottomSheetView style={styles.contentContainer}>
-              <Text fontSize="$9" fontWeight="bold" px="$3" pb="$3">
+            <BottomSheetView style={[styles.contentContainer, {backgroundColor: theme.background?.val.default.val}]}>
+              <Text fontSize="$9" fontWeight="bold" px="$3" pb="$3" color={theme.color?.val.default.val}>
                 Post Options
               </Text>
-              <Separator />
-              <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
+              <Separator borderColor={theme.borderColor?.val.default.val} />
+              <XStack py="$3" px="$4" bg={theme.background?.val.default.val} justifyContent="space-between">
                 <YStack maxWidth="60%" gap="$2">
-                  <Text fontSize="$5" fontWeight={'bold'}>
+                  <Text fontSize="$5" fontWeight={'bold'}color={theme.color?.val.default.val}>
                     Enable Media Editor
                   </Text>
-                  <Text fontSize="$3" color="$gray9">
+                  <Text fontSize="$3" color={theme.color?.val.secondary.val}>
                     Allows you to crop and resize photos using a square aspect ratio.
                     Disable to preserve native aspect ratio.
                   </Text>
@@ -823,18 +829,18 @@ export default function Camera() {
                 </Switch>
               </XStack>
 
-              <Separator />
-              <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
+              <Separator borderColor={theme.borderColor?.val.default.val} />
+              <XStack py="$3" px="$4" bg={theme.background?.val.default.val} justifyContent="space-between">
                 <YStack maxWidth="60%" gap="$2">
-                  <Text fontSize="$5" fontWeight={'bold'}>
+                  <Text fontSize="$5" fontWeight={'bold'} color={theme.color?.val.default.val}>
                     Auto-Resize Large Images
                   </Text>
-                  <Text fontSize="$3" color="$gray9">
+                  <Text fontSize="$3" color={theme.color?.val.secondary.val}>
                     Images larger than {MAX_IMAGE_SIZE_MB}MB will be automatically resized
                     to {MAX_IMAGE_WIDTH}px max width.
                   </Text>
                 </YStack>
-                <Text fontSize="$5" fontWeight={'bold'} color="$blue9">
+                <Text fontSize="$5" fontWeight={'bold'} color={theme.color?.val.default.val}>
                   Enabled
                 </Text>
               </XStack>
@@ -848,19 +854,22 @@ export default function Camera() {
             backdropComponent={renderBackdrop}
             keyboardBehavior={Platform.OS === 'ios' ? 'extend' : 'interactive'}
             android_keyboardInputMode="adjustResize"
-          >
-            <BottomSheetScrollView style={styles.contentContainer}>
-              <Text fontSize="$9" fontWeight="bold" px="$3" mb="$3">
+            backgroundStyle={{backgroundColor: theme.background.val.default.val}}
+          handleIndicatorStyle={{backgroundColor: theme.background.val.tertiary.val}}
+        >
+          <BottomSheetScrollView style={[styles.contentContainer, {backgroundColor: theme.background?.val.default.val}]}>
+              <Text fontSize="$9" fontWeight="bold" px="$3" mb="$3" color={theme.color?.val.default.val}>
                 Alt Text
               </Text>
-              {activeIndex >= 0 ? (
+              <Text color={theme.color?.val.tertiary.val} mb="$3">Add optional alt text to describe the media for visually impaired</Text>
+              {media && activeIndex >= 0 && media[activeIndex] ? (
                 <>
-                  <Separator />
                   <ImageComponent
                     source={{ uri: media[activeIndex].path }}
                     style={{
                       width: '100%',
                       height: Keyboard.isVisible() ? 140 : 240,
+                      marginBottom: 10,
                     }}
                     resizeMode={'contain'}
                   />
@@ -870,22 +879,24 @@ export default function Camera() {
                 style={styles.input}
                 multiline={true}
                 maxLength={composeSettings?.max_altext_length}
+                borderColor={theme.borderColor.val.default.val}
                 defaultValue={curAltText}
+                color={theme.color?.val.default.val}
                 onChangeText={setCurAltText}
                 placeholder="Add optional alt text to describe the media for visually impaired"
                 autoCapitalize="sentences"
-                numberOfLines={3}
+                numberOfLines={4}
               />
               <YStack mt="$1" mb="$3">
                 <XStack justifyContent="flex-end">
-                  <Text color="$gray8" fontWeight="bold">
+                  <Text color={theme.color?.val.tertiary.val} fontWeight="bold">
                     {curAltText && curAltText?.length ? curAltText.length : 0}/
                     {composeSettings?.max_altext_length}
                   </Text>
                 </XStack>
               </YStack>
               <Button
-                bg="$blue9"
+                bg={theme.colorHover?.val.hover.val}
                 color="white"
                 size="$6"
                 fontWeight="bold"
@@ -905,7 +916,6 @@ export default function Camera() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
   },
   contentContainer: {
     flex: 1,
@@ -913,10 +923,10 @@ const styles = StyleSheet.create({
   },
   input: {
     borderRadius: 10,
-    fontSize: 16,
-    padding: 8,
+    fontSize: 18,
+    lineHeight: 22,
+    padding: 15,
     borderWidth: 0.33,
-    borderColor: '#ccc',
-    backgroundColor: 'white',
+    minHeight: 130
   },
 })

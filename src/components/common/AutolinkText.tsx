@@ -74,9 +74,9 @@ export default function AutolinkText(
   const parts = useMemo(() => getTextParts(text, matches), [text, matches])
 
   return (
-    <Text fontSize="$5">
+    <Text fontSize="$5" color={theme.color?.val.default.val}>
       {username ? (
-        <Text fontSize="$5" fontWeight="bold" onPress={() => onUsernamePress()}>
+        <Text fontSize="$5" fontWeight="bold" color={theme.color?.val.default.val} onPress={() => onUsernamePress()}>
           {username}{' '}
         </Text>
       ) : null}
@@ -88,7 +88,7 @@ export default function AutolinkText(
                 key={index}
                 onPress={() => onMentionPress(`${part.value}`)}
                 fontSize="$5"
-                color={theme.blue9}
+                color={theme.colorHover.val.active.val}
               >
                 {part.value}
               </Text>
@@ -101,7 +101,7 @@ export default function AutolinkText(
                 key={index}
                 onPress={() => onHashtagPress(`${part.value.slice(1)}`)}
                 fontSize="$5"
-                color={theme.blue9}
+                color={theme.colorHover.val.active.val}
               >
                 {part.value}
               </Text>
@@ -109,7 +109,7 @@ export default function AutolinkText(
           }
 
           return (
-            <Text key={index} fontSize="$5">
+            <Text key={index} fontSize="$5" color={theme.color?.val.default.val}>
               {part.value}
             </Text>
           )

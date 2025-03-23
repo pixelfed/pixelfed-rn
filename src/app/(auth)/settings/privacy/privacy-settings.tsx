@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Switch } from 'src/components/form/Switch'
 import { getSelfAccount } from 'src/lib/api'
 import { Storage } from 'src/state/cache'
-import { ScrollView, Separator, Text, View, XStack, YStack } from 'tamagui'
+import { ScrollView, Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
 
 import { useProfileMutation } from 'src/hooks/mutations/useProfileMutation'
 
@@ -18,14 +18,15 @@ interface RenderSwitchProps {
 }
 
 const RenderSwitch = (props: RenderSwitchProps) => {
+  const theme = useTheme();
   return (
     <YStack>
-      <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
+      <XStack py="$3" px="$4" bg={theme.background?.val.default.val} justifyContent="space-between">
         <YStack maxWidth="75%" gap="$2">
-          <Text fontSize="$5" fontWeight={'bold'}>
+          <Text fontSize="$5" fontWeight={'bold'} color={theme.color?.val.default.val}>
             {props.title}
           </Text>
-          <Text fontSize="$3" color="$gray9">
+          <Text fontSize="$3" color={theme.color?.val.tertiary.val}>
             {props.description}
           </Text>
         </YStack>
@@ -37,7 +38,7 @@ const RenderSwitch = (props: RenderSwitchProps) => {
           <Switch.Thumb animation="quicker" />
         </Switch>
       </XStack>
-      <Separator />
+      <Separator borderColor={theme.borderColor?.val.default.val} />
     </YStack>
   )
 }
@@ -45,6 +46,7 @@ const RenderSwitch = (props: RenderSwitchProps) => {
 export default function Page() {
   const instance = Storage.getString('app.instance')!.toLowerCase()
   const queryClient = useQueryClient()
+  const theme = useTheme();
 
   const { profileMutation } = useProfileMutation({
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['getSelfAccount'] }),
@@ -86,7 +88,7 @@ export default function Page() {
   if (isPending || isLoading) {
     return (
       <View p="$4">
-        <ActivityIndicator />
+        <ActivityIndicator color={theme.color?.val.default.val} />
       </View>
     )
   }

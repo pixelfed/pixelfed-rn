@@ -10,10 +10,11 @@ import {
 } from 'src/components/common/GroupButtonContent'
 import { Storage } from 'src/state/cache'
 import { openBrowserAsync } from 'src/utils'
-import { Button, Group, ScrollView, Separator, Text, XStack, YStack } from 'tamagui'
+import { Button, Group, ScrollView, Separator, Text, XStack, YStack, useTheme } from 'tamagui'
 
 export default function Page() {
   const navigation = useNavigation()
+  const theme = useTheme();
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Settings' })
   }, [navigation])
@@ -39,7 +40,7 @@ export default function Page() {
   }: GroupButtonContentProps & { path: string }) => (
     <Group.Item>
       <Link href={path} asChild>
-        <Button bg="$gray1" justifyContent="flex-start" size="$5" px="$3">
+        <Button bg={theme.background?.val.secondary.val} justifyContent="flex-start" size="$5" px="$3">
           <GroupButtonContent icon={icon} title={title} iconColor="#666" />
         </Button>
       </Link>
@@ -53,7 +54,7 @@ export default function Page() {
   }: GroupButtonContentProps & { path: string }) => (
     <Group.Item>
       <Button
-        bg="$gray1"
+        bg={theme.background?.val.secondary.val}
         justifyContent="flex-start"
         size="$5"
         px="$3"
@@ -77,7 +78,7 @@ export default function Page() {
     ])
   }
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={['bottom']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background?.val.default.val }} edges={['bottom']}>
       <Stack.Screen
         options={{
           title: 'Settings',
@@ -86,7 +87,7 @@ export default function Page() {
       />
       <ScrollView flexShrink={1} showsVerticalScrollIndicator={false}>
         <YStack p="$5" gap="$5">
-          <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
+          <Group orientation="vertical" borderWidth={1} borderColor={theme.borderColor?.val.default.val} separator={<Separator borderColor={theme.borderColor?.val.default.val} />}>
             <GroupButton
               icon="user"
               title="Avatar, Bio and Display Name"
@@ -111,7 +112,7 @@ export default function Page() {
             />
           </Group>
 
-          <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
+          <Group orientation="vertical" borderWidth={1} borderColor={theme.borderColor?.val.default.val} separator={<Separator borderColor={theme.borderColor?.val.default.val} />}>
             <GroupButton
               icon="life-buoy"
               title="Accessibility"
@@ -125,7 +126,7 @@ export default function Page() {
             />
           </Group>
 
-          <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
+          <Group orientation="vertical" borderWidth={1} borderColor={theme.borderColor?.val.default.val} separator={<Separator borderColor={theme.borderColor?.val.default.val} />}>
             <GroupButton icon="align-left" title="Legal" path="/settings/legal/" />
             <GroupUrlButton
               icon="trash"
@@ -134,19 +135,19 @@ export default function Page() {
             />
           </Group>
 
-          <Button bg="$gray1" justifyContent="flex-start" size="$5" px="$3">
+          <Button bg={theme.background?.val.secondary.val} borderWidth={1} borderColor={theme.borderColor?.val.default.val} justifyContent="flex-start" size="$5" px="$3">
             <XStack flexGrow={1} justifyContent="space-between" alignItems="center">
               <XStack alignItems="center" ml="$1" gap="$3">
-                <Text fontSize="$6">Version</Text>
+                <Text fontSize="$6" color={theme.color?.val.tertiary.val}>Version</Text>
               </XStack>
-              <Text fontSize="$6" color="$gray9">
+              <Text fontSize="$6" color={theme.color?.val.tertiary.val}>
                 {version}
               </Text>
             </XStack>
           </Button>
 
-          <Button bg="$red4" mt="$2" onPress={() => handleLogOut()}>
-            <Text>Log out {'@' + username}</Text>
+          <Button variant="outline" backgroundColor={theme.background?.val.default.val} borderColor={theme.borderColor?.val.strong.val} mt="$2" onPress={() => handleLogOut()}>
+            <Text color={theme.color?.val.default.val}>Log out {'@' + username}</Text>
           </Button>
         </YStack>
       </ScrollView>

@@ -17,17 +17,18 @@ import {
   getTrendingPostsV1,
 } from 'src/lib/api'
 import { enforceLen, prettyCount } from 'src/utils'
-import { Image, ScrollView, Text, View, XStack, YStack } from 'tamagui'
+import { Image, ScrollView, Text, View, XStack, YStack, useTheme } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function DiscoverScreen() {
   const router = useRouter()
+  const theme = useTheme();
 
   const RenderTags = ({ item }) => (
     <Link href={`/hashtag/${item.hashtag}`} asChild>
-      <View bg="$gray3" py="$2" px="$3" borderRadius={5} mr="$2">
-        <Text fontWeight="bold">{item.name}</Text>
+      <View bg={theme.background?.val.tertiary.val} py="$2" px="$3" borderRadius={5} mr="$2">
+        <Text fontWeight="bold" color={theme.color?.val.default.val}>{item.name}</Text>
       </View>
     </Link>
   )
@@ -38,7 +39,7 @@ export default function DiscoverScreen() {
         px="$6"
         py="$3"
         borderWidth={1}
-        borderColor="$gray5"
+        borderColor={theme.borderColor?.val.default.val}
         borderRadius={10}
         justifyContent="center"
         alignItems="center"
@@ -47,10 +48,10 @@ export default function DiscoverScreen() {
       >
         <UserAvatar url={item.avatar} size="$3" />
         <YStack justifyContent="center" alignItems="center" gap="$2">
-          <Text fontSize="$5" fontWeight="bold">
+          <Text fontSize="$5" fontWeight="bold" color={theme.color?.val.default.val}>
             {item.username}
           </Text>
-          <Text fontSize="$2" color="$gray9">
+          <Text fontSize="$2" color={theme.color?.val.tertiary.val}>
             {prettyCount(item.followers_count)} Followers
           </Text>
         </YStack>
@@ -63,7 +64,7 @@ export default function DiscoverScreen() {
     return (
       <Link href={`/post/${item.id}`} asChild>
         <YStack justifyContent="center" alignItems="center" gap="$2" mr="$3">
-          <View borderRadius={10} overflow="hidden" bg="black">
+          <View borderRadius={10} borderWidth={1} borderColor={theme.borderColor?.val.default.val} overflow="hidden" bg={theme.background?.val.tertiary.val}>
             <ImageComponent
               placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
               source={{ uri: item.media_attachments[0].url }}
@@ -71,7 +72,7 @@ export default function DiscoverScreen() {
               contentFit={'cover'}
             />
             <Text
-              color="white"
+              color={theme.color?.val.default.val}
               alignSelf="center"
               fontWeight={'bold'}
               fontSize="$1"
@@ -89,7 +90,7 @@ export default function DiscoverScreen() {
   const RenderPosts = ({ item }) => (
     <Link href={`/post/${item.id}`} asChild>
       <YStack justifyContent="center" alignItems="center" gap="$2" mr="$3">
-        <View borderRadius={10} overflow="hidden" bg="black">
+        <View borderRadius={10} borderWidth={1} borderColor={theme.borderColor?.val.default.val} overflow="hidden" bg={theme.background?.val.tertiary.val}>
           <ImageComponent
             placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
             source={{
@@ -102,7 +103,7 @@ export default function DiscoverScreen() {
             contentFit="cover"
           />
           <Text
-            color="white"
+            color={theme.color?.val.default.val}
             alignSelf="center"
             fontWeight={'bold'}
             fontSize="$1"
@@ -154,7 +155,7 @@ export default function DiscoverScreen() {
     )
   }
   return (
-    <SafeAreaView flex={1} edges={['top', 'bottom']} style={{ backgroundColor: '#fff' }}>
+    <SafeAreaView flex={1} edges={['top', 'bottom']} style={{ backgroundColor: theme.background?.val.default.val }}>
       <Stack.Screen
         options={{
           title: 'Explore',
@@ -164,7 +165,7 @@ export default function DiscoverScreen() {
         {hashtags && hashtags.length ? (
           <View ml="$5" mt="$5">
             <YStack pb="$4" gap="$3">
-              <Text fontSize="$6" allowFontScaling={false}>
+              <Text fontSize="$6" allowFontScaling={false} color={theme.color?.val.secondary.val}>
                 Trending tags
               </Text>
               <FlatList
@@ -180,7 +181,7 @@ export default function DiscoverScreen() {
         {trendingPosts && trendingPosts.accounts ? (
           <View ml="$5" mt="$5">
             <YStack pb="$4" gap="$3">
-              <Text fontSize="$6" allowFontScaling={false}>
+              <Text fontSize="$6" allowFontScaling={false} color={theme.color?.val.secondary.val}>
                 Popular accounts
               </Text>
               <FlatList
@@ -196,7 +197,7 @@ export default function DiscoverScreen() {
         {posts && posts.length ? (
           <View ml="$5" mt="$5">
             <YStack pb="$4" gap="$3">
-              <Text fontSize="$6" allowFontScaling={false}>
+              <Text fontSize="$6" allowFontScaling={false} color={theme.color?.val.secondary.val}>
                 Trending today
               </Text>
               <FlatList
@@ -212,7 +213,7 @@ export default function DiscoverScreen() {
         {trendingPosts && trendingPosts.posts ? (
           <View ml="$5" mt="$5">
             <YStack pb="$4" gap="$3">
-              <Text fontSize="$6" allowFontScaling={false}>
+              <Text fontSize="$6" allowFontScaling={false} color={theme.color?.val.secondary.val}>
                 Popular around the fediverse
               </Text>
               <FlatList

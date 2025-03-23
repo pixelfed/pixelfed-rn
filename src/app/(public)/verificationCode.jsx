@@ -11,12 +11,13 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Button, Input, Text, View, XStack, YStack } from 'tamagui'
+import { Button, Input, Text, View, XStack, YStack, useTheme } from 'tamagui'
 
 export default function VerificationCodeScreen() {
   const router = useRouter()
   const { server } = useLocalSearchParams()
   const { login } = useAuth()
+  const theme = useTheme();
 
   const [email, setEmail] = useState('')
   const [code, setCode] = useState('')
@@ -61,22 +62,20 @@ export default function VerificationCodeScreen() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView
         style={{
-          backgroundColor: 'black',
+          backgroundColor: theme.background.val.default.val,
           flexGrow: 1,
         }}
         edges={['top']}
       >
-        <StatusBar style="light" />
-
         <YStack px="$4" pt="$4" pb="$6" space="$4" flexGrow={1}>
           <XStack alignItems="center">
             <Pressable onPress={navigateBack}>
-              <Feather name="arrow-left" size={24} color="white" />
+              <Feather name="arrow-left" size={24} color={theme.color.val.default.val} />
             </Pressable>
             <Text
               fontSize="$6"
               fontWeight="bold"
-              color="white"
+              color={theme.color.val.default.val}
               textAlign="center"
               flex={1}
             >
@@ -87,25 +86,25 @@ export default function VerificationCodeScreen() {
 
           <YStack space="$6" mt="$6">
             <YStack>
-              <Text fontSize="$5" fontWeight="bold" color="white" mb="$2">
+              <Text fontSize="$5" fontWeight="bold" color={theme.color.val.default.val} mb="$2">
                 Enter Verification Details
               </Text>
-              <Text color="$gray5" mb="$4">
+              <Text color={theme.color.val.tertiary.val} mb="$4">
                 Please enter the email you used to sign up.
               </Text>
             </YStack>
 
             <YStack space="$4">
               <YStack space="$2">
-                <Text color="$gray5">Email Address</Text>
+                <Text color={theme.color.val.tertiary.val}>Email Address</Text>
                 <Input
                   ref={emailInputRef}
                   size="$4"
                   borderWidth={1}
-                  borderColor="$gray8"
+                  borderColor={theme.borderColor.val.default.val}
                   borderRadius={8}
-                  backgroundColor="#111"
-                  color="white"
+                  backgroundColor={theme.background.val.tertiary.val}
+                  color={theme.color.val.default.val}
                   placeholder="your@email.com"
                   placeholderTextColor="#666"
                   value={email}
@@ -123,7 +122,7 @@ export default function VerificationCodeScreen() {
             ) : null}
 
             <Button
-              backgroundColor="$blue9"
+              backgroundColor={theme.colorHover.val.hover.val}
               color="white"
               size="$5"
               fontWeight="bold"
@@ -131,15 +130,15 @@ export default function VerificationCodeScreen() {
               disabled={loading}
               mt="$4"
             >
-              {loading ? <ActivityIndicator color="white" /> : 'Verify Account'}
+              {loading ? <ActivityIndicator color={theme.color.val.default.val} /> : 'Verify Account'}
             </Button>
 
             <View alignItems="center">
-              <Text color="$gray6" fontSize="$3" textAlign="center" mt="$2">
+              <Text color={theme.color.val.tertiary.val} fontSize="$3" textAlign="center" mt="$2">
                 Didn't receive a code?
               </Text>
               <Pressable onPress={navigateBack}>
-                <Text color="$blue9" fontWeight="bold" fontSize="$3" mt="$2">
+                <Text color={theme.colorHover.val.hover.val} fontWeight="bold" fontSize="$3" mt="$2">
                   Go back to signup and request a new code
                 </Text>
               </Pressable>

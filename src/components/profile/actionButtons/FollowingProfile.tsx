@@ -1,10 +1,11 @@
 import { Alert } from 'react-native'
-import { Button, XStack } from 'tamagui'
+import { Button, XStack, useTheme } from 'tamagui'
 
 export default function FollowingProfile({
   onPress,
   onSendMessage,
 }: { onPress: () => void; onSendMessage: () => void }) {
+  const theme = useTheme()
   const handleAction = () => {
     Alert.alert('Confirm Unfollow', 'Are you sure you want to unfollow this account?', [
       {
@@ -24,9 +25,9 @@ export default function FollowingProfile({
         theme="light"
         size="$3"
         bg="transparent"
-        color="black"
+        color={theme.color?.val.default.val}
         borderWidth={1}
-        borderColor="black"
+        borderColor={theme.borderColor?.val.default.val}
         fontWeight="bold"
         fontSize="$4"
         flexGrow={1}
@@ -40,8 +41,8 @@ export default function FollowingProfile({
         bg="transparent"
         size="$3"
         borderWidth={1}
-        borderColor="black"
-        color="black"
+        borderColor={theme.borderColor?.val.default.val}
+        color={theme.color?.val.default.val}
         fontWeight="bold"
         fontSize="$4"
         onPress={() => onSendMessage()}

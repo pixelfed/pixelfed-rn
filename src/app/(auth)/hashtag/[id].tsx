@@ -18,7 +18,7 @@ import {
   getHashtagRelated,
   unfollowHashtag,
 } from 'src/lib/api'
-import { Button, ScrollView, Separator, Text, View, XStack, YStack } from 'tamagui'
+import { Button, ScrollView, Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
 import { prettyCount } from '../../../utils'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
@@ -28,10 +28,10 @@ const ITEM_HEIGHT = IMAGE_HEIGHT
 
 const RenderItem = memo(({ item }) => {
   if (!item?.media_attachments?.[0]?.url) return null
-
+  const theme = useTheme();
   return (
     <Link href={`/post/${item.id}`} asChild>
-      <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
+      <View flexShrink={1} style={{ borderWidth: 1, borderColor: theme.borderColor?.val.default.val }}>
         <ImageComponent
           placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
           source={{
@@ -48,17 +48,20 @@ const RenderItem = memo(({ item }) => {
   )
 })
 
-const ListFooter = memo(({ loading }) =>
-  loading ? (
+const ListFooter = memo(({ loading }) => {
+  const theme = useTheme();
+  return loading ? (
     <View p="$5">
-      <ActivityIndicator />
+      <ActivityIndicator color={theme.color?.val.default.val} />
     </View>
   ) : null
-)
+})
+
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const queryClient = useQueryClient()
+  const theme = useTheme();
 
   const RelatedTags = useCallback(
     ({ relatedTags }) =>
@@ -74,9 +77,9 @@ export default function Page() {
                   mr="$2"
                   borderRadius={10}
                   borderWidth={1}
-                  borderColor="$gray8"
+                  borderColor={theme.borderColor?.val.default.val}
                 >
-                  <Text color="$gray11">#{tag.name}</Text>
+                  <Text color={theme.color?.val.secondary.val}>#{tag.name}</Text>
                 </View>
               </Link>
             ))}
@@ -119,11 +122,11 @@ export default function Page() {
   }
 
   const RenderEmpty = () => (
-    <View flex={1}>
-      <Separator borderColor="#ccc" />
-      <YStack flex={1} justifyContent="center" alignItems="center" padding="$4" gap="$3">
+    <View flexGrow={1}>
+      <Separator borderColor={theme.borderColor?.val.default.val} />
+      <YStack h="100%" flexGrow={1} justifyContent="center" alignItems="center" padding="$4" gap="$3">
         <Feather name="alert-circle" size={40} color="#aaa" />
-        <Text fontSize="$8">No posts with this tag.</Text>
+        <Text fontSize="$8" color={theme.color?.val.default.val}>No posts with this tag.</Text>
       </YStack>
     </View>
   )
@@ -220,28 +223,29 @@ export default function Page() {
                       height: 100,
                       borderRadius: 100,
                       borderWidth: 1,
-                      borderColor: '#eee',
+                      borderColor: theme.borderColor?.val.default.val,
                     }}
                     containFit={'cover'}
                   />
                 ) : (
-                  <View w={100} h={100} borderRadius={100} bg="$gray6"></View>
+                  <View w={100} h={100} borderRadius={100} bg={theme.background?.val.tertiary.val}></View>
                 )}
               </View>
               <YStack flex={1} justifyContent="center" alignItems="center" gap="$2">
                 <Text fontSize="$6" allowFontScaling={false}>
-                  <Text fontWeight="bold">{prettyCount(hashtag?.count ?? 0)}</Text>{' '}
-                  <Text color="$gray9">posts</Text>
+                  <Text fontWeight="bold" color={theme.color?.val.default.val}>{prettyCount(hashtag?.count ?? 0)}</Text>{' '}
+                  <Text color={theme.color?.val.default.val}>posts</Text>
                 </Text>
                 {hashtag?.count > 0 ? (
                   <>
                     {hashtag.following ? (
                       <Button
-                        borderColor="$blue9"
+                        borderColor={theme.borderColor?.val.default.val}
                         h={35}
+                        bg="transparent"
                         size="$5"
                         fontWeight="bold"
-                        color="$blue9"
+                        color={theme.color?.val.default.val}
                         alignSelf="stretch"
                         onPress={onUnfollow}
                       >
@@ -249,7 +253,7 @@ export default function Page() {
                       </Button>
                     ) : (
                       <Button
-                        bg="$blue9"
+                        bg={theme.colorHover.val.active.val}
                         h={35}
                         size="$5"
                         color="white"
@@ -263,7 +267,7 @@ export default function Page() {
                     {hashtag.following ? (
                       <Text
                         fontSize="$4"
-                        color="$gray9"
+                        color={theme.color?.val.tertiary.val}
                         flexWrap="wrap"
                         allowFontScaling={false}
                       >
@@ -272,7 +276,7 @@ export default function Page() {
                     ) : (
                       <Text
                         fontSize="$2"
-                        color="$gray9"
+                        color={theme.color?.val.tertiary.val}
                         flexWrap="wrap"
                         allowFontScaling={false}
                       >
@@ -301,7 +305,7 @@ export default function Page() {
           }}
         />
         <View flexGrow={1} mt="$5">
-          <ActivityIndicator color={'#000'} />
+          <ActivityIndicator color={theme.color?.val.default.val} />
         </View>
       </>
     )
@@ -311,8 +315,8 @@ export default function Page() {
     return (
       <View flexGrow={1}>
         <YStack justifyContent="center" alignItems="center" p="$4">
-          <Text fontSize="$7">Oops! An Error Occured.</Text>
-          <Text>{error?.message}</Text>
+          <Text fontSize="$7" color={theme.color?.val.default.val}>Oops! An Error Occured.</Text>
+          <Text color={theme.color?.val.secondary.val}>{error?.message}</Text>
         </YStack>
       </View>
     )

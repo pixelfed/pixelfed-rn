@@ -5,7 +5,7 @@ import { ActivityIndicator, Alert, Pressable } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { report } from 'src/lib/api'
 import { reportTypes } from 'src/lib/reportTypes'
-import { ScrollView, Text, View, XStack, YStack } from 'tamagui'
+import { ScrollView, Text, View, XStack, YStack, useTheme } from 'tamagui'
 
 import type { NewReport } from 'src/lib/api'
 import type { ReportType } from 'src/lib/reportTypes'
@@ -13,19 +13,20 @@ import type { ReportType } from 'src/lib/reportTypes'
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
+  const theme = useTheme();
 
   const RenderOption = ({ title, name }: ReportType) => (
     <Pressable onPress={() => handleAction(name)}>
       <XStack
         px="$5"
         py="$3"
-        bg="white"
+        bg={theme.background?.val.default.val}
         borderTopWidth={1}
-        borderColor="$gray7"
+        borderColor={theme.borderColor?.val.default.val}
         justifyContent="space-between"
         alignItems="center"
       >
-        <Text fontSize="$5">{title}</Text>
+        <Text fontSize="$5" color={theme.color?.val.default.val}>{title}</Text>
         <Feather name="chevron-right" size={20} color="#ccc" />
       </XStack>
     </Pressable>
@@ -57,15 +58,15 @@ export default function Page() {
       />
       {mutation.isPending ? (
         <View p="$5">
-          <ActivityIndicator />
+          <ActivityIndicator color={theme.color?.val.default.val} />
         </View>
       ) : (
         <ScrollView>
-          <YStack p="$5" bg="white" gap="$3">
-            <Text fontSize="$7" fontWeight="bold">
+          <YStack p="$5" bg={theme.background?.val.default.val} gap="$3">
+            <Text fontSize="$7" fontWeight="bold" color={theme.color?.val.default.val}>
               Why are you reporting this profile?
             </Text>
-            <Text fontSize="$5" color="$gray9">
+            <Text fontSize="$5" color={theme.color?.val.secondary.val}>
               Your report is anonymous, except if you're reporting an intellectual
               property infringement. If someone is in immediate danger, call the local
               emergency services - don't wait.

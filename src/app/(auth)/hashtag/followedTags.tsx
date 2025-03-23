@@ -4,25 +4,27 @@ import { Link, Stack } from 'expo-router'
 import { ActivityIndicator, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { getFollowedTags } from 'src/lib/api'
-import { Text, View, YStack } from 'tamagui'
+import { Text, View, YStack, useTheme } from 'tamagui'
 
 export default function Screen() {
+  const theme = useTheme();
+
   const RenderItem = ({ item }) => (
     <Link href={`/hashtag/${item.name}`} asChild>
-      <View p="$5" bg="white">
-        <Text fontSize="$6">#{item.name}</Text>
+      <View p="$5" bg={theme.background?.val.secondary.val}>
+        <Text fontSize="$6" color={theme.color?.val.default.val}>#{item.name}</Text>
       </View>
     </Link>
   )
 
-  const Separator = () => <View h={1} borderBottomWidth={0.1} borderColor="$gray3" />
+  const Separator = () => <View h={1} borderBottomWidth={0.1} borderColor={theme.borderColor?.val.default.val} />
 
   const RenderEmpty = () => (
     <View flexGrow={1} justifyContent="center" alignItems="center" py="$5">
       <YStack flexShrink={1} justifyContent="center" alignItems="center" gap="$5">
-        <Feather name="alert-circle" size={70} />
-        <Text fontSize="$7" allowFontScaling={false}>
-          You are not following any hashtags
+        <Feather name="alert-circle" size={70} color={theme.color?.val.tertiary.val} />
+        <Text fontSize="$7" allowFontScaling={false} color={theme.color?.val.default.val}>
+          No results found
         </Text>
       </YStack>
     </View>
@@ -47,7 +49,7 @@ export default function Screen() {
           }}
         />
         <View flexGrow={1} mt="$5">
-          <ActivityIndicator color={'#000'} />
+          <ActivityIndicator color={theme.color?.val.default.val} />
         </View>
       </>
     )
@@ -62,7 +64,7 @@ export default function Screen() {
   }
 
   return (
-    <SafeAreaView edges={['bottom']}>
+    <SafeAreaView flex={1} edges={['bottom']}>
       <Stack.Screen
         options={{
           title: 'Followed Hashtags',

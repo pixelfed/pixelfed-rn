@@ -4,10 +4,11 @@ import { ActivityIndicator, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { getStatusById, getStatusReblogs } from 'src/lib/api'
-import { Text, View, XStack, YStack } from 'tamagui'
+import { Text, View, XStack, YStack, useTheme } from 'tamagui'
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
+  const theme = useTheme()
 
   const RenderItem = ({ item }) => {
     return (
@@ -16,13 +17,14 @@ export default function Page() {
           <XStack gap="$3" alignItems="center">
             <UserAvatar url={item.avatar} />
             <YStack flexShrink={1} gap="$1">
-              <Text fontSize="$4" color="$gray12" flexWrap="wrap">
+              <Text fontSize="$4" color={theme.color?.val.tertiary.val} flexWrap="wrap">
                 {item.display_name}
               </Text>
               <Text
                 fontSize={item.acct.length > 40 ? '$4' : '$5'}
                 fontWeight="bold"
                 flexWrap="wrap"
+                color={theme.color?.val.default.val}
               >
                 @{item.acct}
               </Text>
@@ -40,7 +42,7 @@ export default function Page() {
 
   const statusId = status?.id
 
-  const ItemSeparator = () => <View h={1} bg="$gray5"></View>
+  const ItemSeparator = () => <View h={1} bg={theme.background?.val.tertiary.val}></View>
 
   const {
     fetchStatus,
@@ -103,7 +105,7 @@ export default function Page() {
         }}
         onEndReachedThreshold={0.5}
         ListFooterComponent={() =>
-          isFetchingPreviousPage ? <ActivityIndicator /> : null
+          isFetchingPreviousPage ? <ActivityIndicator color={theme.color?.val.default.val} /> : null
         }
       />
     </SafeAreaView>

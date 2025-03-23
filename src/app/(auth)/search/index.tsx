@@ -8,51 +8,54 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { searchQuery } from 'src/lib/api'
 import { getDomain, prettyCount } from 'src/utils'
-import { Input, Text, View, XStack, YStack } from 'tamagui'
+import { Input, Text, View, XStack, YStack, useTheme } from 'tamagui'
 import ReadMore from '../../../components/common/ReadMore'
 import { formatTimestampMonthYear } from '../../../utils'
 
 const Tab = createMaterialTopTabNavigator()
 
-const RenderEmptyResults = ({ message = 'No results found' }) => (
+const RenderEmptyResults = ({ message = 'No results found' }) => {
+  const theme = useTheme();
+  return (
   <View flex={1} flexGrow={1} justifyContent="center" alignItems="center" py="$5">
     <YStack justifyContent="center" alignItems="center" gap="$5">
-      <Feather name="alert-circle" size={50} />
-      <Text fontSize="$6" color="#444">
+      <Feather name="alert-circle" size={50} color={theme.color?.val.default.val} />
+      <Text fontSize="$6" color={theme.color?.val.secondary.val}>
         {message}
       </Text>
     </YStack>
   </View>
-)
+)}
 
 const AccountResultsTab = ({ accounts, isFetching, query }) => {
+  const theme = useTheme();
   const RenderAccountItem = useCallback(
     ({ item }) => (
-      <View p="$3" bg="white">
+      <View p="$3" bg={theme.background?.val.default.val}>
         <Link href={`/profile/${item.id}`} asChild>
           <Pressable>
             <XStack alignItems="center" gap="$3">
               <UserAvatar url={item.avatar} width={40} height={40} />
               <YStack flexGrow={1} gap={4} w="50%">
                 <XStack alignItems="center" gap="$2" flexWrap="wrap">
-                  <Text fontSize="$6" fontWeight="bold">
+                  <Text fontSize="$6" fontWeight="bold" color={theme.color?.val.default.val}>
                     {item.username}
                   </Text>
 
                   {!item.local ? (
                     <View bg="$gray3" px={5} py={4} borderRadius={5}>
-                      <Text fontSize="$2" fontWeight="bold" color="#999">
+                      <Text fontSize="$2" fontWeight="bold"  color={theme.color?.val.tertiary.val}>
                         {getDomain(item.url)}
                       </Text>
                     </View>
                   ) : null}
                 </XStack>
                 <XStack gap="$2" alignItems="center">
-                  <Text color="$gray9" fontSize="$2">
+                  <Text color={theme.color?.val.secondary.val} fontSize="$2">
                     {prettyCount(item.followers_count)} Followers
                   </Text>
-                  <Text color="$gray8">·</Text>
-                  <Text color="$gray9" fontSize="$2">
+                  <Text color={theme.color?.val.tertiary.val}>·</Text>
+                  <Text color={theme.color?.val.secondary.val} fontSize="$2">
                     {item.local ? 'Joined' : 'First seen'}{' '}
                     {formatTimestampMonthYear(item.created_at)}
                   </Text>
@@ -94,20 +97,22 @@ const AccountResultsTab = ({ accounts, isFetching, query }) => {
 }
 
 const HashtagResultsTab = ({ hashtags, isFetching, query }) => {
+  const theme = useTheme();
+
   const RenderHashtagItem = useCallback(
     ({ item }) => (
       <Link href={`/hashtag/${item.name}`} asChild>
-        <View px="$4" py="$3" bg="white">
+        <View px="$4" py="$3" bg={theme.background?.val.default.val}>
           <XStack alignItems="center" gap="$4">
             <View
               w={30}
               h={30}
               borderRadius={50}
-              bg="$gray3"
+              bg={theme.background?.val.tertiary.val}
               justifyContent="center"
               alignItems="center"
             >
-              <Feather name="hash" size={20} color="#000" />
+              <Feather name="hash" size={20} color={theme.color?.val.tertiary.val} />
             </View>
             <XStack
               flexGrow={1}
@@ -116,11 +121,11 @@ const HashtagResultsTab = ({ hashtags, isFetching, query }) => {
               justifyContent="space-between"
               alignItems="center"
             >
-              <Text fontSize="$6" w="70%" fontWeight="bold" flexWrap="wrap">
+              <Text fontSize="$6" w="70%" fontWeight="bold" flexWrap="wrap" color={theme.color?.val.default.val}>
                 {item.name}
               </Text>
               <XStack>
-                <Text color="$gray9" fontSize="$3">
+                <Text color={theme.color?.val.tertiary.val} fontSize="$3">
                   {prettyCount(item.count)} posts
                 </Text>
               </XStack>
@@ -142,7 +147,7 @@ const HashtagResultsTab = ({ hashtags, isFetching, query }) => {
       <FlatList
         data={hashtags}
         renderItem={RenderHashtagItem}
-        ItemSeparatorComponent={() => <View h={1} bg="$gray4" />}
+        ItemSeparatorComponent={() => <View h={1} bg={theme.background?.val.tertiary.val} />}
         onScrollBeginDrag={() => Keyboard.dismiss()}
         ListEmptyComponent={EmptyHashtagsList}
         ListFooterComponent={() =>
@@ -160,6 +165,7 @@ const HashtagResultsTab = ({ hashtags, isFetching, query }) => {
 }
 
 const PostResultsTab = ({ posts, isFetching, query }) => {
+  const theme = useTheme();
   const RenderPostItem = useCallback(
     ({ item }) => (
       <View p="$3" bg="white">
@@ -226,7 +232,7 @@ const PostResultsTab = ({ posts, isFetching, query }) => {
         ListFooterComponent={() =>
           isFetching ? (
             <View mt="$3">
-              <ActivityIndicator />
+              <ActivityIndicator color={theme.color.val.default.val} />
             </View>
           ) : (
             <View h={200} />
@@ -241,6 +247,7 @@ const PostResultsTab = ({ posts, isFetching, query }) => {
 export default function SearchScreen() {
   const { initialQuery } = useLocalSearchParams<{ initialQuery?: string }>()
   const [query, setQuery] = useState(initialQuery || '')
+  const theme = useTheme();
 
   const { data, isLoading, isError, error, isFetching } = useQuery({
     queryKey: ['search', query],
@@ -255,7 +262,7 @@ export default function SearchScreen() {
   if (isLoading && !isFetching) {
     return (
       <View mt="$4">
-        <ActivityIndicator />
+        <ActivityIndicator color={theme.color?.val.defaut.val} />
       </View>
     )
   }
@@ -278,7 +285,10 @@ export default function SearchScreen() {
           m="$3"
           onChangeText={(text) => setQuery(text)}
           value={query}
-          bg="white"
+          bg={theme.background?.val.default.val}
+          borderWidth={1}
+          color={theme.color?.val.default.val}
+          borderColor={theme.borderColor?.val.default.val}
           autoCorrect={false}
           autoComplete="off"
           autoFocus={true}
@@ -289,11 +299,11 @@ export default function SearchScreen() {
           <Tab.Navigator
             screenOptions={{
               tabBarLabelStyle: { fontSize: 12, fontWeight: 'bold' },
-              tabBarIndicatorStyle: { backgroundColor: 'black' },
+              tabBarIndicatorStyle: { backgroundColor: theme.background?.val.inverse.val },
               tabBarStyle: {
                 elevation: 0,
                 shadowOpacity: 0,
-                borderBottomColor: '#eee',
+                borderBottomColor: theme.borderColor?.val.default.val,
                 borderBottomWidth: 1,
               },
             }}

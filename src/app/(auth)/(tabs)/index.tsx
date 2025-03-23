@@ -31,23 +31,25 @@ import {
 } from 'src/lib/api'
 import type { Status } from 'src/lib/api-types'
 import { useUserCache } from 'src/state/AuthProvider'
-import { Spinner, Text, View, XStack, YStack } from 'tamagui'
+import { Button, Spinner, Text, View, XStack, YStack, useTheme } from 'tamagui'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
+  const theme = useTheme()
   return (
     <View
       style={{
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'white',
+        gap: 30,
+        backgroundColor: theme.background?.val.default.val,
       }}
     >
       <Text fontSize="$8" allowFontScaling={false} color="red">
         Something went wrong!
       </Text>
-      <Text>{props.error?.message}</Text>
-      <Text onPress={props.retry}>Try Again?</Text>
+      <Text color={theme.color?.val.default.val}>{props.error?.message}</Text>
+      <Button theme="blue" size="$4" bg={theme.colorHover.val.hover.val} onPress={props.retry}>Try Again</Button>
     </View>
   )
 }
@@ -60,6 +62,7 @@ export default function HomeScreen() {
   const { hasShareIntent } = useShareIntentContext()
   const params = useLocalSearchParams()
   const [isPosting, setIsPosting] = useState(false)
+  const theme = useTheme()
 
   useEffect(() => {
     if (hasShareIntent) {
@@ -251,15 +254,14 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <StatusBar style="dark" />
+    <SafeAreaView style={[styles.container, {backgroundColor: theme.background.val}]} edges={['top']}>
       <Stack.Screen options={{ headerShown: false }} />
       <FeedHeader title="Pixelfed" user={user} />
       {isPosting ? (
         <View p="$5">
           <XStack gap="$3">
-            <Spinner />
-            <Text fontSize="$5" allowFontScaling={false}>
+            <Spinner color={theme.color?.val.default.val} />
+            <Text fontSize="$5" allowFontScaling={false} color={theme.color?.val.default.val}>
               Uploading new post, please wait...
             </Text>
           </XStack>
@@ -273,7 +275,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
   },
   input: {
     flexShrink: 1,

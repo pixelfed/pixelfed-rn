@@ -31,23 +31,25 @@ import {
 } from 'src/lib/api'
 import type { Status } from 'src/lib/api-types'
 import { useUserCache } from 'src/state/AuthProvider'
-import { Text, View } from 'tamagui'
+import { Button, Text, View, useTheme } from 'tamagui'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
+  const theme = useTheme()
   return (
     <View
       style={{
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'white',
+        gap: 30,
+        backgroundColor: theme.background?.val.default.val,
       }}
     >
       <Text fontSize="$8" allowFontScaling={false} color="red">
         Something went wrong!
       </Text>
-      <Text>{props.error?.message}</Text>
-      <Text onPress={props.retry}>Try Again?</Text>
+      <Text color={theme.color?.val.default.val}>{props.error?.message}</Text>
+      <Button theme="blue" size="$4" bg={theme.colorHover.val.hover.val} onPress={props.retry}>Try Again</Button>
     </View>
   )
 }
@@ -57,6 +59,7 @@ export default function HomeScreen() {
   const navigation = useNavigation()
   const flatListRef = useRef(null)
   const queryClient = useQueryClient()
+  const theme = useTheme();
 
   useFocusEffect(
     useCallback(() => {
@@ -92,7 +95,7 @@ export default function HomeScreen() {
 
   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 50 })
 
-  const keyExtractor = useCallback((item: Status) => item.id, [])
+  const keyExtractor = useCallback((item: Status) => item?.id, [])
 
   const onDeletePost = (id: string) => {
     deletePostMutation.mutate(id)
@@ -142,13 +145,14 @@ export default function HomeScreen() {
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<Status>) => (
+      item && item.id && (
       <FeedPost
         post={item}
         user={user}
         onOpenComments={() => onOpenComments(item.id)}
         onDeletePost={() => onDeletePost(item.id)}
         onShare={() => onShare(item.id, item.reblogged)}
-      />
+      />)
     ),
     [user, onOpenComments, onDeletePost, onShare]
   )
@@ -186,7 +190,7 @@ export default function HomeScreen() {
   if (isFetching && !isFetchingNextPage && !isRefetching) {
     return (
       <View flexGrow={1} mt="$5" py="$5" justifyContent="center" alignItems="center">
-        <ActivityIndicator color={'#000'} />
+        <ActivityIndicator color={theme.color?.val.default.val} />
       </View>
     )
   }
@@ -221,14 +225,13 @@ export default function HomeScreen() {
           if (hasNextPage && !isFetching && !isFetchingNextPage) fetchNextPage()
         }}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator /> : null)}
+        ListFooterComponent={() => (isFetchingNextPage ? <ActivityIndicator color={theme.color?.val.default.val} /> : null)}
       />
     )
   }
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <StatusBar style="dark" />
       <Stack.Screen options={{ headerShown: false }} />
       <FeedHeader title="Local Feed" user={user} />
       {renderFeed(data?.pages.flatMap((page) => page.data))}
@@ -239,7 +242,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
   },
   input: {
     flexShrink: 1,

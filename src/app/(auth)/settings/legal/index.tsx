@@ -6,11 +6,12 @@ import {
   type GroupButtonContentProps,
 } from 'src/components/common/GroupButtonContent'
 import { Storage } from 'src/state/cache'
-import { Button, Group, ScrollView, Separator, YStack } from 'tamagui'
+import { Button, Group, ScrollView, Separator, YStack, useTheme } from 'tamagui'
 import { openBrowserAsync } from '../../../../utils'
 
 export default function Screen() {
   const instance = Storage.getString('app.instance')
+  const theme = useTheme()
 
   const openLink = async (path: string) => {
     await openBrowserAsync(`https://${instance}/${path}`)
@@ -24,7 +25,7 @@ export default function Screen() {
     <Group.Item>
       <Button
         onPress={() => openLink(path)}
-        bg="$gray1"
+        bg={theme.background?.val.secondary.val}
         justifyContent="flex-start"
         size="$5"
         px="$3"
@@ -45,7 +46,7 @@ export default function Screen() {
 
       <ScrollView flexShrink={1}>
         <YStack p="$5" gap="$5">
-          <Group orientation="vertical" separator={<Separator borderColor="$gray2" />}>
+          <Group orientation="vertical" separator={<Separator borderColor={theme.borderColor?.val.default.val}/>}>
             <GroupButton icon="align-left" title="Privacy Policy" path="e/privacy" />
             <GroupButton icon="align-left" title="Terms of Service" path="e/terms" />
           </Group>

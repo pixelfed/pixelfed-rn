@@ -11,7 +11,7 @@ import {
   pushStateDisable,
   pushStateUpdate,
 } from 'src/lib/api'
-import { ScrollView, Separator, Text, View, XStack, YStack } from 'tamagui'
+import { ScrollView, Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
 
 function handleRegistrationError(errorMessage: string) {
   alert(errorMessage)
@@ -64,6 +64,7 @@ async function registerForPushNotificationsAsync() {
 export default function Page() {
   const queryClient = useQueryClient()
   const [expoPushToken, setExpoPushToken] = useState('')
+  const theme = useTheme();
 
   useEffect(() => {
     registerForPushNotificationsAsync()
@@ -146,7 +147,7 @@ export default function Page() {
   if (status === 'pending') {
     return (
       <View>
-        <ActivityIndicator />
+        <ActivityIndicator color={theme.color?.val.default.val} />
       </View>
     )
   }
@@ -165,12 +166,12 @@ export default function Page() {
         <XStack
           py="$4"
           px="$4"
-          bg="white"
+          bg={theme.background?.val.tertiary.val}
           justifyContent="space-between"
           alignItems="center"
         >
           <YStack maxWidth="75%">
-            <Text fontSize="$6">Enable Push Notifications</Text>
+            <Text fontSize="$6" color={theme.color?.val.default.val}>Enable Push Notifications</Text>
           </YStack>
           <Switch
             size="$3"
@@ -182,13 +183,13 @@ export default function Page() {
           </Switch>
         </XStack>
 
-        <YStack m="$3" bg="white" borderRadius={10} overflow="hidden">
-          <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
+        <YStack m="$3" borderColor={theme.borderColor?.val.default.val} borderWidth={1} borderRadius={10} overflow="hidden">
+          <XStack py="$3" px="$4" bg={theme.background?.val.tertiary.val} justifyContent="space-between">
             <YStack maxWidth="75%" gap="$2">
-              <Text fontSize="$5" fontWeight={'bold'}>
+              <Text fontSize="$5" fontWeight={'bold'} color={theme.color?.val.default.val}>
                 New Follower
               </Text>
-              <Text fontSize="$3" color="$gray9">
+              <Text fontSize="$3" color={theme.color?.val.secondary.val}>
                 jappleseed started following you
               </Text>
             </YStack>
@@ -203,13 +204,13 @@ export default function Page() {
               <Switch.Thumb animation="quicker" />
             </Switch>
           </XStack>
-          <Separator />
-          <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
+          <Separator borderColor={theme.borderColor?.val.default.val} />
+          <XStack py="$3" px="$4" bg={theme.background?.val.tertiary.val} justifyContent="space-between">
             <YStack maxWidth="75%" gap="$2">
-              <Text fontSize="$5" fontWeight={'bold'}>
+              <Text fontSize="$5" fontWeight={'bold'} color={theme.color?.val.default.val}>
                 Likes
               </Text>
-              <Text fontSize="$3" color="$gray9">
+              <Text fontSize="$3" color={theme.color?.val.secondary.val}>
                 jappleseed liked your post
               </Text>
             </YStack>
@@ -224,13 +225,13 @@ export default function Page() {
               <Switch.Thumb animation="quicker" />
             </Switch>
           </XStack>
-          <Separator />
-          <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
+          <Separator borderColor={theme.borderColor?.val.default.val} />
+          <XStack py="$3" px="$4" bg={theme.background?.val.tertiary.val} justifyContent="space-between">
             <YStack maxWidth="75%" gap="$2">
-              <Text fontSize="$5" fontWeight={'bold'}>
+              <Text fontSize="$5" fontWeight={'bold'} color={theme.color?.val.default.val}>
                 Comments
               </Text>
-              <Text fontSize="$3" color="$gray9">
+              <Text fontSize="$3" color={theme.color?.val.secondary.val}>
                 jappleseed commented on your post
               </Text>
             </YStack>
@@ -245,13 +246,13 @@ export default function Page() {
               <Switch.Thumb animation="quicker" />
             </Switch>
           </XStack>
-          <Separator />
-          <XStack py="$3" px="$4" bg="white" justifyContent="space-between">
+          <Separator borderColor={theme.borderColor?.val.default.val} />
+          <XStack py="$3" px="$4" bg={theme.background?.val.tertiary.val} justifyContent="space-between">
             <YStack maxWidth="75%" gap="$2">
-              <Text fontSize="$5" fontWeight={'bold'}>
+              <Text fontSize="$5" fontWeight={'bold'} color={theme.color?.val.default.val}>
                 Mentions
               </Text>
-              <Text fontSize="$3" color="$gray9">
+              <Text fontSize="$3" color={theme.color?.val.secondary.val}>
                 jappleseed mentioned you in a post
               </Text>
             </YStack>

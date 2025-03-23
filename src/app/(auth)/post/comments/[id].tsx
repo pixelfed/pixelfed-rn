@@ -1,14 +1,11 @@
-import { Feather, Ionicons } from '@expo/vector-icons'
-import { BottomSheetBackdrop, type BottomSheetModal } from '@gorhom/bottom-sheet'
+import { Feather } from '@expo/vector-icons'
 import {
   useInfiniteQuery,
   useMutation,
-  useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
 import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-//@ts-check
 import {
   ActivityIndicator,
   Alert,
@@ -22,29 +19,33 @@ import {
   TextInput,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { PixelfedBottomSheetModal } from 'src/components/common/BottomSheets'
 import { Switch } from 'src/components/form/Switch'
 import CommentItem from 'src/components/post/CommentItem'
-import FeedPost from 'src/components/post/FeedPost'
 import {
   deleteStatus,
-  deleteStatusV1,
-  getStatusById,
   getStatusRepliesById,
   likeStatus,
   postComment,
-  reblogStatus,
   unlikeStatus,
-  unreblogStatus,
 } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
-import { ScrollView, Text, View, XStack, YStack } from 'tamagui'
+import { Text, View, XStack, YStack, useTheme } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
-export default function Page() {
+export default function CommentsScreen() {
+  // Hooks and Params
   const { id } = useLocalSearchParams<{ id: string }>()
   const navigation = useNavigation()
+  const queryClient = useQueryClient()
+  const theme = useTheme()
+  const user = useUserCache()
+  
+  // Refs
+  const commentRef = useRef(null)
+  const flatListRef = useRef(null)
+  
+  // State
   const [commentText, setComment] = useState('')
   const [inReplyToId, setInReplyToId] = useState(null)
   const [replySet, setReply] = useState()
@@ -53,136 +54,169 @@ export default function Page() {
   const [loadingChildId, setLoadingChildId] = useState(null)
   const [childComments, setChildComments] = useState({})
   const [keyboardVisible, setKeyboardVisible] = useState(false)
-  const commentRef = useRef(null)
-  const flatListRef = useRef(null)
-  const user = useUserCache()
-  const queryClient = useQueryClient()
+  const [keyboardHeight, setKeyboardHeight] = useState(0)
 
+  // Calculate dimensions and styles
+  const inputContainerHeight = inReplyToId && replySet ? 150 : 110
+
+  // Set up navigation options
   useLayoutEffect(() => {
-    navigation.setOptions({ title: 'Loading', headerBackTitle: 'Back' })
+    navigation.setOptions({
+      title: 'Comments',
+      headerBackTitle: 'Back',
+    })
   }, [navigation])
 
-  const handleGotoProfile = (id: string) => {
-    router.push(`/profile/${id}`)
-  }
-
-  const handleGotoHashtag = (id: string) => {
-    router.push(`/hashtag/${id}`)
-  }
-
-  const handleGotoUsernameProfile = (id: string) => {
-    router.push(`/profile/0?byUsername=${id.slice(1)}`)
-  }
-
-  const handleShowLikes = (id: string) => {
-    router.push(`/post/likes/${id}`)
-  }
-
-  const handleCommentReport = (id: string) => {
-    router.push(`/post/report/${id}`)
-  }
-
-  const gotoProfile = (id: string) => {
-    router.push(`/profile/${id}`)
-  }
-
+  // Keyboard event handlers
   useLayoutEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-      setKeyboardVisible(true)
+    const keyboardWillShowListener = Platform.OS === 'ios' 
+      ? Keyboard.addListener('keyboardWillShow', (e) => {
+          setKeyboardVisible(true)
+          setKeyboardHeight(e.endCoordinates.height)
+        })
+      : { remove: () => {} }
 
-      if (flatListRef.current) {
-        setTimeout(() => {
-          flatListRef.current.scrollToEnd({ animated: true })
-        }, 100)
-      }
-    })
+    const keyboardDidShowListener = Platform.OS === 'android'
+      ? Keyboard.addListener('keyboardDidShow', () => {
+          setKeyboardVisible(true)
+        })
+      : { remove: () => {} }
 
-    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardVisible(false)
-    })
+    const keyboardWillHideListener = Platform.OS === 'ios'
+      ? Keyboard.addListener('keyboardWillHide', () => {
+          setKeyboardVisible(false)
+          setKeyboardHeight(0)
+        })
+      : { remove: () => {} }
+
+    const keyboardDidHideListener = Platform.OS === 'android'
+      ? Keyboard.addListener('keyboardDidHide', () => {
+          setKeyboardVisible(false)
+        })
+      : { remove: () => {} }
 
     return () => {
+      keyboardWillShowListener.remove()
       keyboardDidShowListener.remove()
+      keyboardWillHideListener.remove()
       keyboardDidHideListener.remove()
     }
   }, [])
 
+  // Scroll to bottom when keyboard appears
+  useEffect(() => {
+    if (keyboardVisible && flatListRef.current) {
+      // Add delay to ensure flatlist is ready
+      const timer = setTimeout(() => {
+        flatListRef.current.scrollToEnd({ animated: true })
+      }, Platform.OS === 'ios' ? 100 : 200)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [keyboardVisible])
+
+  // Navigation handlers
+  const navigateToProfile = useCallback((userId) => {
+    router.push(`/profile/${userId}`)
+  }, [])
+
+  const navigateToHashtag = useCallback((hashtag) => {
+    router.push(`/hashtag/${hashtag}`)
+  }, [])
+
+  const navigateToUsernameProfile = useCallback((username) => {
+    router.push(`/profile/0?byUsername=${username.slice(1)}`)
+  }, [])
+
+  const navigateToLikes = useCallback((postId) => {
+    router.push(`/post/likes/${postId}`)
+  }, [])
+
+  const navigateToReport = useCallback((postId) => {
+    router.push(`/post/report/${postId}`)
+  }, [])
+
+  // Comment actions
   const handleReplyPost = () => {
+    if (!commentText.trim()) return
+    
     commentMutation.mutate({
       postId: inReplyToId || id,
       commentText,
       scope: replyScope,
       cw: hasCW,
     })
+    
     setComment('')
     setInReplyToId(null)
-    setReply()
+    setReply(undefined)
     Keyboard.dismiss()
   }
 
-  const handleCommentLike = (item) => {
-    likeMutation.mutate({
-      id: item.id,
-      type: item.favourited ? 'unlike' : 'like',
-    })
-  }
-
   const handleReplyTo = (item) => {
+    if (!item?.id || !item?.account?.id) return
+    
     commentRef.current?.focus()
-    if (item?.id && item?.account?.id) {
-      setReply({
-        id: item.id,
-        username: item.account.username,
-        content: item.content_text && item.content_text.slice(8, 55) + '...',
-        acct: item.account.acct,
-      })
-      setInReplyToId(item.id)
-      setComment('@' + item.account.acct + ' ')
-    }
-  }
-
-  const toggleScope = () => {
-    setReplyScope((current) => {
-      switch (current) {
-        case 'public':
-          return 'unlisted'
-        case 'unlisted':
-          return 'private'
-        case 'private':
-          return 'public'
-        default:
-          return 'public'
-      }
+    setReply({
+      id: item.id,
+      username: item.account.username,
+      content: item.content_text && item.content_text.slice(8, 55) + '...',
+      acct: item.account.acct,
     })
-  }
-
-  const handleCommentDelete = (id) => {
-    Alert.alert('Confirm Delete', 'Are you sure you want to delete your comment?', [
-      {
-        text: 'Cancel',
-      },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () => commentDeleteMutation.mutate({ id }),
-      },
-    ])
+    setInReplyToId(item.id)
+    setComment('@' + item.account.acct + ' ')
   }
 
   const clearReply = () => {
-    setReply()
+    setReply(undefined)
     setInReplyToId(null)
     setComment('')
     commentRef.current?.blur()
     Keyboard.dismiss()
   }
 
+  const toggleScope = () => {
+    setReplyScope((current) => {
+      switch (current) {
+        case 'public': return 'unlisted'
+        case 'unlisted': return 'private'
+        case 'private': return 'public'
+        default: return 'public'
+      }
+    })
+  }
+
+  const handleCommentLike = useCallback((item) => {
+    likeMutation.mutate({
+      id: item.id,
+      type: item.favourited ? 'unlike' : 'like',
+    })
+  }, [])
+
+  const handleCommentDelete = useCallback((id) => {
+    Alert.alert(
+      'Confirm Delete', 
+      'Are you sure you want to delete your comment?', 
+      [
+        { text: 'Cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => commentDeleteMutation.mutate({ id }),
+        },
+      ]
+    )
+  }, [])
+
+  // Fetch child comments
   const fetchChildren = async (parentId, level) => {
     if (level >= 3) {
       router.push(`/post/comments/${parentId}`)
       return
     }
+    
     setLoadingChildId(parentId)
+    
     try {
       const childrenData = await getStatusRepliesById(parentId, 0)
       setChildComments((prev) => ({
@@ -196,19 +230,20 @@ export default function Page() {
     }
   }
 
-  const renderItem = useCallback(
+  // List rendering
+  const renderCommentItem = useCallback(
     ({ item }) => (
       <CommentItem
         item={item}
         onReply={handleReplyTo}
         onLike={handleCommentLike}
-        onReport={handleCommentReport}
+        onReport={navigateToReport}
         onDelete={handleCommentDelete}
-        onShowLikes={handleShowLikes}
+        onShowLikes={navigateToLikes}
         onLoadChildren={fetchChildren}
-        gotoProfile={gotoProfile}
-        gotoUsernameProfile={handleGotoUsernameProfile}
-        gotoHashtag={handleGotoHashtag}
+        gotoProfile={navigateToProfile}
+        gotoUsernameProfile={navigateToUsernameProfile}
+        gotoHashtag={navigateToHashtag}
         user={user}
         childComments={childComments}
         loadingChildId={loadingChildId}
@@ -217,20 +252,21 @@ export default function Page() {
     [childComments, loadingChildId, user]
   )
 
-  const RenderEmpty = useCallback(
+  const RenderEmptyState = useCallback(
     () => (
       <YStack h="100%" justifyContent="center" alignItems="center" gap="$3">
-        <Text fontSize="$9" fontWeight="bold">
+        <Text fontSize="$9" fontWeight="bold" color={theme.color?.val.default.val}>
           No comments yet
         </Text>
-        <Text fontSize="$6" color="$gray9">
+        <Text fontSize="$6" color={theme.color?.val.secondary.val}>
           Start the conversation
         </Text>
       </YStack>
     ),
-    []
+    [theme]
   )
 
+  // Mutations
   const commentMutation = useMutation({
     mutationFn: postComment,
     onSuccess: () => {
@@ -243,38 +279,51 @@ export default function Page() {
       const res = type === 'like' ? await likeStatus({ id }) : await unlikeStatus({ id })
       return { res, id, type }
     },
-    onSuccess: ({ res, id, type }) => {
+    onSuccess: ({ res, id }) => {
+      // Update comments in query cache
       let isIdChildren = true
       queryClient.setQueriesData({ queryKey: ['getStatusRepliesById'] }, (old) => {
         if (!old?.pages) return old
+        
         const newPages = old.pages.map((page) => {
           const newData = page.data.map((post) => {
             if (post.id !== id) return post
+            
             isIdChildren = false
-            post.favourited = res.favourited
-            post.favourites_count = res.favourites_count
-            post.liked_by = res.liked_by
-            return post
+            return {
+              ...post,
+              favourited: res.favourited,
+              favourites_count: res.favourites_count,
+              liked_by: res.liked_by
+            }
           })
           return { ...page, data: newData }
         })
+        
         return { ...old, pages: newPages }
       })
 
+      // Update child comments state if necessary
       if (isIdChildren) {
-        let oldChildrenData = childComments
-        for (const [key, value] of Object.entries(oldChildrenData)) {
-          const newValue = value.map((childValue) => {
-            if (childValue.id === id) {
-              childValue.favourited = res.favourited
-              childValue.favourites_count = res.favourites_count
-              childValue.liked_by = res.liked_by
-            }
-            return childValue
+        setChildComments(prevChildComments => {
+          const updatedChildComments = { ...prevChildComments }
+          
+          Object.keys(updatedChildComments).forEach(key => {
+            updatedChildComments[key] = updatedChildComments[key].map(childComment => {
+              if (childComment.id === id) {
+                return {
+                  ...childComment,
+                  favourited: res.favourited,
+                  favourites_count: res.favourites_count,
+                  liked_by: res.liked_by
+                }
+              }
+              return childComment
+            })
           })
-          oldChildrenData[key] = newValue
-        }
-        setChildComments(oldChildrenData)
+          
+          return updatedChildComments
+        })
       }
     },
   })
@@ -288,7 +337,14 @@ export default function Page() {
     },
   })
 
-  const { data, isFetchingNextPage, isFetching, isError, error } = useInfiniteQuery({
+  // Query for comments
+  const { 
+    data, 
+    isFetchingNextPage, 
+    isFetching, 
+    isError, 
+    error 
+  } = useInfiniteQuery({
     queryKey: ['getStatusRepliesById', id],
     initialPageParam: null,
     refetchOnWindowFocus: false,
@@ -300,27 +356,33 @@ export default function Page() {
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
   })
 
+  // Loading state
   if (isFetching && !isFetchingNextPage) {
     return (
-      <View flexGrow={1} mt="$5">
-        <ActivityIndicator color="#000" />
+      <View flexGrow={1} mt="$5" justifyContent="center" alignItems="center">
+        <ActivityIndicator 
+          color={theme.color?.val.default.val || '#000'} 
+          size="large" 
+        />
       </View>
     )
   }
 
+  // Error state
   if (isError && error) {
     return (
-      <View flexGrow={1}>
-        <Text>Error</Text>
+      <View flexGrow={1} justifyContent="center" alignItems="center" p="$4">
+        <Text color={theme.color?.val.default.val} fontSize="$6" textAlign="center">
+          Error loading comments. Please try again.
+        </Text>
       </View>
     )
   }
 
-  const inputContainerHeight = inReplyToId && replySet ? 150 : 110
-
+  // Render main screen
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: '#fff' }}
+      style={{ flex: 1, backgroundColor: theme.background?.val.default.val }}
       edges={['left', 'right', 'bottom']}
     >
       <Stack.Screen
@@ -329,54 +391,96 @@ export default function Page() {
           headerBackTitle: 'Back',
         }}
       />
+
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        style={{ flex: 1 }}
       >
         <View style={{ flex: 1 }}>
           <FlatList
             ref={flatListRef}
             data={data?.pages.flatMap((page) => page.data)}
-            keyExtractor={(i) => i?.id}
-            renderItem={renderItem}
-            ListEmptyComponent={RenderEmpty}
+            keyExtractor={(item) => item?.id}
+            renderItem={renderCommentItem}
+            ListEmptyComponent={RenderEmptyState}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.contentCommentsContainer}
-            ListFooterComponent={<View style={{ height: inputContainerHeight }} />}
+            contentContainerStyle={[
+              styles.contentCommentsContainer,
+              { 
+                paddingBottom: Platform.OS === 'android' && keyboardVisible
+                  ? inputContainerHeight + 120
+                  : inputContainerHeight + 40
+              }
+            ]}
+            onContentSizeChange={() => {
+              if (keyboardVisible && flatListRef.current) {
+                flatListRef.current.scrollToEnd({ animated: true })
+              }
+            }}
           />
         </View>
 
-        <View style={[styles.fixedInputContainer, { height: inputContainerHeight }]}>
+        {/* Input Container with platform-specific styling */}
+        <View 
+          style={[
+            styles.fixedInputContainer, 
+            { 
+              height: inputContainerHeight, 
+              borderColor: theme.borderColor?.val.default.val, 
+              backgroundColor: theme.background?.val.default.val,
+              // For Android, we need to adjust position when keyboard is visible
+              ...(Platform.OS === 'android' && {
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                zIndex: 999,
+              })
+            }
+          ]}
+        >
+          {/* Reply Info */}
           {inReplyToId && replySet ? (
-            <View px="$4" style={styles.replyContainer}>
+            <View px="$4" style={[styles.replyContainer, {borderColor: theme.border?.val.default.val}]}>
               <XStack justifyContent="space-between">
                 <YStack>
-                  <Text color="$gray8">
+                  <Text color={theme.color?.val.secondary.val}>
                     @
-                    <Text fontWeight="600" fontFamily="system" color="$gray8">
+                    <Text fontWeight="600" fontFamily="system" color={theme.color?.val.secondary.val}>
                       {replySet.acct}
                     </Text>
                   </Text>
-                  <Text color="$gray11">{replySet.content}</Text>
+                  <Text color={theme.color?.val.default.val}>{replySet.content}</Text>
                 </YStack>
-                <Text color="$gray8" onPress={clearReply}>
+                <Text color={theme.color?.val.secondary.val} onPress={clearReply}>
                   Clear
                 </Text>
               </XStack>
             </View>
           ) : null}
 
+          {/* Comment Input */}
           <YStack style={styles.inputGroup}>
             <TextInput
               ref={commentRef}
-              style={styles.input}
+              style={[
+                styles.input, 
+                {
+                  color: theme.color?.val.default.val,
+                  borderColor: theme.borderColor?.val.default.val || 'rgba(151, 151, 151, 0.25)',
+                  backgroundColor: theme.backgroundHover?.val.default.val || 'rgba(151, 151, 151, 0.05)',
+                }
+              ]}
               value={commentText}
               onChangeText={setComment}
               multiline={true}
               maxLength={500}
               placeholder="Add a comment..."
+              placeholderTextColor={theme.color?.val.secondary.val}
             />
+            
+            {/* Input Controls */}
             <XStack
               px="$5"
               pb="$4"
@@ -384,12 +488,13 @@ export default function Page() {
               justifyContent="space-between"
               alignItems="center"
             >
+              {/* Character Counter */}
               <XStack>
                 <Text
                   allowFontScaling={false}
                   fontWeight="bold"
                   fontSize={12}
-                  color="$gray9"
+                  color={theme.color?.val.secondary.val}
                 >
                   {commentText.length}
                 </Text>
@@ -397,7 +502,7 @@ export default function Page() {
                   allowFontScaling={false}
                   fontWeight="bold"
                   fontSize={12}
-                  color="$gray9"
+                  color={theme.color?.val.secondary.val}
                 >
                   /
                 </Text>
@@ -405,16 +510,18 @@ export default function Page() {
                   allowFontScaling={false}
                   fontWeight="bold"
                   fontSize={12}
-                  color="$gray9"
+                  color={theme.color?.val.secondary.val}
                 >
                   500
                 </Text>
               </XStack>
+              
+              {/* Visibility Toggle */}
               <XStack alignItems="center" gap={5}>
-                <Pressable onPress={toggleScope}>
+                <Pressable onPress={toggleScope} hitSlop={10}>
                   <Text
                     allowFontScaling={false}
-                    color="$gray10"
+                    color={theme.color?.val.secondary.val}
                     fontWeight="bold"
                     fontSize={12}
                     textTransform="uppercase"
@@ -430,14 +537,16 @@ export default function Page() {
                         ? 'lock'
                         : 'eye-off'
                   }
-                  color="#ccc"
+                  color={theme.color?.val.secondary.val}
                 />
               </XStack>
+              
+              {/* Content Warning Toggle */}
               <XStack alignItems="center" gap={5}>
                 <Text
                   allowFontScaling={false}
                   fontSize={12}
-                  color="#ccc"
+                  color={theme.color?.val.secondary.val}
                   fontWeight="bold"
                 >
                   CW
@@ -451,10 +560,19 @@ export default function Page() {
                   <Switch.Thumb width={20} height={20} animation="quicker" />
                 </Switch>
               </XStack>
-              <Pressable onPress={handleReplyPost}>
+              
+              {/* Post Button */}
+              <Pressable 
+                onPress={handleReplyPost}
+                disabled={!commentText.trim()}
+                hitSlop={10}
+              >
                 <Text
                   allowFontScaling={false}
-                  color="$blue9"
+                  color={commentText.trim() 
+                    ? theme.colorHover.val.active.val 
+                    : `${theme.colorHover.val.active.val}80`
+                  }
                   fontWeight="bold"
                   letterSpacing={-0.41}
                 >
@@ -468,32 +586,26 @@ export default function Page() {
     </SafeAreaView>
   )
 }
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
   contentCommentsContainer: {
     flexGrow: 1,
-    backgroundColor: 'white',
     paddingBottom: 20,
-  },
-  itemContainer: {
-    flex: 1,
-    width: SCREEN_WIDTH,
-    padding: 15,
-    marginBottom: 0,
-    backgroundColor: '#fff',
   },
   fixedInputContainer: {
     backgroundColor: 'white',
     borderTopWidth: 1,
-    borderTopColor: '#eee',
+    // Shadow for iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    // Elevation for Android
+    elevation: 5,
   },
   replyContainer: {
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
   },
   inputGroup: {
     padding: 10,
@@ -508,27 +620,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     padding: 10,
     borderWidth: 1,
-    borderColor: 'rgba(151, 151, 151, 0.25)',
-    backgroundColor: 'rgba(151, 151, 151, 0.05)',
-  },
-  nestedComment: {
-    marginLeft: 20,
-  },
-  childCommentContainer: {
-    borderLeftWidth: 1,
-    borderLeftColor: '#eee',
-    marginLeft: 15,
-  },
-  loadMoreReplies: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-    marginLeft: 45,
-  },
-  loadMoreLine: {
-    width: 20,
-    height: 1,
-    backgroundColor: '#ccc',
-    marginRight: 8,
   },
 })

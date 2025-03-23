@@ -9,6 +9,7 @@ import Animated, {
   Extrapolate,
   interpolate,
 } from 'react-native-reanimated'
+import { useTheme } from 'tamagui'
 
 type LikeButtonProps = {
   hasLiked: boolean
@@ -19,6 +20,7 @@ type LikeButtonProps = {
 export default function LikeButton(props: LikeButtonProps) {
   const { hasLiked, handleLike, size = 32 } = props
   const likeAnimation = useSharedValue(hasLiked ? 1 : 0)
+  const theme = useTheme();
 
   useEffect(() => {
     likeAnimation.value = withSpring<number>(hasLiked ? 1 : 0)
@@ -53,7 +55,7 @@ export default function LikeButton(props: LikeButtonProps) {
   return (
     <Pressable onPress={handlePress}>
       <Animated.View style={[StyleSheet.absoluteFillObject, outlineStyle]}>
-        <MaterialCommunityIcons name={'heart-outline'} size={size} color={'black'} />
+        <MaterialCommunityIcons name={'heart-outline'} size={size} color={theme.color?.val.default.val} />
       </Animated.View>
 
       <Animated.View style={fillStyle}>

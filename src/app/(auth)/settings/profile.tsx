@@ -24,6 +24,7 @@ import {
   XStack,
   YStack,
   ZStack,
+  useTheme,
 } from 'tamagui'
 
 type LinkFieldProps = {
@@ -35,6 +36,7 @@ type LinkFieldProps = {
 
 export default function ProfilePage() {
   const navigation = useNavigation()
+  const theme = useTheme();
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Edit Profile', headerBackTitle: 'Back' })
   }, [navigation])
@@ -113,14 +115,14 @@ export default function ProfilePage() {
 
   const LinkField = ({ label, value, placeholder, path }: LinkFieldProps) => (
     <XStack px="$3" py="$3" alignItems="flex-start" justifyContent="center">
-      <Text w="25%" fontSize="$5" color="$gray9" paddingTop="$3">
+      <Text w="25%" fontSize="$5" color={theme.color.val.tertiary.val} paddingTop="$3">
         {label}
       </Text>
 
       <Link href={path} asChild>
         <View
           flex={1}
-          borderColor="$gray4"
+          borderColor={theme.borderColor?.val.default.val}
           borderWidth={1}
           borderRadius="$4"
           flexDirection="row"
@@ -129,6 +131,7 @@ export default function ProfilePage() {
           <Text
             fontSize="$5"
             p="$3"
+            color={theme.color?.val.secondary.val}
             style={value ? styles.fieldValue : styles.placeholder}
           >
             {value || placeholder}
@@ -139,7 +142,7 @@ export default function ProfilePage() {
   )
 
   return (
-    <SafeAreaView style={styles.background} edges={['bottom']}>
+    <SafeAreaView style={[styles.background, {backgroundColor: theme.background?.val.default.val}]} edges={['bottom']}>
       <Stack.Screen
         options={{
           title: 'Edit Profile',
@@ -148,22 +151,22 @@ export default function ProfilePage() {
       />
       <ZStack flex={1}>
         {isFetching && (
-          <ActivityIndicator style={styles.activityIndicator} color="#000" />
+          <ActivityIndicator style={styles.activityIndicator} color={theme.color?.val.default.val} />
         )}
 
         <ScrollView flexShrink={1}>
           <XStack padding="$3" gap="$4" alignItems="center">
-            <Avatar circular size="$10" borderWidth={1} borderColor="$gray6">
+            <Avatar circular size="$10" borderWidth={1} borderColor={theme.borderColor?.val.default.val}>
               <Avatar.Image accessibilityLabel={user?.username} src={user?.avatar} />
-              <Avatar.Fallback backgroundColor="$gray6" />
+              <Avatar.Fallback backgroundColor={theme.background?.val.tertiary.val} />
             </Avatar>
 
             <YStack>
-              <Text style={styles.username}>@{user?.username}</Text>
+              <Text style={styles.username} color={theme.color?.val.default.val}>@{user?.username}</Text>
               <Button
                 p="$0"
                 chromeless
-                color="$blue9"
+                color={theme.colorHover.val.active.val}
                 fontWeight="bold"
                 onPress={() => updateProfilePhoto()}
               >
@@ -174,7 +177,7 @@ export default function ProfilePage() {
             </YStack>
           </XStack>
 
-          <Separator />
+          <Separator borderColor={theme.borderColor?.val.default.val} />
 
           <YStack gap="$1">
             <LinkField
@@ -197,8 +200,6 @@ export default function ProfilePage() {
               placeholder="https://"
             />
           </YStack>
-
-          <Separator />
         </ScrollView>
       </ZStack>
     </SafeAreaView>
@@ -211,7 +212,6 @@ const styles = StyleSheet.create({
   },
   background: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   username: {
     fontWeight: 'bold',
