@@ -2,11 +2,11 @@
   "expo": {
     "name": "Pixelfed",
     "slug": "pixelfed",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "pixelfed",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -20,6 +20,7 @@
       "android"
     ],
     "ios": {
+      "userInterfaceStyle": "automatic",
       "supportsTablet": true,
       "bundleIdentifier": "com.pixelfed",
       "infoPlist": {
@@ -40,6 +41,7 @@
         "android.permission.CAMERA",
         "android.permission.ACCESS_COARSE_LOCATION"
       ],
+      "userInterfaceStyle": "automatic",
       "googleServicesFile": "./google-services.json"
     },
     "web": {
@@ -107,6 +109,7 @@
       "router": {
         "origin": false
       },
+      "nodeEnv": "development",
       "eas": {
         "projectId": ""
       }
