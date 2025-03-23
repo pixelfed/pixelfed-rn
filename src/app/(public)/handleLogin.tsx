@@ -27,6 +27,7 @@ import {
   View,
   XStack,
   YStack,
+  useTheme,
 } from 'tamagui'
 
 export default function LoginScreen() {
@@ -41,6 +42,7 @@ export default function LoginScreen() {
   const inputRef = useRef(null)
   const { login } = useAuth()
   const router = useRouter()
+  const theme = useTheme()
 
   const navigateBack = () => {
     router.back()
@@ -184,7 +186,6 @@ export default function LoginScreen() {
         }}
         edges={['top']}
       >
-        <StatusBar style="light" />
         <ActivityIndicator color="white" size="large" />
       </SafeAreaView>
     )
@@ -194,12 +195,11 @@ export default function LoginScreen() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView
         style={{
-          backgroundColor: 'black',
+          backgroundColor: theme.background?.val.default.val,
           flexGrow: 1,
         }}
         edges={['top']}
       >
-        <StatusBar style="light" />
         <RNScrollView
           ref={scrollViewRef}
           contentContainerStyle={{
@@ -211,15 +211,15 @@ export default function LoginScreen() {
           <YStack px="$4" pt="$4" pb="$6" space="$4" flexGrow={1} minHeight="100%">
             <XStack justifyContent="space-between" alignItems="center">
               <Pressable onPress={navigateBack}>
-                <Feather name="arrow-left" size={24} color="white" />
+                <Feather name="arrow-left" size={24} color={theme.color?.val.default.val} />
               </Pressable>
               <YStack alignItems="center" space="$6">
-                <Text fontSize={28} fontWeight="500" color="white">
+                <Text fontSize={28} fontWeight="500" color={theme.color?.val.default.val}>
                   Log in
                 </Text>
               </YStack>
               <Pressable onPress={showHelpInfo}>
-                <Feather name={'help-circle'} size={24} color="white" />
+                <Feather name={'help-circle'} size={24} color={theme.color?.val.default.val} />
               </Pressable>
             </XStack>
 
@@ -231,9 +231,9 @@ export default function LoginScreen() {
                   alignItems: 'center',
                   padding: 16,
                   borderWidth: 1,
-                  borderColor: selectedOption === 0 ? '#3F8FF7' : '#333',
+                  borderColor: selectedOption === 0 ? '#3F8FF7' : theme.borderColor?.val.default.val,
                   borderRadius: 8,
-                  backgroundColor: '#111',
+                  backgroundColor: theme.background?.val.secondary.val,
                 }}
               >
                 <View
@@ -259,7 +259,7 @@ export default function LoginScreen() {
                     />
                   )}
                 </View>
-                <Text color="white" fontSize="$6">
+                <Text color={theme.color?.val.default.val} fontSize="$6">
                   Log in to pixelfed.social
                 </Text>
               </Pressable>
@@ -267,10 +267,10 @@ export default function LoginScreen() {
               <View
                 style={{
                   borderWidth: 1,
-                  borderColor: selectedOption === 1 ? '#3F8FF7' : '#333',
+                  borderColor: selectedOption === 1 ? '#3F8FF7' : theme.borderColor?.val.default.val,
                   borderRadius: 8,
                   overflow: 'hidden',
-                  backgroundColor: '#111',
+                  backgroundColor: theme.background?.val.secondary.val,
                 }}
               >
                 <Pressable
@@ -304,7 +304,7 @@ export default function LoginScreen() {
                       />
                     )}
                   </View>
-                  <Text color="white" fontSize="$6">
+                  <Text color={theme.color?.val.default.val} fontSize="$6">
                     Enter the name of your instance
                   </Text>
                 </Pressable>
@@ -316,11 +316,11 @@ export default function LoginScreen() {
                       style={{
                         borderWidth: 1,
                         padding: 12,
-                        color: 'white',
                         marginTop: 12,
                       }}
-                      borderColor="#333"
-                      backgroundColor="#222"
+                      borderColor={theme.borderColor?.val.default.val}
+                      color={theme.color?.val.default.val}
+                      backgroundColor={theme.background?.val.default.val}
                       size="$6"
                       placeholder="pixelfed.example.com"
                       placeholderTextColor="#666"
@@ -339,7 +339,7 @@ export default function LoginScreen() {
                             onPress={() => handleSuggestionSelect(suggestion)}
                             style={{ paddingVertical: 12 }}
                           >
-                            <Text color="#3F8FF7" fontSize="$6" fontWeight="bold">
+                            <Text color={theme.colorHover?.val.active.val} fontSize="$6" fontWeight="bold">
                               {suggestion}
                             </Text>
                           </Pressable>
@@ -364,11 +364,11 @@ export default function LoginScreen() {
             </YStack>
 
             <XStack gap="$2">
-              <Text fontSize="$6" color="$gray6">
+              <Text fontSize="$6" color={theme.color?.val.secondary.val}>
                 Forgot your instance?
               </Text>
               <Pressable onPress={handleFindInstance}>
-                <Text fontSize="$6" color="$blue9" fontWeight="bold">
+                <Text fontSize="$6" color={theme.colorHover?.val.hover.val} fontWeight="bold">
                   Find it
                 </Text>
               </Pressable>
@@ -378,11 +378,11 @@ export default function LoginScreen() {
 
             <YStack mt="$4" alignItems="center" gap="$3">
               <XStack gap="$2">
-                <Text fontSize="$6" color="$gray6">
+                <Text fontSize="$6" color={theme.color?.val.secondary.val}>
                   Don't have an account yet?
                 </Text>
                 <Pressable onPress={navigateToSignup}>
-                  <Text fontSize="$6" color="$blue9" fontWeight="bold">
+                  <Text fontSize="$6" color={theme.colorHover?.val.hover.val} fontWeight="bold">
                     Sign up
                   </Text>
                 </Pressable>
@@ -391,7 +391,7 @@ export default function LoginScreen() {
 
             <Button
               my="$2"
-              backgroundColor="$blue9"
+              backgroundColor={theme.colorHover?.val.hover.val}
               theme="blue"
               themeInverse={true}
               color="white"
