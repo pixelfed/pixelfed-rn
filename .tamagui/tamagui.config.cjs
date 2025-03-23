@@ -27413,14 +27413,14 @@ var ThemeBuilder = class {
   }
   // for dev mode only really
   _addedThemes = [];
-  addThemes(themes3) {
+  addThemes(themes4) {
     return this._addedThemes.push({
       type: "themes",
-      args: [themes3]
+      args: [themes4]
     }), this.state.themes = {
       // as {} prevents generic string key merge messing up types
       ...this.state.themes,
-      ...themes3
+      ...themes4
     }, this;
   }
   // these wont be typed to save some complexity and because they don't need to be typed!
@@ -45197,7 +45197,7 @@ __name(makeContentId, "makeContentId");
 // node_modules/@tamagui/theme/dist/esm/_mutateTheme.mjs
 var import_web23 = require("@tamagui/core");
 function mutateThemes({
-  themes: themes3,
+  themes: themes4,
   batch,
   insertCSS = true,
   ...props
@@ -45206,7 +45206,7 @@ function mutateThemes({
   for (const {
     name,
     theme
-  } of themes3) {
+  } of themes4) {
     const res = _mutateTheme({
       ...props,
       name,
@@ -45272,11 +45272,11 @@ function updateThemeStates() {
   (0, import_web23.forceUpdateThemes)();
 }
 __name(updateThemeStates, "updateThemeStates");
-function insertThemeCSS(themes3, batch = false) {
+function insertThemeCSS(themes4, batch = false) {
   const config3 = (0, import_web23.getConfig)();
   let cssRules = [];
-  for (const themeName in themes3) {
-    const theme = themes3[themeName], rules = (0, import_web23.getThemeCSSRules)({
+  for (const themeName in themes4) {
+    const theme = themes4[themeName], rules = (0, import_web23.getThemeCSSRules)({
       config: config3,
       themeName,
       names: [themeName],
@@ -45286,7 +45286,7 @@ function insertThemeCSS(themes3, batch = false) {
     cssRules = [...cssRules, ...rules], batch || updateStyle(`t_theme_style_${themeName}`, rules);
   }
   if (batch) {
-    const id = typeof batch == "string" ? batch : (0, import_web23.simpleHash)(Object.keys(themes3).join(""));
+    const id = typeof batch == "string" ? batch : (0, import_web23.simpleHash)(Object.keys(themes4).join(""));
     updateStyle(`t_theme_style_${id}`, cssRules);
   }
   return cssRules;
@@ -47882,7 +47882,158 @@ var Text4 = (0, import_core56.styled)(import_core56.Text, {
 var import_core57 = require("@tamagui/core");
 
 // tamagui.config.ts
-var config2 = createTamagui(config);
+var colorTokens2 = (0, import_core57.createTokens)({
+  light: {
+    // Background colors
+    background: {
+      default: "#FFFFFF",
+      secondary: "#F5F5F5",
+      tertiary: "#EFEFEF",
+      inverse: "#000000"
+    },
+    // Text colors
+    text: {
+      default: "#000000",
+      secondary: "#555555",
+      tertiary: "#888888",
+      inverse: "#FFFFFF"
+    },
+    // Border colors
+    border: {
+      default: "#E0E0E0",
+      strong: "#AAAAAA",
+      inverse: "#FFFFFF"
+    },
+    // Interactive colors
+    interactive: {
+      active: "#2b7fff",
+      hover: "#3395FF"
+    }
+  },
+  dark: {
+    // Background colors
+    background: {
+      default: "#000000",
+      secondary: "#1E1E1E",
+      tertiary: "#2A2A2A",
+      inverse: "#ffffff"
+    },
+    // Text colors
+    text: {
+      default: "#FFFFFF",
+      secondary: "#BBBBBB",
+      tertiary: "#888888",
+      inverse: "#000000"
+    },
+    // Border colors
+    border: {
+      default: "#333333",
+      strong: "#555555",
+      inverse: "#000000"
+    },
+    // Interactive colors
+    interactive: {
+      active: "#51a2ff",
+      hover: "#3395FF"
+    }
+  },
+  // New slate gray dark theme
+  slateDark: {
+    // Background colors with slate gray tones
+    background: {
+      default: "#2F3542",
+      secondary: "#3A4050",
+      tertiary: "#454C5C",
+      inverse: "#ffffff"
+    },
+    // Text colors
+    text: {
+      default: "#FFFFFF",
+      secondary: "#D1D5DB",
+      tertiary: "#9CA3AF",
+      inverse: "#2F3542"
+    },
+    // Border colors
+    border: {
+      default: "#4B5563",
+      strong: "#6B7280",
+      inverse: "#1F2937"
+    },
+    // Interactive colors
+    interactive: {
+      active: "#60A5FA",
+      hover: "#3B82F6"
+    }
+  },
+  // New hot pink theme
+  hotPink: {
+    // Background colors
+    background: {
+      default: "#fdf2f8",
+      secondary: "#FDF2F8",
+      tertiary: "#FCE7F3",
+      inverse: "#831843"
+    },
+    // Text colors
+    text: {
+      default: "#831843",
+      secondary: "#BE185D",
+      tertiary: "#DB2777",
+      inverse: "#FFFFFF"
+    },
+    // Border colors
+    border: {
+      default: "#F9A8D4",
+      strong: "#F472B6",
+      inverse: "#BF125D"
+    },
+    // Interactive colors
+    interactive: {
+      active: "#EC4899",
+      hover: "#DB2777"
+    }
+  }
+});
+var themes3 = {
+  light: {
+    background: colorTokens2.light.background,
+    color: colorTokens2.light.text,
+    borderColor: colorTokens2.light.border,
+    colorHover: colorTokens2.light.interactive
+  },
+  dark: {
+    background: colorTokens2.dark.background,
+    color: colorTokens2.dark.text,
+    borderColor: colorTokens2.dark.border,
+    colorHover: colorTokens2.dark.interactive
+  },
+  // Add the new slate gray dark theme
+  slateDark: {
+    background: colorTokens2.slateDark.background,
+    color: colorTokens2.slateDark.text,
+    borderColor: colorTokens2.slateDark.border,
+    colorHover: colorTokens2.slateDark.interactive
+  },
+  // Add the new hot pink theme
+  hotPink: {
+    background: colorTokens2.hotPink.background,
+    color: colorTokens2.hotPink.text,
+    borderColor: colorTokens2.hotPink.border,
+    colorHover: colorTokens2.hotPink.interactive
+  }
+};
+var extendedConfig = {
+  ...config,
+  tokens: {
+    ...config.tokens,
+    color: colorTokens2
+  },
+  themes: {
+    ...config.themes,
+    ...themes3
+  }
+};
+var config2 = createTamagui(extendedConfig);
 var tamagui_config_default = config2;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {

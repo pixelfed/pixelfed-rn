@@ -1,6 +1,7 @@
 import { BottomSheetBackdrop, type BottomSheetModal } from '@gorhom/bottom-sheet'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
 import { useCallback, useLayoutEffect, useMemo, useRef } from 'react'
 //@ts-check
 import { ActivityIndicator, Platform } from 'react-native'
@@ -8,12 +9,12 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import FeedPost from 'src/components/post/FeedPost'
 import { deleteStatusV1, getStatusById, reblogStatus, unreblogStatus } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
-import { ScrollView, Text, View } from 'tamagui'
+import { ScrollView, Text, View, useTheme } from 'tamagui'
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const navigation = useNavigation()
-
+  const theme = useTheme()
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Post', headerBackTitle: 'Back' })
   }, [navigation])
@@ -66,7 +67,10 @@ export default function Page() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['bottom']}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.background.val.default.val }}
+      edges={['bottom']}
+    >
       <Stack.Screen
         options={{
           title: 'Post',
