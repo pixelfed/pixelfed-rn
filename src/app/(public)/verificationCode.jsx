@@ -1,11 +1,9 @@
 import Feather from '@expo/vector-icons/Feather'
 import { useAuth } from '@state/AuthProvider'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
-import React, { useState, useRef, useEffect } from 'react'
+import { useRef, useState } from 'react'
 import {
   ActivityIndicator,
-  Alert,
   Keyboard,
   Pressable,
   TouchableWithoutFeedback,

@@ -19,7 +19,6 @@ import {
   Alert,
   Keyboard,
   Linking,
-  ListRenderItem,
   type ListRenderItemInfo,
   Platform,
   StyleSheet,
@@ -107,8 +106,6 @@ export default function Camera() {
       if (fileSizeInMB <= MAX_IMAGE_SIZE_MB) {
         return uri
       }
-
-      console.log(`Resizing image: ${uri} (${fileSizeInMB.toFixed(2)}MB)`)
 
       const manipResult = await ImageManipulator.manipulateAsync(
         uri,

@@ -9,7 +9,6 @@ import UserAvatar from 'src/components/common/UserAvatar'
 import { searchQuery } from 'src/lib/api'
 import { getDomain, prettyCount } from 'src/utils'
 import { Input, Text, View, XStack, YStack, useTheme } from 'tamagui'
-import ReadMore from '../../../components/common/ReadMore'
 import { formatTimestampMonthYear } from '../../../utils'
 
 const Tab = createMaterialTopTabNavigator()

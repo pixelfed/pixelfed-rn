@@ -8,7 +8,7 @@ import {
 } from '@tanstack/react-query'
 import { Link, Stack, useLocalSearchParams } from 'expo-router'
 import { memo, useCallback, useMemo } from 'react'
-import { ActivityIndicator, Dimensions, FlatList } from 'react-native'
+import { ActivityIndicator, Dimensions } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import ImageComponent from 'src/components/ImageComponent'
 import {
