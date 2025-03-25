@@ -1,6 +1,6 @@
 import Feather from '@expo/vector-icons/Feather'
 import { BlurView } from '@react-native-community/blur'
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import Video from 'react-native-video'

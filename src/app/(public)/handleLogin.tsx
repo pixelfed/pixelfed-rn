@@ -2,33 +2,19 @@ import Feather from '@expo/vector-icons/Feather'
 import { useAuth } from '@state/AuthProvider'
 import { useQuery } from '@tanstack/react-query'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
 import * as WebBrowser from 'expo-web-browser'
 import React, { useState, useEffect, useRef } from 'react'
 import {
   ActivityIndicator,
   Alert,
-  FlatList,
   Keyboard,
   Pressable,
   ScrollView as RNScrollView,
-  TextInput,
   TouchableWithoutFeedback,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { getOpenServers } from 'src/lib/api'
-import {
-  Button,
-  Image,
-  Input,
-  ScrollView,
-  Separator,
-  Text,
-  View,
-  XStack,
-  YStack,
-  useTheme,
-} from 'tamagui'
+import { Button, Input, Text, View, XStack, YStack, useTheme } from 'tamagui'
 
 export default function LoginScreen() {
   const params = useLocalSearchParams<{ server: string }>()

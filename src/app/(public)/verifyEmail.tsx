@@ -24,7 +24,7 @@ import { updateAvatar } from 'src/lib/api'
 import { objectToForm } from 'src/requests'
 import { useAuth } from 'src/state/AuthProvider'
 import { Storage } from 'src/state/cache'
-import { Separator, Text, useTheme } from 'tamagui'
+import { Text, useTheme } from 'tamagui'
 
 const { width } = Dimensions.get('window')
 

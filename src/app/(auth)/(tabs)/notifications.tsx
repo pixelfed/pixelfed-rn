@@ -1,13 +1,11 @@
 import Feather from '@expo/vector-icons/Feather'
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { Stack, useNavigation } from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
 import { useEffect, useLayoutEffect, useState } from 'react'
 import { ActivityIndicator, Dimensions, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import RenderNotificationItem from 'src/components/notifications/RenderNotificationItem'
 import { fetchNotifications } from 'src/lib/api'
-import { _timeAgo } from 'src/utils'
 import { Separator, Tabs, Text, View, useTheme } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width

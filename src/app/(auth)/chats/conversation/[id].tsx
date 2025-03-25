@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
-import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   ActivityIndicator,
   Alert,
@@ -17,7 +17,7 @@ import {
 } from 'react-native-gifted-chat'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { deleteChatMessage, fetchChatThread, sendChatMessage } from 'src/lib/api'
-import { _timeAgo, enforceLen } from 'src/utils'
+import { enforceLen } from 'src/utils'
 import { Text, View, YStack, useTheme } from 'tamagui'
 
 import { Feather } from '@expo/vector-icons'

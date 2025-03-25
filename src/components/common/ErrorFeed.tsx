@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons'
-import { Text, View, YStack } from 'tamagui'
+import { Text, YStack } from 'tamagui'
 
 export default function ErrorFeed() {
   return (

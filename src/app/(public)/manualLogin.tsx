@@ -1,26 +1,8 @@
 import { useAuth } from '@state/AuthProvider'
-import {
-  Link,
-  Stack,
-  router,
-  useLocalSearchParams,
-  useNavigation,
-  useRouter,
-} from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
-import { useEffect, useState } from 'react'
-import { ActivityIndicator, SafeAreaView } from 'react-native'
-import {
-  Button,
-  Form,
-  Input,
-  Label,
-  Separator,
-  Text,
-  View,
-  XStack,
-  YStack,
-} from 'tamagui'
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
+import { useState } from 'react'
+import { SafeAreaView } from 'react-native'
+import { Button, Form, Input, Label, Text, YStack } from 'tamagui'
 
 export default function Login() {
   const params = useLocalSearchParams()

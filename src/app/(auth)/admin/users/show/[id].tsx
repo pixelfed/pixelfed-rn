@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { getAdminUser } from 'src/lib/api'
 import { Storage } from 'src/state/cache'
-import { _timeAgo, enforceLen, formatTimestamp, prettyCount } from 'src/utils'
+import { enforceLen, formatTimestamp, prettyCount } from 'src/utils'
 import { Button, Group, ScrollView, Separator, Text, View, XStack, YStack } from 'tamagui'
 
 export default function Screen() {

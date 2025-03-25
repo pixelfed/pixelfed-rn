@@ -9,7 +9,6 @@ import type {
   Relationship,
   RelationshipFromFollowAPIResponse,
   Status,
-  UpdateCredentialsParams,
   UploadV2Params,
   UploadV2ResponseOrError,
 } from './api-types'

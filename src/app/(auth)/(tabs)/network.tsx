@@ -1,4 +1,3 @@
-import { BottomSheetBackdrop, type BottomSheetModal } from '@gorhom/bottom-sheet'
 import { useFocusEffect } from '@react-navigation/native'
 import {
   useInfiniteQuery,
@@ -7,13 +6,11 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { type ErrorBoundaryProps, Stack, useNavigation, useRouter } from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useRef } from 'react'
 import {
   ActivityIndicator,
   FlatList,
   type ListRenderItemInfo,
-  Platform,
   StyleSheet,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'

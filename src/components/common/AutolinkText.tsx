@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { Text, useTheme } from 'tamagui'
 
 const mentionRegex = /@\w+(?:@\w+\.\w+(?:\.\w+)*)?/g

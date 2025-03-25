@@ -1,11 +1,5 @@
-import ProfileHeader from '@components/profile/ProfileHeader'
 import { Feather } from '@expo/vector-icons'
-import {
-  BottomSheetBackdrop,
-  type BottomSheetModal,
-  BottomSheetScrollView,
-} from '@gorhom/bottom-sheet'
-import Clipboard from '@react-native-clipboard/clipboard'
+import type { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { useToastController } from '@tamagui/toast'
 import {
   useInfiniteQuery,
@@ -13,43 +7,21 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
-import { Link, Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
-import {
-  ActivityIndicator,
-  Alert,
-  Dimensions,
-  FlatList,
-  Platform,
-  Share,
-} from 'react-native'
-import { Blurhash } from 'react-native-blurhash'
+import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
+import { useCallback, useMemo, useRef } from 'react'
+import { ActivityIndicator, Dimensions, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import ImageComponent from 'src/components/ImageComponent'
+import FeedPost from 'src/components/post/FeedPost'
 import {
-  blockProfileById,
-  followAccountById,
   getAccountById,
   getAccountByUsername,
-  getAccountRelationship,
   getAccountStatusesById,
-  getMutualFollowing,
-  muteProfileById,
   reblogStatus,
-  unblockProfileById,
-  unfollowAccountById,
-  unmuteProfileById,
   unreblogStatus,
 } from 'src/lib/api'
-import { Storage } from 'src/state/cache'
-import { Button, Separator, Text, View, YStack, ZStack, useTheme } from 'tamagui'
-
-import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet'
-import { StatusBar } from 'expo-status-bar'
-import { PixelfedBottomSheetModal } from 'src/components/common/BottomSheets'
-import FeedPost from 'src/components/post/FeedPost'
 import { useUserCache } from 'src/state/AuthProvider'
 import { enforceLen } from 'src/utils'
+import { Button, Text, View, YStack, useTheme } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 

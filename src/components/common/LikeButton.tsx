@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { Pressable, StyleSheet } from 'react-native'
 import Animated, {
   useSharedValue,

@@ -1,7 +1,5 @@
 import { useAuth } from '@state/AuthProvider'
 import { Link, useRouter } from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
-import React from 'react'
 import { ActivityIndicator, Pressable } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Storage } from 'src/state/cache'

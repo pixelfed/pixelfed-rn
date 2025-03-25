@@ -15,7 +15,6 @@ import UserAvatar from 'src/components/common/UserAvatar'
 import { Switch } from 'src/components/form/Switch'
 import { editPostMedia, getInstanceV1, getStatusById, putEditPost } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
-import { _timeAgo } from 'src/utils'
 import { ScrollView, Text, TextArea, View, XStack, YStack, useTheme } from 'tamagui'
 
 const SCREEN_HEIGHT = Dimensions.get('screen').height

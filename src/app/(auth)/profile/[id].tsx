@@ -43,7 +43,6 @@ import { Storage } from 'src/state/cache'
 import { Button, Separator, Text, View, YStack, ZStack, useTheme } from 'tamagui'
 
 import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet'
-import { StatusBar } from 'expo-status-bar'
 import { PixelfedBottomSheetModal } from 'src/components/common/BottomSheets'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width

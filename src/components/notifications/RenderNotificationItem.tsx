@@ -1,5 +1,4 @@
 import { Link } from 'expo-router'
-import React from 'react'
 import { Pressable } from 'react-native'
 import ImageComponent from 'src/components/ImageComponent'
 import UserAvatar from 'src/components/common/UserAvatar'

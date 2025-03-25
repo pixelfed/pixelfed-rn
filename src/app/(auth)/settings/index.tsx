@@ -1,7 +1,7 @@
 import { useAuth, useUserCache } from '@state/AuthProvider'
 import * as Application from 'expo-application'
 import { Link, Stack, useNavigation } from 'expo-router'
-import React, { useState, useEffect, useLayoutEffect } from 'react'
+import { useLayoutEffect } from 'react'
 import { Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {

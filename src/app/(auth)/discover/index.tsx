@@ -1,14 +1,6 @@
-import { Feather } from '@expo/vector-icons'
 import { useQuery } from '@tanstack/react-query'
 import { Link, Stack, useRouter } from 'expo-router'
-import {
-  ActivityIndicator,
-  Dimensions,
-  FlatList,
-  Platform,
-  SafeAreaView,
-} from 'react-native'
-import { PressableOpacity } from 'react-native-pressable-opacity'
+import { ActivityIndicator, Dimensions, FlatList, SafeAreaView } from 'react-native'
 import ImageComponent from 'src/components/ImageComponent'
 import UserAvatar from 'src/components/common/UserAvatar'
 import {
@@ -17,7 +9,7 @@ import {
   getTrendingPostsV1,
 } from 'src/lib/api'
 import { enforceLen, prettyCount } from 'src/utils'
-import { Image, ScrollView, Text, View, XStack, YStack, useTheme } from 'tamagui'
+import { ScrollView, Text, View, YStack, useTheme } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
