@@ -8,8 +8,7 @@
     "scheme": "pixelfed",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "image": "./assets/adaptive-icon.png",
       "backgroundColor": "#000000"
     },
     "assetBundlePatterns": [
