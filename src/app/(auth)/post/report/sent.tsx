@@ -1,13 +1,15 @@
 import { Feather } from '@expo/vector-icons'
 import { Stack, useRouter } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Button, Separator, Text, YStack } from 'tamagui'
+import { Button, Separator, Text, YStack, useTheme } from 'tamagui'
 
 export default function Page() {
   const router = useRouter()
+  const theme = useTheme()
 
   return (
-    <SafeAreaView style={{ backgroundColor: 'white' }}>
+    <SafeAreaView style={{ backgroundColor: theme.background?.val.default.val }}>
       <Stack.Screen
         options={{
           title: 'Report Sent',
@@ -15,11 +17,11 @@ export default function Page() {
         }}
       />
       <YStack flexGrow={1} justifyContent="center" alignItems="center" px="$6" gap="$9">
-        <Text fontSize="$9" fontWeight="bold">
+        <Text fontSize="$9" fontWeight="bold" color={theme.color?.val.default.val}>
           Reported Post
         </Text>
         <Feather name="check-circle" color="#10b981" size={100} />
-        <Text fontSize="$8" color="black" textAlign="center">
+        <Text fontSize="$8" color={theme.color?.val.default.val} textAlign="center">
           Thanks for keeping our community safe!
         </Text>
       </YStack>
@@ -30,10 +32,10 @@ export default function Page() {
         p="$6"
         gap="$3"
       >
-        <Text fontSize="$6" color="rgba(0,0,0,0.4)" textAlign="left">
+        <Text fontSize="$6" color={theme.color?.val.secondary.val} textAlign="left">
           All reports are subject to review by our mod team.
         </Text>
-        <Text fontSize="$4" color="rgba(0,0,0,0.25)" textAlign="left">
+        <Text fontSize="$4" color={theme.color?.val.secondary.val} textAlign="left">
           Please be aware that making false reports could lead to the suspension of your
           account. If our mod team needs additional information, they may contact you.
         </Text>
@@ -44,7 +46,7 @@ export default function Page() {
           mx="$6"
           onPress={() => router.back()}
           alignSelf="stretch"
-          bg="$blue9"
+          bg={theme.colorHover.val.active.val}
           color="white"
           fontWeight="bold"
           size="$5"

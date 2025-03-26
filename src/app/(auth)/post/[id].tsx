@@ -1,46 +1,29 @@
 import { BottomSheetBackdrop, type BottomSheetModal } from '@gorhom/bottom-sheet'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
 import { useCallback, useLayoutEffect, useMemo, useRef } from 'react'
 //@ts-check
 import { ActivityIndicator, Platform } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { PixelfedBottomSheetModal } from 'src/components/BottomSheets'
-import CommentFeed from 'src/components/post/CommentFeed'
 import FeedPost from 'src/components/post/FeedPost'
 import { deleteStatusV1, getStatusById, reblogStatus, unreblogStatus } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
-import { ScrollView, Text, View } from 'tamagui'
+import { ScrollView, Text, View, useTheme } from 'tamagui'
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const navigation = useNavigation()
-
+  const theme = useTheme()
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Post', headerBackTitle: 'Back' })
   }, [navigation])
   const user = useUserCache()
   const queryClient = useQueryClient()
-  const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
-  const snapPoints = useMemo(() => ['45%', '70%', '90%'], [])
-  const renderBackdrop = useCallback(
-    (props) => (
-      <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
-    ),
-    []
-  )
-  const handleGotoProfile = (id: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/profile/${id}`)
-  }
 
-  const handleGotoHashtag = (id: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/hashtag/${id}`)
+  const onOpenComments = (id: string) => {
+    router.push(`/post/comments/${id}`)
   }
-  const onOpenComments = useCallback((id: string) => {
-    bottomSheetModalRef.current?.present()
-  }, [])
 
   const onShare = (id: string, state) => {
     shareMutation.mutate({ type: state == true ? 'unreblog' : 'reblog', id: id })
@@ -53,22 +36,6 @@ export default function Page() {
         : await unreblogStatus(handleShare)
     },
   })
-
-  const handleGotoUsernameProfile = (id: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/profile/0?byUsername=${id.slice(1)}`)
-  }
-
-  const handleShowLikes = (id: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/post/likes/${id}`)
-  }
-
-  const handleCommentReport = (id: string) => {
-    bottomSheetModalRef.current?.close()
-    router.push(`/post/report/${id}`)
-  }
-
   const onDeletePost = (id: string) => {
     deletePostMutation.mutate(id)
   }
@@ -100,31 +67,16 @@ export default function Page() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['bottom']}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.background.val.default.val }}
+      edges={['bottom']}
+    >
       <Stack.Screen
         options={{
           title: 'Post',
           headerBackTitle: 'Back',
         }}
       />
-      <PixelfedBottomSheetModal
-        ref={bottomSheetModalRef}
-        index={2}
-        snapPoints={snapPoints}
-        backdropComponent={renderBackdrop}
-        keyboardBehavior={Platform.OS === 'ios' ? 'extend' : 'interactive'}
-        android_keyboardInputMode="adjustResize"
-      >
-        <CommentFeed
-          id={id}
-          user={user}
-          showLikes={handleShowLikes}
-          handleReport={handleCommentReport}
-          gotoProfile={handleGotoProfile}
-          gotoHashtag={handleGotoHashtag}
-          gotoUsernameProfile={handleGotoUsernameProfile}
-        />
-      </PixelfedBottomSheetModal>
       <ScrollView flexShrink={1}>
         <FeedPost
           post={data}

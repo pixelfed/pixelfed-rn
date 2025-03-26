@@ -2,11 +2,11 @@
   "expo": {
     "name": "Pixelfed",
     "slug": "pixelfed",
-    "version": "1.0.2",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "pixelfed",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -20,11 +20,13 @@
       "android"
     ],
     "ios": {
+      "userInterfaceStyle": "automatic",
       "supportsTablet": true,
       "bundleIdentifier": "com.pixelfed",
       "infoPlist": {
         "NSCameraUsageDescription": "$(PRODUCT_NAME) needs access to your Camera.",
-        "NSMicrophoneUsageDescription": "$(PRODUCT_NAME) needs access to your Microphone."
+        "NSMicrophoneUsageDescription": "$(PRODUCT_NAME) needs access to your Microphone.",
+        "NSLocationWhenInUseUsageDescription": "Pixelfed may use your location to provide location-based features or improve user experience."
       }
     },
     "android": {
@@ -36,8 +38,10 @@
       "package": "com.pixelfed",
       "permissions": [
         "android.permission.RECORD_AUDIO",
-        "android.permission.CAMERA"
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_COARSE_LOCATION"
       ],
+      "userInterfaceStyle": "automatic",
       "googleServicesFile": "./google-services.json"
     },
     "web": {
@@ -90,6 +94,9 @@
           "android": {
             "enableProguardInReleaseBuilds": true,
             "enableShrinkResourcesInReleaseBuilds": true
+          },
+          "ios": {
+            "useFrameworks": "static"
           }
         }
       ],
@@ -102,6 +109,7 @@
       "router": {
         "origin": false
       },
+      "nodeEnv": "development",
       "eas": {
         "projectId": ""
       }

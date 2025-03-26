@@ -12,7 +12,7 @@ import {
 import { Feather, Ionicons } from '@expo/vector-icons'
 import { BottomSheetFlatList, BottomSheetTextInput } from '@gorhom/bottom-sheet'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import FastImage from 'react-native-fast-image'
+import ImageComponent from 'src/components/ImageComponent'
 import {
   deleteStatus,
   getStatusRepliesById,
@@ -26,7 +26,7 @@ import {
   likeCountLabel,
   prettyCount,
 } from 'src/utils'
-import { Separator, Text, View, XStack, YStack } from 'tamagui'
+import { Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
 import AutolinkText from '../common/AutolinkText'
 import ReadMore from '../common/ReadMore'
 import { Switch } from '../form/Switch'
@@ -74,6 +74,7 @@ const CommentItem = ({
   const hasChildren = item.reply_count > 0
   const isLoadingChildren = loadingChildId === item.id
   const childrenForComment = childComments?.[item.id] || []
+  const theme = useTheme()
 
   return (
     <YStack>
@@ -82,7 +83,7 @@ const CommentItem = ({
           <XStack flexShrink={1}>
             <XStack gap="$3" flexGrow={1}>
               <Pressable onPress={() => gotoProfile(item.account.id)}>
-                <FastImage
+                <ImageComponent
                   source={{
                     uri: item.account.avatar,
                     width: level ? 15 : 30,
@@ -93,7 +94,7 @@ const CommentItem = ({
                     height: level ? 35 : 50,
                     borderRadius: 40,
                   }}
-                  resizeMode={FastImage.resizeMode.cover}
+                  resizeMode={'cover'}
                 />
               </Pressable>
 
@@ -110,14 +111,14 @@ const CommentItem = ({
                 </XStack>
 
                 {postType === 'photo' && (
-                  <FastImage
+                  <ImageComponent
                     source={{
                       uri: item?.media_attachments[0].url,
                       width: 200,
                       height: 200,
                     }}
                     style={{ width: 200, height: 200, borderRadius: 10 }}
-                    resizeMode={FastImage.resizeMode.cover}
+                    resizeMode={'cover'}
                   />
                 )}
 
@@ -185,7 +186,11 @@ const CommentItem = ({
                 {item.favourited ? (
                   <Ionicons name="heart" color="red" size={20} />
                 ) : (
-                  <Ionicons name="heart-outline" color="black" size={20} />
+                  <Ionicons
+                    name="heart-outline"
+                    color={theme.color?.val.default.val}
+                    size={20}
+                  />
                 )}
                 {item.favourites_count > 0 && (
                   <Text fontSize="$3">{prettyCount(item.favourites_count)}</Text>
@@ -247,6 +252,7 @@ export default function CommentFeed({
   const [childComments, setChildComments] = useState({})
   const queryClient = useQueryClient()
   const commentRef = useRef<TextInput | null>(null)
+  const theme = useTheme()
 
   const handleReplyPost = () => {
     commentMutation.mutate({
@@ -379,10 +385,10 @@ export default function CommentFeed({
     () => (
       <View flexGrow={1} justifyContent="center" alignItems="center">
         <YStack justifyContent="center" alignItems="center" gap="$3">
-          <Text fontSize="$9" fontWeight="bold">
+          <Text fontSize="$9" fontWeight="bold" color={theme.color?.val.default.val}>
             No comments yet
           </Text>
-          <Text fontSize="$6" color="$gray9">
+          <Text fontSize="$6" color={theme.color?.val.tertiary.val}>
             Start the conversation
           </Text>
         </YStack>
@@ -399,12 +405,43 @@ export default function CommentFeed({
   })
 
   const likeMutation = useMutation({
-    mutationFn: ({ id, type }) =>
-      type === 'like' ? likeStatus({ id }) : unlikeStatus({ id }),
-    onSuccess: () => {
-      setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: ['getStatusRepliesById'] })
-      }, 500)
+    mutationFn: async ({ id, type }) => {
+      const res = type === 'like' ? await likeStatus({ id }) : await unlikeStatus({ id })
+      return { res, id, type }
+    },
+    onSuccess: ({ res, id, type }) => {
+      let isIdChildren = true
+      queryClient.setQueriesData({ queryKey: ['getStatusRepliesById'] }, (old) => {
+        if (!old?.pages) return old
+        const newPages = old.pages.map((page) => {
+          const newData = page.data.map((post: any) => {
+            if (post.id !== id) return post
+            isIdChildren = false
+            post.favourited = res.favourited
+            post.favourites_count = res.favourites_count
+            post.liked_by = res.liked_by
+            return post
+          })
+          return { ...page, data: newData }
+        })
+        return { ...old, pages: newPages }
+      })
+
+      if (isIdChildren) {
+        let oldChildrenData = childComments
+        for (const [key, value] of Object.entries(oldChildrenData)) {
+          const newValue = value.map((childValue) => {
+            if (childValue.id === id) {
+              childValue.favourited = res.favourited
+              childValue.favourites_count = res.favourites_count
+              childValue.liked_by = res.liked_by
+            }
+            return childValue
+          })
+          oldChildrenData[key] = newValue
+        }
+        setChildComments(oldChildrenData)
+      }
     },
   })
 
@@ -479,7 +516,7 @@ export default function CommentFeed({
           ref={
             commentRef as any /* BottomSheetTextInput is forwarding ref to a normal TextInput, but the typing is wrong, so we need to cast to any here */
           }
-          style={styles.input}
+          style={[styles.input, { color: theme.color?.val.default.val }]}
           value={commentText}
           onChangeText={setComment}
           multiline={true}
@@ -494,7 +531,12 @@ export default function CommentFeed({
           alignItems="center"
         >
           <XStack>
-            <Text allowFontScaling={false} fontWeight="bold" fontSize={12} color="$gray9">
+            <Text
+              allowFontScaling={false}
+              fontWeight="bold"
+              fontSize={12}
+              color={theme.color?.val.secondary.val}
+            >
               {commentText.length}
             </Text>
             <Text allowFontScaling={false} fontWeight="bold" fontSize={12} color="$gray9">
@@ -564,7 +606,6 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     padding: 15,
     marginBottom: 0,
-    backgroundColor: '#fff',
   },
   inputGroup: {
     minHeight: 100,

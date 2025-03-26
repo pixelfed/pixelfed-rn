@@ -9,18 +9,22 @@ import Animated, {
   Extrapolate,
   interpolate,
 } from 'react-native-reanimated'
+import { useTheme } from 'tamagui'
 
 type LikeButtonProps = {
   hasLiked: boolean
   handleLike: () => void
+  size?: number
 }
 
 export default function LikeButton(props: LikeButtonProps) {
-  const likeAnimation = useSharedValue(props.hasLiked ? 1 : 0)
+  const { hasLiked, handleLike, size = 32 } = props
+  const likeAnimation = useSharedValue(hasLiked ? 1 : 0)
+  const theme = useTheme()
 
   useEffect(() => {
-    likeAnimation.value = withSpring<number>(props.hasLiked ? 1 : 0)
-  }, [props.hasLiked])
+    likeAnimation.value = withSpring<number>(hasLiked ? 1 : 0)
+  }, [hasLiked])
 
   const outlineStyle = useAnimatedStyle(() => {
     return {
@@ -43,19 +47,23 @@ export default function LikeButton(props: LikeButtonProps) {
     }
   })
 
-  const handleLike = () => {
+  const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-    props.handleLike()
+    handleLike()
   }
 
   return (
-    <Pressable onPress={() => handleLike()}>
+    <Pressable onPress={handlePress}>
       <Animated.View style={[StyleSheet.absoluteFillObject, outlineStyle]}>
-        <MaterialCommunityIcons name={'heart-outline'} size={32} color={'black'} />
+        <MaterialCommunityIcons
+          name={'heart-outline'}
+          size={size}
+          color={theme.color?.val.default.val}
+        />
       </Animated.View>
 
       <Animated.View style={fillStyle}>
-        <MaterialCommunityIcons name={'heart'} size={32} color={'red'} />
+        <MaterialCommunityIcons name={'heart'} size={size} color={'red'} />
       </Animated.View>
     </Pressable>
   )

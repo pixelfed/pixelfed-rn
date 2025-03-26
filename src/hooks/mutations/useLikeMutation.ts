@@ -6,9 +6,16 @@ type onSuccessType = Parameters<typeof useMutation>[0]['onSuccess']
 type LikeMutateType = {
   type: 'like' | 'unlike'
   id: string
+  profileId?: string // Optional profileId
 }
 
-export function useLikeMutation({ onSuccess }: { onSuccess?: onSuccessType } = {}) {
+export function useLikeMutation({
+  onSuccess,
+  profileId,
+}: {
+  onSuccess?: onSuccessType
+  profileId?: string
+} = {}) {
   const queryClient = useQueryClient()
 
   const updateStatus = (status: Status, isLike: boolean) => {
@@ -28,6 +35,23 @@ export function useLikeMutation({ onSuccess }: { onSuccess?: onSuccessType } = {
 
     let updated = false
     const newPages = old.pages.map((page: any) => {
+      // If page is an array (no data property), handle it directly
+      if (Array.isArray(page)) {
+        let pageUpdated = false
+        const newData = page.map((status: Status) => {
+          if (status.id !== statusId) return status
+          if (status.favourited === isLike) return status
+
+          pageUpdated = true
+          return updateStatus(status, isLike)
+        })
+
+        if (!pageUpdated) return page
+        updated = true
+        return newData
+      }
+
+      // If page has a data property, handle that
       if (!Array.isArray(page.data)) return page
 
       let pageUpdated = false
@@ -59,10 +83,16 @@ export function useLikeMutation({ onSuccess }: { onSuccess?: onSuccessType } = {
         ['homeFeed'],
         ['fetchNetworkFeed'],
         ['getSelfBookmarks'],
+        ['getSelfLikes'],
         ['getStatusById', newLike.id],
       ]
 
-      // Cancel queries in parallel
+      const userProfileId = newLike.profileId || profileId
+      if (userProfileId) {
+        queryKeys.push(['statusesFeedById', userProfileId])
+      }
+
+      // Cancel all relevant queries to prevent race conditions
       await Promise.all(
         queryKeys.map((key) => queryClient.cancelQueries({ queryKey: key }))
       )
@@ -70,14 +100,19 @@ export function useLikeMutation({ onSuccess }: { onSuccess?: onSuccessType } = {
       const isLike = newLike.type === 'like'
       const previousState: Record<string, any> = {}
 
-      // Snapshot and update in a single pass
+      // Snapshot the current state and update optimistically
       queryKeys.forEach((key) => {
         const queryKey = key.join('/')
         const currentData = queryClient.getQueryData(key)
         previousState[queryKey] = currentData
 
         if (key.length === 1) {
-          // Feed update
+          const updatedFeed = updateFeed(currentData, newLike.id, isLike)
+          if (updatedFeed !== currentData) {
+            queryClient.setQueryData(key, updatedFeed)
+          }
+        } else if (key[0] === 'statusesFeedById' && key[1] === userProfileId) {
+          // Special handling for user statuses feed (infinite query)
           const updatedFeed = updateFeed(currentData, newLike.id, isLike)
           if (updatedFeed !== currentData) {
             queryClient.setQueryData(key, updatedFeed)
@@ -104,17 +139,27 @@ export function useLikeMutation({ onSuccess }: { onSuccess?: onSuccessType } = {
     },
 
     onSuccess: (data, variables) => {
-      // Update all instances of this status with server data
       const queryKeys = [
         ['homeFeed'],
         ['fetchNetworkFeed'],
         ['getSelfBookmarks'],
+        ['getSelfLikes'],
         ['getStatusById', variables.id],
       ]
+
+      const userProfileId = variables.profileId || profileId
+      if (userProfileId) {
+        queryKeys.push(['statusesFeedById', userProfileId])
+      }
 
       queryKeys.forEach((key) => {
         if (key.length === 1) {
           queryClient.setQueriesData({ queryKey: key }, (old) => {
+            if (!old?.pages) return old
+            return updateFeed(old, data.id, data.favourited)
+          })
+        } else if (key[0] === 'statusesFeedById' && key[1] === userProfileId) {
+          queryClient.setQueryData(key, (old) => {
             if (!old?.pages) return old
             return updateFeed(old, data.id, data.favourited)
           })
@@ -129,9 +174,13 @@ export function useLikeMutation({ onSuccess }: { onSuccess?: onSuccessType } = {
     },
   })
 
-  const handleLike = async (id: string, liked: boolean) => {
+  const handleLike = async (id: string, liked: boolean, statusProfileId?: string) => {
     try {
-      await mutate({ type: liked ? 'like' : 'unlike', id })
+      await mutate({
+        type: liked ? 'like' : 'unlike',
+        id,
+        profileId: statusProfileId !== undefined ? statusProfileId : profileId,
+      })
     } catch (error) {
       console.error('Error in handleLike:', error)
     }

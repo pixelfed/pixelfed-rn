@@ -1,12 +1,24 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
-import { useLayoutEffect, useState } from 'react'
-import { ActivityIndicator, Alert, type AlertButton, Pressable } from 'react-native'
-import { Bubble, GiftedChat, Send } from 'react-native-gifted-chat'
+import { Link, Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import {
+  ActivityIndicator,
+  Alert,
+  type AlertButton,
+  Pressable,
+  useWindowDimensions,
+} from 'react-native'
+import {
+  Bubble,
+  Composer,
+  GiftedChat,
+  InputToolbar,
+  Send,
+} from 'react-native-gifted-chat'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { deleteChatMessage, fetchChatThread, sendChatMessage } from 'src/lib/api'
 import { _timeAgo, enforceLen } from 'src/utils'
-import { View } from 'tamagui'
+import { Text, View, YStack, useTheme } from 'tamagui'
 
 import { Feather } from '@expo/vector-icons'
 import { useUserCache } from 'src/state/AuthProvider'
@@ -14,11 +26,18 @@ import { useUserCache } from 'src/state/AuthProvider'
 import type { BubbleProps, IMessage } from 'react-native-gifted-chat'
 
 function renderBubble<TMessage extends IMessage>(props: BubbleProps<TMessage>) {
+  const theme = useTheme()
   return (
     <Bubble
       {...props}
-      textStyle={{ right: { color: 'white' } }}
-      wrapperStyle={{ right: { backgroundColor: '#0081f1' } }}
+      textStyle={{
+        left: { color: theme.color?.val.default.val },
+        right: { color: 'white' },
+      }}
+      wrapperStyle={{
+        left: { backgroundColor: theme.background?.val.tertiary.val },
+        right: { backgroundColor: '#0081f1' },
+      }}
     />
   )
 }
@@ -28,13 +47,43 @@ export default function Page() {
   const router = useRouter()
   const queryClient = useQueryClient()
   const navigation = useNavigation()
-  useLayoutEffect(() => {
-    navigation.setOptions({ title: 'Conversation', headerBackTitle: 'Back' })
-  }, [navigation])
+  const [recipientUsername, setUsername] = useState('')
   const [messages, setMessages] = useState([])
   const [isReloading, setReloading] = useState(false)
   const [isTyping, setTyping] = useState(false)
   const selfUser = useUserCache()
+  const { width } = useWindowDimensions()
+  const theme = useTheme()
+
+  const formattedUsername = useCallback(() => {
+    if (!recipientUsername || !recipientUsername.length) {
+      return
+    }
+    if (recipientUsername.startsWith('@')) {
+      return recipientUsername
+    }
+
+    return `@${recipientUsername}`
+  }, [recipientUsername])
+
+  const HeaderTitle = () => (
+    <YStack w="100%" justifyContent="center" alignItems="center">
+      <Text fontSize="$6" fontWeight="bold" color={theme.color?.val.default.val}>
+        Direct Message
+      </Text>
+      <Link href={`/profile/${id}`} asChild>
+        <Text fontSize="$4" color={theme.color?.val.tertiary.val}>
+          {enforceLen(formattedUsername(), 40, true)}
+        </Text>
+      </Link>
+    </YStack>
+  )
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => <HeaderTitle />,
+      headerBackTitle: 'Back',
+    })
+  }, [navigation, recipientUsername])
 
   const onSend = (messages) => {
     sendMutation.mutate(messages)
@@ -198,6 +247,7 @@ export default function Page() {
         text: 'Direct conversation with ' + data.username,
       })
 
+      setUsername(data.username)
       setMessages(msgs)
       setReloading(false)
       return msgs
@@ -213,17 +263,23 @@ export default function Page() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['bottom']}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.background?.val.default.val }}
+      edges={['bottom']}
+    >
       <Stack.Screen
         options={{
-          title: 'Conversation',
           headerBackTitle: 'Back',
           headerRight: () =>
             isReloading ? (
-              <ActivityIndicator />
+              <ActivityIndicator color={theme.color?.val.default.val} />
             ) : (
               <Pressable onPress={() => reloadChat()}>
-                <Feather name="refresh-cw" size={25} />
+                <Feather
+                  name="refresh-cw"
+                  size={25}
+                  color={theme.color?.val.default.val}
+                />
               </Pressable>
             ),
         }}
@@ -233,7 +289,10 @@ export default function Page() {
         renderBubble={renderBubble}
         infiniteScroll
         scrollToBottom
-        messagesContainerStyle={{ backgroundColor: 'white' }}
+        messagesContainerStyle={{
+          backgroundColor: theme.background?.val.default.val,
+          paddingBottom: 20,
+        }}
         user={{
           _id: selfUser.id,
           name: selfUser.username,
@@ -241,12 +300,56 @@ export default function Page() {
         }}
         onSend={(messages) => onSend(messages)}
         maxInputLength={500}
+        lightboxProps={{
+          activeProps: {
+            style: {
+              flex: 1,
+              resizeMode: 'contain',
+              width,
+            },
+          },
+        }}
+        textInputStyle={{
+          backgroundColor: theme.background.val.tertiary.val,
+          color: theme.color.val.default.val,
+        }}
+        renderComposer={(props) => (
+          <Composer
+            {...props}
+            textInputStyle={{
+              backgroundColor: theme.background.val.tertiary.val,
+              color: theme.color.val.default.val,
+              borderColor: theme.background.val.tertiary.val,
+              borderWidth: 1,
+            }}
+            composerHeight={50}
+            containerStyle={{
+              backgroundColor: theme.background.val.tertiary.val,
+              borderTopWidth: 0,
+              borderTopColor: 'transparent',
+            }}
+          />
+        )}
+        renderInputToolbar={(props) => (
+          <InputToolbar
+            {...props}
+            containerStyle={{
+              backgroundColor: theme.background.val.tertiary.val,
+              borderTopWidth: 0,
+              marginHorizontal: 10,
+              borderRadius: 10,
+              borderTopColor: 'transparent',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          />
+        )}
         isTyping={isTyping}
         onLongPress={(ctx, message) => onLongPress(ctx, message)}
         renderSend={(props) => {
           return (
             <Send {...props}>
-              <View style={{ marginRight: 10, marginBottom: 5, alignItems: 'center' }}>
+              <View style={{ marginRight: 10, flex: 1, alignItems: 'center' }}>
                 <Feather name="send" size={30} color="#0081f1" />
               </View>
             </Send>

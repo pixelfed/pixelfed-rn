@@ -1,6 +1,6 @@
 import Feather from '@expo/vector-icons/Feather'
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
-import { DefaultTheme, ThemeProvider } from '@react-navigation/native'
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
 import { ToastProvider, ToastViewport } from '@tamagui/toast'
 import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-query'
 import { useFonts } from 'expo-font'
@@ -8,14 +8,16 @@ import * as Notifications from 'expo-notifications'
 import { Stack, useRouter } from 'expo-router'
 import { ShareIntentProvider } from 'expo-share-intent'
 import * as SplashScreen from 'expo-splash-screen'
-import React, { useEffect } from 'react'
-import { type AppStateStatus, LogBox, Platform } from 'react-native'
+import { StatusBar } from 'expo-status-bar'
+import React, { useEffect, useState } from 'react'
+import { type AppStateStatus, LogBox, Platform, useColorScheme } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import GlobalToast from 'src/components/notifications/GlobalToast'
 import { useAppState } from 'src/hooks/useAppState'
 import { useOnlineManager } from 'src/hooks/useOnlineManager'
 import { VideoProvider } from 'src/hooks/useVideoProvider'
-import { TamaguiProvider } from 'tamagui'
+import { Storage } from 'src/state/cache'
+import { TamaguiProvider, Theme } from 'tamagui'
 import { config } from '../../tamagui.config'
 import AuthProvider from '../state/AuthProvider'
 
@@ -46,9 +48,69 @@ const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 2 } },
 })
 
+// Theme configurations
+const customLightTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+  },
+}
+
+const customDarkTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+  },
+}
+
+const slateTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: '#2F3542',
+    card: '#3A4050',
+    text: '#FFFFFF',
+    border: '#4B5563',
+  },
+}
+
+const hotPinkTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#EC4899',
+    background: '#FFFFFF',
+    card: '#FDF2F8',
+    text: '#831843',
+    border: '#F9A8D4',
+  },
+}
+
+const statusBarMap = {
+  light: 'dark',
+  dark: 'light',
+  slateDark: 'light',
+  hotPink: 'dark',
+}
+
+const navigationThemeMap = {
+  auto: customLightTheme,
+  light: customLightTheme,
+  dark: customDarkTheme,
+  slateDark: slateTheme,
+  hotPink: hotPinkTheme,
+}
+
+const statusBarBackgroundColorMap = {
+  auto: '#fff',
+  light: '#fff',
+  dark: '#000',
+  slateDark: '#2F3542',
+  hotPink: '#FFFFFF',
+}
+
 function RootLayout() {
   useOnlineManager()
-
   useAppState(onAppStateChange)
 
   const [loaded, error] = useFonts({
@@ -89,35 +151,93 @@ export default function RootLayoutWithContext() {
 }
 
 function RootLayoutNav() {
+  const deviceTheme = useColorScheme()
+  const [currentTheme, setCurrentTheme] = useState(deviceTheme || 'light')
+  const [statusBarStyle, setStatusBarStyle] = useState(
+    statusBarMap[currentTheme] || 'auto'
+  )
+
+  // Load the theme from storage on initial render
+  useEffect(() => {
+    const storedTheme = Storage.getString('ui.theme')
+    if (storedTheme && ['light', 'dark', 'slateDark', 'hotPink'].includes(storedTheme)) {
+      setCurrentTheme(storedTheme)
+      setStatusBarStyle(statusBarMap[storedTheme] || 'auto')
+    }
+  }, [])
+
+  // Listen for MMKV storage changes to update the theme
+  useEffect(() => {
+    // Set up a listener for MMKV storage changes
+    const listener = Storage.addOnValueChangedListener((key) => {
+      if (key === 'ui.theme') {
+        const newTheme = Storage.getString('ui.theme')
+        if (newTheme) {
+          setCurrentTheme(newTheme)
+          setStatusBarStyle(statusBarMap[newTheme] || 'auto')
+        }
+      }
+    })
+
+    return () => {
+      // Clean up the listener
+      listener.remove()
+    }
+  }, [])
+
+  // Select the navigation theme based on current theme
+  const navigationTheme =
+    navigationThemeMap[currentTheme] ||
+    (currentTheme === 'dark' ? customDarkTheme : customLightTheme)
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthProvider>
         <QueryClientProvider client={queryClient}>
-          <TamaguiProvider config={config} defaultTheme={'light'}>
-            <ThemeProvider value={DefaultTheme}>
-              <ToastProvider native={false}>
-                <VideoProvider>
-                  <BottomSheetModalProvider>
-                    <ToastViewport padding="$6" bottom={0} left={0} right={0} />
-                    <GlobalToast />
-                    <Stack>
-                      <Stack.Screen
-                        name="(auth)/(tabs)"
-                        options={{ headerShown: false }}
+          <TamaguiProvider config={config} defaultTheme={currentTheme}>
+            <Theme name={currentTheme}>
+              <ThemeProvider value={navigationTheme}>
+                <ToastProvider native={false}>
+                  <VideoProvider>
+                    <BottomSheetModalProvider>
+                      <StatusBar
+                        style={statusBarStyle}
+                        backgroundColor={statusBarBackgroundColorMap[currentTheme]}
+                        animated
                       />
-                      <Stack.Screen
-                        name="(public)/login"
-                        options={{ headerShown: false }}
-                      />
-                      <Stack.Screen
-                        name="(public)/verifyEmail"
-                        options={{ headerShown: false }}
-                      />
-                    </Stack>
-                  </BottomSheetModalProvider>
-                </VideoProvider>
-              </ToastProvider>
-            </ThemeProvider>
+                      <ToastViewport padding="$6" bottom={0} left={0} right={0} />
+                      <GlobalToast />
+                      <Stack>
+                        <Stack.Screen
+                          name="(auth)/(tabs)"
+                          options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                          name="(public)/login"
+                          options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                          name="(public)/handleLogin"
+                          options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                          name="(public)/handleSignup"
+                          options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                          name="(public)/verifyEmail"
+                          options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                          name="(public)/verificationCode"
+                          options={{ headerShown: false }}
+                        />
+                      </Stack>
+                    </BottomSheetModalProvider>
+                  </VideoProvider>
+                </ToastProvider>
+              </ThemeProvider>
+            </Theme>
           </TamaguiProvider>
         </QueryClientProvider>
       </AuthProvider>

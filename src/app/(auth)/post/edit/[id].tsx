@@ -8,59 +8,65 @@ import {
   Platform,
   StyleSheet,
 } from 'react-native'
-import FastImage from 'react-native-fast-image'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import ImageComponent from 'src/components/ImageComponent'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { Switch } from 'src/components/form/Switch'
 import { editPostMedia, getInstanceV1, getStatusById, putEditPost } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
 import { _timeAgo } from 'src/utils'
-import { ScrollView, Text, TextArea, View, XStack, YStack } from 'tamagui'
+import { ScrollView, Text, TextArea, View, XStack, YStack, useTheme } from 'tamagui'
 
 const SCREEN_HEIGHT = Dimensions.get('screen').height
 
-const RenderItem = React.memo(({ item, onUpdateMediaAlt }) => (
-  <XStack m="$3" gap="$3">
-    {item.type === 'image' ? (
-      <FastImage
-        source={{ uri: item.url }}
-        style={{ width: 100, height: 160, borderRadius: 5 }}
-        resizeMode={FastImage.resizeMode.cover}
-      />
-    ) : (
-      <View w={100} h={160} bg="$gray8"></View>
-    )}
-    <YStack flexGrow={1} width="70%" gap="$2">
-      <Text fontSize="$3" allowFontScaling={false} color="$gray9">
-        Media Alt Text
-      </Text>
-
-      <TextArea
-        size="$4"
-        fontSize={Platform.OS === 'ios' ? '$7' : '$5'}
-        borderWidth={1}
-        flexGrow={1}
-        defaultValue={item.description}
-        onChangeText={(text) => onUpdateMediaAlt(item.id, text)}
-        maxLength={1000}
-        backgroundColor={'white'}
-        numberOfLines={4}
-        rows={4}
-        multiline={true}
-        textAlignVertical="top"
-        placeholder="Add descriptive alt text to describe your media here..."
-        placeholderTextColor={'#ccc'}
-      />
-
-      <XStack justifyContent="flex-end" alignItems="center">
-        <Text color="$gray9">
-          {item?.description ? item?.description?.length : '0'}/1000
+const RenderItem = React.memo(({ item, onUpdateMediaAlt }) => {
+  const theme = useTheme()
+  return (
+    <XStack m="$3" gap="$3">
+      {item.type === 'image' ? (
+        <ImageComponent
+          placeholder={{ blurhash: item?.blurhash || '' }}
+          source={{ uri: item.url }}
+          style={{ width: 100, height: 160, borderRadius: 5 }}
+          contentFit={'cover'}
+        />
+      ) : (
+        <View w={100} h={160} bg="$gray8"></View>
+      )}
+      <YStack flexGrow={1} width="70%" gap="$2">
+        <Text fontSize="$3" allowFontScaling={false} color={theme.color?.val.default.val}>
+          Media Alt Text
         </Text>
-      </XStack>
-    </YStack>
-  </XStack>
-))
+
+        <TextArea
+          size="$4"
+          fontSize={Platform.OS === 'ios' ? '$7' : '$5'}
+          borderWidth={1}
+          borderColor={theme.borderColor?.val.default.val}
+          color={theme.color?.val.default.val}
+          flexGrow={1}
+          defaultValue={item.description}
+          onChangeText={(text) => onUpdateMediaAlt(item.id, text)}
+          maxLength={1000}
+          backgroundColor={theme.background?.val.tertiary.val}
+          numberOfLines={4}
+          rows={4}
+          multiline={true}
+          textAlignVertical="top"
+          placeholder="Add descriptive alt text to describe your media here..."
+          placeholderTextColor={'#ccc'}
+        />
+
+        <XStack justifyContent="flex-end" alignItems="center">
+          <Text color={theme.color?.val.tertiary.val}>
+            {item?.description ? item?.description?.length : '0'}/1000
+          </Text>
+        </XStack>
+      </YStack>
+    </XStack>
+  )
+})
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -71,6 +77,7 @@ export default function Page() {
   const [spoilerText, setSpoiler] = useState('')
   const [showSpoiler, setShowSpoiler] = useState(false)
   const [isSaving, setSaving] = useState(false)
+  const theme = useTheme()
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Edit Post', headerBackTitle: 'Back' })
@@ -81,9 +88,14 @@ export default function Page() {
   const HeaderRight = () => (
     <PressableOpacity onPress={() => _onUpdate()}>
       {isSaving ? (
-        <ActivityIndicator />
+        <ActivityIndicator color={theme.color?.val.default.val} />
       ) : (
-        <Text fontSize="$5" allowFontScaling={false} fontWeight="bold" color="$blue9">
+        <Text
+          fontSize="$5"
+          allowFontScaling={false}
+          fontWeight="bold"
+          color={theme.colorHover?.val.active.val}
+        >
           Save
         </Text>
       )}
@@ -156,13 +168,13 @@ export default function Page() {
   })
 
   if (isPending || serverConfigPending) {
-    return <ActivityIndicator />
+    return <ActivityIndicator color={theme.color?.val.default.val} />
   }
 
   if (isPending || isLoading) {
     return (
       <View flexGrow={1} mt="$5">
-        <ActivityIndicator color={'#000'} />
+        <ActivityIndicator color={theme.color?.val.default.val} />
       </View>
     )
   }
@@ -172,7 +184,10 @@ export default function Page() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={['bottom']}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.background?.val.default.val }}
+      edges={['bottom']}
+    >
       <Stack.Screen
         options={{
           title: 'Edit Post',
@@ -185,12 +200,16 @@ export default function Page() {
           <XStack gap="$3" justifyContent="space-between" alignItems="center">
             <XStack gap="$3" alignItems="center">
               <UserAvatar url={user?.avatar} size="$3" />
-              <Text fontSize={Platform.OS === 'ios' ? '$7' : '$5'} fontWeight="bold">
+              <Text
+                fontSize={Platform.OS === 'ios' ? '$7' : '$5'}
+                fontWeight="bold"
+                color={theme.color?.val.default.val}
+              >
                 {user?.username}
               </Text>
             </XStack>
             <XStack justifyContent="flex-end" alignItems="center">
-              <Text color="$gray9">
+              <Text color={theme.color?.val.tertiary.val}>
                 {caption ? caption?.length : '0'}/
                 {serverConfig?.configuration.statuses.max_characters}
               </Text>
@@ -201,10 +220,12 @@ export default function Page() {
             size="$4"
             fontSize={Platform.OS === 'ios' ? '$7' : '$5'}
             borderWidth={1}
+            borderColor={theme.borderColor?.val.default.val}
+            color={theme.color?.val.default.val}
             defaultValue={caption}
             onChangeText={setCaption}
             maxLength={serverConfig?.configuration.statuses.max_characters}
-            backgroundColor={'white'}
+            backgroundColor={theme.background?.val.tertiary.val}
             numberOfLines={4}
             textAlignVertical="top"
             rows={4}
@@ -216,15 +237,19 @@ export default function Page() {
           <XStack
             py="$3"
             px="$4"
-            bg="white"
+            bg={theme.background?.val.secondary.val}
             borderRadius="$3"
             justifyContent="space-between"
           >
             <YStack maxWidth="70%" gap="$2">
-              <Text fontSize="$4" fontWeight={'bold'}>
+              <Text
+                fontSize="$4"
+                fontWeight={'bold'}
+                color={theme.color?.val.default.val}
+              >
                 Contains Sensitive Media
               </Text>
-              <Text fontSize="$3" color="$gray9">
+              <Text fontSize="$3" color={theme.color?.val.tertiary.val}>
                 Applies a sensitive content warning.
               </Text>
             </YStack>

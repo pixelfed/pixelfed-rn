@@ -6,11 +6,12 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import ReadMore from 'src/components/common/ReadMore'
 import { getStatusHistory } from 'src/lib/api'
 import { _timeAgo, htmlToTextWithLineBreaks } from 'src/utils'
-import { Separator, Text, View, XStack, YStack } from 'tamagui'
+import { Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const navigation = useNavigation()
+  const theme = useTheme()
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Post History', headerBackTitle: 'Back' })
@@ -70,6 +71,7 @@ export default function Page() {
             flexWrap="wrap"
             fontSize="$3"
             allowFontScaling={false}
+            color={theme.color?.val.default.val}
             style={[
               part.type === 'added' && styles.added,
               part.type === 'removed' && styles.removed,
@@ -86,11 +88,15 @@ export default function Page() {
     ({ item, index }) => {
       let prevData = index > 0 ? data[index - 1]?.content : null
       return (
-        <View p="$5" bg="white">
+        <View p="$5" bg={theme.background?.val.tertiary.val}>
           <YStack gap="$2">
             <XStack gap="$3" flexWrap="wrap">
-              <Text fontWeight="bold">Version #{index + 1}</Text>
-              <Text>Post edited {_timeAgo(item?.created_at)}</Text>
+              <Text fontWeight="bold" color={theme.color?.val.tertiary.val}>
+                Version #{index + 1}
+              </Text>
+              <Text color={theme.color?.val.tertiary.val}>
+                Post edited {_timeAgo(item?.created_at)}
+              </Text>
             </XStack>
             {index > 0 ? (
               <ReadMore numberOfLines={3}>
@@ -101,7 +107,11 @@ export default function Page() {
               </ReadMore>
             ) : (
               <ReadMore numberOfLines={3}>
-                <Text fontSize="$3" allowFontScaling={false}>
+                <Text
+                  fontSize="$3"
+                  allowFontScaling={false}
+                  color={theme.color?.val.default.val}
+                >
                   {htmlToTextWithLineBreaks(item.content)}
                 </Text>
               </ReadMore>
@@ -115,7 +125,7 @@ export default function Page() {
   if (isPending) {
     return (
       <View flexGrow={1} mt="$5">
-        <ActivityIndicator color={'#000'} />
+        <ActivityIndicator color={theme.color?.val.default.val} />
       </View>
     )
   }

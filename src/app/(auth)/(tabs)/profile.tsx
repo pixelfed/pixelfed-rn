@@ -3,16 +3,17 @@ import Feather from '@expo/vector-icons/Feather'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Link } from 'expo-router'
 import { ActivityIndicator, Alert, Dimensions, FlatList, Share } from 'react-native'
-import { Blurhash } from 'react-native-blurhash'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import ImageComponent from 'src/components/ImageComponent'
 import { getAccountStatusesById } from 'src/lib/api'
 import { useQuerySelfProfile } from 'src/state/AuthProvider'
-import { Image, View } from 'tamagui'
+import { Text, View, YStack, useTheme } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileScreen() {
   const { user, isFetching } = useQuerySelfProfile()
+  const theme = useTheme()
 
   const userId = user?.id
 
@@ -24,6 +25,49 @@ export default function ProfileScreen() {
     } catch (error: any) {
       Alert.alert(error?.message || 'onshare error: error message missing')
     }
+  }
+
+  const EmptyFeed = () => {
+    if (isFetching) {
+      return (
+        <YStack flex={1} justifyContent="center" alignItems="center" gap="$5">
+          <ActivityIndicator />
+        </YStack>
+      )
+    }
+
+    return (
+      <View
+        flexGrow={1}
+        bg={theme.background?.val.default.val}
+        borderTopWidth={1}
+        borderColor={theme.borderColor?.val.default.val}
+        alignItems="center"
+        justifyContent="center"
+      >
+        <YStack
+          h="100%"
+          flexGrow={1}
+          justifyContent="center"
+          alignItems="center"
+          gap="$5"
+        >
+          <View flexGrow={1} alignItems="center" justifyContent="center" gap="$4">
+            <View
+              p="$6"
+              borderWidth={2}
+              borderColor={theme.borderColor?.val.default}
+              borderRadius={100}
+            >
+              <Feather name="camera" size={50} color={theme.color?.val.tertiary.val} />
+            </View>
+            <Text fontSize="$9" color={theme.color?.val.tertiary.val}>
+              No Posts Yet
+            </Text>
+          </View>
+        </YStack>
+      </View>
+    )
   }
 
   const {
@@ -56,39 +100,33 @@ export default function ProfileScreen() {
       if (lastPage.length === 0) {
         return undefined
       }
-      let lowestId = lastPage.reduce((min, obj) => {
-        if (obj.id < min) {
-          return obj.id
-        }
-        return min
+
+      const lowestId = lastPage.reduce((min, post) => {
+        return BigInt(post.id) < BigInt(min) ? post.id : min
       }, lastPage[0].id)
-      return lowestId
+
+      return String(BigInt(lowestId) - 1n)
     },
     enabled: !!userId,
   })
 
   const RenderItem = ({ item }) =>
     item && item.media_attachments[0].url ? (
-      <Link href={`/post/${item.id}`}>
-        <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
-          {item.media_attachments[0]?.blurhash ? (
-            <Blurhash
-              blurhash={item.media_attachments[0]?.blurhash}
-              style={{
-                flex: 1,
-                position: 'absolute',
-                width: SCREEN_WIDTH / 3 - 2,
-                height: SCREEN_WIDTH / 3 - 2,
-              }}
-            />
-          ) : null}
-          <Image
+      <Link key={item?.id} href={`/post/${item.id}`}>
+        <View
+          flexShrink={1}
+          style={{ borderWidth: 1, borderColor: theme.borderColor?.val.default.val }}
+        >
+          <ImageComponent
+            placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
             source={{
               uri: item.media_attachments[0].url,
+            }}
+            style={{
               width: SCREEN_WIDTH / 3 - 2,
               height: SCREEN_WIDTH / 3 - 2,
             }}
-            resizeMode="cover"
+            containFit="cover"
           />
           {item.pf_type === 'photo:album' ? (
             <View position="absolute" right={5} top={5}>
@@ -102,7 +140,7 @@ export default function ProfileScreen() {
   if (isFetching) {
     return (
       <View flexGrow={1} justifyContent="center" alignItems="center">
-        <ActivityIndicator color={'#000'} />
+        <ActivityIndicator color={theme.color?.val.default.val} />
       </View>
     )
   }
@@ -111,7 +149,7 @@ export default function ProfileScreen() {
     <SafeAreaView edges={['top']} flex={1}>
       {isFetching && (
         <View flexGrow={1}>
-          <ActivityIndicator color={'#000'} />
+          <ActivityIndicator color={theme.color?.val.default.val} />
         </View>
       )}
 
@@ -127,11 +165,12 @@ export default function ProfileScreen() {
         onEndReached={() => {
           if (!isFetching && hasNextPage) fetchNextPage()
         }}
+        ListEmptyComponent={EmptyFeed}
         onEndReachedThreshold={0.5}
         ListFooterComponent={() =>
           isFetchingNextPage ? (
             <View p="$5">
-              <ActivityIndicator />
+              <ActivityIndicator color={theme.color?.val.default.val} />
             </View>
           ) : null
         }

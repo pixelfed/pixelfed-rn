@@ -4,6 +4,8 @@ import {
   type BottomSheetModal,
   BottomSheetScrollView,
 } from '@gorhom/bottom-sheet'
+import * as Haptics from 'expo-haptics'
+import { Image } from 'expo-image'
 import { Link, router } from 'expo-router'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import {
@@ -15,12 +17,16 @@ import {
   useWindowDimensions,
 } from 'react-native'
 import { Blurhash } from 'react-native-blurhash'
-import FastImage from 'react-native-fast-image'
 import {
   Gesture,
   GestureDetector,
   PinchGestureHandler,
   State,
+} from 'react-native-gesture-handler'
+import type {
+  GestureEvent,
+  HandlerStateChangeEvent,
+  PinchGestureHandlerEventPayload,
 } from 'react-native-gesture-handler'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import Animated, {
@@ -31,26 +37,9 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated'
 import Carousel, { Pagination } from 'react-native-reanimated-carousel'
+import ImageComponent from 'src/components/ImageComponent'
 import AutolinkText from 'src/components/common/AutolinkText'
 import LikeButton from 'src/components/common/LikeButton'
-import { Storage } from 'src/state/cache'
-import {
-  _timeAgo,
-  enforceLen,
-  formatTimestamp,
-  htmlToTextWithLineBreaks,
-  openBrowserAsync,
-  prettyCount,
-} from 'src/utils'
-import { Button, Separator, Text, View, XStack, YStack, ZStack } from 'tamagui'
-import ReadMore from '../common/ReadMore'
-import VideoPlayer from './VideoPlayer'
-
-import type {
-  GestureEvent,
-  HandlerStateChangeEvent,
-  PinchGestureHandlerEventPayload,
-} from 'react-native-gesture-handler'
 import { useBookmarkMutation } from 'src/hooks/mutations/useBookmarkMutation'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 import type {
@@ -62,11 +51,34 @@ import type {
   Timestamp,
   Visibility,
 } from 'src/lib/api-types'
-import { PixelfedBottomSheetModal } from '../BottomSheets'
+import { Storage } from 'src/state/cache'
+import {
+  _timeAgo,
+  enforceLen,
+  formatTimestamp,
+  htmlToTextWithLineBreaks,
+  openBrowserAsync,
+  prettyCount,
+} from 'src/utils'
+import {
+  Button,
+  Circle,
+  Separator,
+  Text,
+  View,
+  XStack,
+  YStack,
+  ZStack,
+  useTheme,
+  useThemeName,
+} from 'tamagui'
+import { PixelfedBottomSheetModal } from '../common/BottomSheets'
+import ReadMore from '../common/ReadMore'
+import VideoPlayer from './VideoPlayer'
 
-const AnimatedFastImage = Animated.createAnimatedComponent(FastImage)
+const AnimatedFastImage = Animated.createAnimatedComponent(Image)
 
-const ZoomableImage = ({ source, style }) => {
+const ZoomableImage = ({ source, placeholder, style }) => {
   const scale = useSharedValue(1)
   const savedScale = useSharedValue(1)
   const translateX = useSharedValue(0)
@@ -121,8 +133,9 @@ const ZoomableImage = ({ source, style }) => {
       <Animated.View>
         <AnimatedFastImage
           source={source}
+          placeholder={placeholder}
           style={[style, animatedStyle]}
-          resizeMode={FastImage.resizeMode.contain}
+          contentFit={'cover'}
         />
       </Animated.View>
     </PinchGestureHandler>
@@ -131,17 +144,44 @@ const ZoomableImage = ({ source, style }) => {
 
 const AVATAR_WIDTH = 45
 
-const Section = React.memo(({ children }: React.PropsWithChildren) => (
-  <View px="$3" bg="white" borderTopWidth={1} borderBottomWidth={1} borderColor="$gray7">
-    {children}
-  </View>
-))
+const Section = React.memo(({ children }: React.PropsWithChildren) => {
+  const theme = useTheme()
+  return (
+    <View
+      px="$3"
+      backgroundColor={theme.background?.val.default.val}
+      borderTopWidth={1}
+      borderBottomWidth={1}
+      borderColor={theme.borderColor.val.default.val}
+    >
+      {children}
+    </View>
+  )
+})
 
-const BorderlessSection = React.memo(({ children }: React.PropsWithChildren) => (
-  <View px="$3" bg="white">
-    {children}
-  </View>
-))
+const SectionTopBorder = React.memo(({ children }: React.PropsWithChildren) => {
+  const theme = useTheme()
+  return (
+    <View
+      px="$3"
+      backgroundColor={theme.background?.val.default.val}
+      borderTopWidth={1}
+      borderBottomWidth={0}
+      borderColor={theme.borderColor.val.default.val}
+    >
+      {children}
+    </View>
+  )
+})
+
+const BorderlessSection = React.memo(({ children }: React.PropsWithChildren) => {
+  const theme = useTheme()
+  return (
+    <View px="$3" backgroundColor={theme.background?.val.default.val}>
+      {children}
+    </View>
+  )
+})
 
 interface PostHeaderProps {
   avatar: string
@@ -152,54 +192,68 @@ interface PostHeaderProps {
 }
 
 const PostHeader = React.memo(
-  ({ avatar, username, displayName, userId, onOpenMenu }: PostHeaderProps) => (
-    <Section>
-      <XStack
-        flexGrow={1}
-        justifyContent="space-between"
-        alignSelf="stretch"
-        alignItems="center"
-        py="$2"
-      >
-        <View flexGrow={1}>
-          <Link href={`/profile/${userId}`} asChild>
-            <Pressable>
-              <XStack gap="$3" alignItems="center" flexGrow={1}>
-                <FastImage
-                  source={{ uri: avatar }}
-                  style={{
-                    width: AVATAR_WIDTH,
-                    height: AVATAR_WIDTH,
-                    borderRadius: AVATAR_WIDTH,
-                    borderWidth: 1,
-                    borderColor: '#eee',
-                  }}
-                />
-                <YStack gap={3}>
-                  <XStack gap="$2" alignItems="center">
-                    <Text fontWeight="bold" fontSize="$5">
-                      {enforceLen(username, 20, true)}
-                    </Text>
-                  </XStack>
-                  <Text fontWeight="300" fontSize="$3" color="$gray9">
-                    {enforceLen(displayName, 25, true)}
-                  </Text>
-                </YStack>
-              </XStack>
-            </Pressable>
-          </Link>
-        </View>
-        <Pressable onPress={() => onOpenMenu()}>
-          <View px="$3">
-            <Feather
-              name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
-              size={25}
-            />
+  ({ avatar, username, displayName, userId, onOpenMenu }: PostHeaderProps) => {
+    const theme = useTheme()
+    return (
+      <Section>
+        <XStack
+          flexGrow={1}
+          justifyContent="space-between"
+          alignSelf="stretch"
+          alignItems="center"
+          py="$2"
+        >
+          <View flexGrow={1}>
+            <Link href={`/profile/${userId}`} asChild>
+              <Pressable>
+                <XStack gap="$3" alignItems="center" flexGrow={1}>
+                  <ImageComponent
+                    source={{ uri: avatar }}
+                    style={{
+                      width: AVATAR_WIDTH,
+                      height: AVATAR_WIDTH,
+                      borderRadius: AVATAR_WIDTH,
+                      borderWidth: 1,
+                      borderColor: theme.borderColor.val.default.val,
+                    }}
+                  />
+                  <YStack gap={3}>
+                    <XStack gap="$2" alignItems="center">
+                      <Text
+                        fontWeight="bold"
+                        fontSize="$5"
+                        color={theme.color.val.default.val}
+                      >
+                        {enforceLen(username, 20, true)}
+                      </Text>
+                    </XStack>
+                    {displayName && displayName.length && (
+                      <Text
+                        fontWeight="300"
+                        fontSize="$3"
+                        color={theme.color.val.secondary.val}
+                      >
+                        {enforceLen(displayName, 25, true)}
+                      </Text>
+                    )}
+                  </YStack>
+                </XStack>
+              </Pressable>
+            </Link>
           </View>
-        </Pressable>
-      </XStack>
-    </Section>
-  )
+          <Pressable onPress={() => onOpenMenu()}>
+            <View px="$3">
+              <Feather
+                name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
+                size={25}
+                color={theme.color.val.default.val}
+              />
+            </View>
+          </Pressable>
+        </XStack>
+      </Section>
+    )
+  }
 )
 
 interface PostMediaProps {
@@ -211,6 +265,7 @@ const PostMedia = React.memo(({ media, post }: PostMediaProps) => {
   const mediaUrl = media[0].url
   const [showSensitive, setSensitive] = useState(false)
   const { width } = useWindowDimensions()
+  const theme = useTheme()
   const forceSensitive = Storage.getBoolean('ui.forceSensitive') == true
   const height = media[0].meta?.original?.width
     ? width * (media[0].meta?.original?.height / media[0].meta?.original.width)
@@ -219,14 +274,6 @@ const PostMedia = React.memo(({ media, post }: PostMediaProps) => {
   if (!forceSensitive && post.sensitive && !showSensitive) {
     return (
       <ZStack w={width} h={height}>
-        <Blurhash
-          blurhash={media[0]?.blurhash || ''}
-          style={{
-            flex: 1,
-            width: width,
-            height: height,
-          }}
-        />
         <YStack justifyContent="center" alignItems="center" flexGrow={1}>
           <YStack
             justifyContent="center"
@@ -241,7 +288,7 @@ const PostMedia = React.memo(({ media, post }: PostMediaProps) => {
             </Text>
           </YStack>
           <YStack w={width} flexShrink={1}>
-            <Separator />
+            <Separator borderColor={theme.borderColor?.val.default.val} />
             <PressableOpacity onPress={() => setSensitive(true)}>
               <View p="$4" justifyContent="center" alignItems="center">
                 <Text
@@ -254,6 +301,7 @@ const PostMedia = React.memo(({ media, post }: PostMediaProps) => {
                 </Text>
               </View>
             </PressableOpacity>
+            <Separator borderColor={theme.borderColor?.val.default.val} />
           </YStack>
         </YStack>
       </ZStack>
@@ -267,6 +315,7 @@ const PostMedia = React.memo(({ media, post }: PostMediaProps) => {
   return (
     <View flex={1} borderBottomWidth={1} borderBottomColor="$gray5" zIndex={100}>
       <ZoomableImage
+        placeholder={{ blurhash: media[0]?.blurhash || '' }}
         source={{ uri: mediaUrl }}
         style={{ width: width, height: height, backgroundColor: '#000' }}
       />
@@ -294,7 +343,9 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
     const height = calculateHeight(item, width)
     return height > max ? height : max
   }, 0)
-
+  const theme = useTheme()
+  const themeName = useThemeName()
+  const dotColor = themeName == 'dark' ? 'rgba(255, 255, 255, 0.20)' : 'rgba(0,0,0,0.11)'
   const mediaList = post.media_attachments.slice(0, 10)
 
   if (post.sensitive && !showSensitive) {
@@ -316,7 +367,7 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
             </Text>
           </YStack>
           <YStack w={width} flexShrink={1}>
-            <Separator />
+            <Separator borderColor={theme.borderColor?.val.default.val} />
 
             <PressableOpacity onPress={() => setSensitive(true)}>
               <View p="$4" justifyContent="center" alignItems="center">
@@ -330,6 +381,7 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
                 </Text>
               </View>
             </PressableOpacity>
+            <Separator borderColor={theme.borderColor?.val.default.val} />
           </YStack>
         </YStack>
       </ZStack>
@@ -339,7 +391,9 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
   return (
     <YStack zIndex={1}>
       <Carousel
-        onConfigurePanGesture={(gestureChain) => gestureChain.activeOffsetX([-10, 10])}
+        onConfigurePanGesture={(gestureChain) =>
+          gestureChain.activeOffsetX([-10, 10]).runOnJS(true)
+        }
         width={width}
         height={height}
         vertical={false}
@@ -362,7 +416,7 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
       <Pagination.Basic
         progress={progress}
         data={mediaList}
-        dotStyle={{ backgroundColor: 'rgba(0,0,0,0.16)', borderRadius: 50 }}
+        dotStyle={{ backgroundColor: dotColor, borderRadius: 50 }}
         activeDotStyle={{ backgroundColor: '#408DF6', borderRadius: 50 }}
         containerStyle={{
           gap: 2,
@@ -424,7 +478,7 @@ const PostActions = React.memo(
           'Media was not tagged with any alt text.'
       )
     }
-
+    const theme = useTheme()
     const [shareCountCache, setShareCount] = useState(sharesCount)
     const [hasSharedCache, setShared] = useState(hasShared)
 
@@ -475,10 +529,16 @@ const PostActions = React.memo(
             <XStack gap="$5">
               <XStack justifyContent="center" alignItems="center" gap="$2">
                 <LikeButton hasLiked={hasLiked} handleLike={handleLike} />
-                {isLikePending ? <ActivityIndicator color="#000" /> : null}
+                {isLikePending ? (
+                  <ActivityIndicator color={theme.color?.val.default.val} />
+                ) : null}
                 {!isLikePending && likesCount ? (
                   <Link href={`/post/likes/${post.id}`}>
-                    <Text fontWeight={'bold'} allowFontScaling={false}>
+                    <Text
+                      fontWeight={'bold'}
+                      allowFontScaling={false}
+                      color={theme.color?.val.secondary.val}
+                    >
                       {prettyCount(likesCount)}
                     </Text>
                   </Link>
@@ -486,16 +546,25 @@ const PostActions = React.memo(
               </XStack>
               <XStack justifyContent="center" alignItems="center" gap="$2">
                 <Pressable onPress={() => onOpenComments()}>
-                  <Feather name="message-circle" size={30} />
+                  <Feather
+                    name="message-circle"
+                    size={30}
+                    color={theme.color?.val.default.val}
+                  />
                 </Pressable>
                 {commentsCount ? (
-                  <Text fontWeight={'bold'} allowFontScaling={false} fontSize="$2">
+                  <Text
+                    fontWeight={'bold'}
+                    allowFontScaling={false}
+                    fontSize="$2"
+                    color={theme.color?.val.secondary.val}
+                  >
                     {prettyCount(commentsCount)}
                   </Text>
                 ) : null}
               </XStack>
             </XStack>
-            <XStack gap="$2">
+            <XStack gap="$4">
               {post.visibility === 'public' ? (
                 <XStack justifyContent="center" alignItems="center" gap="$2">
                   <PressableOpacity
@@ -505,12 +574,16 @@ const PostActions = React.memo(
                     <Feather
                       name="refresh-cw"
                       size={28}
-                      color={hasSharedCache ? 'gold' : 'black'}
+                      color={hasSharedCache ? 'gold' : theme.color?.val.default.val}
                     />
                   </PressableOpacity>
                   {sharesCount ? (
                     <Link href={`/post/shares/${post.id}`}>
-                      <Text fontWeight={'bold'} allowFontScaling={false}>
+                      <Text
+                        fontWeight={'bold'}
+                        allowFontScaling={false}
+                        color={theme.color?.val.tertiary.val}
+                      >
                         {prettyCount(shareCountCache)}
                       </Text>
                     </Link>
@@ -518,15 +591,23 @@ const PostActions = React.memo(
                 </XStack>
               ) : null}
               {!isLikeFeed && isBookmarkPending ? (
-                <ActivityIndicator color="#000" />
+                <ActivityIndicator color={theme.color?.val.default.val} />
               ) : null}
               {!isBookmarkPending && !isLikeFeed ? (
                 <PressableOpacity onPress={() => handleBookmarkAction()}>
                   <XStack gap="$4">
                     {hasBookmarked ? (
-                      <Ionicons name="bookmark" size={30} />
+                      <Ionicons
+                        name="bookmark"
+                        size={30}
+                        color={theme.color?.val.default.val}
+                      />
                     ) : (
-                      <Feather name="bookmark" size={30} />
+                      <Feather
+                        name="bookmark"
+                        size={30}
+                        color={theme.color?.val.default.val}
+                      />
                     )}
                   </XStack>
                 </PressableOpacity>
@@ -534,7 +615,11 @@ const PostActions = React.memo(
               {showAltText && hasAltText ? (
                 <PressableOpacity onPress={() => onShowAlt()}>
                   <XStack bg="black" px="$3" py={4} borderRadius={5}>
-                    <Text color="white" fontSize="$5" fontWeight="bold">
+                    <Text
+                      color={theme.color?.val.default.val}
+                      fontSize="$5"
+                      fontWeight="bold"
+                    >
                       ALT
                     </Text>
                   </XStack>
@@ -586,7 +671,7 @@ const PostCaption = React.memo(
   }: PostCaptionProps) => {
     const timeAgo = formatTimestamp(createdAt)
     const captionText = htmlToTextWithLineBreaks(caption)
-
+    const theme = useTheme()
     return (
       <BorderlessSection>
         <YStack gap="$3" pt="$1" pb="$3" px="$2">
@@ -613,7 +698,7 @@ const PostCaption = React.memo(
           </XStack>
           {commentsCount ? (
             <Pressable onPress={() => onOpenComments()}>
-              <Text color="$gray10" fontSize="$3">
+              <Text color={theme.color?.val.secondary.val} fontSize="$3">
                 View all {commentsCount} comments
               </Text>
             </Pressable>
@@ -622,30 +707,30 @@ const PostCaption = React.memo(
           <XStack justifyContent="flex-start" alignItems="center" gap="$3">
             {visibility == 'public' ? (
               <XStack alignItems="center" gap="$2">
-                <Text color="$gray9" fontSize="$3">
+                <Text color={theme.color?.val.secondary.val} fontSize="$3">
                   Public
                 </Text>
               </XStack>
             ) : null}
             {visibility == 'unlisted' ? (
               <XStack alignItems="center" gap="$2">
-                <Text color="$gray9" fontSize="$3">
+                <Text color={theme.color?.val.secondary.val} fontSize="$3">
                   Unlisted
                 </Text>
               </XStack>
             ) : null}
             {visibility == 'private' ? (
               <XStack alignItems="center" gap="$2">
-                <Feather name="lock" color="#ccc" />
-                <Text color="$gray9" fontSize="$3">
+                <Feather name="lock" color={theme.color?.val.secondary.val} />
+                <Text color={theme.color?.val.secondary.val} fontSize="$3">
                   Followers only
                 </Text>
               </XStack>
             ) : null}
             <Link href={`/post/${postId}`} asChild>
               <XStack alignItems="center" gap="$2">
-                <Feather name="clock" color="#ccc" />
-                <Text color="$gray9" fontSize="$3">
+                <Feather name="clock" color={theme.color?.val.tertiary.val} />
+                <Text color={theme.color?.val.secondary.val} fontSize="$3">
                   {timeAgo}
                 </Text>
               </XStack>
@@ -653,8 +738,8 @@ const PostCaption = React.memo(
             {editedAt ? (
               <Link href={`/post/history/${postId}`} asChild>
                 <XStack alignItems="center" gap="$2">
-                  <Feather name="edit" color="#ccc" />
-                  <Text color="$gray9" fontSize="$3">
+                  <Feather name="edit" color={theme.color?.val.secondary.val} />
+                  <Text color={theme.color?.val.secondary.val} fontSize="$3">
                     Last Edited {_timeAgo(editedAt)}
                   </Text>
                 </XStack>
@@ -663,7 +748,7 @@ const PostCaption = React.memo(
             {isLikeFeed && likedAt ? (
               <XStack alignItems="center" gap="$2">
                 <Feather name="heart" color="#ccc" />
-                <Text color="$gray9" fontSize="$3">
+                <Text color={theme.color?.val.secondary.val} fontSize="$3">
                   Liked {_timeAgo(likedAt)} ago
                 </Text>
               </XStack>
@@ -684,7 +769,178 @@ interface FeedPostProps {
   isPermalink?: boolean
   isLikeFeed?: boolean
   onShare: (id: string) => void
+  handleLikeProfileId?: boolean
 }
+
+const TextPost = React.memo(
+  ({
+    post,
+    avatar,
+    username,
+    displayName,
+    handleLike,
+    userId,
+    onOpenMenu,
+    disableReadMore,
+    likesCount,
+    caption,
+    commentsCount,
+    createdAt,
+    onHashtagPress,
+    onMentionPress,
+    onUsernamePress,
+    onOpenComments,
+    hasLiked,
+    isLikePending,
+  }) => {
+    const timeAgo = formatTimestamp(createdAt)
+    const captionText = htmlToTextWithLineBreaks(caption)
+    const theme = useTheme()
+
+    return (
+      <SectionTopBorder>
+        <XStack alignItems="flex-start" gap="$3" paddingVertical="$3">
+          <Link href={`/profile/${userId}`} asChild>
+            <Pressable>
+              <Circle
+                size={40}
+                overflow="hidden"
+                borderWidth={1}
+                borderColor={theme.borderColor.val.default.val}
+              >
+                <ImageComponent
+                  source={{ uri: avatar }}
+                  style={{
+                    width: AVATAR_WIDTH,
+                    height: AVATAR_WIDTH,
+                    borderRadius: AVATAR_WIDTH,
+                    borderWidth: 1,
+                    borderColor: '#eee',
+                  }}
+                />
+              </Circle>
+            </Pressable>
+          </Link>
+          <YStack flex={1}>
+            {post.in_reply_to_id ? (
+              <XStack>
+                <Text color={theme.color.val.secondary.val}>In reply to this </Text>
+                <Link href={`/post/${post.in_reply_to_id}`}>
+                  <Text color={theme.colorHover.val.active.val} fontWeight="bold">
+                    post
+                  </Text>
+                </Link>
+              </XStack>
+            ) : null}
+            <XStack
+              alignItems="center"
+              paddingHorizontal="$1"
+              justifyContent="space-between"
+              flex={1}
+              flexWrap="wrap"
+            >
+              <XStack alignItems="center" space="$2" flex={1}>
+                <Text
+                  fontWeight="bold"
+                  fontSize={16}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  color={theme.color.val.default.val}
+                >
+                  {enforceLen(username, 20, true)}
+                </Text>
+                <Text
+                  color={theme.color.val.secondary.val}
+                  fontSize={14}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {timeAgo}
+                </Text>
+              </XStack>
+
+              <Pressable onPress={() => onOpenMenu()}>
+                <View px="$3">
+                  <Feather
+                    name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
+                    size={25}
+                    color={theme.color.val.secondary.val}
+                  />
+                </View>
+              </Pressable>
+            </XStack>
+
+            <YStack paddingHorizontal="$1" marginBottom="$2">
+              <XStack flexWrap="wrap" pr="$3">
+                {disableReadMore ? (
+                  <AutolinkText
+                    text={captionText}
+                    username={''}
+                    onHashtagPress={onHashtagPress}
+                    onMentionPress={onMentionPress}
+                    onUsernamePress={onUsernamePress}
+                  />
+                ) : (
+                  <ReadMore numberOfLines={3}>
+                    <AutolinkText
+                      text={captionText}
+                      username={''}
+                      onHashtagPress={onHashtagPress}
+                      onMentionPress={onMentionPress}
+                      onUsernamePress={onUsernamePress}
+                    />
+                  </ReadMore>
+                )}
+              </XStack>
+            </YStack>
+
+            <YStack>
+              <XStack alignItems="center" marginTop="$2">
+                <XStack flex={1} alignItems="center" space="$6">
+                  <XStack justifyContent="center" alignItems="center" gap="$2">
+                    <LikeButton hasLiked={hasLiked} handleLike={handleLike} size={23} />
+                    {isLikePending ? (
+                      <ActivityIndicator color={theme.color.val.default.val} />
+                    ) : null}
+                    {!isLikePending && likesCount ? (
+                      <Link href={`/post/likes/${post.id}`}>
+                        <Text
+                          fontWeight={'bold'}
+                          allowFontScaling={false}
+                          fontSize={13}
+                          color={theme.color.val.secondary.val}
+                        >
+                          {prettyCount(likesCount)}
+                        </Text>
+                      </Link>
+                    ) : null}
+                  </XStack>
+
+                  <XStack gap="$2" alignItems="center">
+                    <Pressable onPress={() => onOpenComments()}>
+                      <Feather
+                        name="message-circle"
+                        size={20}
+                        color={theme.color.val.default.val}
+                      />
+                    </Pressable>
+                    <Text
+                      fontSize={13}
+                      fontWeight="bold"
+                      color={theme.color.val.secondary.val}
+                    >
+                      {prettyCount(commentsCount)}
+                    </Text>
+                  </XStack>
+                </XStack>
+              </XStack>
+            </YStack>
+          </YStack>
+        </XStack>
+      </SectionTopBorder>
+    )
+  }
+)
 
 const FeedPost = React.memo(
   function FeedPost({
@@ -696,6 +952,7 @@ const FeedPost = React.memo(
     isPermalink = false,
     isLikeFeed = false,
     onShare,
+    handleLikeProfileId = false,
   }: FeedPostProps) {
     const { handleLike, isLikePending } = useLikeMutation()
     const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
@@ -704,6 +961,7 @@ const FeedPost = React.memo(
     const { width } = useWindowDimensions()
     const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
     const showAltText = Storage.getBoolean('ui.showAltText') == true
+    const theme = useTheme()
 
     const handlePresentModalPress = useCallback(() => {
       bottomSheetModalRef.current?.present()
@@ -718,12 +976,17 @@ const FeedPost = React.memo(
 
     const handleLikeAction = useCallback(() => {
       const shouldLike = !post.favourited
-      handleLike(post.id, shouldLike)
+      handleLike(
+        post.id,
+        shouldLike,
+        handleLikeProfileId ? post.account.id.toString() : ''
+      )
     }, [post.id, post.favourited, post.favourites_count, handleLike])
 
     const handleDoubleTap = () => {
       // only allow liking with double tap, not unliking
       if (!post.favourited) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
         handleLikeAction()
       }
     }
@@ -732,11 +995,8 @@ const FeedPost = React.memo(
       .maxDuration(250)
       .numberOfTaps(2)
       .onStart(() => {
-        try {
-          runOnJS(handleDoubleTap)()
-        } catch (error) {
-          console.error('Double tap error:', error)
-        }
+        'worklet'
+        runOnJS(handleDoubleTap)()
       })
 
     const _onDeletePost = (id: string) => {
@@ -803,62 +1063,88 @@ const FeedPost = React.memo(
     }
     return (
       <View flex={1} style={{ width }}>
-        <PostHeader
-          avatar={post.account?.avatar}
-          username={post.account?.acct}
-          displayName={post.account?.display_name}
-          userId={post.account?.id}
-          onOpenMenu={() => handlePresentModalPress()}
-        />
         {post.media_attachments?.length > 0 ? (
-          <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
-            {post.media_attachments.length > 1 ? (
-              <PostAlbumMedia
-                media={post.media_attachments}
-                post={post}
-                progress={progress}
-              />
-            ) : (
-              <PostMedia media={post.media_attachments} post={post} />
-            )}
-          </GestureDetector>
-        ) : null}
-        {!hideCaptions || isPermalink ? (
           <>
-            <PostActions
-              hasLiked={post.favourited}
-              hasShared={post?.reblogged === true}
-              hasBookmarked={post?.bookmarked === true}
-              isLikeFeed={isLikeFeed}
-              post={post}
-              progress={progress}
-              isLikePending={isLikePending}
-              likesCount={post?.favourites_count}
-              likedBy={post?.liked_by}
-              sharesCount={post?.reblogs_count}
-              showAltText={showAltText}
-              commentsCount={post.replies_count}
-              handleLike={handleLikeAction}
-              onOpenComments={() => onOpenComments(post?.id)}
-              onShare={() => onShare(post?.id)}
+            <PostHeader
+              avatar={post.account?.avatar}
+              username={post.account?.acct}
+              displayName={post.account?.display_name}
+              userId={post.account?.id}
+              onOpenMenu={() => handlePresentModalPress()}
             />
 
-            <PostCaption
-              postId={post.id}
-              username={post.account?.username}
+            <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
+              {post.media_attachments.length > 1 ? (
+                <PostAlbumMedia
+                  media={post.media_attachments}
+                  post={post}
+                  progress={progress}
+                />
+              ) : (
+                <PostMedia media={post.media_attachments} post={post} />
+              )}
+            </GestureDetector>
+            {!hideCaptions || isPermalink ? (
+              <>
+                <PostActions
+                  hasLiked={post.favourited}
+                  hasShared={post?.reblogged === true}
+                  hasBookmarked={post?.bookmarked === true}
+                  isLikeFeed={isLikeFeed}
+                  post={post}
+                  progress={progress}
+                  isLikePending={isLikePending}
+                  likesCount={post?.favourites_count}
+                  likedBy={post?.liked_by}
+                  sharesCount={post?.reblogs_count}
+                  showAltText={showAltText}
+                  commentsCount={post.replies_count}
+                  handleLike={handleLikeAction}
+                  onOpenComments={() => onOpenComments(post?.id)}
+                  onShare={() => onShare(post?.id)}
+                />
+
+                <PostCaption
+                  postId={post.id}
+                  username={post.account?.username}
+                  caption={post.content}
+                  commentsCount={post.replies_count}
+                  createdAt={post.created_at}
+                  tags={post.tags}
+                  visibility={post.visibility}
+                  disableReadMore={disableReadMore}
+                  onOpenComments={() => onOpenComments(post.id)}
+                  onHashtagPress={(tag) => onGotoHashtag(tag)}
+                  onMentionPress={(tag) => onGotoMention(tag)}
+                  onUsernamePress={() => goToProfile()}
+                  editedAt={post.edited_at}
+                  isLikeFeed={isLikeFeed}
+                  likedAt={post.liked_at}
+                />
+              </>
+            ) : null}
+          </>
+        ) : !hideCaptions || isPermalink ? (
+          <>
+            <TextPost
+              post={post}
+              avatar={post.account?.avatar}
+              username={post.account?.acct}
+              displayName={post.account?.display_name}
+              userId={post.account?.id}
+              disableReadMore={disableReadMore}
+              hasLiked={post.favourited}
+              isLikePending={isLikePending}
+              likesCount={post?.favourites_count}
               caption={post.content}
               commentsCount={post.replies_count}
               createdAt={post.created_at}
-              tags={post.tags}
-              visibility={post.visibility}
-              disableReadMore={disableReadMore}
-              onOpenComments={() => onOpenComments(post.id)}
+              onOpenMenu={() => handlePresentModalPress()}
               onHashtagPress={(tag) => onGotoHashtag(tag)}
               onMentionPress={(tag) => onGotoMention(tag)}
               onUsernamePress={() => goToProfile()}
-              editedAt={post.edited_at}
-              isLikeFeed={isLikeFeed}
-              likedAt={post.liked_at}
+              onOpenComments={() => onOpenComments(post?.id)}
+              handleLike={handleLikeAction}
             />
           </>
         ) : null}
@@ -868,46 +1154,80 @@ const FeedPost = React.memo(
           snapPoints={snapPoints}
           onChange={handleSheetChanges}
           backdropComponent={renderBackdrop}
+          backgroundStyle={{ backgroundColor: theme.background.val.default.val }}
+          handleIndicatorStyle={{ backgroundColor: theme.background.val.tertiary.val }}
         >
-          <BottomSheetScrollView>
-            <Button size="$6" chromeless onPress={() => onGotoShare()}>
+          <BottomSheetScrollView
+            style={{ backgroundColor: theme.background?.val.default.val }}
+          >
+            <Button
+              size="$6"
+              chromeless
+              onPress={() => onGotoShare()}
+              color={theme.color?.val.default.val}
+            >
               Share
             </Button>
-            <Separator />
+            <Separator borderColor={theme.borderColor?.val.default.val} />
             {!isPermalink ? (
               <>
-                <Button size="$6" chromeless onPress={() => goToPost()}>
+                <Button
+                  size="$6"
+                  chromeless
+                  onPress={() => goToPost()}
+                  color={theme.color?.val.default.val}
+                >
                   View Post
                 </Button>
-                <Separator />
+                <Separator borderColor={theme.borderColor?.val.default.val} />
               </>
             ) : null}
-            <Button size="$6" chromeless onPress={() => goToProfile()}>
+            <Button
+              size="$6"
+              chromeless
+              onPress={() => goToProfile()}
+              color={theme.color?.val.default.val}
+            >
               View Profile
             </Button>
-            <Separator />
-            <Button size="$6" chromeless onPress={() => onGotoAbout()}>
+            <Separator borderColor={theme.borderColor?.val.default.val} />
+            <Button
+              size="$6"
+              chromeless
+              onPress={() => onGotoAbout()}
+              color={theme.color?.val.default.val}
+            >
               About this account
             </Button>
-            <Separator />
-            <Button size="$6" chromeless onPress={() => openInBrowser()}>
+            <Separator borderColor={theme.borderColor?.val.default.val} />
+            <Button
+              size="$6"
+              chromeless
+              onPress={() => openInBrowser()}
+              color={theme.color?.val.default.val}
+            >
               Open in browser
             </Button>
-            <Separator />
+            <Separator borderColor={theme.borderColor?.val.default.val} />
             {user && user?.id != post?.account?.id ? (
               <>
                 <Button size="$6" chromeless color="red" onPress={() => goToReport()}>
                   Report
                 </Button>
-                <Separator />
+                <Separator borderColor={theme.borderColor?.val.default.val} />
               </>
             ) : null}
             {user && user?.id === post?.account?.id ? (
               <>
-                <Button size="$6" chromeless onPress={() => _onEditPost(post.id)}>
+                <Button
+                  size="$6"
+                  chromeless
+                  onPress={() => _onEditPost(post.id)}
+                  color={theme.color?.val.secondary.val}
+                >
                   Edit Post
                 </Button>
-                <Separator />
+                <Separator borderColor={theme.borderColor?.val.default.val} />
                 <Button
                   size="$6"
                   chromeless
@@ -916,13 +1236,13 @@ const FeedPost = React.memo(
                 >
                   Delete Post
                 </Button>
-                <Separator />
+                <Separator borderColor={theme.borderColor?.val.default.val} />
               </>
             ) : null}
             <Button
               size="$6"
               chromeless
-              color="$gray8"
+              color={theme.color?.val.secondary.val}
               onPress={() => bottomSheetModalRef.current?.close()}
             >
               Cancel

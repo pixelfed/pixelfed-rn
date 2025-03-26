@@ -1,4 +1,5 @@
 import { Feather } from '@expo/vector-icons'
+import { FlashList } from '@shopify/flash-list'
 import {
   useInfiniteQuery,
   useMutation,
@@ -6,11 +7,10 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { Link, Stack, useLocalSearchParams } from 'expo-router'
-import { useCallback } from 'react'
+import { memo, useCallback, useMemo } from 'react'
 import { ActivityIndicator, Dimensions, FlatList } from 'react-native'
-import { Blurhash } from 'react-native-blurhash'
-import FastImage from 'react-native-fast-image'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import ImageComponent from 'src/components/ImageComponent'
 import {
   followHashtag,
   getHashtagByName,
@@ -18,44 +18,61 @@ import {
   getHashtagRelated,
   unfollowHashtag,
 } from 'src/lib/api'
-import { Button, ScrollView, Separator, Text, View, XStack, YStack } from 'tamagui'
+import {
+  Button,
+  ScrollView,
+  Separator,
+  Text,
+  View,
+  XStack,
+  YStack,
+  useTheme,
+} from 'tamagui'
 import { prettyCount } from '../../../utils'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 const IMAGE_WIDTH = SCREEN_WIDTH / 3 - 2
+const IMAGE_HEIGHT = IMAGE_WIDTH
+const ITEM_HEIGHT = IMAGE_HEIGHT
 
-const RenderItem = ({ item }) =>
-  item && item.media_attachments && item.media_attachments[0].url ? (
+const RenderItem = memo(({ item }) => {
+  if (!item?.media_attachments?.[0]?.url) return null
+  const theme = useTheme()
+  return (
     <Link href={`/post/${item.id}`} asChild>
-      <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
-        {item.media_attachments[0]?.blurhash ? (
-          <Blurhash
-            blurhash={item.media_attachments[0].blurhash}
-            style={{
-              flex: 1,
-              position: 'absolute',
-              width: IMAGE_WIDTH,
-              height: IMAGE_WIDTH,
-            }}
-          />
-        ) : null}
-        <FastImage
+      <View
+        flexShrink={1}
+        style={{ borderWidth: 1, borderColor: theme.borderColor?.val.default.val }}
+      >
+        <ImageComponent
+          placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
           source={{
             uri: item.media_attachments[0].url,
           }}
           style={{
             width: IMAGE_WIDTH,
-            height: IMAGE_WIDTH,
+            height: IMAGE_HEIGHT,
           }}
-          resizeMode={FastImage.resizeMode.cover}
+          contentFit={'cover'}
         />
       </View>
     </Link>
+  )
+})
+
+const ListFooter = memo(({ loading }) => {
+  const theme = useTheme()
+  return loading ? (
+    <View p="$5">
+      <ActivityIndicator color={theme.color?.val.default.val} />
+    </View>
   ) : null
+})
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const queryClient = useQueryClient()
+  const theme = useTheme()
 
   const RelatedTags = useCallback(
     ({ relatedTags }) =>
@@ -64,8 +81,16 @@ export default function Page() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {relatedTags.map((tag) => (
               <Link key={tag.name} href={`/hashtag/${tag.name}`} asChild>
-                <View bg="$gray6" px="$3" py="$2" mr="$2" borderRadius={10}>
-                  <Text>{tag.name}</Text>
+                <View
+                  bg="transparent"
+                  px="$3"
+                  py="$1.5"
+                  mr="$2"
+                  borderRadius={10}
+                  borderWidth={1}
+                  borderColor={theme.borderColor?.val.default.val}
+                >
+                  <Text color={theme.color?.val.secondary.val}>#{tag.name}</Text>
                 </View>
               </Link>
             ))}
@@ -95,6 +120,7 @@ export default function Page() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getHashtagByName'] })
+      queryClient.invalidateQueries({ queryKey: ['getFollowedTags'] })
     },
   })
 
@@ -107,11 +133,20 @@ export default function Page() {
   }
 
   const RenderEmpty = () => (
-    <View flex={1}>
-      <Separator borderColor="#ccc" />
-      <YStack flexGrow={1} justifyContent="center" alignItems="center" gap="$3">
+    <View flexGrow={1}>
+      <Separator borderColor={theme.borderColor?.val.default.val} />
+      <YStack
+        h="100%"
+        flexGrow={1}
+        justifyContent="center"
+        alignItems="center"
+        padding="$4"
+        gap="$3"
+      >
         <Feather name="alert-circle" size={40} color="#aaa" />
-        <Text fontSize="$8">No posts with this tag.</Text>
+        <Text fontSize="$8" color={theme.color?.val.default.val}>
+          No posts with this tag.
+        </Text>
       </YStack>
     </View>
   )
@@ -146,13 +181,12 @@ export default function Page() {
       if (lastPage.length === 0) {
         return undefined
       }
-      let lowestId = lastPage.reduce((min, obj) => {
-        if (obj.id < min) {
-          return obj.id
-        }
-        return min
+
+      const lowestId = lastPage.reduce((min, post) => {
+        return BigInt(post.id) < BigInt(min) ? post.id : min
       }, lastPage[0].id)
-      return lowestId
+
+      return String(BigInt(lowestId) - 1n)
     },
   })
 
@@ -170,6 +204,27 @@ export default function Page() {
     enabled: !!feed && !!hashtag,
   })
 
+  const flattenedData = useMemo(() => {
+    return feed?.pages.flat() || []
+  }, [feed?.pages])
+
+  const keyExtractor = useCallback((item) => item?.id.toString(), [])
+
+  const getItemLayout = useCallback((data, index) => {
+    const row = Math.floor(index / 3)
+    return {
+      length: ITEM_HEIGHT,
+      offset: ITEM_HEIGHT * row,
+      index,
+    }
+  }, [])
+
+  const handleEndReached = useCallback(() => {
+    if (hasNextPage && !isFetching) {
+      fetchNextPage()
+    }
+  }, [hasNextPage, isFetching, fetchNextPage])
+
   const Header = useCallback(
     ({ hashtag, feed, onUnfollow, onFollow }) => {
       return (
@@ -178,35 +233,46 @@ export default function Page() {
             <XStack alignItems="center" gap="$4">
               <View w={100} h={100}>
                 {feed?.pages[0].length ? (
-                  <FastImage
+                  <ImageComponent
+                    placeholder={{
+                      blurhash: feed.pages[0][0]?.media_attachments[0]?.blurhash || '',
+                    }}
                     source={{ uri: feed.pages[0][0].media_attachments[0].url }}
                     style={{
                       width: 100,
                       height: 100,
                       borderRadius: 100,
                       borderWidth: 1,
-                      borderColor: '#eee',
+                      borderColor: theme.borderColor?.val.default.val,
                     }}
-                    resizeMode={FastImage.resizeMode.cover}
+                    containFit={'cover'}
                   />
                 ) : (
-                  <View w={100} h={100} borderRadius={100} bg="$gray6"></View>
+                  <View
+                    w={100}
+                    h={100}
+                    borderRadius={100}
+                    bg={theme.background?.val.tertiary.val}
+                  ></View>
                 )}
               </View>
               <YStack flex={1} justifyContent="center" alignItems="center" gap="$2">
                 <Text fontSize="$6" allowFontScaling={false}>
-                  <Text fontWeight="bold">{prettyCount(hashtag?.count ?? 0)}</Text>{' '}
-                  <Text color="$gray9">posts</Text>
+                  <Text fontWeight="bold" color={theme.color?.val.default.val}>
+                    {prettyCount(hashtag?.count ?? 0)}
+                  </Text>{' '}
+                  <Text color={theme.color?.val.default.val}>posts</Text>
                 </Text>
                 {hashtag?.count > 0 ? (
                   <>
                     {hashtag.following ? (
                       <Button
-                        borderColor="$blue9"
+                        borderColor={theme.borderColor?.val.default.val}
                         h={35}
+                        bg="transparent"
                         size="$5"
                         fontWeight="bold"
-                        color="$blue9"
+                        color={theme.color?.val.default.val}
                         alignSelf="stretch"
                         onPress={onUnfollow}
                       >
@@ -214,7 +280,7 @@ export default function Page() {
                       </Button>
                     ) : (
                       <Button
-                        bg="$blue9"
+                        bg={theme.colorHover.val.active.val}
                         h={35}
                         size="$5"
                         color="white"
@@ -228,7 +294,7 @@ export default function Page() {
                     {hashtag.following ? (
                       <Text
                         fontSize="$4"
-                        color="$gray9"
+                        color={theme.color?.val.tertiary.val}
                         flexWrap="wrap"
                         allowFontScaling={false}
                       >
@@ -237,7 +303,7 @@ export default function Page() {
                     ) : (
                       <Text
                         fontSize="$2"
-                        color="$gray9"
+                        color={theme.color?.val.tertiary.val}
                         flexWrap="wrap"
                         allowFontScaling={false}
                       >
@@ -266,7 +332,7 @@ export default function Page() {
           }}
         />
         <View flexGrow={1} mt="$5">
-          <ActivityIndicator color={'#000'} />
+          <ActivityIndicator color={theme.color?.val.default.val} />
         </View>
       </>
     )
@@ -276,15 +342,17 @@ export default function Page() {
     return (
       <View flexGrow={1}>
         <YStack justifyContent="center" alignItems="center" p="$4">
-          <Text fontSize="$7">Oops! An Error Occured.</Text>
-          <Text>{error?.message}</Text>
+          <Text fontSize="$7" color={theme.color?.val.default.val}>
+            Oops! An Error Occured.
+          </Text>
+          <Text color={theme.color?.val.secondary.val}>{error?.message}</Text>
         </YStack>
       </View>
     )
   }
 
   return (
-    <SafeAreaView edges={['left']}>
+    <SafeAreaView style={{ flex: 1 }} edges={['left']}>
       <Stack.Screen
         options={{
           title: `#${id}`,
@@ -292,20 +360,17 @@ export default function Page() {
         }}
       />
       {/* <Header hashtag={hashtag} feed={feed} /> */}
-      <FlatList
-        data={feed?.pages.flat()}
+      <FlashList
+        data={flattenedData}
         extraData={hashtag}
-        keyExtractor={(item, index) => item?.id}
-        renderItem={RenderItem}
+        keyExtractor={keyExtractor}
+        renderItem={({ item }) => <RenderItem key={item?.id} item={item} />}
+        horizontal={false}
+        estimatedItemSize={IMAGE_HEIGHT}
         numColumns={3}
         showsVerticalScrollIndicator={false}
-        onEndReached={() => {
-          if (hasNextPage) {
-            if (!isFetching) {
-              fetchNextPage()
-            }
-          }
-        }}
+        maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
+        onEndReached={handleEndReached}
         onEndReachedThreshold={0.4}
         ListEmptyComponent={RenderEmpty}
         ListHeaderComponent={
@@ -316,23 +381,8 @@ export default function Page() {
             onUnfollow={handleOnUnfollow}
           />
         }
-        ListFooterComponent={
-          isFetchingNextPage ? (
-            <View p="$5">
-              <ActivityIndicator />
-            </View>
-          ) : null
-        }
-        getItemLayout={(data, index) => {
-          const column = index % 3
-          const row = Math.floor(index / 3)
-
-          return {
-            length: IMAGE_WIDTH,
-            offset: (IMAGE_WIDTH + 2) * column,
-            index,
-          }
-        }}
+        ListFooterComponent={<ListFooter loading={isFetchingNextPage} />}
+        getItemLayout={getItemLayout}
       />
     </SafeAreaView>
   )

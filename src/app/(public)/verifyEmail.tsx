@@ -17,13 +17,14 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native'
-import FastImage from 'react-native-fast-image'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { updateAvatar, updateCredentials } from 'src/lib/api'
+import ImageComponent from 'src/components/ImageComponent'
+import { useProfileMutation } from 'src/hooks/mutations/useProfileMutation'
+import { updateAvatar } from 'src/lib/api'
 import { objectToForm } from 'src/requests'
 import { useAuth } from 'src/state/AuthProvider'
 import { Storage } from 'src/state/cache'
-import { Separator, Text } from 'tamagui'
+import { Separator, Text, useTheme } from 'tamagui'
 
 const { width } = Dimensions.get('window')
 
@@ -58,6 +59,7 @@ const postRequest = async (
 const VerificationStep = ({ onSubmit, isLoading, email, domain, updateCode }) => {
   const [code, setCode] = useState('')
   const [error, setError] = useState('')
+  const theme = useTheme()
 
   const handleSubmit = async () => {
     if (code.length !== 6) {
@@ -85,10 +87,12 @@ const VerificationStep = ({ onSubmit, isLoading, email, domain, updateCode }) =>
 
   return (
     <View style={styles.stepContainer}>
-      <Text style={styles.title}>Check your email</Text>
-      <Text style={styles.subtitle}>
+      <Text style={styles.title} color={theme.color?.val.default.val}>
+        Check your email
+      </Text>
+      <Text style={styles.subtitle} color={theme.color?.val.secondary.val}>
         We've sent a 6-digit code to{' '}
-        <Text color="$gray9" fontWeight="bold">
+        <Text color={theme.color?.val.default.val} fontWeight="bold">
           {email}
         </Text>
       </Text>
@@ -96,6 +100,9 @@ const VerificationStep = ({ onSubmit, isLoading, email, domain, updateCode }) =>
       <TextInput
         style={styles.input}
         placeholder="000000"
+        color={theme.color?.val.secondary.val}
+        backgroundColor={theme.background?.val.default.val}
+        borderColor={theme.borderColor?.val.default.val}
         placeholderTextColor="#666"
         keyboardType="number-pad"
         maxLength={6}
@@ -105,11 +112,17 @@ const VerificationStep = ({ onSubmit, isLoading, email, domain, updateCode }) =>
 
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={isLoading}>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: theme.colorHover?.val.active.val }]}
+        onPress={handleSubmit}
+        disabled={isLoading}
+      >
         {isLoading ? (
-          <ActivityIndicator color="#fff" />
+          <ActivityIndicator color={theme.color?.val.default.val} />
         ) : (
-          <Text style={styles.buttonText}>Verify</Text>
+          <Text style={[styles.buttonText, { color: theme.color?.val.inverse.val }]}>
+            Verify
+          </Text>
         )}
       </TouchableOpacity>
     </View>
@@ -122,6 +135,7 @@ const DetailsStep = ({ onSubmit, isLoading, domain, code, email, setLoading }) =
   const [displayName, setDisplayName] = useState('')
   const [error, setError] = useState('')
   const router = useRouter()
+  const theme = useTheme()
 
   const handleSubmit = async () => {
     if (!username || !password || !displayName) {
@@ -170,13 +184,20 @@ const DetailsStep = ({ onSubmit, isLoading, domain, code, email, setLoading }) =
 
   return (
     <View style={styles.stepContainer}>
-      <Text style={styles.title}>Complete your profile</Text>
-      <Text style={styles.subtitle}>Choose how you'll appear in the community</Text>
+      <Text style={[styles.title, { color: theme.color?.val.default.val }]}>
+        Complete your profile
+      </Text>
+      <Text style={[styles.subtitle, { color: theme.color?.val.secondary.val }]}>
+        Choose how you'll appear in the community
+      </Text>
 
       <TextInput
         style={styles.input}
         placeholder="Username"
         placeholderTextColor="#666"
+        backgroundColor={theme.background?.val.tertiary.val}
+        borderColor={theme.borderColor?.val.default.val}
+        color={theme.color?.val.default.val}
         autoCapitalize="none"
         autoComplete="off"
         maxLength={30}
@@ -184,7 +205,12 @@ const DetailsStep = ({ onSubmit, isLoading, domain, code, email, setLoading }) =
         onChangeText={setUsername}
       />
 
-      <Text style={[styles.subtitle, { fontSize: 14, marginTop: -10 }]}>
+      <Text
+        style={[
+          styles.subtitle,
+          { fontSize: 14, marginTop: -10, color: theme.color?.val.tertiary.val },
+        ]}
+      >
         Username must be 2-30 characters long, start/end with a letter or number, contain
         at least one letter, and may include a single dash, underscore, or period.
       </Text>
@@ -193,6 +219,9 @@ const DetailsStep = ({ onSubmit, isLoading, domain, code, email, setLoading }) =
         style={styles.input}
         placeholder="Display name"
         placeholderTextColor="#666"
+        backgroundColor={theme.background?.val.tertiary.val}
+        borderColor={theme.borderColor?.val.default.val}
+        color={theme.color?.val.default.val}
         autoCapitalize="none"
         autoComplete="off"
         maxLength={30}
@@ -200,7 +229,12 @@ const DetailsStep = ({ onSubmit, isLoading, domain, code, email, setLoading }) =
         onChangeText={setDisplayName}
       />
 
-      <Text style={[styles.subtitle, { fontSize: 14, marginTop: -10 }]}>
+      <Text
+        style={[
+          styles.subtitle,
+          { fontSize: 14, marginTop: -10, color: theme.color?.val.tertiary.val },
+        ]}
+      >
         Display names can be up to 30 characters long.
       </Text>
 
@@ -208,22 +242,36 @@ const DetailsStep = ({ onSubmit, isLoading, domain, code, email, setLoading }) =
         style={styles.input}
         placeholder="Password"
         placeholderTextColor="#666"
+        backgroundColor={theme.background?.val.tertiary.val}
+        borderColor={theme.borderColor?.val.default.val}
+        color={theme.color?.val.default.val}
         secureTextEntry
         value={password}
         onChangeText={setPassword}
       />
 
-      <Text style={[styles.subtitle, { fontSize: 14, marginTop: -10 }]}>
+      <Text
+        style={[
+          styles.subtitle,
+          { fontSize: 14, marginTop: -10, color: theme.color?.val.tertiary.val },
+        ]}
+      >
         Pick a secure password that is 8 characters or longer.
       </Text>
 
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={isLoading}>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: theme.colorHover?.val.hover.val }]}
+        onPress={handleSubmit}
+        disabled={isLoading}
+      >
         {isLoading ? (
-          <ActivityIndicator color="#fff" />
+          <ActivityIndicator color={theme.color?.val.inverse.val} />
         ) : (
-          <Text style={styles.buttonText}>Create Account</Text>
+          <Text style={[styles.buttonText, { color: theme.color?.val.inverse.val }]}>
+            Create Account
+          </Text>
         )}
       </TouchableOpacity>
     </View>
@@ -235,10 +283,11 @@ const WelcomeStep = ({ onSubmit, isLoading, domain }) => {
   const [avatarPayload, setAvatarPayload] = useState(null)
   const [bio, setBio] = useState('')
   const [error, setError] = useState('')
+  const theme = useTheme()
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [1, 1],
       exif: false,
@@ -262,17 +311,7 @@ const WelcomeStep = ({ onSubmit, isLoading, domain }) => {
   const handleSubmit = async () => {
     setError('')
     try {
-      if (avatar) {
-        await updateAvatar({
-          avatar: avatarPayload,
-        })
-      }
-
-      if (bio) {
-        await updateCredentials({ note: bio })
-      }
-
-      onSubmit(avatarPayload, bio)
+      onSubmit(avatarPayload, bio.length > 0 ? bio : false)
     } catch (error) {
       setError('Failed to update profile. Please try again.')
     }
@@ -284,15 +323,31 @@ const WelcomeStep = ({ onSubmit, isLoading, domain }) => {
 
   return (
     <View style={styles.stepContainer}>
-      <Text style={styles.title}>Welcome to Pixelfed!</Text>
-      <Text style={styles.subtitle}>Let's personalize your profile</Text>
+      <Text style={[styles.title, { color: theme.color?.val.default.val }]}>
+        Welcome to Pixelfed!
+      </Text>
+      <Text style={[styles.subtitle, { color: theme.color?.val.tertiary.val }]}>
+        Let's personalize your profile
+      </Text>
 
       <TouchableOpacity onPress={pickImage} style={styles.avatarContainer}>
         {avatar ? (
-          <FastImage source={{ uri: avatar }} style={styles.avatar} />
+          <ImageComponent source={{ uri: avatar }} style={styles.avatar} />
         ) : (
-          <View style={styles.avatarPlaceholder}>
-            <Text style={styles.avatarPlaceholderText}>Add Photo</Text>
+          <View
+            style={[
+              styles.avatarPlaceholder,
+              { borderColor: theme.borderColor?.val.default.val },
+            ]}
+          >
+            <Text
+              style={[
+                styles.avatarPlaceholderText,
+                { color: theme.color?.val.tertiary.val },
+              ]}
+            >
+              Add Photo
+            </Text>
           </View>
         )}
       </TouchableOpacity>
@@ -302,6 +357,9 @@ const WelcomeStep = ({ onSubmit, isLoading, domain }) => {
           style={[styles.input, styles.bioInput]}
           placeholder="Write a short bio..."
           placeholderTextColor="#666"
+          backgroundColor={theme.background?.val.tertiary.val}
+          borderColor={theme.borderColor?.val.default.val}
+          color={theme.color?.val.default.val}
           multiline
           maxLength={150}
           value={bio}
@@ -316,11 +374,17 @@ const WelcomeStep = ({ onSubmit, isLoading, domain }) => {
 
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={isLoading}>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: theme.colorHover?.val.hover.val }]}
+        onPress={handleSubmit}
+        disabled={isLoading}
+      >
         {isLoading ? (
-          <ActivityIndicator color="#fff" />
+          <ActivityIndicator color={theme.color?.val.inverse.val} />
         ) : (
-          <Text style={styles.buttonText}>Complete Profile</Text>
+          <Text style={[styles.buttonText, { color: theme.color?.val.inverse.val }]}>
+            Complete Profile
+          </Text>
         )}
       </TouchableOpacity>
 
@@ -329,7 +393,9 @@ const WelcomeStep = ({ onSubmit, isLoading, domain }) => {
         onPress={handleSkip}
         disabled={isLoading}
       >
-        <Text style={styles.skipButtonText}>Skip for now</Text>
+        <Text style={[styles.skipButtonText, { color: theme.color?.val.tertiary.val }]}>
+          Skip for now
+        </Text>
       </TouchableOpacity>
     </View>
   )
@@ -345,6 +411,8 @@ const SignUp = ({ navigation }) => {
   const router = useRouter()
   const [authToken, setAuthToken] = useState(null)
   const [registeredDomain, setRegisteredDomain] = useState(null)
+  const { profileMutation } = useProfileMutation()
+  const theme = useTheme()
 
   const slideAnim = React.useRef(new Animated.Value(0)).current
 
@@ -375,7 +443,6 @@ const SignUp = ({ navigation }) => {
       setRegisteredDomain(details.domain)
       setCurrentStep(2)
       slideToNext()
-      // router.replace('/(auth)/(tabs)/')
     } catch (error) {
       console.error(error)
     } finally {
@@ -388,10 +455,10 @@ const SignUp = ({ navigation }) => {
     try {
       const updatePromises = []
       if (avatar) {
-        updatePromises.push(updateAvatar({ avatar }))
+        updatePromises.push(updateAvatar({ avatar: avatar }))
       }
       if (bio && bio.length) {
-        updatePromises.push(updateCredentials({ note: bio }))
+        updatePromises.push(profileMutation.mutate({ note: bio }))
       }
       if (updatePromises.length) {
         await Promise.all(updatePromises)
@@ -399,7 +466,7 @@ const SignUp = ({ navigation }) => {
 
       await handleRegistration(registeredDomain, authToken)
 
-      router.replace('/(app)/(tabs)/')
+      router.replace('/(auth)/(tabs)/')
     } catch (error) {
       console.error(error)
     } finally {
@@ -408,7 +475,9 @@ const SignUp = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background.val.default.val }]}
+    >
       <Stack.Screen options={{ headerShown: false }} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -468,7 +537,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#000',
   },
   slider: {
     flex: 1,
@@ -482,31 +550,26 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
     marginBottom: 32,
   },
   input: {
-    backgroundColor: '#1a1a1a',
+    borderWidth: 1,
     borderRadius: 8,
     padding: 16,
     marginBottom: 16,
-    color: '#fff',
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#0095f6',
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
     marginTop: 16,
   },
   buttonText: {
-    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -527,14 +590,11 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: '#1a1a1a',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#333',
   },
   avatarPlaceholderText: {
-    color: '#666',
     fontSize: 16,
   },
   bioInput: {
@@ -548,7 +608,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   skipButtonText: {
-    color: '#666',
     fontSize: 16,
   },
   bioContainer: {
@@ -559,7 +618,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 4,
-    color: '#666',
     fontSize: 12,
   },
   characterCountLimit: {

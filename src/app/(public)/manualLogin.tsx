@@ -48,8 +48,6 @@ export default function Login() {
           headerShown: false,
         }}
       />
-      <StatusBar style="light" />
-
       <YStack w="100%" px="$5">
         <Text fontSize={30} my="$6" letterSpacing={-1} color="white">
           Pixelfed Sign in

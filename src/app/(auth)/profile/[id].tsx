@@ -24,8 +24,8 @@ import {
   Share,
 } from 'react-native'
 import { Blurhash } from 'react-native-blurhash'
-import FastImage from 'react-native-fast-image'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import ImageComponent from 'src/components/ImageComponent'
 import {
   blockProfileById,
   followAccountById,
@@ -40,10 +40,11 @@ import {
   unmuteProfileById,
 } from 'src/lib/api'
 import { Storage } from 'src/state/cache'
-import { Button, Separator, Text, View, YStack, ZStack } from 'tamagui'
+import { Button, Separator, Text, View, YStack, ZStack, useTheme } from 'tamagui'
 
 import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet'
-import { PixelfedBottomSheetModal } from 'src/components/BottomSheets'
+import { StatusBar } from 'expo-status-bar'
+import { PixelfedBottomSheetModal } from 'src/components/common/BottomSheets'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
@@ -55,6 +56,7 @@ export default function ProfileScreen() {
   const snapPoints = useMemo(() => ['50%', '55%'], [])
   // const toast = useToastController();
   const toastController = useToastController()
+  const theme = useTheme()
 
   const renderBackdrop: React.FC<BottomSheetBackdropProps> = useCallback(
     (props) => (
@@ -65,7 +67,7 @@ export default function ProfileScreen() {
 
   const RenderItem = useCallback(({ item }) => {
     if (!item || !item.media_attachments) {
-      return <View bg="$gray4"></View>
+      return <View key={item?.id} bg="$gray4"></View>
     }
     const forceSensitive = Storage.getBoolean('ui.forceSensitive') === true
     const med = item.media_attachments[0]
@@ -79,8 +81,11 @@ export default function ProfileScreen() {
 
       if (!bh || bh === 'U4Rfzst8?bt7ogayj[j[~pfQ9Goe%Mj[WBay') {
         return (
-          <Link href={`/post/${item.id}`} asChild>
-            <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
+          <Link key={item?.id} href={`/post/${item.id}`} asChild>
+            <View
+              flexShrink={1}
+              style={{ borderWidth: 1, borderColor: theme.borderColor?.val.inverse.val }}
+            >
               <ZStack w={SCREEN_WIDTH / 3 - 2} h={SCREEN_WIDTH / 3 - 2}>
                 <View
                   style={{
@@ -99,8 +104,11 @@ export default function ProfileScreen() {
         )
       }
       return (
-        <Link href={`/post/${item.id}`} asChild>
-          <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
+        <Link key={item?.id} href={`/post/${item.id}`} asChild>
+          <View
+            flexShrink={1}
+            style={{ borderWidth: 1, borderColor: theme.borderColor?.val.inverse.val }}
+          >
             <ZStack w={SCREEN_WIDTH / 3 - 2} h={SCREEN_WIDTH / 3 - 2}>
               <Blurhash
                 blurhash={bh}
@@ -121,21 +129,23 @@ export default function ProfileScreen() {
 
     if (med?.type === 'video') {
       return (
-        <Link href={`/post/${item.id}`} asChild>
-          <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
+        <Link key={item?.id} href={`/post/${item.id}`} asChild>
+          <View
+            flexShrink={1}
+            style={{ borderWidth: 1, borderColor: theme.borderColor?.val.inverse.val }}
+          >
             <ZStack w={SCREEN_WIDTH / 3 - 2} h={SCREEN_WIDTH / 3 - 2}>
               {hasPreview && med.preview_url ? (
-                <FastImage
+                <ImageComponent
                   style={{
                     width: SCREEN_WIDTH / 3 - 2,
                     height: SCREEN_WIDTH / 3 - 2,
-                    backgroundColor: '#ddd',
+                    backgroundColor: '#fff',
                   }}
                   source={{
                     uri: med.preview_url,
-                    priority: FastImage.priority.normal,
                   }}
-                  resizeMode={FastImage.resizeMode.cover}
+                  contentFit={'cover'}
                 />
               ) : (
                 <Blurhash
@@ -156,8 +166,15 @@ export default function ProfileScreen() {
       )
     }
     return item && item.media_attachments && item.media_attachments[0].url ? (
-      <Link href={`/post/${item.id}`} asChild>
-        <View flexShrink={1} style={{ borderWidth: 1, borderColor: 'white' }}>
+      <Link key={item?.id} href={`/post/${item.id}`} asChild>
+        <View
+          flexShrink={1}
+          style={{
+            backgroundColor: '#fff',
+            borderWidth: 1,
+            borderColor: theme.borderColor?.val.inverse.val,
+          }}
+        >
           {item.sensitive && !forceSensitive ? (
             <ZStack w={SCREEN_WIDTH / 3 - 2} h={SCREEN_WIDTH / 3 - 2}>
               <Blurhash
@@ -173,28 +190,18 @@ export default function ProfileScreen() {
               </View>
             </ZStack>
           ) : (
-            <>
-              <Blurhash
-                blurhash={item.media_attachments[0]?.blurhash}
-                style={{
-                  flex: 1,
-                  position: 'absolute',
-                  width: SCREEN_WIDTH / 3 - 2,
-                  height: SCREEN_WIDTH / 3 - 2,
-                }}
-              />
-              <FastImage
-                style={{
-                  width: SCREEN_WIDTH / 3 - 2,
-                  height: SCREEN_WIDTH / 3 - 2,
-                }}
-                source={{
-                  uri: item.media_attachments[0].url,
-                  priority: FastImage.priority.normal,
-                }}
-                resizeMode={FastImage.resizeMode.cover}
-              />
-            </>
+            <ImageComponent
+              placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
+              style={{
+                width: SCREEN_WIDTH / 3 - 2,
+                height: SCREEN_WIDTH / 3 - 2,
+                backgroundColor: '#fff',
+              }}
+              source={{
+                uri: item.media_attachments[0].url,
+              }}
+              contentFit={'cover'}
+            />
           )}
           {item.pf_type === 'photo:album' ? (
             <View position="absolute" right={5} top={5}>
@@ -242,17 +249,36 @@ export default function ProfileScreen() {
         >
           {user?.locked && !relationship?.following ? (
             <>
-              <View p="$6" borderWidth={2} borderColor="black" borderRadius={100}>
-                <Feather name="lock" size={40} />
+              <View
+                p="$6"
+                borderWidth={2}
+                borderColor={theme.borderColor?.val.default.val}
+                borderRadius={100}
+              >
+                <Feather name="lock" size={40} color={theme.color?.val.tertiary.val} />
               </View>
-              <Text fontSize="$8">This account is private</Text>
+              <YStack justifyContent="center" alignItems="center" gap="$2" px="$5">
+                <Text fontSize="$8" color={theme.color?.val.default.val}>
+                  This account is private
+                </Text>
+                <Text fontSize="$5" color={theme.color?.val.tertiary.val}>
+                  Follow this account to see their photos and videos.
+                </Text>
+              </YStack>
             </>
           ) : (
             <View flexGrow={1} alignItems="center" justifyContent="center" gap="$4">
-              <View p="$6" borderWidth={2} borderColor="black" borderRadius={100}>
-                <Feather name="camera" size={50} />
+              <View
+                p="$6"
+                borderWidth={2}
+                borderColor={theme.borderColor?.val.default}
+                borderRadius={100}
+              >
+                <Feather name="camera" size={50} color={theme.color?.val.tertiary.val} />
               </View>
-              <Text fontSize="$9">No Posts Yet</Text>
+              <Text fontSize="$9" color={theme.color?.val.tertiary.val}>
+                No Posts Yet
+              </Text>
             </View>
           )}
         </YStack>
@@ -266,6 +292,7 @@ export default function ProfileScreen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
+      queryClient.invalidateQueries({ queryKey: ['blockedAccounts'] })
     },
   })
 
@@ -275,6 +302,7 @@ export default function ProfileScreen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
+      queryClient.invalidateQueries({ queryKey: ['blockedAccounts'] })
     },
   })
 
@@ -284,6 +312,7 @@ export default function ProfileScreen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
+      queryClient.invalidateQueries({ queryKey: ['mutedAccounts'] })
     },
   })
 
@@ -293,6 +322,7 @@ export default function ProfileScreen() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['getAccountRelationship'] })
+      queryClient.invalidateQueries({ queryKey: ['mutedAccounts'] })
     },
   })
 
@@ -327,6 +357,24 @@ export default function ProfileScreen() {
       return
     }
     bottomSheetModalRef.current?.present()
+  }
+
+  const handleActionUnblock = () => {
+    Alert.alert(
+      'Confirm Unblock',
+      "Are you sure you want to unblock this account?\n\nThey won't be notified you unblocked them. You can block them later.",
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Unblock',
+          style: 'destructive',
+          onPress: () => handleUnblock(),
+        },
+      ]
+    )
   }
 
   const menuGotoLink = async (action) => {
@@ -516,6 +564,7 @@ export default function ProfileScreen() {
         onUnfollow={() => handleUnfollow()}
         onCancelFollowRequest={() => handleCancelFollowRequest()}
         onShare={() => handleOnShare()}
+        onUnblock={() => handleActionUnblock()}
         mutuals={mutuals}
       />
     ),
@@ -536,7 +585,7 @@ export default function ProfileScreen() {
   } = useInfiniteQuery({
     queryKey: ['statusesById', user?.id],
     queryFn: async ({ pageParam }) => {
-      const data = await getAccountStatusesById(user?.id, pageParam)
+      const data = await getAccountStatusesById(user?.id, { max_id: pageParam })
       const res = data.filter((p) => {
         return (
           ['photo', 'photo:album', 'video'].includes(p.pf_type) &&
@@ -551,13 +600,12 @@ export default function ProfileScreen() {
       if (lastPage.length === 0) {
         return undefined
       }
-      let lowestId = lastPage.reduce((min, obj) => {
-        if (obj.id < min) {
-          return obj.id
-        }
-        return min
+
+      const lowestId = lastPage.reduce((min, post) => {
+        return BigInt(post.id) < BigInt(min) ? post.id : min
       }, lastPage[0].id)
-      return lowestId
+
+      return String(BigInt(lowestId) - 1n)
     },
     enabled: !!userId,
   })
@@ -600,14 +648,17 @@ export default function ProfileScreen() {
       <SafeAreaView edges={['top']} flex={1}>
         <Stack.Screen options={{ headerShown: false }} />
         <View style={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator color={'#000'} />
+          <ActivityIndicator color={theme.color?.val.default.val} />
         </View>
       </SafeAreaView>
     )
   }
 
   return (
-    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: 'white' }}>
+    <SafeAreaView
+      edges={['top']}
+      style={{ flex: 1, backgroundColor: theme.background?.val.default.val }}
+    >
       <Stack.Screen
         options={{
           headerShown: Platform.OS === 'android',
@@ -621,17 +672,20 @@ export default function ProfileScreen() {
         numColumns={3}
         showsVerticalScrollIndicator={false}
         onEndReached={() => {
-          if (!userError && !isFetching && hasNextPage) {
+          if (!userError && !isFetching && !isFetchingNextPage && hasNextPage) {
             fetchNextPage()
           }
         }}
         onEndReachedThreshold={0.1}
         ListEmptyComponent={EmptyFeed}
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={{
+          flexGrow: 1,
+          backgroundColor: theme.background?.val.default.val,
+        }}
         ListFooterComponent={() =>
           !userError && isFetched && isFetchingNextPage ? (
             <View p="$5">
-              <ActivityIndicator />
+              <ActivityIndicator color={theme.color?.val.default.val} />
             </View>
           ) : null
         }
@@ -642,8 +696,12 @@ export default function ProfileScreen() {
         snapPoints={snapPoints}
         backdropComponent={renderBackdrop}
         keyboardBehavior={Platform.OS === 'ios' ? 'extend' : 'interactive'}
+        backgroundStyle={{ backgroundColor: theme.background.val.default.val }}
+        handleIndicatorStyle={{ backgroundColor: theme.background.val.tertiary.val }}
       >
-        <BottomSheetScrollView>
+        <BottomSheetScrollView
+          style={{ backgroundColor: theme.background?.val.default.val }}
+        >
           <Button
             size="$6"
             chromeless
@@ -652,7 +710,7 @@ export default function ProfileScreen() {
           >
             {relationship?.muting ? 'Unmute' : 'Mute'}
           </Button>
-          <Separator />
+          <Separator borderColor={theme.borderColor?.val.default.val} />
           <Button
             size="$6"
             chromeless
@@ -661,27 +719,42 @@ export default function ProfileScreen() {
           >
             {relationship?.blocking ? 'Unblock' : 'Block'}
           </Button>
-          <Separator />
+          <Separator borderColor={theme.borderColor?.val.default.val} />
           <Button size="$6" chromeless color="red" onPress={() => menuGotoLink('report')}>
             Report
           </Button>
-          <Separator />
-          <Button size="$6" chromeless onPress={() => menuGotoLink('about')}>
-            About this account
-          </Button>
-          <Separator />
-          <Button size="$6" chromeless onPress={() => menuGotoLink('copyurl')}>
-            Copy profile URL
-          </Button>
-          <Separator />
-          <Button size="$6" chromeless onPress={() => menuGotoLink('share')}>
-            Share this profile
-          </Button>
-          <Separator />
+          <Separator borderColor={theme.borderColor?.val.default.val} />
           <Button
             size="$6"
             chromeless
-            color="$gray8"
+            color={theme.color?.val.default.val}
+            onPress={() => menuGotoLink('about')}
+          >
+            About this account
+          </Button>
+          <Separator borderColor={theme.borderColor?.val.default.val} />
+          <Button
+            size="$6"
+            chromeless
+            color={theme.color?.val.default.val}
+            onPress={() => menuGotoLink('copyurl')}
+          >
+            Copy profile URL
+          </Button>
+          <Separator borderColor={theme.borderColor?.val.default.val} />
+          <Button
+            size="$6"
+            chromeless
+            color={theme.color?.val.default.val}
+            onPress={() => menuGotoLink('share')}
+          >
+            Share this profile
+          </Button>
+          <Separator borderColor={theme.borderColor?.val.default.val} />
+          <Button
+            size="$6"
+            chromeless
+            color={theme.color?.val.secondary.val}
             onPress={() => bottomSheetModalRef.current?.close()}
           >
             Cancel

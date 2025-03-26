@@ -313,8 +313,7 @@ export type NewReport = {
 
 export async function report(report: NewReport) {
   const api = ContextFromStorage()
-  const response = await api.jsonRequest('POST', 'api/v1.1/report', {}, report)
-  return await response.json()
+  return await api.jsonRequest('POST', 'api/v1.1/report', {}, report)
 }
 
 export async function getAccountByUsername(username: string): Promise<Account> {
@@ -367,10 +366,16 @@ export async function getHashtagRelated(id: string) {
   return await fetchPaginatedData(url)
 }
 
-export async function getConversations() {
+export async function getConversations({ pageParam = false }) {
   const instance = Storage.getString('app.instance')
-  let url = `https://${instance}/api/v1/conversations`
-  return await fetchData(url)
+  let url
+  if (!pageParam) {
+    const instance = Storage.getString('app.instance')
+    url = `https://${instance}/api/v1/conversations`
+  } else {
+    url = pageParam
+  }
+  return await fetchPaginatedData(url)
 }
 
 export async function getComposeSettings() {
@@ -396,6 +401,21 @@ export async function getStatusRepliesById(id: string, page) {
 export async function getOpenServers() {
   const response = await fetch(
     'https://pixelfed.org/api/v1/mobile-app/servers/open.json',
+    {
+      method: 'get',
+      headers: new Headers({
+        Accept: 'application/json',
+        'X-Pixelfed-App': '1',
+        'Content-Type': 'application/json',
+      }),
+    }
+  )
+  return (await response.json()) as OpenServersResponse
+}
+
+export async function getRegisterServers() {
+  const response = await fetch(
+    'https://pixelfed.org/api/v1/mobile-app/servers/register.json',
     {
       method: 'get',
       headers: new Headers({
