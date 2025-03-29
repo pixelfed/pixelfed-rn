@@ -37,11 +37,6 @@ export default function CommentsScreen() {
   const { id, username, content, acct } = useLocalSearchParams<{ id: string, username: string, content: string, acct: string }>()
   const navigation = useNavigation()
   const queryClient = useQueryClient()
-  useFocusEffect(
-    React.useCallback(() => {
-      queryClient.invalidateQueries({ queryKey: ['getStatusRepliesById', id] })
-    }, [queryClient])
-  );
   const theme = useTheme()
   const user = useUserCache()
 
@@ -73,6 +68,11 @@ export default function CommentsScreen() {
       setComment('@' + acct + ' ');
     }
   }, [username, content, acct, id, replySet, setReply, setInReplyToId, setComment]);
+  useFocusEffect(
+    React.useCallback(() => {
+      setChildComments({})
+    }, [])
+  );
 
   // Calculate dimensions and styles
   const inputContainerHeight = inReplyToId && replySet ? 150 : 110
