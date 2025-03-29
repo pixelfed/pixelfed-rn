@@ -125,7 +125,7 @@ export default function CommentItem({
                 </ReadMore>
 
                 <XStack mt="$2" gap="$4">
-                  <Pressable onPress={() => onReply(item)}>
+                  <Pressable onPress={() => onReply(item, level)}>
                     <Text
                       fontWeight="bold"
                       fontSize="$3"
