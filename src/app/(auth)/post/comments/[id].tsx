@@ -253,7 +253,7 @@ export default function CommentsScreen() {
 
   const handleCommentLike = useCallback((item) => {
     likeMutation.mutate({
-      id: item.id,
+      postId: item.id,
       type: item.favourited ? 'unlike' : 'like',
     })
   }, [])
@@ -388,11 +388,11 @@ export default function CommentsScreen() {
   })
 
   const likeMutation = useMutation({
-    mutationFn: async ({ id, type }) => {
-      const res = type === 'like' ? await likeStatus({ id }) : await unlikeStatus({ id })
-      return { res, id, type }
+    mutationFn: async ({ postId, type }) => {
+      const res = type === 'like' ? await likeStatus({ id: postId }) : await unlikeStatus({ id: postId })
+      return { res, postId, type }
     },
-    onSuccess: ({ res, id }) => {
+    onSuccess: ({ res, postId }) => {
       // Update comments in query cache
       let isIdChildren = true
       queryClient.setQueriesData({ queryKey: ['getStatusRepliesById', id] }, (old) => {
@@ -400,7 +400,7 @@ export default function CommentsScreen() {
 
         const newPages = old.pages.map((page) => {
           const newData = page.data.map((post) => {
-            if (post.id !== id) return post
+            if (post.id !== postId) return post
 
             isIdChildren = false
             return {
@@ -423,7 +423,7 @@ export default function CommentsScreen() {
 
           Object.keys(updatedChildComments).forEach((key) => {
             updatedChildComments[key] = updatedChildComments[key].map((childComment) => {
-              if (childComment.id === id) {
+              if (childComment.id === postId) {
                 return {
                   ...childComment,
                   favourited: res.favourited,
