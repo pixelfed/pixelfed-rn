@@ -494,10 +494,30 @@ export default function CommentsScreen() {
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
   })
 
+  const handleCustomBackPress = () => {
+    router.back();
+    router.setParams({ backId: `${id}` + '/' + `${data?.pages[0].data.length}` })
+  };
+
+  const HeaderLeft = () => (
+    <View ml="$3">
+      <Pressable onPress={handleCustomBackPress}>
+        <Feather name="chevron-left" size={25} color={theme.color?.val.default.val} />
+      </Pressable>
+    </View>
+  )
+
   // Loading state
   if (isFetching && !isFetchingNextPage) {
     return (
       <View flexGrow={1} mt="$5" justifyContent="center" alignItems="center">
+        <Stack.Screen
+          options={{
+            title: 'Comments',
+            // headerBackTitle: 'Back',
+            headerLeft: HeaderLeft,
+          }}
+        />
         <ActivityIndicator color={theme.color?.val.default.val || '#000'} size="large" />
       </View>
     )
@@ -513,19 +533,6 @@ export default function CommentsScreen() {
       </View>
     )
   }
-
-  const handleCustomBackPress = () => {
-    router.back();
-    router.setParams({ backId: `${id}` + '/' + `${data?.pages[0].data.length}` })
-  };
-
-  const HeaderLeft = () => (
-    <View ml="$3">
-      <Pressable onPress={handleCustomBackPress}>
-        <Feather name="chevron-left" size={25} color={theme.color?.val.default.val} />
-      </Pressable>
-    </View>
-  )
 
   // Render main screen
   return (
