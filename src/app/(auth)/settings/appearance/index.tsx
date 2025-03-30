@@ -32,18 +32,12 @@ export default function Screen() {
   const router = useRouter()
   // Available themes
   const themes = [
+    { name: 'Auto (System)', value: 'system' },
     { name: 'Light', value: 'light' },
     { name: 'Dark', value: 'dark' },
     { name: 'Slate Dark', value: 'slateDark' },
     { name: 'Hot Pink', value: 'hotPink' },
   ]
-
-  const statusBarMap = {
-    light: 'dark',
-    dark: 'light',
-    slateDark: 'light',
-    hotPink: 'dark',
-  }
 
   // Get stored theme or use system default
   const getStoredTheme = useCallback(() => {
