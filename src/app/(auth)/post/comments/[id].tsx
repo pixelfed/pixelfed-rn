@@ -1,6 +1,5 @@
 import React from 'react';
 import { Feather } from '@expo/vector-icons'
-import { useFocusEffect } from '@react-navigation/native';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
@@ -34,7 +33,7 @@ const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function CommentsScreen() {
   // Hooks and Params
-  const { id, username, content, acct } = useLocalSearchParams<{ id: string, username: string, content: string, acct: string }>()
+  const { id, username, content, acct, backId } = useLocalSearchParams<{ id: string, username: string, content: string, acct: string, backId: string }>()
   const navigation = useNavigation()
   const queryClient = useQueryClient()
   const theme = useTheme()
@@ -68,11 +67,35 @@ export default function CommentsScreen() {
       setComment('@' + acct + ' ');
     }
   }, [username, content, acct, id, replySet, setReply, setInReplyToId, setComment]);
-  useFocusEffect(
-    React.useCallback(() => {
-      setChildComments({})
-    }, [])
-  );
+  useEffect(() => {
+    if (backId !== undefined) {
+      const splitArray = backId.split("/");
+      setChildComments((prevChildComments) => {
+        if (prevChildComments && typeof prevChildComments === 'object') {
+          for (const key in prevChildComments) {
+            if (prevChildComments.hasOwnProperty(key)) {
+              const value = prevChildComments[key];
+              if (Array.isArray(value)) {
+                prevChildComments[key] = prevChildComments[key].map((item) => {
+                  if (String(item.id) === splitArray[0]) {
+                    item.reply_count = parseInt(splitArray[1]);
+                    if (item.reply_count === 1) {
+                      prevChildComments[parseInt(splitArray[0])] = [{}];
+                    }
+                    if (item.reply_count === 0) {
+                      prevChildComments[parseInt(splitArray[0])] = [];
+                    }
+                  }
+                  return item;
+                });
+              }
+            }
+          }
+        }
+        return prevChildComments;
+      })
+    }
+  }, [backId]);
 
   // Calculate dimensions and styles
   const inputContainerHeight = inReplyToId && replySet ? 150 : 110
@@ -81,7 +104,6 @@ export default function CommentsScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Comments',
-      headerBackTitle: 'Back',
     })
   }, [navigation])
 
@@ -308,7 +330,6 @@ export default function CommentsScreen() {
   // Mutations
   const commentMutation = useMutation({
     mutationFn: async ({ postId, commentText, scope, cw }) => {
-      // debugger;
       setCommentActionPending(true);
       const res = await postComment({ postId, commentText, scope, cw });
       res.content_text = commentText;
@@ -427,6 +448,7 @@ export default function CommentsScreen() {
       return { res };
     },
     onSuccess: ({ res }) => {
+      // router.setParams({ deleted: "bar" })
       queryClient.setQueriesData({ queryKey: ['getStatusRepliesById', id] }, (old) => {
         if (!old?.pages) return old
         const newPages = old.pages.map((page) => {
@@ -492,7 +514,18 @@ export default function CommentsScreen() {
     )
   }
 
+  const handleCustomBackPress = () => {
+    router.back();
+    router.setParams({ backId: `${id}` + '/' + `${data?.pages[0].data.length}` })
+  };
 
+  const HeaderLeft = () => (
+    <View ml="$3">
+      <Pressable onPress={handleCustomBackPress}>
+        <Feather name="chevron-left" size={25} color={theme.color?.val.default.val} />
+      </Pressable>
+    </View>
+  )
 
   // Render main screen
   return (
@@ -503,7 +536,8 @@ export default function CommentsScreen() {
       <Stack.Screen
         options={{
           title: 'Comments',
-          headerBackTitle: 'Back',
+          // headerBackTitle: 'Back',
+          headerLeft: HeaderLeft,
         }}
       />
       {commentActionPending && (
