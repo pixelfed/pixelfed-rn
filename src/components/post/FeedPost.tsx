@@ -150,9 +150,6 @@ const Section = React.memo(({ children }: React.PropsWithChildren) => {
     <View
       px="$3"
       backgroundColor={theme.background?.val.default.val}
-      borderTopWidth={1}
-      borderBottomWidth={1}
-      borderColor={theme.borderColor.val.default.val}
     >
       {children}
     </View>
@@ -475,7 +472,7 @@ const PostActions = React.memo(
       Alert.alert(
         'Alt Text',
         post?.media_attachments[idx].description ??
-          'Media was not tagged with any alt text.'
+        'Media was not tagged with any alt text.'
       )
     }
     const theme = useTheme()
@@ -966,7 +963,7 @@ const FeedPost = React.memo(
     const handlePresentModalPress = useCallback(() => {
       bottomSheetModalRef.current?.present()
     }, [])
-    const handleSheetChanges = useCallback((_: number) => {}, [])
+    const handleSheetChanges = useCallback((_: number) => { }, [])
     const renderBackdrop = useCallback(
       (props: BottomSheetBackdropProps) => (
         <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
@@ -1059,7 +1056,7 @@ const FeedPost = React.memo(
         await Share.share({
           message: post.url || post.uri,
         })
-      } catch (error) {}
+      } catch (error) { }
     }
     return (
       <View flex={1} style={{ width }}>
