@@ -1,0 +1,82 @@
+[
+  {
+    "Double Platinum Sponsors": [
+      {
+        "name": "Ben Perkins, @onequest",
+        "note": "onequest.me",
+        "pixelfedUser": "https://pixey.org/onequest"
+      }
+    ],
+
+    "Platinum Sponsors": [
+      {
+        "name": "Ani Betts"
+      },
+      {
+        "name": "Ghost",
+        "note": "https://ghost.org",
+        "pixelfedUser": ""
+        
+      }
+    ],
+
+    "Diamond Sponsors": [
+      {
+        "name": "Revenni Inc",
+        "note": "revenni.com",
+        "pixelfedUser": ""
+      },
+      {
+        "name": "Chris Graham",
+        "note": "",
+        "pixelfedUser": ""
+      },
+      {
+        "name": "Boomland Jenkins",
+        "note": "",
+        "pixelfedUser": ""
+      },
+      {
+        "name": "PrivacySafe.app",
+        "note": "",
+        "pixelfedUser": ""
+      },
+      {
+        "name": "Ma’moun Diraneyya",
+        "note": "",
+        "pixelfedUser": ""
+      },
+      {
+        "name": "Fedica",
+        "note": "fedica.com",
+        "pixelfedUser": ""
+      },
+      {
+        "name": "iVeryAm",
+        "note": "",
+        "pixelfedUser": ""
+      },
+      {
+        "name": "Streeternity",
+        "note": "",
+        "pixelfedUser": ""
+      }
+    ],
+
+    "Gold Sponsors": [
+      {
+        "name": "Fake Craig Mills",
+        "note": "",
+        "pixelfedUser": ""
+      }
+    ],
+
+    "Sponsors": [
+      {
+        "name": "Fake Sheena Maddox",
+        "note": "",
+        "pixelfedUser": ""
+      }
+    ]
+  }
+]
