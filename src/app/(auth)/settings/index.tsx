@@ -159,7 +159,11 @@ export default function Page() {
             borderColor={theme.borderColor?.val.default.val}
             separator={<Separator borderColor={theme.borderColor?.val.default.val} />}
           >
-            <GroupButton icon="dollar-sign" title="Contributors" path="/settings/contributors/" />
+            <GroupButton
+              icon="dollar-sign"
+              title="Contributors"
+              path="/settings/contributors/"
+            />
             <GroupButton icon="align-left" title="Legal" path="/settings/legal/" />
             <GroupUrlButton
               icon="trash"

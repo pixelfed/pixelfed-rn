@@ -20,19 +20,83 @@ export default function Screen() {
   const [query, setQuery] = useState('')
 
   const contributors = {
-    'Double Platinum Sponsor': ['Ben', 'Perkins', '@onequest'],
-    'Platinum Sponsors': ['Ghost', 'Ani Betts'],
-    'Diamond Sponsors': [
-      'Revenni Inc',
-      'Chris Graham',
-      'Boomland Jenkins',
-      'PrivacySafe.app',
-      'Ma’moun Diraneyya',
-      'Fedica',
-      'iVeryAm',
+    'Double Platinum Sponsors 💠💠': [
+      {
+        name: 'Ben Perkins, @onequest',
+        note: 'onequest.me',
+        pixelfedUser: 'https://pixey.org/onequest',
+      },
     ],
-    'Gold Sponsors': ['dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'dummy'],
-    Sponsors: ['dummy', 'dummy', 'dummy', 'dummy', 'dummy', 'dummy'],
+
+    'Platinum Sponsors 💠': [
+      {
+        name: 'Ani Betts',
+      },
+      {
+        name: 'Ghost',
+        note: 'https://ghost.org',
+        pixelfedUser: '',
+      },
+    ],
+
+    'Diamond Sponsors 💎': [
+      {
+        name: 'Revenni Inc',
+        note: 'revenni.com',
+        pixelfedUser: '',
+      },
+      {
+        name: 'Chris Graham',
+        note: '',
+        pixelfedUser: '',
+      },
+      {
+        name: 'Boomland Jenkins',
+        note: '',
+        pixelfedUser: '',
+      },
+      {
+        name: 'PrivacySafe.app',
+        note: '',
+        pixelfedUser: '',
+      },
+      {
+        name: 'Ma’moun Diraneyya',
+        note: '',
+        pixelfedUser: '',
+      },
+      {
+        name: 'Fedica',
+        note: 'fedica.com',
+        pixelfedUser: '',
+      },
+      {
+        name: 'iVeryAm',
+        note: '',
+        pixelfedUser: '',
+      },
+      {
+        name: 'Streeternity',
+        note: '',
+        pixelfedUser: '',
+      },
+    ],
+
+    'Gold Sponsors': [
+      {
+        name: 'Fake Craig Mills',
+        note: '',
+        pixelfedUser: '',
+      },
+    ],
+
+    Sponsors: [
+      {
+        name: 'Fake Sheena Maddox',
+        note: '',
+        pixelfedUser: '',
+      },
+    ],
   }
 
   const [searchedContributors, setSearchedContributors] = useState(contributors)
@@ -50,12 +114,12 @@ export default function Screen() {
           const originalNamesArray = contributors[key]
           const matchingNames = []
           if (Array.isArray(originalNamesArray)) {
-            for (const name of originalNamesArray) {
+            for (const sponsor of originalNamesArray) {
               if (
-                typeof name === 'string' &&
-                name.toLowerCase().includes(lowerCasequery)
+                typeof sponsor.name === 'string' &&
+                sponsor.name.toLowerCase().includes(lowerCasequery)
               ) {
-                matchingNames.push(name)
+                matchingNames.push(sponsor)
               }
             }
           }
@@ -77,9 +141,13 @@ export default function Screen() {
           headerBackTitle: 'Back',
         }}
       />
-      <H4 textAlign="center" color={theme.color?.val.default.val} mt="$4" mb="$4">
-        A Heartfelt Thank You to Our Amazing Contributors!
+      <H4 color={theme.color?.val.default.val} ml="$3" mt="$4">
+        Our amazing sponsors ! 🎉
       </H4>
+      <H5 color={theme.color?.val.secondary.val} ml="$3" mt="$2" mb="$3">
+        Your support makes all the difference—thank you for helping us achieve our goals!
+        🚀
+      </H5>
       <Input
         placeholder="Search contributors"
         m="$3"
@@ -93,30 +161,44 @@ export default function Screen() {
       <ScrollView flexShrink={1} showsVerticalScrollIndicator={false}>
         <YStack p="$5" gap="$4">
           {Object.entries(searchedContributors)
-            .filter(([sponsorType, names]) => names.length > 0)
-            .map(([sponsorType, names]) => (
-              <YGroup
-                borderWidth={1}
-                borderColor={theme.borderColor?.val.default.val}
-                key={sponsorType}
-                borderRadius="$8"
-                separator={<Separator borderColor={theme.borderColor?.val.default.val} />}
-              >
-                <YGroup.Item>
-                  <ListItem jc="center">
-                    <H5 color={theme.color?.val.default.val}>{sponsorType}</H5>
-                  </ListItem>
-                </YGroup.Item>
-                {names.map((name, index) => (
-                  <YGroup.Item key={index}>
-                    <ListItem>
-                      <Text color={theme.color?.val.default.val} textAlign="center">
-                        {name}
-                      </Text>
-                    </ListItem>
-                  </YGroup.Item>
-                ))}
-              </YGroup>
+            .filter(([_, sponsors]) => sponsors.length > 0)
+            .map(([sponsorType, sponsors]) => (
+              <>
+                <H5 color={theme.color?.val.default.val}>{sponsorType}</H5>
+                <YGroup
+                  borderWidth={1}
+                  borderColor={theme.borderColor?.val.default.val}
+                  key={sponsorType}
+                  borderRadius="$8"
+                  separator={
+                    <Separator borderColor={theme.borderColor?.val.default.val} />
+                  }
+                >
+                  {sponsors.map((sponsor, index) => (
+                    <YGroup.Item key={index}>
+                      <ListItem>
+                        <YStack mt="$1" my="$1" space="$1">
+                          <Text
+                            my={sponsor.note ? '' : '$2'}
+                            color={theme.color?.val.default.val}
+                          >
+                            {sponsor.name}
+                          </Text>
+                          {sponsor.note && (
+                            <Text
+                              mt="$1"
+                              fontSize={13}
+                              color={theme.color?.val.secondary.val}
+                            >
+                              {sponsor.note}
+                            </Text>
+                          )}
+                        </YStack>
+                      </ListItem>
+                    </YGroup.Item>
+                  ))}
+                </YGroup>
+              </>
             ))}
         </YStack>
       </ScrollView>
