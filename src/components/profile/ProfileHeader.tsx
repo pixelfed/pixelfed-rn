@@ -67,8 +67,8 @@ export default function ProfileHeader({
   const router = useRouter()
   const [usernameTruncated, setUsernameTruncated] = useState(profile?.acct?.length > 40)
   const [modalVisible, setModalVisible] = useState(false)
-  let { width } = useWindowDimensions()
-  width = width * (70 / 100)
+  const { width: windowWidth } = useWindowDimensions()
+  const imageWidth = windowWidth * (70 / 100)
 
   const theme = useTheme()
   const { id: selfId } = useUserCache()
@@ -389,10 +389,10 @@ export default function ProfileHeader({
                 <ZoomableImage
                   source={{ uri: profile?.avatar }}
                   style={{
-                    width: width,
-                    height: width,
+                    width: imageWidth,
+                    height: imageWidth,
                     backgroundColor: profile?.local ? '$gray5' : '$gray3',
-                    borderRadius: width,
+                    borderRadius: imageWidth,
                   }}
                 />
               </View>
