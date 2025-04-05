@@ -3,7 +3,7 @@
     "Double Platinum Sponsors": [
       {
         "name": "Ben Perkins, @onequest",
-        "note": "",
+        "note": "onequest.me",
         "pixelfedUser": "https://pixey.org/onequest"
       }
     ],
@@ -53,6 +53,11 @@
       },
       {
         "name": "iVeryAm",
+        "note": "",
+        "pixelfedUser": ""
+      },
+      {
+        "name": "Streeternity",
         "note": "",
         "pixelfedUser": ""
       }
