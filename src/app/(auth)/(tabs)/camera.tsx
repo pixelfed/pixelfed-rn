@@ -108,8 +108,6 @@ export default function Camera() {
         return uri
       }
 
-      console.log(`Resizing image: ${uri} (${fileSizeInMB.toFixed(2)}MB)`)
-
       const manipResult = await ImageManipulator.manipulateAsync(
         uri,
         [{ resize: { width: MAX_IMAGE_WIDTH } }],
@@ -758,7 +756,6 @@ export default function Camera() {
                   <Button p="$0" chromeless onPress={() => setSensitive(!isSensitive)}>
                     <Feather
                       name={isSensitive ? 'eye-off' : 'eye'}
-                      color={isSensitive ? '#bf9f00' : 'black'}
                       size={24}
                       color={theme.color?.val.default.val}
                     />

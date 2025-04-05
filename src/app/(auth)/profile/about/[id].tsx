@@ -167,7 +167,7 @@ export default function ProfileScreen() {
                 >
                   Private Account
                 </Text>
-                <Text fontSize="$5" color="$gray10" color={theme.color.val.secondary.val}>
+                <Text fontSize="$5" color={theme.color.val.secondary.val}>
                   Curates who can follow them and see their posts
                 </Text>
               </YStack>
