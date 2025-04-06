@@ -29,7 +29,13 @@ import type {
   PinchGestureHandlerEventPayload,
 } from 'react-native-gesture-handler'
 import { PressableOpacity } from 'react-native-pressable-opacity'
-import { type SharedValue, runOnJS, useSharedValue } from 'react-native-reanimated'
+import Animated, {
+  runOnJS,
+  type SharedValue,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated'
 import Carousel, { Pagination } from 'react-native-reanimated-carousel'
 import ImageComponent from 'src/components/ImageComponent'
 import AutolinkText from 'src/components/common/AutolinkText'
@@ -68,8 +74,73 @@ import {
 } from 'tamagui'
 import { PixelfedBottomSheetModal } from '../common/BottomSheets'
 import ReadMore from '../common/ReadMore'
-import ZoomableImage from '../common/ZoomableImage'
 import VideoPlayer from './VideoPlayer'
+
+const AnimatedFastImage = Animated.createAnimatedComponent(Image)
+
+const ZoomableImage = ({ source, placeholder, style }) => {
+  const scale = useSharedValue(1)
+  const savedScale = useSharedValue(1)
+  const translateX = useSharedValue(0)
+  const translateY = useSharedValue(0)
+  const originX = useSharedValue(0)
+  const originY = useSharedValue(0)
+
+  const onGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
+    const pinchScale = event.nativeEvent.scale
+    const nextScale = savedScale.value * pinchScale
+    const touchX = event.nativeEvent.focalX
+    const touchY = event.nativeEvent.focalY
+
+    if (scale.value === savedScale.value) {
+      originX.value = touchX
+      originY.value = touchY
+    }
+
+    const focalDeltaX = (touchX - originX.value) * (pinchScale - 1)
+    const focalDeltaY = (touchY - originY.value) * (pinchScale - 1)
+
+    scale.value = nextScale
+    translateX.value = focalDeltaX
+    translateY.value = focalDeltaY
+  }
+
+  const onHandlerStateChange = (
+    event: HandlerStateChangeEvent<PinchGestureHandlerEventPayload>
+  ) => {
+    if (event.nativeEvent.oldState === State.ACTIVE) {
+      savedScale.value = scale.value
+      scale.value = withSpring(1)
+      savedScale.value = 1
+      translateX.value = withSpring(0)
+      translateY.value = withSpring(0)
+    }
+  }
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+      { scale: scale.value },
+    ],
+  }))
+
+  return (
+    <PinchGestureHandler
+      onGestureEvent={onGestureEvent}
+      onHandlerStateChange={onHandlerStateChange}
+    >
+      <Animated.View>
+        <AnimatedFastImage
+          source={source}
+          placeholder={placeholder}
+          style={[style, animatedStyle]}
+          contentFit={'cover'}
+        />
+      </Animated.View>
+    </PinchGestureHandler>
+  )
+}
 
 const AVATAR_WIDTH = 45
 
@@ -320,13 +391,16 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
   return (
     <YStack zIndex={1}>
       <Carousel
-        onConfigurePanGesture={(gestureChain) => gestureChain.activeOffsetX([-10, 10])}
+        onConfigurePanGesture={(gestureChain) =>
+          gestureChain.activeOffsetX([-10, 10]).runOnJS(true)
+        }
         width={width}
         height={height}
         vertical={false}
         onProgressChange={progress}
         data={mediaList}
         renderItem={({ index }) => {
+          const media = mediaList[0]
           return (
             <ZoomableImage
               style={{

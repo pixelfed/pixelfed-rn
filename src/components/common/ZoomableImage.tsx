@@ -7,18 +7,25 @@ const AnimatedImage = Animated.createAnimatedComponent(Image)
 
 const PinchZoomImage = ({ source, style, placeholder }) => {
   const scale = useRef(new Animated.Value(1)).current
+  const lastScale = useRef(1)
 
-  const onPinchGestureEvent = Animated.event([{ nativeEvent: { scale } }], {
+  const onPinchGestureEvent = Animated.event([{ nativeEvent: { scale: scale } }], {
     useNativeDriver: true,
   })
 
   const onPinchHandlerStateChange = (event) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
+      lastScale.current *= event.nativeEvent.scale
+
+      // Animate back to original scale
       Animated.spring(scale, {
         toValue: 1,
         useNativeDriver: true,
-        bounciness: 0,
-      }).start()
+        bounciness: 5,
+      }).start(() => {
+        lastScale.current = 1
+        scale.setValue(1)
+      })
     }
   }
 
