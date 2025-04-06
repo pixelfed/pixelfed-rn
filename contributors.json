@@ -3,7 +3,7 @@
     "Double Platinum Sponsors": [
       {
         "name": "Ben Perkins, @onequest",
-        "note": "onequest.me",
+        "note": "https://onequest.me",
         "pixelfedUser": "https://pixey.org/onequest"
       }
     ],
@@ -23,7 +23,7 @@
     "Diamond Sponsors": [
       {
         "name": "Revenni Inc",
-        "note": "revenni.com",
+        "note": "https://revenni.com",
         "pixelfedUser": ""
       },
       {
@@ -38,7 +38,7 @@
       },
       {
         "name": "PrivacySafe.app",
-        "note": "",
+        "note": "https://privacysafe.app",
         "pixelfedUser": ""
       },
       {
@@ -48,7 +48,7 @@
       },
       {
         "name": "Fedica",
-        "note": "fedica.com",
+        "note": "https://fedica.com",
         "pixelfedUser": ""
       },
       {
