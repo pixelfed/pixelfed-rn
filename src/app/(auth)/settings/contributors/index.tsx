@@ -645,7 +645,7 @@ export default function Screen() {
           {Object.entries(searchedContributors)
             .filter(([_, sponsors]) => sponsors.length > 0)
             .map(([sponsorType, sponsors]) => (
-              <>
+              <React.Fragment key={sponsorType}>
                 <H5
                   style={{ letterSpacing: -0.05 }}
                   pt="$2"
@@ -657,7 +657,6 @@ export default function Screen() {
                 <YGroup
                   borderWidth={1}
                   borderColor={theme.borderColor?.val.default.val}
-                  key={sponsorType}
                   borderRadius="$8"
                   separator={
                     <Separator borderColor={theme.borderColor?.val.default.val} />
@@ -666,9 +665,10 @@ export default function Screen() {
                 >
                   {sponsors.map((sponsor, index) => (
                     <PressableOpacity
+                      key={`${sponsor.name}-${index}`}
                       onPress={() => gotoUserProfile(sponsor.pixelfedUser)}
                     >
-                      <YGroup.Item key={index}>
+                      <YGroup.Item>
                         <ListItem>
                           <YStack my="$2">
                             <Text
@@ -696,7 +696,7 @@ export default function Screen() {
                     </PressableOpacity>
                   ))}
                 </YGroup>
-              </>
+              </React.Fragment>
             ))}
         </YStack>
       </ScrollView>
