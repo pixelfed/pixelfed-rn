@@ -622,7 +622,6 @@ export default function Screen() {
         color={theme.color?.val.secondary.val}
         ml="$3"
         mt="$1"
-        mb="$3"
       >
         Your support makes all the difference—thank you for helping us achieve our goals!
         🚀
@@ -630,25 +629,24 @@ export default function Screen() {
       <Input
         placeholder="Search contributors"
         mx="$3"
-        mt="$3"
-        mb="$1"
+        mt="$4"
         onChangeText={(text) => setQuery(text)}
         value={query}
         bg={theme.background?.val.tertiary.val}
         color={theme.color?.val.default.val}
         placeholderTextColor={theme.color?.val.tertiary.val}
         size="$5"
-        borderRadius="$8"
+        borderRadius="$9"
       />
       <ScrollView flexShrink={1} showsVerticalScrollIndicator={false}>
-        <YStack px="$5" py="$3">
+        <YStack px="$5">
           {Object.entries(searchedContributors)
             .filter(([_, sponsors]) => sponsors.length > 0)
             .map(([sponsorType, sponsors]) => (
               <React.Fragment key={sponsorType}>
                 <H5
                   style={{ letterSpacing: -0.05 }}
-                  pt="$2"
+                  pt="$4"
                   pb="$1"
                   color={theme.color?.val.default.val}
                 >
@@ -661,7 +659,6 @@ export default function Screen() {
                   separator={
                     <Separator borderColor={theme.borderColor?.val.default.val} />
                   }
-                  mb="$2"
                 >
                   {sponsors.map((sponsor, index) => (
                     <PressableOpacity
@@ -670,9 +667,8 @@ export default function Screen() {
                     >
                       <YGroup.Item>
                         <ListItem>
-                          <YStack my="$2">
+                          <YStack>
                             <Text
-                              my={sponsor.note ? '' : '$2'}
                               color={theme.color?.val.default.val}
                               numberOfLines={1}
                               ellipsizeMode="tail"
