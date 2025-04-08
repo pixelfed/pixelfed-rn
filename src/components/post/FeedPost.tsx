@@ -147,13 +147,7 @@ const AVATAR_WIDTH = 45
 const Section = React.memo(({ children }: React.PropsWithChildren) => {
   const theme = useTheme()
   return (
-    <View
-      px="$3"
-      backgroundColor={theme.background?.val.default.val}
-      borderTopWidth={1}
-      borderBottomWidth={1}
-      borderColor={theme.borderColor.val.default.val}
-    >
+    <View px="$3" py="$1" backgroundColor={theme.background?.val.default.val}>
       {children}
     </View>
   )
@@ -674,7 +668,7 @@ const PostCaption = React.memo(
     const theme = useTheme()
     return (
       <BorderlessSection>
-        <YStack gap="$3" pt="$1" pb="$3" px="$2">
+        <YStack gap="$3" pt="$1" pb="$5" px="$2">
           <XStack flexWrap="wrap" pr="$3">
             {disableReadMore ? (
               <AutolinkText
