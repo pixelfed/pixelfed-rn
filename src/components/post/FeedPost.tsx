@@ -149,6 +149,7 @@ const Section = React.memo(({ children }: React.PropsWithChildren) => {
   return (
     <View
       px="$3"
+      py="$1"
       backgroundColor={theme.background?.val.default.val}
     >
       {children}
