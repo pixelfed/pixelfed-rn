@@ -195,8 +195,7 @@ const PostHeader = React.memo(
           justifyContent="space-between"
           alignSelf="stretch"
           alignItems="center"
-          pt="$4"
-          pb="$2"
+          py="$2"
         >
           <View flexGrow={1}>
             <Link href={`/profile/${userId}`} asChild>
@@ -669,7 +668,7 @@ const PostCaption = React.memo(
     const theme = useTheme()
     return (
       <BorderlessSection>
-        <YStack gap="$3" pt="$1" pb="$3" px="$2">
+        <YStack gap="$3" pt="$1" pb="$5" px="$2">
           <XStack flexWrap="wrap" pr="$3">
             {disableReadMore ? (
               <AutolinkText
