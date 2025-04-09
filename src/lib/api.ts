@@ -505,6 +505,38 @@ export async function postComment({ postId, commentText, scope = 'public', cw = 
   return await response.json()
 }
 
+export async function pinPost({ id }) {
+  const instance = Storage.getString('app.instance')
+  const token = Storage.getString('app.token')
+
+  const url = `https://${instance}/api/v1/statuses/${id}/pin`
+  const response = await fetch(url, {
+    method: 'post',
+    headers: new Headers({
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
+  })
+  return await response.json()
+}
+
+export async function unPinPost({ id }) {
+  const instance = Storage.getString('app.instance')
+  const token = Storage.getString('app.token')
+
+  const url = `https://${instance}/api/v1/statuses/${id}/unpin`
+  const response = await fetch(url, {
+    method: 'post',
+    headers: new Headers({
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
+  })
+  return await response.json()
+}
+
 export async function likeStatus({ id }: { id: string }) {
   const instance = Storage.getString('app.instance')
   const token = Storage.getString('app.token')

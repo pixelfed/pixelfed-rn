@@ -16,6 +16,9 @@ import {
   Share,
   useWindowDimensions,
 } from 'react-native'
+import {
+  useMutation,
+} from '@tanstack/react-query'
 import { Blurhash } from 'react-native-blurhash'
 import {
   Gesture,
@@ -51,6 +54,10 @@ import type {
   Timestamp,
   Visibility,
 } from 'src/lib/api-types'
+import {
+  pinPost,
+  unPinPost,
+} from 'src/lib/api'
 import { Storage } from 'src/state/cache'
 import {
   _timeAgo,
@@ -475,7 +482,7 @@ const PostActions = React.memo(
       Alert.alert(
         'Alt Text',
         post?.media_attachments[idx].description ??
-          'Media was not tagged with any alt text.'
+        'Media was not tagged with any alt text.'
       )
     }
     const theme = useTheme()
@@ -966,7 +973,7 @@ const FeedPost = React.memo(
     const handlePresentModalPress = useCallback(() => {
       bottomSheetModalRef.current?.present()
     }, [])
-    const handleSheetChanges = useCallback((_: number) => {}, [])
+    const handleSheetChanges = useCallback((_: number) => { }, [])
     const renderBackdrop = useCallback(
       (props: BottomSheetBackdropProps) => (
         <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
@@ -1010,6 +1017,37 @@ const FeedPost = React.memo(
           text: 'Delete',
           style: 'destructive',
           onPress: () => onDeletePost(id),
+        },
+      ])
+    }
+
+    const pinUnPinMutation = useMutation({
+      mutationFn: async (id: string, action: boolean) => {
+        try {
+          return action
+            ? await pinPost(id)
+            : await unPinPost(id)
+        } catch (error) {
+          console.error('Error within mutationFn:', error)
+          throw error
+        }
+      },
+      onError: (error) => {
+        console.error('Error handled by pin/unpin useMutation:', error)
+      },
+    })
+
+    const _onPinUnPinPost = (id: string, action: boolean) => {
+      bottomSheetModalRef.current?.close()
+      Alert.alert(action ? "Pin Post" : "Unpin Post", `Are you sure you want to ${action ? "Pin Post" : "Unpin Post"} this post?`, [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: action ? "Pin Post" : "Unpin Post",
+          style: 'default',
+          onPress: () => pinUnPinMutation.mutate(id, action),
         },
       ])
     }
@@ -1059,7 +1097,7 @@ const FeedPost = React.memo(
         await Share.share({
           message: post.url || post.uri,
         })
-      } catch (error) {}
+      } catch (error) { }
     }
     return (
       <View flex={1} style={{ width }}>
@@ -1222,6 +1260,15 @@ const FeedPost = React.memo(
                 <Button
                   size="$6"
                   chromeless
+                  onPress={() => _onPinUnPinPost(post.id, !post.pinned)}
+                  color={theme.color?.val.secondary.val}
+                >
+                  {post?.pinned ? "Unpin Post" : "Pin Post"}
+                </Button>
+                <Separator borderColor={theme.borderColor?.val.default.val} />
+                <Button
+                  size="$6"
+                  chromeless
                   onPress={() => _onEditPost(post.id)}
                   color={theme.color?.val.secondary.val}
                 >
@@ -1249,7 +1296,7 @@ const FeedPost = React.memo(
             </Button>
           </BottomSheetScrollView>
         </PixelfedBottomSheetModal>
-      </View>
+      </View >
     )
   },
   (prevProps, nextProps) => {
