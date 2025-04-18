@@ -135,7 +135,7 @@ const ZoomableImage = ({ source, placeholder, style }) => {
           source={source}
           placeholder={placeholder}
           style={[style, animatedStyle]}
-          contentFit={'cover'}
+          contentFit={'contain'}
         />
       </Animated.View>
     </PinchGestureHandler>
