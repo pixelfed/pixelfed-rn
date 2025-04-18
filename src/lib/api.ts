@@ -288,7 +288,7 @@ export async function getStatusById(id: string) {
 
 export async function getAccountById(id: string) {
   const api = ContextFromStorage()
-  return await api.get(`api/v1/accounts/${id}?_pe=1`)
+  return await api.get(`api/v1/accounts/${id}?_pe=1&pinned=true`)
 }
 
 export async function followAccountById(
@@ -318,7 +318,7 @@ export async function report(report: NewReport) {
 
 export async function getAccountByUsername(username: string): Promise<Account> {
   const api = ContextFromStorage()
-  let account = await api.get(`api/v1.1/accounts/username/${username}?_pe=1`)
+  let account = await api.get(`api/v1.1/accounts/username/${username}?_pe=1&pinned=true`)
   if (Array.isArray(account) && account.length === 0) {
     throw new Error(`Account "${username}" not found`)
   }
@@ -494,6 +494,38 @@ export async function postComment({ postId, commentText, scope = 'public', cw = 
     sensitive: String(cw),
   })
   const url = `https://${instance}/api/v1/statuses?${params}`
+  const response = await fetch(url, {
+    method: 'post',
+    headers: new Headers({
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
+  })
+  return await response.json()
+}
+
+export async function pinPost({ id }) {
+  const instance = Storage.getString('app.instance')
+  const token = Storage.getString('app.token')
+
+  const url = `https://${instance}/api/v1/statuses/${id}/pin`
+  const response = await fetch(url, {
+    method: 'post',
+    headers: new Headers({
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
+  })
+  return await response.json()
+}
+
+export async function unPinPost({ id }) {
+  const instance = Storage.getString('app.instance')
+  const token = Storage.getString('app.token')
+
+  const url = `https://${instance}/api/v1/statuses/${id}/unpin`
   const response = await fetch(url, {
     method: 'post',
     headers: new Headers({
