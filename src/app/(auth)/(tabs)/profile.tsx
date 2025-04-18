@@ -77,6 +77,8 @@ export default function ProfileScreen() {
     data: feed,
     fetchNextPage,
     hasNextPage,
+    refetch,
+    isRefetching,
     hasPreviousPage,
     isFetchingNextPage,
     isFetching: isFeedFetching,
@@ -88,7 +90,7 @@ export default function ProfileScreen() {
       if (!userId) {
         throw new Error('getAccountStatusesById: user id missing')
       }
-      const data = await getAccountStatusesById(userId, { max_id: pageParam })
+      const data = await getAccountStatusesById(userId, { max_id: pageParam, pinned: true })
       return data.filter((p) => {
         return (
           ['photo', 'photo:album', 'video'].includes(p.pf_type) &&
@@ -175,6 +177,8 @@ export default function ProfileScreen() {
         }
         renderItem={RenderItem}
         numColumns={3}
+        refreshing={isRefetching}
+        onRefresh={refetch}
         showsVerticalScrollIndicator={false}
         onEndReached={() => {
           if (!isFetching && hasNextPage) fetchNextPage()

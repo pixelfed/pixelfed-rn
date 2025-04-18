@@ -1,5 +1,6 @@
 import ProfileHeader from '@components/profile/ProfileHeader'
 import { Feather } from '@expo/vector-icons'
+import Entypo from '@expo/vector-icons/Entypo';
 import {
   BottomSheetBackdrop,
   type BottomSheetModal,
@@ -203,7 +204,21 @@ export default function ProfileScreen() {
               contentFit={'cover'}
             />
           )}
-          {item.pf_type === 'photo:album' ? (
+
+          {item.pinned ? (
+            <View
+              style={{
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.05,
+                shadowRadius: 0.5,
+                elevation: 1, // Android shadow
+              }}
+              position="absolute" right={5} top={5}>
+              <Entypo name="pin" size={20} color="white" />
+            </View>
+          ) : null}
+          {item.pf_type === 'photo:album' && !item.pinned ? (
             <View position="absolute" right={5} top={5}>
               <Feather name="columns" color="white" size={20} />
             </View>
@@ -518,13 +533,13 @@ export default function ProfileScreen() {
   const { data: user, error: userError } = useQuery(
     byUsername !== undefined && id === '0'
       ? {
-          queryKey: ['getAccountByUsername', byUsername],
-          queryFn: () => getAccountByUsername(byUsername),
-        }
+        queryKey: ['getAccountByUsername', byUsername],
+        queryFn: () => getAccountByUsername(byUsername),
+      }
       : {
-          queryKey: ['getAccountById', id],
-          queryFn: () => getAccountById(id),
-        }
+        queryKey: ['getAccountById', id],
+        queryFn: () => getAccountById(id),
+      }
   )
 
   const userId = user?.id
@@ -585,7 +600,7 @@ export default function ProfileScreen() {
   } = useInfiniteQuery({
     queryKey: ['statusesById', user?.id],
     queryFn: async ({ pageParam }) => {
-      const data = await getAccountStatusesById(user?.id, { max_id: pageParam })
+      const data = await getAccountStatusesById(user?.id, { max_id: pageParam, pinned: true })
       const res = data.filter((p) => {
         return (
           ['photo', 'photo:album', 'video'].includes(p.pf_type) &&

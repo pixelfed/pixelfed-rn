@@ -1022,11 +1022,12 @@ const FeedPost = React.memo(
     }
 
     const pinUnPinMutation = useMutation({
-      mutationFn: async (id: string, action: boolean) => {
+      mutationFn: async ({ id, action }) => {
         try {
-          return action
-            ? await pinPost(id)
-            : await unPinPost(id)
+          const res = action
+            ? await pinPost({ id })
+            : await unPinPost({ id });
+          return res;
         } catch (error) {
           console.error('Error within mutationFn:', error)
           throw error
@@ -1047,7 +1048,7 @@ const FeedPost = React.memo(
         {
           text: action ? "Pin Post" : "Unpin Post",
           style: 'default',
-          onPress: () => pinUnPinMutation.mutate(id, action),
+          onPress: () => pinUnPinMutation.mutate({ id, action }),
         },
       ])
     }
@@ -1260,7 +1261,7 @@ const FeedPost = React.memo(
                 <Button
                   size="$6"
                   chromeless
-                  onPress={() => _onPinUnPinPost(post.id, !post.pinned)}
+                  onPress={() => _onPinUnPinPost(post.id, !post?.pinned)}
                   color={theme.color?.val.secondary.val}
                 >
                   {post?.pinned ? "Unpin Post" : "Pin Post"}
