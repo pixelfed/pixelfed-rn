@@ -1,7 +1,7 @@
-import React from 'react';
 import { Feather } from '@expo/vector-icons'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
+import React from 'react'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {
   ActivityIndicator,
@@ -10,11 +10,11 @@ import {
   FlatList,
   Keyboard,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   Pressable,
   StyleSheet,
   TextInput,
-  Modal
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Switch } from 'src/components/form/Switch'
@@ -33,7 +33,13 @@ const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function CommentsScreen() {
   // Hooks and Params
-  const { id, username, content, acct, backId } = useLocalSearchParams<{ id: string, username: string, content: string, acct: string, backId: string }>()
+  const { id, username, content, acct, backId } = useLocalSearchParams<{
+    id: string
+    username: string
+    content: string
+    acct: string
+    backId: string
+  }>()
   const navigation = useNavigation()
   const queryClient = useQueryClient()
   const theme = useTheme()
@@ -50,52 +56,57 @@ export default function CommentsScreen() {
   const [replyScope, setReplyScope] = useState('public')
   const [hasCW, setCW] = useState(false)
   const [loadingChildId, setLoadingChildId] = useState(null)
-  const [commentActionPending, setCommentActionPending] = useState(false);
+  const [commentActionPending, setCommentActionPending] = useState(false)
   const [childComments, setChildComments] = useState({})
   const [keyboardVisible, setKeyboardVisible] = useState(false)
   const [keyboardHeight, setKeyboardHeight] = useState(0)
 
   useEffect(() => {
-    if (username !== undefined && content !== undefined && acct !== undefined && replySet === null) {
+    if (
+      username !== undefined &&
+      content !== undefined &&
+      acct !== undefined &&
+      replySet === null
+    ) {
       setReply({
         id,
         username,
         content,
         acct,
-      });
-      setInReplyToId(id);
-      setComment('@' + acct + ' ');
+      })
+      setInReplyToId(id)
+      setComment('@' + acct + ' ')
     }
-  }, [username, content, acct, id, replySet, setReply, setInReplyToId, setComment]);
+  }, [username, content, acct, id, replySet, setReply, setInReplyToId, setComment])
   useEffect(() => {
     if (backId !== undefined) {
-      const splitArray = backId.split("/");
+      const splitArray = backId.split('/')
       setChildComments((prevChildComments) => {
         if (prevChildComments && typeof prevChildComments === 'object') {
           for (const key in prevChildComments) {
             if (prevChildComments.hasOwnProperty(key)) {
-              const value = prevChildComments[key];
+              const value = prevChildComments[key]
               if (Array.isArray(value)) {
                 prevChildComments[key] = prevChildComments[key].map((item) => {
                   if (String(item.id) === splitArray[0]) {
-                    item.reply_count = parseInt(splitArray[1]);
+                    item.reply_count = Number.parseInt(splitArray[1])
                     if (item.reply_count === 1) {
-                      prevChildComments[parseInt(splitArray[0])] = [{}];
+                      prevChildComments[Number.parseInt(splitArray[0])] = [{}]
                     }
                     if (item.reply_count === 0) {
-                      prevChildComments[parseInt(splitArray[0])] = [];
+                      prevChildComments[Number.parseInt(splitArray[0])] = []
                     }
                   }
-                  return item;
-                });
+                  return item
+                })
               }
             }
           }
         }
-        return prevChildComments;
+        return prevChildComments
       })
     }
-  }, [backId]);
+  }, [backId])
 
   // Calculate dimensions and styles
   const inputContainerHeight = inReplyToId && replySet ? 190 : 150
@@ -112,32 +123,32 @@ export default function CommentsScreen() {
     const keyboardWillShowListener =
       Platform.OS === 'ios'
         ? Keyboard.addListener('keyboardWillShow', (e) => {
-          setKeyboardVisible(true)
-          setKeyboardHeight(e.endCoordinates.height)
-        })
-        : { remove: () => { } }
+            setKeyboardVisible(true)
+            setKeyboardHeight(e.endCoordinates.height)
+          })
+        : { remove: () => {} }
 
     const keyboardDidShowListener =
       Platform.OS === 'android'
         ? Keyboard.addListener('keyboardDidShow', () => {
-          setKeyboardVisible(true)
-        })
-        : { remove: () => { } }
+            setKeyboardVisible(true)
+          })
+        : { remove: () => {} }
 
     const keyboardWillHideListener =
       Platform.OS === 'ios'
         ? Keyboard.addListener('keyboardWillHide', () => {
-          setKeyboardVisible(false)
-          setKeyboardHeight(0)
-        })
-        : { remove: () => { } }
+            setKeyboardVisible(false)
+            setKeyboardHeight(0)
+          })
+        : { remove: () => {} }
 
     const keyboardDidHideListener =
       Platform.OS === 'android'
         ? Keyboard.addListener('keyboardDidHide', () => {
-          setKeyboardVisible(false)
-        })
-        : { remove: () => { } }
+            setKeyboardVisible(false)
+          })
+        : { remove: () => {} }
 
     return () => {
       keyboardWillShowListener.remove()
@@ -210,10 +221,9 @@ export default function CommentsScreen() {
           username: item.account.username,
           content: item.content_text && item.content_text.slice(8, 55) + '...',
           acct: item.account.acct,
-        }
-      }
-      )
-      return;
+        },
+      })
+      return
     }
     fetchChildren(item.id, level)
 
@@ -330,66 +340,69 @@ export default function CommentsScreen() {
   // Mutations
   const commentMutation = useMutation({
     mutationFn: async ({ postId, commentText, scope, cw }) => {
-      setCommentActionPending(true);
-      const res = await postComment({ postId, commentText, scope, cw });
-      res.content_text = commentText;
+      setCommentActionPending(true)
+      const res = await postComment({ postId, commentText, scope, cw })
+      res.content_text = commentText
       return { res }
     },
     onSuccess: ({ res }) => {
-      let isChildrenReply = false;
+      let isChildrenReply = false
       queryClient.setQueriesData({ queryKey: ['getStatusRepliesById', id] }, (old) => {
         if (!old?.pages) return old
         old.pages[0].data.map((commentItem) => {
           if (commentItem.id === res.in_reply_to_id) {
             isChildrenReply = true
-            return;
-          };
+            return
+          }
         })
 
         Object.keys(childComments).forEach((key) => {
           childComments[key].map((data) => {
             if (data.id === res.in_reply_to_id) {
-              isChildrenReply = true;
-              data.reply_count++;
-              return;
-            };
+              isChildrenReply = true
+              data.reply_count++
+              return
+            }
           })
         })
 
         if (!isChildrenReply) {
-          old.pages[0].data.push(res);
+          old.pages[0].data.push(res)
         }
-        return { ...old };
+        return { ...old }
       })
       if (isChildrenReply) {
         // setLoadingChildId(res.in_reply_to_id);
         setChildComments((prevChildComments) => {
           const updatedChildComments = { ...prevChildComments }
-          let isAlreadyPresent = false;
+          let isAlreadyPresent = false
           Object.keys(updatedChildComments).forEach((key) => {
             if (key === res.in_reply_to_id) {
-              isAlreadyPresent = true;
-              updatedChildComments[key].push(res);
+              isAlreadyPresent = true
+              updatedChildComments[key].push(res)
             }
           })
-          if (!isAlreadyPresent) updatedChildComments[res.in_reply_to_id] = [res];
+          if (!isAlreadyPresent) updatedChildComments[res.in_reply_to_id] = [res]
           Object.keys(updatedChildComments).forEach((key) => {
             updatedChildComments[key].map((item) => {
-              if (item.id === res.id) item.reply_count++;
-            });
+              if (item.id === res.id) item.reply_count++
+            })
           })
           return updatedChildComments
         })
         // setLoadingChildId(null);
       }
-      setCommentActionPending(false);
+      setCommentActionPending(false)
     },
-    onError: () => setCommentActionPending(false)
+    onError: () => setCommentActionPending(false),
   })
 
   const likeMutation = useMutation({
     mutationFn: async ({ postId, type }) => {
-      const res = type === 'like' ? await likeStatus({ id: postId }) : await unlikeStatus({ id: postId })
+      const res =
+        type === 'like'
+          ? await likeStatus({ id: postId })
+          : await unlikeStatus({ id: postId })
       return { res, postId, type }
     },
     onSuccess: ({ res, postId }) => {
@@ -444,8 +457,8 @@ export default function CommentsScreen() {
   const commentDeleteMutation = useMutation({
     mutationFn: async ({ id }) => {
       setCommentActionPending(true)
-      const res = await deleteStatus({ id });
-      return { res };
+      const res = await deleteStatus({ id })
+      return { res }
     },
     onSuccess: ({ res }) => {
       // router.setParams({ deleted: "bar" })
@@ -453,7 +466,7 @@ export default function CommentsScreen() {
         if (!old?.pages) return old
         const newPages = old.pages.map((page) => {
           const newData = page.data.filter((post) => {
-            return post.id !== res.id;
+            return post.id !== res.id
           })
           return { ...page, data: newData }
         })
@@ -463,22 +476,25 @@ export default function CommentsScreen() {
         if (prevChildComments && typeof prevChildComments === 'object') {
           for (const key in prevChildComments) {
             if (prevChildComments.hasOwnProperty(key)) {
-              const value = prevChildComments[key];
+              const value = prevChildComments[key]
               if (Array.isArray(value)) {
-                prevChildComments[key] = value.filter(item => !(typeof item === 'object' && item !== null && item.id === res.id));
+                prevChildComments[key] = value.filter(
+                  (item) =>
+                    !(typeof item === 'object' && item !== null && item.id === res.id)
+                )
                 prevChildComments[key] = prevChildComments[key].map((item) => {
-                  if (item.id === res.in_reply_to_id) item.reply_count--;
-                  return item;
-                });
+                  if (item.id === res.in_reply_to_id) item.reply_count--
+                  return item
+                })
               }
             }
           }
         }
-        return prevChildComments;
+        return prevChildComments
       })
       setCommentActionPending(false)
     },
-    onError: () => setCommentActionPending(false)
+    onError: () => setCommentActionPending(false),
   })
 
   // Query for comments
@@ -495,9 +511,9 @@ export default function CommentsScreen() {
   })
 
   const handleCustomBackPress = () => {
-    router.back();
+    router.back()
     router.setParams({ backId: `${id}` + '/' + `${data?.pages[0].data.length}` })
-  };
+  }
 
   const HeaderLeft = () => (
     <View ml="$3">
@@ -550,7 +566,10 @@ export default function CommentsScreen() {
       {commentActionPending && (
         <Modal transparent={true} animationType="fade" visible={commentActionPending}>
           <View style={styles.overlay}>
-            <ActivityIndicator color={theme.color?.val.default.val || '#000'} size="large" />
+            <ActivityIndicator
+              color={theme.color?.val.default.val || '#000'}
+              size="large"
+            />
           </View>
         </Modal>
       )}
