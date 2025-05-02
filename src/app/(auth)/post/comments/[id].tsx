@@ -98,7 +98,7 @@ export default function CommentsScreen() {
   }, [backId]);
 
   // Calculate dimensions and styles
-  const inputContainerHeight = inReplyToId && replySet ? 150 : 110
+  const inputContainerHeight = inReplyToId && replySet ? 190 : 150
 
   // Set up navigation options
   useLayoutEffect(() => {
@@ -567,6 +567,7 @@ export default function CommentsScreen() {
             keyExtractor={(item) => item?.id}
             renderItem={renderCommentItem}
             ListEmptyComponent={RenderEmptyState}
+            keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
             contentContainerStyle={[
               styles.contentCommentsContainer,
@@ -797,6 +798,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     padding: 10,
     borderWidth: 1,
+    height: 75,
+    textAlignVertical: 'top',
   },
   overlay: {
     flex: 1,
