@@ -109,8 +109,6 @@ export default function Camera() {
         return uri
       }
 
-      console.log(`Resizing image: ${uri} (${fileSizeInMB.toFixed(2)}MB)`)
-
       const manipResult = await ImageManipulator.manipulateAsync(
         uri,
         [{ resize: { width: MAX_IMAGE_WIDTH } }],
