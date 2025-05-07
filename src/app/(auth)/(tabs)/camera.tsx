@@ -28,7 +28,6 @@ import { FlatList } from 'react-native-gesture-handler'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import ImageComponent from 'src/components/ImageComponent'
 import { PixelfedBottomSheetModal } from 'src/components/common/BottomSheets'
-import { ErrorAlert } from 'src/components/common/ErrorAlert'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { Switch } from 'src/components/form/Switch'
 import {
@@ -545,7 +544,7 @@ export default function Camera() {
 
         toast.show('Error uploading media', {
           message: err.message,
-          native: false
+          native: false,
         })
       })
   }

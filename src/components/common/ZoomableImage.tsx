@@ -1,5 +1,5 @@
 import { Image } from 'expo-image'
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 import { Animated, StyleSheet, View } from 'react-native'
 import { PinchGestureHandler, State } from 'react-native-gesture-handler'
 

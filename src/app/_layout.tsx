@@ -9,8 +9,14 @@ import { Stack, useRouter } from 'expo-router'
 import { ShareIntentProvider } from 'expo-share-intent'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
-import React, { useEffect, useState } from 'react'
-import { Appearance, type AppStateStatus, LogBox, Platform, useColorScheme } from 'react-native'
+import { useEffect, useState } from 'react'
+import {
+  type AppStateStatus,
+  Appearance,
+  LogBox,
+  Platform,
+  useColorScheme,
+} from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import GlobalToast from 'src/components/notifications/GlobalToast'
 import { useAppState } from 'src/hooks/useAppState'
@@ -160,7 +166,10 @@ function RootLayoutNav() {
   // Load the theme from storage on initial render
   useEffect(() => {
     const storedTheme = Storage.getString('ui.theme')
-    if (storedTheme && ['light', 'dark', 'slateDark', 'hotPink', 'system'].includes(storedTheme)) {
+    if (
+      storedTheme &&
+      ['light', 'dark', 'slateDark', 'hotPink', 'system'].includes(storedTheme)
+    ) {
       if (storedTheme === 'system') {
         setCurrentTheme(deviceTheme)
         setStatusBarStyle(statusBarMap[deviceTheme])
@@ -189,14 +198,16 @@ function RootLayoutNav() {
       }
     })
 
-    const deviceThemeChangeListener = Appearance.addChangeListener(({ colorScheme: newColorScheme }) => {
-      const newTheme = Storage.getString('ui.theme')
-      if (newTheme === 'system') {
-        setCurrentTheme(newColorScheme)
-        setStatusBarStyle(statusBarMap[newColorScheme])
-        return
+    const deviceThemeChangeListener = Appearance.addChangeListener(
+      ({ colorScheme: newColorScheme }) => {
+        const newTheme = Storage.getString('ui.theme')
+        if (newTheme === 'system') {
+          setCurrentTheme(newColorScheme)
+          setStatusBarStyle(statusBarMap[newColorScheme])
+          return
+        }
       }
-    });
+    )
 
     return () => {
       // Clean up the listener

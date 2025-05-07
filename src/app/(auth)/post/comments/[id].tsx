@@ -1,7 +1,6 @@
 import { Feather } from '@expo/vector-icons'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
-import React from 'react'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {
   ActivityIndicator,
@@ -84,7 +83,7 @@ export default function CommentsScreen() {
       setChildComments((prevChildComments) => {
         if (prevChildComments && typeof prevChildComments === 'object') {
           for (const key in prevChildComments) {
-            if (prevChildComments.hasOwnProperty(key)) {
+            if (prevChildComments.hasOwn(key)) {
               const value = prevChildComments[key]
               if (Array.isArray(value)) {
                 prevChildComments[key] = prevChildComments[key].map((item) => {
@@ -472,7 +471,7 @@ export default function CommentsScreen() {
       setChildComments((prevChildComments) => {
         if (prevChildComments && typeof prevChildComments === 'object') {
           for (const key in prevChildComments) {
-            if (prevChildComments.hasOwnProperty(key)) {
+            if (prevChildComments.hasOwn(key)) {
               const value = prevChildComments[key]
               if (Array.isArray(value)) {
                 prevChildComments[key] = value.filter(
