@@ -1,11 +1,10 @@
 import Feather from '@expo/vector-icons/Feather'
-import { BottomSheetBackdrop, type BottomSheetModal } from '@gorhom/bottom-sheet'
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query'
 import * as Haptics from 'expo-haptics'
 //@ts-check
 import { Stack, useNavigation, useRouter } from 'expo-router'
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { ActivityIndicator, FlatList, Platform } from 'react-native'
+import { useCallback, useLayoutEffect } from 'react'
+import { ActivityIndicator, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import FeedPost from 'src/components/post/FeedPost'
 import { getSelfBookmarks, reblogStatus, unreblogStatus } from 'src/lib/api'

@@ -1,6 +1,5 @@
 import { Feather } from '@expo/vector-icons'
 import { Stack, useRouter } from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Button, Separator, Text, YStack, useTheme } from 'tamagui'
 

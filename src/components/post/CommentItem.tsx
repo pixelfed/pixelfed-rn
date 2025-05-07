@@ -1,38 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import {
-  ActivityIndicator,
-  Alert,
-  Dimensions,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  StyleSheet,
-  TextInput,
-} from 'react-native'
+import { ActivityIndicator, Dimensions, Pressable, StyleSheet } from 'react-native'
 
-import { Feather, Ionicons } from '@expo/vector-icons'
-import { BottomSheetFlatList, BottomSheetTextInput } from '@gorhom/bottom-sheet'
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { FlatList } from 'react-native-gesture-handler'
+import { Ionicons } from '@expo/vector-icons'
 import ImageComponent from 'src/components/ImageComponent'
-import {
-  deleteStatus,
-  getStatusRepliesById,
-  likeStatus,
-  postComment,
-  unlikeStatus,
-} from 'src/lib/api'
 import {
   _timeAgo,
   htmlToTextWithLineBreaks,
   likeCountLabel,
   prettyCount,
 } from 'src/utils'
-import { Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
+import { Text, View, XStack, YStack, useTheme } from 'tamagui'
 import AutolinkText from '../common/AutolinkText'
 import ReadMore from '../common/ReadMore'
-import { Switch } from '../form/Switch'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 

@@ -2,7 +2,6 @@ import Feather from '@expo/vector-icons/Feather'
 import { useAuth } from '@state/AuthProvider'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
 import * as WebBrowser from 'expo-web-browser'
 import React, { useState, useEffect, useRef } from 'react'
 import {
@@ -18,18 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { getRegisterServers } from 'src/lib/api'
 import type { OpenServer } from 'src/lib/api-types'
 import { prettyCount } from 'src/utils'
-import {
-  Button,
-  Image,
-  Input,
-  ScrollView,
-  Separator,
-  Text,
-  View,
-  XStack,
-  YStack,
-  useTheme,
-} from 'tamagui'
+import { Button, Image, ScrollView, Text, View, XStack, YStack, useTheme } from 'tamagui'
 
 export default function SignupScreen() {
   const [server, setServer] = useState('pixelfed.social')

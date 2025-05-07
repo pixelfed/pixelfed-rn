@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import React, { useState } from 'react'
-import { followAccountById, unfollowAccountById } from 'src/lib/api'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+import { followAccountById } from 'src/lib/api'
 import { Button, Spinner, XStack, useTheme } from 'tamagui'
 
 export default function FollowProfile({

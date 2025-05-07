@@ -20,7 +20,6 @@ import {
   Alert,
   Keyboard,
   Linking,
-  ListRenderItem,
   type ListRenderItemInfo,
   Platform,
   StyleSheet,

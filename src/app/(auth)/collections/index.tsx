@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import ImageComponent from 'src/components/ImageComponent'
 import { getSelfCollections } from 'src/lib/api'
 import { formatTimestamp } from 'src/utils'
-import { Button, ScrollView, Text, View, XStack, YStack } from 'tamagui'
+import { ScrollView, Text, View, XStack, YStack } from 'tamagui'
 
 export default function Screen() {
   const navigation = useNavigation()

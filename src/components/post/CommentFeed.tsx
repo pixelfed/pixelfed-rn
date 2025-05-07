@@ -4,7 +4,6 @@ import {
   Alert,
   Dimensions,
   Keyboard,
-  Platform,
   Pressable,
   StyleSheet,
 } from 'react-native'
