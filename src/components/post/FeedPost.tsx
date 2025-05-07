@@ -135,6 +135,8 @@ const ZoomableImage = ({ source, placeholder, style }) => {
           source={source}
           placeholder={placeholder}
           style={[style, animatedStyle]}
+          cachePolicy="memory"
+          priority="high"
           contentFit={'contain'}
         />
       </Animated.View>
