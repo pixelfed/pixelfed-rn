@@ -1,10 +1,8 @@
-import { BottomSheetBackdrop, type BottomSheetModal } from '@gorhom/bottom-sheet'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
-import { useCallback, useLayoutEffect, useMemo, useRef } from 'react'
+import { useLayoutEffect } from 'react'
 //@ts-check
-import { ActivityIndicator, Platform } from 'react-native'
+import { ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import FeedPost from 'src/components/post/FeedPost'
 import { deleteStatusV1, getStatusById, reblogStatus, unreblogStatus } from 'src/lib/api'

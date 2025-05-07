@@ -1,15 +1,13 @@
 import Feather from '@expo/vector-icons/Feather'
 import { useNavigation } from '@react-navigation/native'
 import { Stack, useRouter } from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { useColorScheme } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Switch } from 'src/components/form/Switch'
 import { Storage } from 'src/state/cache'
 import {
   Adapt,
-  Button,
   ScrollView,
   Select,
   Separator,
@@ -32,18 +30,12 @@ export default function Screen() {
   const router = useRouter()
   // Available themes
   const themes = [
+    { name: 'Auto (System)', value: 'system' },
     { name: 'Light', value: 'light' },
     { name: 'Dark', value: 'dark' },
     { name: 'Slate Dark', value: 'slateDark' },
     { name: 'Hot Pink', value: 'hotPink' },
   ]
-
-  const statusBarMap = {
-    light: 'dark',
-    dark: 'light',
-    slateDark: 'light',
-    hotPink: 'dark',
-  }
 
   // Get stored theme or use system default
   const getStoredTheme = useCallback(() => {

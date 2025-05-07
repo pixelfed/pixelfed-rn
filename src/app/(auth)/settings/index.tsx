@@ -1,7 +1,7 @@
 import { useAuth, useUserCache } from '@state/AuthProvider'
 import * as Application from 'expo-application'
 import { Link, Stack, useNavigation } from 'expo-router'
-import React, { useState, useEffect, useLayoutEffect } from 'react'
+import { useLayoutEffect } from 'react'
 import { Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {
@@ -159,6 +159,11 @@ export default function Page() {
             borderColor={theme.borderColor?.val.default.val}
             separator={<Separator borderColor={theme.borderColor?.val.default.val} />}
           >
+            <GroupButton
+              icon="heart"
+              title="Contributors"
+              path="/settings/contributors/"
+            />
             <GroupButton icon="align-left" title="Legal" path="/settings/legal/" />
             <GroupUrlButton
               icon="trash"

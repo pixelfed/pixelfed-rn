@@ -9,7 +9,6 @@ import UserAvatar from 'src/components/common/UserAvatar'
 import { searchQuery } from 'src/lib/api'
 import { getDomain, prettyCount } from 'src/utils'
 import { Input, Text, View, XStack, YStack, useTheme } from 'tamagui'
-import ReadMore from '../../../components/common/ReadMore'
 import { formatTimestampMonthYear } from '../../../utils'
 
 const Tab = createMaterialTopTabNavigator()
@@ -305,6 +304,7 @@ export default function SearchScreen() {
           bg={theme.background?.val.default.val}
           borderWidth={1}
           color={theme.color?.val.default.val}
+          placeholderTextColor={theme.color?.val.tertiary.val}
           borderColor={theme.borderColor?.val.default.val}
           autoCorrect={false}
           autoComplete="off"

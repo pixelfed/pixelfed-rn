@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
+import React from 'react'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {
   ActivityIndicator,
@@ -9,6 +10,7 @@ import {
   FlatList,
   Keyboard,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   Pressable,
   StyleSheet,
@@ -31,7 +33,13 @@ const SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function CommentsScreen() {
   // Hooks and Params
-  const { id } = useLocalSearchParams<{ id: string }>()
+  const { id, username, content, acct, backId } = useLocalSearchParams<{
+    id: string
+    username: string
+    content: string
+    acct: string
+    backId: string
+  }>()
   const navigation = useNavigation()
   const queryClient = useQueryClient()
   const theme = useTheme()
@@ -44,22 +52,69 @@ export default function CommentsScreen() {
   // State
   const [commentText, setComment] = useState('')
   const [inReplyToId, setInReplyToId] = useState(null)
-  const [replySet, setReply] = useState()
+  const [replySet, setReply] = useState(null)
   const [replyScope, setReplyScope] = useState('public')
   const [hasCW, setCW] = useState(false)
   const [loadingChildId, setLoadingChildId] = useState(null)
+  const [commentActionPending, setCommentActionPending] = useState(false)
   const [childComments, setChildComments] = useState({})
   const [keyboardVisible, setKeyboardVisible] = useState(false)
   const [keyboardHeight, setKeyboardHeight] = useState(0)
 
+  useEffect(() => {
+    if (
+      username !== undefined &&
+      content !== undefined &&
+      acct !== undefined &&
+      replySet === null
+    ) {
+      setReply({
+        id,
+        username,
+        content,
+        acct,
+      })
+      setInReplyToId(id)
+      setComment('@' + acct + ' ')
+    }
+  }, [username, content, acct, id, replySet, setReply, setInReplyToId, setComment])
+  useEffect(() => {
+    if (backId !== undefined) {
+      const splitArray = backId.split('/')
+      setChildComments((prevChildComments) => {
+        if (prevChildComments && typeof prevChildComments === 'object') {
+          for (const key in prevChildComments) {
+            if (prevChildComments.hasOwnProperty(key)) {
+              const value = prevChildComments[key]
+              if (Array.isArray(value)) {
+                prevChildComments[key] = prevChildComments[key].map((item) => {
+                  if (String(item.id) === splitArray[0]) {
+                    item.reply_count = Number.parseInt(splitArray[1])
+                    if (item.reply_count === 1) {
+                      prevChildComments[Number.parseInt(splitArray[0])] = [{}]
+                    }
+                    if (item.reply_count === 0) {
+                      prevChildComments[Number.parseInt(splitArray[0])] = []
+                    }
+                  }
+                  return item
+                })
+              }
+            }
+          }
+        }
+        return prevChildComments
+      })
+    }
+  }, [backId])
+
   // Calculate dimensions and styles
-  const inputContainerHeight = inReplyToId && replySet ? 150 : 110
+  const inputContainerHeight = inReplyToId && replySet ? 190 : 150
 
   // Set up navigation options
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Comments',
-      headerBackTitle: 'Back',
     })
   }, [navigation])
 
@@ -156,8 +211,21 @@ export default function CommentsScreen() {
     Keyboard.dismiss()
   }
 
-  const handleReplyTo = (item) => {
+  const handleReplyTo = (item, level) => {
     if (!item?.id || !item?.account?.id) return
+
+    if (level + 1 >= 3) {
+      router.push({
+        pathname: `/post/comments/${item.id}`,
+        params: {
+          username: item.account.username,
+          content: item.content_text && item.content_text.slice(8, 55) + '...',
+          acct: item.account.acct,
+        },
+      })
+      return
+    }
+    fetchChildren(item.id, level)
 
     commentRef.current?.focus()
     setReply({
@@ -195,7 +263,7 @@ export default function CommentsScreen() {
 
   const handleCommentLike = useCallback((item) => {
     likeMutation.mutate({
-      id: item.id,
+      postId: item.id,
       type: item.favourited ? 'unlike' : 'like',
     })
   }, [])
@@ -271,26 +339,79 @@ export default function CommentsScreen() {
 
   // Mutations
   const commentMutation = useMutation({
-    mutationFn: postComment,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['getStatusRepliesById'] })
+    mutationFn: async ({ postId, commentText, scope, cw }) => {
+      setCommentActionPending(true)
+      const res = await postComment({ postId, commentText, scope, cw })
+      res.content_text = commentText
+      return { res }
     },
+    onSuccess: ({ res }) => {
+      let isChildrenReply = false
+      queryClient.setQueriesData({ queryKey: ['getStatusRepliesById', id] }, (old) => {
+        if (!old?.pages) return old
+        old.pages[0].data.map((commentItem) => {
+          if (commentItem.id === res.in_reply_to_id) {
+            isChildrenReply = true
+            return
+          }
+        })
+
+        Object.keys(childComments).forEach((key) => {
+          childComments[key].map((data) => {
+            if (data.id === res.in_reply_to_id) {
+              isChildrenReply = true
+              data.reply_count++
+              return
+            }
+          })
+        })
+
+        if (!isChildrenReply) {
+          old.pages[0].data.push(res)
+        }
+        return { ...old }
+      })
+      if (isChildrenReply) {
+        setChildComments((prevChildComments) => {
+          const updatedChildComments = { ...prevChildComments }
+          let isAlreadyPresent = false
+          Object.keys(updatedChildComments).forEach((key) => {
+            if (key === res.in_reply_to_id) {
+              isAlreadyPresent = true
+              updatedChildComments[key].push(res)
+            }
+          })
+          if (!isAlreadyPresent) updatedChildComments[res.in_reply_to_id] = [res]
+          Object.keys(updatedChildComments).forEach((key) => {
+            updatedChildComments[key].map((item) => {
+              if (item.id === res.id) item.reply_count++
+            })
+          })
+          return updatedChildComments
+        })
+      }
+      setCommentActionPending(false)
+    },
+    onError: () => setCommentActionPending(false),
   })
 
   const likeMutation = useMutation({
-    mutationFn: async ({ id, type }) => {
-      const res = type === 'like' ? await likeStatus({ id }) : await unlikeStatus({ id })
-      return { res, id, type }
+    mutationFn: async ({ postId, type }) => {
+      const res =
+        type === 'like'
+          ? await likeStatus({ id: postId })
+          : await unlikeStatus({ id: postId })
+      return { res, postId, type }
     },
-    onSuccess: ({ res, id }) => {
+    onSuccess: ({ res, postId }) => {
       // Update comments in query cache
       let isIdChildren = true
-      queryClient.setQueriesData({ queryKey: ['getStatusRepliesById'] }, (old) => {
+      queryClient.setQueriesData({ queryKey: ['getStatusRepliesById', id] }, (old) => {
         if (!old?.pages) return old
 
         const newPages = old.pages.map((page) => {
           const newData = page.data.map((post) => {
-            if (post.id !== id) return post
+            if (post.id !== postId) return post
 
             isIdChildren = false
             return {
@@ -313,7 +434,7 @@ export default function CommentsScreen() {
 
           Object.keys(updatedChildComments).forEach((key) => {
             updatedChildComments[key] = updatedChildComments[key].map((childComment) => {
-              if (childComment.id === id) {
+              if (childComment.id === postId) {
                 return {
                   ...childComment,
                   favourited: res.favourited,
@@ -332,12 +453,45 @@ export default function CommentsScreen() {
   })
 
   const commentDeleteMutation = useMutation({
-    mutationFn: deleteStatus,
-    onSuccess: () => {
-      setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: ['getStatusRepliesById'] })
-      }, 1500)
+    mutationFn: async ({ id }) => {
+      setCommentActionPending(true)
+      const res = await deleteStatus({ id })
+      return { res }
     },
+    onSuccess: ({ res }) => {
+      queryClient.setQueriesData({ queryKey: ['getStatusRepliesById', id] }, (old) => {
+        if (!old?.pages) return old
+        const newPages = old.pages.map((page) => {
+          const newData = page.data.filter((post) => {
+            return post.id !== res.id
+          })
+          return { ...page, data: newData }
+        })
+        return { ...old, pages: newPages }
+      })
+      setChildComments((prevChildComments) => {
+        if (prevChildComments && typeof prevChildComments === 'object') {
+          for (const key in prevChildComments) {
+            if (prevChildComments.hasOwnProperty(key)) {
+              const value = prevChildComments[key]
+              if (Array.isArray(value)) {
+                prevChildComments[key] = value.filter(
+                  (item) =>
+                    !(typeof item === 'object' && item !== null && item.id === res.id)
+                )
+                prevChildComments[key] = prevChildComments[key].map((item) => {
+                  if (item.id === res.in_reply_to_id) item.reply_count--
+                  return item
+                })
+              }
+            }
+          }
+        }
+        return prevChildComments
+      })
+      setCommentActionPending(false)
+    },
+    onError: () => setCommentActionPending(false),
   })
 
   // Query for comments
@@ -353,10 +507,29 @@ export default function CommentsScreen() {
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
   })
 
+  const handleCustomBackPress = () => {
+    router.back()
+    router.setParams({ backId: `${id}` + '/' + `${data?.pages[0].data.length}` })
+  }
+
+  const HeaderLeft = () => (
+    <View ml="$3">
+      <Pressable onPress={handleCustomBackPress}>
+        <Feather name="chevron-left" size={25} color={theme.color?.val.default.val} />
+      </Pressable>
+    </View>
+  )
+
   // Loading state
   if (isFetching && !isFetchingNextPage) {
     return (
       <View flexGrow={1} mt="$5" justifyContent="center" alignItems="center">
+        <Stack.Screen
+          options={{
+            title: 'Comments',
+            headerLeft: HeaderLeft,
+          }}
+        />
         <ActivityIndicator color={theme.color?.val.default.val || '#000'} size="large" />
       </View>
     )
@@ -382,9 +555,19 @@ export default function CommentsScreen() {
       <Stack.Screen
         options={{
           title: 'Comments',
-          headerBackTitle: 'Back',
+          headerLeft: HeaderLeft,
         }}
       />
+      {commentActionPending && (
+        <Modal transparent={true} animationType="fade" visible={commentActionPending}>
+          <View style={styles.overlay}>
+            <ActivityIndicator
+              color={theme.color?.val.default.val || '#000'}
+              size="large"
+            />
+          </View>
+        </Modal>
+      )}
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -398,6 +581,7 @@ export default function CommentsScreen() {
             keyExtractor={(item) => item?.id}
             renderItem={renderCommentItem}
             ListEmptyComponent={RenderEmptyState}
+            keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
             contentContainerStyle={[
               styles.contentCommentsContainer,
@@ -628,5 +812,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     padding: 10,
     borderWidth: 1,
+    height: 75,
+    textAlignVertical: 'top',
+  },
+  overlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black background
   },
 })
