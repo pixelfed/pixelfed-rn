@@ -6,6 +6,7 @@ import {
   BottomSheetTextInput,
   BottomSheetView,
 } from '@gorhom/bottom-sheet'
+import { useToastController } from '@tamagui/toast'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import * as FileSystem from 'expo-file-system'
 import * as ImageManipulator from 'expo-image-manipulator'
@@ -83,8 +84,8 @@ export default function Camera() {
   const [curAltText, setCurAltText] = useState('')
   const [canPost, setCanPost] = useState(false)
   const [isPosting, setIsPosting] = useState(false)
-  const [postingError, setPostingError] = useState<string | null>(null)
   const [maxMediaLimit, setMaxMediaLimit] = useState(4)
+  const toast = useToastController()
   const [isResizing, setIsResizing] = useState(false)
   const queryClient = useQueryClient()
   const theme = useTheme()
@@ -544,7 +545,11 @@ export default function Camera() {
       })
       .catch((err) => {
         setIsPosting(false)
-        setPostingError(err.message)
+
+        toast.show('Error uploading media', {
+          message: err.message,
+          native: false
+        })
       })
   }
 
@@ -642,11 +647,6 @@ export default function Camera() {
           headerRight: HeaderRight,
         }}
       />
-      {postingError ? (
-        <View px="$3">
-          <ErrorAlert message={postingError} title="Error uploading media" />
-        </View>
-      ) : null}
       {isPosting ? (
         <View
           flexGrow={1}
