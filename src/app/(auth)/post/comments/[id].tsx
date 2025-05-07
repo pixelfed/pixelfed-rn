@@ -372,7 +372,6 @@ export default function CommentsScreen() {
         return { ...old }
       })
       if (isChildrenReply) {
-        // setLoadingChildId(res.in_reply_to_id);
         setChildComments((prevChildComments) => {
           const updatedChildComments = { ...prevChildComments }
           let isAlreadyPresent = false
@@ -390,7 +389,6 @@ export default function CommentsScreen() {
           })
           return updatedChildComments
         })
-        // setLoadingChildId(null);
       }
       setCommentActionPending(false)
     },
@@ -461,7 +459,6 @@ export default function CommentsScreen() {
       return { res }
     },
     onSuccess: ({ res }) => {
-      // router.setParams({ deleted: "bar" })
       queryClient.setQueriesData({ queryKey: ['getStatusRepliesById', id] }, (old) => {
         if (!old?.pages) return old
         const newPages = old.pages.map((page) => {
@@ -530,7 +527,6 @@ export default function CommentsScreen() {
         <Stack.Screen
           options={{
             title: 'Comments',
-            // headerBackTitle: 'Back',
             headerLeft: HeaderLeft,
           }}
         />
@@ -559,7 +555,6 @@ export default function CommentsScreen() {
       <Stack.Screen
         options={{
           title: 'Comments',
-          // headerBackTitle: 'Back',
           headerLeft: HeaderLeft,
         }}
       />
