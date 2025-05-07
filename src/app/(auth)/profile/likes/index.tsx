@@ -68,10 +68,6 @@ export default function LikesScreen() {
     </View>
   )
 
-  const likes = data?.pages.flatMap((page) => page.data) || []
-  const hasNoLikes = !isFetching && likes.length === 0
-  const keyExtractor = useCallback((item) => item.id.toString(), [])
-
   const {
     data,
     fetchNextPage,
@@ -92,6 +88,10 @@ export default function LikesScreen() {
     getNextPageParam: (lastPage) => lastPage.nextPage,
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
   })
+
+  const likes = data?.pages.flatMap((page) => page.data) || []
+  const hasNoLikes = !isFetching && likes.length === 0
+  const keyExtractor = useCallback((item) => item.id.toString(), [])
 
   if (isFetching && !isFetchingNextPage && !isRefetching) {
     return (

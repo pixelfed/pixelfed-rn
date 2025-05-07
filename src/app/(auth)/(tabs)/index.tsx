@@ -8,8 +8,7 @@ import {
 import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import type { ErrorBoundaryProps } from 'expo-router'
 import { useShareIntentContext } from 'expo-share-intent'
-import { StatusBar } from 'expo-status-bar'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   ActivityIndicator,
   FlatList,
@@ -31,7 +30,7 @@ import {
 } from 'src/lib/api'
 import type { Status } from 'src/lib/api-types'
 import { useUserCache } from 'src/state/AuthProvider'
-import { Button, Spinner, Text, View, XStack, YStack, useTheme } from 'tamagui'
+import { Button, Spinner, Text, View, XStack, useTheme } from 'tamagui'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   const theme = useTheme()

@@ -124,6 +124,7 @@ export default function SearchScreen() {
           value={query}
           bg={theme.background?.val.tertiary.val}
           color={theme.color?.val.default.val}
+          placeholderTextColor={theme.color?.val.tertiary.val}
           autoFocus={true}
           size="$6"
         />
