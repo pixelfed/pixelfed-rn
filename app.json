@@ -108,10 +108,11 @@
       "router": {
         "origin": false
       },
-      "nodeEnv": "development",
+      "nodeEnv": "production",
       "eas": {
         "projectId": ""
       }
     }
   }
 }
+  
