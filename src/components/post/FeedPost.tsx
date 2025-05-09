@@ -494,7 +494,7 @@ const PostActions = React.memo(
           },
           {
             text: labelText,
-            style: 'destructive',
+            style: 'default',
             onPress: () => {
               if (hasSharedCache) {
                 if (shareCountCache) {
@@ -578,7 +578,7 @@ const PostActions = React.memo(
                       <Text
                         fontWeight={'bold'}
                         allowFontScaling={false}
-                        color={theme.color?.val.tertiary.val}
+                        color={theme.color?.val.secondary.val}
                       >
                         {prettyCount(shareCountCache)}
                       </Text>
