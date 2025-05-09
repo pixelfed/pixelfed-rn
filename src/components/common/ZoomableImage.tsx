@@ -44,6 +44,8 @@ const PinchZoomImage = ({ source, style, placeholder }) => {
             },
           ]}
           placeholder={placeholder}
+          cachePolicy="memory"
+          priority="high"
         />
       </Animated.View>
     </PinchGestureHandler>
