@@ -8,6 +8,7 @@ import Animated, {
   useAnimatedStyle,
   Extrapolate,
   interpolate,
+  useAnimatedReaction,
 } from 'react-native-reanimated'
 import { useTheme } from 'tamagui'
 
@@ -20,11 +21,22 @@ type LikeButtonProps = {
 export default function LikeButton(props: LikeButtonProps) {
   const { hasLiked, handleLike, size = 32 } = props
   const likeAnimation = useSharedValue(hasLiked ? 1 : 0)
+  const hasLikedShared = useSharedValue(hasLiked)
   const theme = useTheme()
 
   useEffect(() => {
-    likeAnimation.value = withSpring<number>(hasLiked ? 1 : 0)
-  }, [hasLiked])
+    hasLikedShared.value = hasLiked;
+  }, [hasLiked]);
+  
+  useAnimatedReaction(
+    () => hasLikedShared.value,
+    (currentHasLiked, previousHasLiked) => {
+      if (currentHasLiked !== previousHasLiked) {
+        likeAnimation.value = withSpring(currentHasLiked ? 1 : 0);
+      }
+    },
+    [hasLiked]
+  );
 
   const outlineStyle = useAnimatedStyle(() => {
     return {

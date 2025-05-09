@@ -33,6 +33,7 @@ import Animated, {
   runOnJS,
   type SharedValue,
   useAnimatedStyle,
+  useAnimatedGestureHandler,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated'
@@ -86,36 +87,33 @@ const ZoomableImage = ({ source, placeholder, style }) => {
   const originX = useSharedValue(0)
   const originY = useSharedValue(0)
 
-  const onGestureEvent = (event: GestureEvent<PinchGestureHandlerEventPayload>) => {
-    const pinchScale = event.nativeEvent.scale
-    const nextScale = savedScale.value * pinchScale
-    const touchX = event.nativeEvent.focalX
-    const touchY = event.nativeEvent.focalY
+  const pinchGestureHandler = useAnimatedGestureHandler({
+    onActive: (event) => {
+      const pinchScale = event.scale
+      const nextScale = savedScale.value * pinchScale
+      const touchX = event.focalX
+      const touchY = event.focalY
 
-    if (scale.value === savedScale.value) {
-      originX.value = touchX
-      originY.value = touchY
-    }
+      if (scale.value === savedScale.value) {
+        originX.value = touchX
+        originY.value = touchY
+      }
 
-    const focalDeltaX = (touchX - originX.value) * (pinchScale - 1)
-    const focalDeltaY = (touchY - originY.value) * (pinchScale - 1)
+      const focalDeltaX = (touchX - originX.value) * (pinchScale - 1)
+      const focalDeltaY = (touchY - originY.value) * (pinchScale - 1)
 
-    scale.value = nextScale
-    translateX.value = focalDeltaX
-    translateY.value = focalDeltaY
-  }
-
-  const onHandlerStateChange = (
-    event: HandlerStateChangeEvent<PinchGestureHandlerEventPayload>
-  ) => {
-    if (event.nativeEvent.oldState === State.ACTIVE) {
+      scale.value = nextScale
+      translateX.value = focalDeltaX
+      translateY.value = focalDeltaY
+    },
+    onEnd: () => {
       savedScale.value = scale.value
       scale.value = withSpring(1)
       savedScale.value = 1
       translateX.value = withSpring(0)
       translateY.value = withSpring(0)
-    }
-  }
+    },
+  })
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
@@ -126,10 +124,7 @@ const ZoomableImage = ({ source, placeholder, style }) => {
   }))
 
   return (
-    <PinchGestureHandler
-      onGestureEvent={onGestureEvent}
-      onHandlerStateChange={onHandlerStateChange}
-    >
+    <PinchGestureHandler onGestureEvent={pinchGestureHandler}>
       <Animated.View>
         <AnimatedFastImage
           source={source}
