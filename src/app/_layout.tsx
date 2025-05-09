@@ -92,11 +92,24 @@ const hotPinkTheme = {
   },
 }
 
+const honeyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#ffb22e',
+    background: '#fff3e3',
+    card: '#ffebcc',
+    text: '#593900',
+    border: '#b79f7a',
+  },
+}
+
 const statusBarMap = {
   light: 'dark',
   dark: 'light',
   slateDark: 'light',
   hotPink: 'dark',
+  honey: 'dark',
 }
 
 const navigationThemeMap = {
@@ -105,6 +118,7 @@ const navigationThemeMap = {
   dark: customDarkTheme,
   slateDark: slateTheme,
   hotPink: hotPinkTheme,
+  honey: honeyTheme,
 }
 
 const statusBarBackgroundColorMap = {
@@ -113,6 +127,7 @@ const statusBarBackgroundColorMap = {
   dark: '#000',
   slateDark: '#2F3542',
   hotPink: '#FFFFFF',
+  honey: '#fff3e3',
 }
 
 function RootLayout() {
@@ -168,7 +183,7 @@ function RootLayoutNav() {
     const storedTheme = Storage.getString('ui.theme')
     if (
       storedTheme &&
-      ['light', 'dark', 'slateDark', 'hotPink', 'system'].includes(storedTheme)
+      ['light', 'dark', 'slateDark', 'hotPink', 'system', 'honey'].includes(storedTheme)
     ) {
       if (storedTheme === 'system') {
         setCurrentTheme(deviceTheme)

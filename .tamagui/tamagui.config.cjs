@@ -47992,6 +47992,34 @@ var colorTokens2 = (0, import_core57.createTokens)({
       active: "#EC4899",
       hover: "#DB2777"
     }
+  },
+  // New honey theme for Ben (our Double Platinum Backer)
+  honey: {
+    // Background colors
+    background: {
+      default: "#fff3e3",
+      secondary: "#ffebcc",
+      tertiary: "#ffe3b3",
+      inverse: "#593900"
+    },
+    // Text colors
+    text: {
+      default: "#593900",
+      secondary: "#7a5000",
+      tertiary: "#9c6500",
+      inverse: "#fff3e3"
+    },
+    // Border colors
+    border: {
+      default: "#b79f7a",
+      strong: "#a38a60",
+      inverse: "#ecdac0"
+    },
+    // Interactive colors
+    interactive: {
+      active: "#ffb22e",
+      hover: "#ffa600"
+    }
   }
 });
 var themes3 = {
@@ -48020,6 +48048,13 @@ var themes3 = {
     color: colorTokens2.hotPink.text,
     borderColor: colorTokens2.hotPink.border,
     colorHover: colorTokens2.hotPink.interactive
+  },
+  // Add the new ben theme
+  honey: {
+    background: colorTokens2.honey.background,
+    color: colorTokens2.honey.text,
+    borderColor: colorTokens2.honey.border,
+    colorHover: colorTokens2.honey.interactive
   }
 };
 var extendedConfig = {

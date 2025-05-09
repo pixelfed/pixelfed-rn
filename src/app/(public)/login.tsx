@@ -36,6 +36,7 @@ export default function Login() {
       dark: 'slateDark',
       slateDark: 'hotPink',
       hotPink: 'light',
+      honey: 'honey',
     }
     Storage.set('ui.theme', themeMap[curTheme])
   }

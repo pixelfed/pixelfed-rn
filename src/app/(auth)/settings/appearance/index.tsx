@@ -35,6 +35,7 @@ export default function Screen() {
     { name: 'Dark', value: 'dark' },
     { name: 'Slate Dark', value: 'slateDark' },
     { name: 'Hot Pink', value: 'hotPink' },
+    { name: 'Honey', value: 'honey' },
   ]
 
   // Get stored theme or use system default
