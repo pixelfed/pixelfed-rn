@@ -25,18 +25,18 @@ export default function LikeButton(props: LikeButtonProps) {
   const theme = useTheme()
 
   useEffect(() => {
-    hasLikedShared.value = hasLiked;
-  }, [hasLiked]);
-  
+    hasLikedShared.value = hasLiked
+  }, [hasLiked])
+
   useAnimatedReaction(
     () => hasLikedShared.value,
     (currentHasLiked, previousHasLiked) => {
       if (currentHasLiked !== previousHasLiked) {
-        likeAnimation.value = withSpring(currentHasLiked ? 1 : 0);
+        likeAnimation.value = withSpring(currentHasLiked ? 1 : 0)
       }
     },
     [hasLiked]
-  );
+  )
 
   const outlineStyle = useAnimatedStyle(() => {
     return {

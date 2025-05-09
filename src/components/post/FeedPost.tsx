@@ -21,12 +21,6 @@ import {
   Gesture,
   GestureDetector,
   PinchGestureHandler,
-  State,
-} from 'react-native-gesture-handler'
-import type {
-  GestureEvent,
-  HandlerStateChangeEvent,
-  PinchGestureHandlerEventPayload,
 } from 'react-native-gesture-handler'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import Animated, {
@@ -306,7 +300,7 @@ const PostMedia = React.memo(({ media, post }: PostMediaProps) => {
   return (
     <View flex={1} borderBottomWidth={1} borderBottomColor="$gray5" zIndex={100}>
       <ZoomableImage
-        placeholder={{ blurhash: media[0]?.blurhash || '' }}
+        placeholder={{ blurhash: media[0]?.blurhash || '', width: width, height: height }}
         source={{ uri: mediaUrl }}
         style={{ width: width, height: height, backgroundColor: '#000' }}
       />
@@ -391,9 +385,13 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
         onProgressChange={progress}
         data={mediaList}
         renderItem={({ index }) => {
-          const media = mediaList[0]
           return (
             <ZoomableImage
+              placeholder={{
+                blurhash: mediaList[index]?.blurhash || '',
+                width: width,
+                height: height,
+              }}
               style={{
                 width: width,
                 height: height,
@@ -446,7 +444,6 @@ const PostActions = React.memo(
     hasLiked,
     likesCount,
     isLikePending,
-    likedBy,
     hasShared,
     sharesCount,
     commentsCount,
