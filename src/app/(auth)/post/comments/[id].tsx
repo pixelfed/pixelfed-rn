@@ -471,7 +471,7 @@ export default function CommentsScreen() {
       setChildComments((prevChildComments) => {
         if (prevChildComments && typeof prevChildComments === 'object') {
           for (const key in prevChildComments) {
-            if (prevChildComments.hasOwn(key)) {
+            if (Object.prototype.hasOwnProperty.call(prevChildComments, key)) {
               const value = prevChildComments[key]
               if (Array.isArray(value)) {
                 prevChildComments[key] = value.filter(
