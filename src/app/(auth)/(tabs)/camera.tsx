@@ -62,6 +62,7 @@ type MediaAsset = {
 
 const MAX_IMAGE_SIZE_MB = 5
 const MAX_IMAGE_WIDTH = 4096
+const MEDIA_EDIT_KEY = "ui.mediaEdit"
 
 export default function Camera() {
   const router = useRouter()
@@ -77,7 +78,7 @@ export default function Camera() {
   const [scope, setScope] = useState('public')
   const [isSensitive, setSensitive] = useState(false)
   const [media, setMedia] = useState<Array<MediaAsset>>([])
-  const [mediaEdit, setMediaEdit] = useState(false)
+  const [mediaEdit, setMediaEdit] = useState(Storage.getBoolean(MEDIA_EDIT_KEY) == true)
   const [activeIndex, setActiveIndex] = useState(-1)
   const [curAltText, setCurAltText] = useState('')
   const [canPost, setCanPost] = useState(false)
@@ -189,7 +190,7 @@ export default function Camera() {
     setScope('public')
     setSensitive(false)
     setMedia([])
-    setMediaEdit(false)
+    setMediaEdit(Storage.getBoolean(MEDIA_EDIT_KEY) == true)
     setActiveIndex(-1)
     setCurAltText('')
     setCanPost(false)
@@ -206,8 +207,10 @@ export default function Camera() {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
-      allowsMultipleSelection: true,
+      allowsMultipleSelection: !mediaEdit,
       selectionLimit: maxMediaLimit,
+      allowsEditing: mediaEdit,
+      aspect: [1, 1],
       quality: 1,
       orderedSelection: true,
       exif: false,
@@ -886,7 +889,7 @@ export default function Camera() {
                 <Switch
                   size="$3"
                   checked={mediaEdit}
-                  onCheckedChange={(checked) => setMediaEdit(checked)}
+                  onCheckedChange={(checked) => { setMediaEdit(checked); Storage.set(MEDIA_EDIT_KEY, checked)}}
                 >
                   <Switch.Thumb animation="quicker" />
                 </Switch>
