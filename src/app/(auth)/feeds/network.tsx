@@ -87,8 +87,6 @@ export default function HomeScreen() {
     ({ viewableItems }) => {
       const visibleVideoId = viewableItems.find((item) => item.isViewable)?.item.id
       if (visibleVideoId && visibleVideoId !== currentVideoId) {
-        // enable for autoplay
-        // playVideo(visibleVideoId);
         playVideo(null)
       } else if (!visibleVideoId) {
         playVideo(null)
@@ -242,7 +240,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <Stack.Screen options={{ headerShown: false }} />
-      <FeedHeader title="Local Feed" user={user} />
+      <FeedHeader title="Local" user={user} />
       {renderFeed(data?.pages.flatMap((page) => page.data))}
     </SafeAreaView>
   )

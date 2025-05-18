@@ -7,6 +7,7 @@ import { Platform } from 'react-native'
 enum TabName {
   Index = 'index',
   Network = 'network',
+  Explore = 'explore',
   Camera = 'camera',
   Discover = 'discover',
   Profile = 'profile',
@@ -46,11 +47,11 @@ export default function AppLayout() {
       />
 
       <Tabs.Screen
-        name={TabName.Network}
+        name={TabName.Explore}
         options={{
           tabBarShowLabel: false,
-          headerShown: false,
-          tabBarIcon: ({ color }) => <Feather name="users" size={23} color={color} />,
+          headerShown: true,
+          tabBarIcon: ({ color }) => <Feather name="compass" size={23} color={color} />,
         }}
       />
 
