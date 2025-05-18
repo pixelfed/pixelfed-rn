@@ -60,7 +60,7 @@ export default function AppLayout() {
           tabBarShowLabel: false,
           headerShown: true,
           tabBarIcon: ({ color }) => (
-            <Feather name="plus-square" size={28} color={color} />
+            <Feather name="camera" size={28} color={color} />
           ),
         }}
       />
