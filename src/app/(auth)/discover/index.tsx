@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link, Stack, useRouter } from 'expo-router'
-import { ActivityIndicator, Dimensions, FlatList, SafeAreaView } from 'react-native'
+import React, { useMemo } from 'react'
+import { ActivityIndicator, Dimensions, FlatList, SafeAreaView, Pressable } from 'react-native'
 import ImageComponent from 'src/components/ImageComponent'
 import UserAvatar from 'src/components/common/UserAvatar'
 import {
@@ -8,255 +9,232 @@ import {
   getTrendingPopularPosts,
   getTrendingPostsV1,
 } from 'src/lib/api'
-import { enforceLen, prettyCount } from 'src/utils'
-import { ScrollView, Text, View, YStack, useTheme } from 'tamagui'
+import { Text, View, YStack, useTheme } from 'tamagui'
+import { Feather } from '@expo/vector-icons'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
+const NUM_COLUMNS = 3
 
 export default function DiscoverScreen() {
   const router = useRouter()
   const theme = useTheme()
 
-  const RenderTags = ({ item }) => (
-    <Link href={`/hashtag/${item.hashtag}`} asChild>
-      <View
-        bg={theme.background?.val.tertiary.val}
-        py="$2"
-        px="$3"
-        borderRadius={5}
-        mr="$2"
-      >
-        <Text fontWeight="bold" color={theme.color?.val.default.val}>
-          {item.name}
-        </Text>
-      </View>
-    </Link>
-  )
-
-  const AccountPartial = ({ item }) => (
-    <Link href={`/profile/${item.id}`} asChild>
-      <YStack
-        px="$6"
-        py="$3"
-        borderWidth={1}
-        borderColor={theme.borderColor?.val.default.val}
-        borderRadius={10}
-        justifyContent="center"
-        alignItems="center"
-        gap="$3"
-        mr="$3"
-      >
-        <UserAvatar url={item.avatar} size="$3" />
-        <YStack justifyContent="center" alignItems="center" gap="$2">
-          <Text fontSize="$5" fontWeight="bold" color={theme.color?.val.default.val}>
-            {item.username}
-          </Text>
-          <Text fontSize="$2" color={theme.color?.val.tertiary.val}>
-            {prettyCount(item.followers_count)} Followers
-          </Text>
-        </YStack>
-      </YStack>
-    </Link>
-  )
-  const RenderAccounts = ({ item, index }) => <AccountPartial item={item} />
-
-  const RenderTrendingPosts = ({ item }) => {
-    return (
-      <Link href={`/post/${item.id}`} asChild>
-        <YStack justifyContent="center" alignItems="center" gap="$2" mr="$3">
-          <View
-            borderRadius={10}
-            borderWidth={1}
-            borderColor={theme.borderColor?.val.default.val}
-            overflow="hidden"
-            bg={theme.background?.val.tertiary.val}
-          >
-            <ImageComponent
-              placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
-              source={{ uri: item.media_attachments[0].url }}
-              style={{ width: SCREEN_WIDTH / 1.3, height: SCREEN_WIDTH / 1.3 }}
-              contentFit={'cover'}
-            />
-            <Text
-              color={theme.color?.val.default.val}
-              alignSelf="center"
-              fontWeight={'bold'}
-              fontSize="$1"
-              allowFontScaling={false}
-              py={4}
-            >
-              {enforceLen(item.account.acct, 15, true, 'end')}
-            </Text>
-          </View>
-        </YStack>
-      </Link>
-    )
-  }
-
-  const RenderPosts = ({ item }) => (
-    <Link href={`/post/${item.id}`} asChild>
-      <YStack justifyContent="center" alignItems="center" gap="$2" mr="$3">
-        <View
-          borderRadius={10}
-          borderWidth={1}
-          borderColor={theme.borderColor?.val.default.val}
-          overflow="hidden"
-          bg={theme.background?.val.tertiary.val}
-        >
-          <ImageComponent
-            placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
-            source={{
-              uri: item.media_attachments[0].url,
-            }}
-            style={{
-              width: 160,
-              height: 160,
-            }}
-            contentFit="cover"
-          />
-          <Text
-            color={theme.color?.val.default.val}
-            alignSelf="center"
-            fontWeight={'bold'}
-            fontSize="$1"
-            allowFontScaling={false}
-            py={4}
-          >
-            {enforceLen(item.account.acct, 13, true, 'end')}
-          </Text>
-        </View>
-      </YStack>
-    </Link>
-  )
-
   const {
-    isPending,
-    isError,
+    isPending: hashtagsPending,
+    isError: hashtagsIsError,
     data: hashtags,
-    error,
+    error: hashtagsError,
   } = useQuery({
     queryKey: ['getTrendingHashtags'],
     queryFn: getTrendingHashtags,
   })
 
-  const { data: posts, isPending: isPopularPostsPending } = useQuery({
+  const {
+    data: popularTodayPosts,
+    isPending: popularTodayPostsPending,
+    isError: popularTodayPostsIsError,
+    error: popularTodayPostsError,
+  } = useQuery({
     queryKey: ['getTrendingPopularPosts'],
     queryFn: getTrendingPopularPosts,
-    enabled: !!hashtags,
+    enabled: !!hashtags, 
   })
 
-  const { data: trendingPosts, isPending: isTrendingPostsPending } = useQuery({
+  const {
+    data: trendingData,
+    isPending: trendingDataPending,
+    isError: trendingDataIsError,
+    error: trendingDataError,
+  } = useQuery({
     queryKey: ['getTrendingPostsV1'],
     queryFn: getTrendingPostsV1,
     enabled: !!hashtags,
   })
 
-  const isAnyActionPending = isPending || isPopularPostsPending || isTrendingPostsPending
+  const popularAccounts = trendingData?.accounts
+  const trendingFediversePosts = trendingData?.posts
+
+  const gridPosts = useMemo(() => {
+    const posts1 = popularTodayPosts || []
+    const posts2 = trendingFediversePosts || []
+    
+    const combinedPosts = [...posts1, ...posts2];
+    const uniquePosts = new Map();
+
+    for (const post of combinedPosts) {
+      if (post && post.id && post.media_attachments && post.media_attachments.length > 0) {
+        if (!uniquePosts.has(post.id)) {
+          uniquePosts.set(post.id, post);
+        }
+      }
+    }
+    return Array.from(uniquePosts.values());
+
+  }, [popularTodayPosts, trendingFediversePosts]);
+
+  const isLoading = hashtagsPending || popularTodayPostsPending || trendingDataPending
+  const fetchError = hashtagsError || popularTodayPostsError || trendingDataError
+
+  const RenderTagItem = ({ item }: { item: { hashtag: string; name: string } }) => (
+    <Link href={`/hashtag/${item.hashtag}`} asChild>
+      <Pressable>
+        <View
+          bg={theme.background?.val.tertiary.val}
+          py="$2"
+          px="$3"
+          borderRadius={5}
+          mr="$2"
+        >
+          <Text fontWeight="bold" color={theme.color?.val.default.val}>
+            {item.name}
+          </Text>
+        </View>
+      </Pressable>
+    </Link>
+  )
+
+  const RenderAccountItem = ({ item }: { item: any }) => (
+    <Link href={`/profile/${item.id}`} asChild>
+      <Pressable>
+        <YStack
+          mr="$3"
+        >
+          <UserAvatar url={item.avatar} size="$5" />
+        </YStack>
+      </Pressable>
+    </Link>
+  )
+
+  const RenderGridPostItem = ({ item }: { item: any }) => {
+    const itemCellWidth = SCREEN_WIDTH / NUM_COLUMNS
+
+    if (!item.media_attachments || item.media_attachments.length === 0) {
+      return <View width={itemCellWidth} height={itemCellWidth} />
+    }
+
+    return (
+      <Link href={`/post/${item.id}`} asChild>
+        <Pressable>
+          <View
+            width={itemCellWidth}
+            height={itemCellWidth}
+            p="$0.5"
+          >
+            <View
+              flex={1}
+              overflow="hidden"
+              bg={theme.background?.val.tertiary.val}
+            >
+              <ImageComponent
+                placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
+                source={{ uri: item.media_attachments[0].url }}
+                style={{ width: '100%', height: '100%' }}
+                contentFit="cover"
+              />
+            </View>
+          </View>
+        </Pressable>
+      </Link>
+    )
+  }
+
+  const ListHeader = () => (
+    <YStack>
+      {hashtags && hashtags.length > 0 && (
+        <View m="$3" mb="$4">
+          <Text fontSize="$6" fontWeight="bold" color={theme.color?.val.secondary.val} mb="$3" ml="$2">
+            Tags
+          </Text>
+          <FlatList
+            data={hashtags}
+            renderItem={RenderTagItem}
+            keyExtractor={(tag) => tag.hashtag}
+            showsHorizontalScrollIndicator={false}
+            horizontal
+          />
+        </View>
+      )}
+
+      {popularAccounts && popularAccounts.length > 0 && (
+        <View m="$3" mb="$4">
+          <Text fontSize="$6" fontWeight="bold" color={theme.color?.val.secondary.val} mb="$3" ml="$2">
+            Accounts
+          </Text>
+          <FlatList
+            data={popularAccounts}
+            renderItem={RenderAccountItem}
+            keyExtractor={(account) => account.id.toString()}
+            showsHorizontalScrollIndicator={false}
+            horizontal
+          />
+        </View>
+      )}
+
+      {gridPosts && gridPosts.length > 0 && (
+         <View m="$3" mb="$3">
+            <Text fontSize="$6" fontWeight="bold" color={theme.color?.val.secondary.val} ml="$2">
+              Posts
+            </Text>
+         </View>
+      )}
+    </YStack>
+  )
+
+  if (isLoading) {
+    return (
+      <SafeAreaView
+        flex={1}
+        style={{ backgroundColor: theme.background?.val.default.val }}
+      >
+        <Stack.Screen options={{ title: 'Explore', headerBackTitle: 'Back' }} />
+        <View flexGrow={1} justifyContent="center" alignItems="center">
+          <ActivityIndicator size="large" />
+        </View>
+      </SafeAreaView>
+    )
+  }
+
+  if (fetchError) {
+    return (
+      <SafeAreaView
+        flex={1}
+        style={{ backgroundColor: theme.background?.val.default.val }}
+      >
+        <Stack.Screen options={{ title: 'Explore', headerBackTitle: 'Back' }} />
+        <View flexGrow={1} justifyContent="center" alignItems="center" p="$4">
+          <Text color={theme.color?.val.danger.val} fontSize="$5" textAlign="center">
+            Error loading content: {fetchError.message}
+          </Text>
+        </View>
+      </SafeAreaView>
+    )
+  }
 
   return (
     <SafeAreaView
       flex={1}
-      edges={['top', 'bottom']}
+      edges={['top', 'bottom', 'left', 'right']}
       style={{ backgroundColor: theme.background?.val.default.val }}
     >
       <Stack.Screen
         options={{
           title: 'Explore',
           headerBackTitle: 'Back',
+          headerRight: () => (
+            <Pressable onPress={() => router.push('/search')}>
+              <Feather name="search" size={24} color={ theme.color?.val.tertiary.val || 'black'} />
+            </Pressable>
+          ),
         }}
       />
-      {isError && (
-        <View>
-          <Text color={theme.color?.val.secondary.val}>Error: {error.message}</Text>
-        </View>
-      )}
-      {isAnyActionPending && (
-        <View flexGrow={1} justifyContent="center" alignItems="center" py="$10">
-          <ActivityIndicator />
-        </View>
-      )}
-      {!isError && !isAnyActionPending && (
-        <ScrollView flexGrow={1}>
-          {hashtags && hashtags.length ? (
-            <View ml="$5" mt="$5">
-              <YStack pb="$4" gap="$3">
-                <Text
-                  fontSize="$6"
-                  allowFontScaling={false}
-                  color={theme.color?.val.secondary.val}
-                >
-                  Trending tags
-                </Text>
-                <FlatList
-                  data={hashtags}
-                  renderItem={RenderTags}
-                  showsHorizontalScrollIndicator={false}
-                  horizontal
-                />
-              </YStack>
-            </View>
-          ) : null}
-
-          {trendingPosts && trendingPosts.accounts ? (
-            <View ml="$5" mt="$5">
-              <YStack pb="$4" gap="$3">
-                <Text
-                  fontSize="$6"
-                  allowFontScaling={false}
-                  color={theme.color?.val.secondary.val}
-                >
-                  Popular accounts
-                </Text>
-                <FlatList
-                  data={trendingPosts.accounts}
-                  renderItem={RenderAccounts}
-                  showsHorizontalScrollIndicator={false}
-                  horizontal
-                />
-              </YStack>
-            </View>
-          ) : null}
-
-          {posts && posts.length ? (
-            <View ml="$5" mt="$5">
-              <YStack pb="$4" gap="$3">
-                <Text
-                  fontSize="$6"
-                  allowFontScaling={false}
-                  color={theme.color?.val.secondary.val}
-                >
-                  Trending today
-                </Text>
-                <FlatList
-                  data={posts}
-                  renderItem={RenderPosts}
-                  showsHorizontalScrollIndicator={false}
-                  horizontal
-                />
-              </YStack>
-            </View>
-          ) : null}
-
-          {trendingPosts && trendingPosts.posts ? (
-            <View ml="$5" mt="$5">
-              <YStack pb="$4" gap="$3">
-                <Text
-                  fontSize="$6"
-                  allowFontScaling={false}
-                  color={theme.color?.val.secondary.val}
-                >
-                  Popular around the fediverse
-                </Text>
-                <FlatList
-                  data={trendingPosts.posts}
-                  renderItem={RenderTrendingPosts}
-                  horizontal
-                />
-              </YStack>
-            </View>
-          ) : null}
-        </ScrollView>
-      )}
+      <FlatList
+        data={gridPosts}
+        renderItem={RenderGridPostItem}
+        keyExtractor={(item, index) => item.id?.toString() || `post-${index}`}
+        numColumns={NUM_COLUMNS}
+        ListHeaderComponent={ListHeader}
+        showsVerticalScrollIndicator={false}
+      />
     </SafeAreaView>
   )
 }
