@@ -554,14 +554,14 @@ export default function ProfileHeader({
                 </Text>
               </View>
             ) : null}
-            {profile && profile?.is_admin ? (
-              <View bg="$red9" borderRadius={5} px={10} py={3}>
+            {profile && profile?.label ? (
+              <View bg={profile?.label.background_color} borderRadius={5} px={10} py={3}>
                 <Text
-                  color={theme.color?.val.default.val}
+                  color={profile?.label.text_color}
                   fontWeight="bold"
                   fontSize="$2"
                 >
-                  Admin
+                  {profile?.label.label}
                 </Text>
               </View>
             ) : null}
