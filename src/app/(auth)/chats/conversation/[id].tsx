@@ -300,6 +300,11 @@ export default function Page() {
         }}
         onSend={(messages) => onSend(messages)}
         maxInputLength={500}
+        onPressAvatar={
+            (user) => {
+                  router.push(`/profile/${user['_id']}`)
+            }
+        }
         lightboxProps={{
           activeProps: {
             style: {
