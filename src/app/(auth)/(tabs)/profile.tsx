@@ -1,5 +1,6 @@
 import ProfileHeader from '@components/profile/ProfileHeader'
 import Feather from '@expo/vector-icons/Feather'
+import Entypo from '@expo/vector-icons/Entypo';
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Link } from 'expo-router'
 import { ActivityIndicator, Alert, Dimensions, FlatList, Share } from 'react-native'
@@ -76,6 +77,8 @@ export default function ProfileScreen() {
     data: feed,
     fetchNextPage,
     hasNextPage,
+    refetch,
+    isRefetching,
     hasPreviousPage,
     isFetchingNextPage,
     isFetching: isFeedFetching,
@@ -87,7 +90,7 @@ export default function ProfileScreen() {
       if (!userId) {
         throw new Error('getAccountStatusesById: user id missing')
       }
-      const data = await getAccountStatusesById(userId, { max_id: pageParam })
+      const data = await getAccountStatusesById(userId, { max_id: pageParam, pinned: true })
       return data.filter((p) => {
         return (
           ['photo', 'photo:album', 'video'].includes(p.pf_type) &&
@@ -128,7 +131,20 @@ export default function ProfileScreen() {
             }}
             containFit="cover"
           />
-          {item.pf_type === 'photo:album' ? (
+          {item.pinned ? (
+            <View
+              style={{
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.05,
+                shadowRadius: 0.5,
+                elevation: 1, // Android shadow
+              }}
+              position="absolute" right={5} top={5}>
+              <Entypo name="pin" size={20} color="white" />
+            </View>
+          ) : null}
+          {item.pf_type === 'photo:album' && !item.pinned ? (
             <View position="absolute" right={5} top={5}>
               <Feather name="columns" color="white" size={20} />
             </View>
@@ -161,6 +177,8 @@ export default function ProfileScreen() {
         }
         renderItem={RenderItem}
         numColumns={3}
+        refreshing={isRefetching}
+        onRefresh={refetch}
         showsVerticalScrollIndicator={false}
         onEndReached={() => {
           if (!isFetching && hasNextPage) fetchNextPage()
