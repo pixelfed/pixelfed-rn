@@ -26,6 +26,26 @@ type AuthProvider = {
   userCache: LoginUserResponse | null
   loadUserCacheFromStorage: () => void
   handleRegistration: (server: string, token: string) => void
+  invalidateCredentialsCache: () => void
+}
+
+// Cache credentials verification for 7 days (in milliseconds)
+const CREDENTIALS_CACHE_DURATION = 7 * 24 * 60 * 60 * 1000
+
+function isCredentialsCacheValid(): boolean {
+  const lastVerified = Storage.getNumber('app.credentials_verified_at')
+  if (!lastVerified) return false
+
+  const now = Date.now()
+  return now - lastVerified < CREDENTIALS_CACHE_DURATION
+}
+
+function markCredentialsAsVerified(): void {
+  Storage.set('app.credentials_verified_at', Date.now())
+}
+
+function invalidateCredentialsCache(): void {
+  Storage.delete('app.credentials_verified_at')
 }
 
 function useProtectedRoute(user: User | null, setUser: any, setIsLoading: any) {
@@ -36,22 +56,62 @@ function useProtectedRoute(user: User | null, setUser: any, setIsLoading: any) {
       try {
         const token = Storage.getString('app.token')
         const server = Storage.getString('app.instance')
+
         if (token && server && !user) {
-          const userInfo = await verifyCredentials(server, token)
-          if (userInfo) {
+          // Check if we have valid cached credentials
+          if (isCredentialsCacheValid()) {
+            // Use cached credentials without API call
             setUser({
               server: server,
               token: token,
             })
-          } else {
+            setIsLoading(false)
+            return
+          }
+
+          // Cache expired or doesn't exist, verify with server
+          try {
+            const userInfo = await verifyCredentials(server, token)
+            if (userInfo) {
+              markCredentialsAsVerified()
+              setUser({
+                server: server,
+                token: token,
+              })
+            } else {
+              // Invalid credentials
+              invalidateCredentialsCache()
+              setIsLoading(false)
+            }
+          } catch (error) {
+            // Network error or server issues - use cached credentials if available
+            const lastVerified = Storage.getNumber('app.credentials_verified_at')
+            if (lastVerified) {
+              console.warn(
+                'Could not verify credentials with server, using cached state:',
+                error
+              )
+              setUser({
+                server: server,
+                token: token,
+              })
+            } else {
+              console.error(
+                'No cached credentials and server verification failed:',
+                error
+              )
+            }
             setIsLoading(false)
           }
+        } else {
+          setIsLoading(false)
         }
       } catch (error) {
         setIsLoading(false)
         console.error('Failed to fetch token from MMKV:', error)
       }
     }
+
     checkToken()
 
     const inAuthGroup = segments[0] === '(auth)'
@@ -59,6 +119,7 @@ function useProtectedRoute(user: User | null, setUser: any, setIsLoading: any) {
     setTimeout(() => {
       setIsLoading(false)
     }, 1000)
+
     if (!user && inAuthGroup) {
       router.replace('/login')
     } else if (user && !inAuthGroup) {
@@ -76,11 +137,11 @@ export const AuthContext = createContext<AuthProvider>({
   userCache: null,
   loadUserCacheFromStorage: () => {},
   handleRegistration: () => {},
+  invalidateCredentialsCache: () => {},
 })
 
 export function useAuth() {
   if (!useContext(AuthContext)) {
-    // This does not work, because default is an object which js will interpret as true here
     throw new Error('useAuth must be used within a <AuthProvider />')
   }
 
@@ -97,27 +158,25 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     setUserCache(saved ? JSON.parse(saved) : null)
   }, [])
 
-  useEffect(
-    () => {
-      loadUserCacheFromStorage()
-    },
-    [loadUserCacheFromStorage] /** only run when component is constructed */
-  )
+  useEffect(() => {
+    loadUserCacheFromStorage()
+  }, [loadUserCacheFromStorage])
 
   const handleRegistration = async (server: string, token: string) => {
-    const url = `https://${server}/api/v1/accounts/verify_credentials`
     const profile = await verifyCredentials(server, token)
 
-    setUserCache(profile)
+    if (profile) {
+      markCredentialsAsVerified()
+      setUserCache(profile)
+      Storage.set('user.profile', JSON.stringify(profile))
+      setUser({
+        server,
+        token,
+      })
+      return true
+    }
 
-    Storage.set('user.profile', JSON.stringify(profile))
-
-    setUser({
-      server,
-      token,
-    })
-
-    return true
+    return false
   }
 
   const login = async (server: string, enabledScopes: string) => {
@@ -207,6 +266,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     ).then((resp: any) => resp.json())
 
     Storage.set('user.profile', JSON.stringify(profile))
+    markCredentialsAsVerified()
     setUserCache(profile)
 
     setUser({
@@ -237,6 +297,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         userCache,
         loadUserCacheFromStorage,
         handleRegistration,
+        setUser,
+        invalidateCredentialsCache,
       }}
     >
       {children}
@@ -245,8 +307,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 export function useUserCache() {
-  // TODO think about this, aren't there cases where this cache needs to be updated
-  // currently it only gets updated when the user logs out and logs in again
   const { userCache } = useContext(AuthContext)
   if (!userCache) {
     throw new Error('Error: user info not available')
@@ -254,9 +314,8 @@ export function useUserCache() {
   return userCache
 }
 
-// this query is preffiled with cached info and will update cache if sth changes
 export function useQuerySelfProfile() {
-  const { userCache, loadUserCacheFromStorage } = useAuth() // user id will be static, so ideally static stuff should be in seperate context (that react only updates it on logout/login)
+  const { userCache, loadUserCacheFromStorage } = useAuth()
   if (!userCache) {
     throw new Error('userCache not set')
   }
@@ -273,7 +332,6 @@ export function useQuerySelfProfile() {
 
   useEffect(() => {
     if (user && isFetchedAfterMount) {
-      // if data is new replace it
       Storage.set('user.profile', JSON.stringify({ ...userCache, ...user }))
       loadUserCacheFromStorage()
     }

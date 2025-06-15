@@ -6,6 +6,13 @@ type ApiRequestOptions = {
   searchParams?: Record<string, string | number | boolean>
 }
 
+// Global logout function that can be set by AuthProvider
+let globalLogoutFunction: (() => void) | null = null
+
+export function setGlobalLogoutFunction(logoutFn: () => void) {
+  globalLogoutFunction = logoutFn
+}
+
 export class ApiContext {
   constructor(
     public readonly instanceHostName: string,
@@ -19,7 +26,20 @@ export class ApiContext {
     }
   }
 
-  // TODO: private
+  private handleUnauthorized() {
+    console.warn('Received 403/401 response - token likely expired or invalid')
+
+    // Clear credentials cache since we got unauthorized
+    Storage.delete('app.credentials_verified_at')
+
+    // Trigger logout if available
+    if (globalLogoutFunction) {
+      globalLogoutFunction()
+    } else {
+      console.error('Global logout function not set - cannot auto-logout on 403')
+    }
+  }
+
   async request(
     path: string,
     fetch_options: RequestInit,
@@ -44,20 +64,35 @@ export class ApiContext {
     }
 
     let response = await fetch(url, fetch_options)
+
+    // Handle unauthorized responses (401 or 403)
+    if (response.status === 401 || response.status === 403) {
+      this.handleUnauthorized()
+      throw new Error('Authentication failed - user has been logged out')
+    }
+
     if (!response.ok) {
       let errorResponse
       try {
         errorResponse = await response.json()
-        console.warn('API Request Failed', { errorResponse })
+        console.warn('API Request Failed', {
+          status: response.status,
+          url: url.toString(),
+          errorResponse,
+        })
         if (
           !errorResponse.error_code &&
           (typeof errorResponse.error === 'undefined' || errorResponse.error.length === 0)
         ) {
-          throw new Error('request failed, but error field is empty')
+          throw new Error(
+            `Request failed with status ${response.status}, but error field is empty`
+          )
         }
       } catch (error) {
         console.error('API Request Failed - Failed to decode error:', error)
-        throw new Error('API Request Failed without error message')
+        throw new Error(
+          `API Request Failed with status ${response.status} without error message`
+        )
       }
       if (errorResponse.error_code) {
         throw new Error(
