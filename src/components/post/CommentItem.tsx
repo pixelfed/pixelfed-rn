@@ -147,7 +147,7 @@ export default function CommentItem({
                           <View
                             w={20}
                             h={1}
-                            backgroundColor={theme.background?.val.secondary.val}
+                            backgroundColor={theme.color?.val.tertiary.val}
                           />
                           <Text
                             fontSize="$3"

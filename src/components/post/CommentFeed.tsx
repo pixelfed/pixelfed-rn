@@ -167,7 +167,7 @@ const CommentItem = ({
                     ) : (
                       <Pressable onPress={() => onLoadChildren(item.id)}>
                         <XStack gap="$2" alignItems="center">
-                          <View w={20} h={1} bg="$gray8" />
+                          <View w={20} h={1} bg={theme.color?.val.tertiary.val} />
                           <Text fontSize="$3" color="$gray9" fontWeight="bold">
                             View {item.reply_count}{' '}
                             {item.reply_count === 1 ? 'reply' : 'replies'}
