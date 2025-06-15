@@ -1,16 +1,17 @@
+import { Feather } from '@expo/vector-icons'
 import { useQuery } from '@tanstack/react-query'
 import { Link, Stack, useRouter } from 'expo-router'
-import React, { useMemo } from 'react'
-import { ActivityIndicator, Dimensions, FlatList, SafeAreaView, Pressable } from 'react-native'
-import ImageComponent from 'src/components/ImageComponent'
-import UserAvatar from 'src/components/common/UserAvatar'
+import { useMemo } from 'react'
 import {
-  getTrendingHashtags,
-  getTrendingPopularPosts,
-  getTrendingPostsV1,
-} from 'src/lib/api'
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  Pressable,
+  SafeAreaView,
+} from 'react-native'
+import ImageComponent from 'src/components/ImageComponent'
+import { getTrendingPopularPosts, getTrendingPostsV1 } from 'src/lib/api'
 import { Text, View, YStack, useTheme } from 'tamagui'
-import { Feather } from '@expo/vector-icons'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 const NUM_COLUMNS = 3
@@ -20,16 +21,6 @@ export default function DiscoverScreen() {
   const theme = useTheme()
 
   const {
-    isPending: hashtagsPending,
-    isError: hashtagsIsError,
-    data: hashtags,
-    error: hashtagsError,
-  } = useQuery({
-    queryKey: ['getTrendingHashtags'],
-    queryFn: getTrendingHashtags,
-  })
-
-  const {
     data: popularTodayPosts,
     isPending: popularTodayPostsPending,
     isError: popularTodayPostsIsError,
@@ -37,7 +28,6 @@ export default function DiscoverScreen() {
   } = useQuery({
     queryKey: ['getTrendingPopularPosts'],
     queryFn: getTrendingPopularPosts,
-    enabled: !!hashtags, 
   })
 
   const {
@@ -48,7 +38,6 @@ export default function DiscoverScreen() {
   } = useQuery({
     queryKey: ['getTrendingPostsV1'],
     queryFn: getTrendingPostsV1,
-    enabled: !!hashtags,
   })
 
   const popularAccounts = trendingData?.accounts
@@ -57,53 +46,27 @@ export default function DiscoverScreen() {
   const gridPosts = useMemo(() => {
     const posts1 = popularTodayPosts || []
     const posts2 = trendingFediversePosts || []
-    
-    const combinedPosts = [...posts1, ...posts2];
-    const uniquePosts = new Map();
+
+    const combinedPosts = [...posts1, ...posts2]
+    const uniquePosts = new Map()
 
     for (const post of combinedPosts) {
-      if (post && post.id && post.media_attachments && post.media_attachments.length > 0) {
+      if (
+        post &&
+        post.id &&
+        post.media_attachments &&
+        post.media_attachments.length > 0
+      ) {
         if (!uniquePosts.has(post.id)) {
-          uniquePosts.set(post.id, post);
+          uniquePosts.set(post.id, post)
         }
       }
     }
-    return Array.from(uniquePosts.values());
+    return Array.from(uniquePosts.values())
+  }, [popularTodayPosts, trendingFediversePosts])
 
-  }, [popularTodayPosts, trendingFediversePosts]);
-
-  const isLoading = hashtagsPending || popularTodayPostsPending || trendingDataPending
-  const fetchError = hashtagsError || popularTodayPostsError || trendingDataError
-
-  const RenderTagItem = ({ item }: { item: { hashtag: string; name: string } }) => (
-    <Link href={`/hashtag/${item.hashtag}`} asChild>
-      <Pressable>
-        <View
-          bg={theme.background?.val.tertiary.val}
-          py="$2"
-          px="$3"
-          borderRadius={5}
-          mr="$2"
-        >
-          <Text fontWeight="bold" color={theme.color?.val.default.val}>
-            {item.name}
-          </Text>
-        </View>
-      </Pressable>
-    </Link>
-  )
-
-  const RenderAccountItem = ({ item }: { item: any }) => (
-    <Link href={`/profile/${item.id}`} asChild>
-      <Pressable>
-        <YStack
-          mr="$3"
-        >
-          <UserAvatar url={item.avatar} size="$5" />
-        </YStack>
-      </Pressable>
-    </Link>
-  )
+  const isLoading = popularTodayPostsPending || trendingDataPending
+  const fetchError = popularTodayPostsError || trendingDataError
 
   const RenderGridPostItem = ({ item }: { item: any }) => {
     const itemCellWidth = SCREEN_WIDTH / NUM_COLUMNS
@@ -115,16 +78,8 @@ export default function DiscoverScreen() {
     return (
       <Link href={`/post/${item.id}`} asChild>
         <Pressable>
-          <View
-            width={itemCellWidth}
-            height={itemCellWidth}
-            p="$0.5"
-          >
-            <View
-              flex={1}
-              overflow="hidden"
-              bg={theme.background?.val.tertiary.val}
-            >
+          <View width={itemCellWidth} height={itemCellWidth * 1.5} p="$0.5">
+            <View flex={1} overflow="hidden" bg={theme.background?.val.tertiary.val}>
               <ImageComponent
                 placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
                 source={{ uri: item.media_attachments[0].url }}
@@ -142,7 +97,13 @@ export default function DiscoverScreen() {
     <YStack>
       {hashtags && hashtags.length > 0 && (
         <View m="$3" mb="$4">
-          <Text fontSize="$6" fontWeight="bold" color={theme.color?.val.secondary.val} mb="$3" ml="$2">
+          <Text
+            fontSize="$6"
+            fontWeight="bold"
+            color={theme.color?.val.secondary.val}
+            mb="$3"
+            ml="$2"
+          >
             Tags
           </Text>
           <FlatList
@@ -157,7 +118,13 @@ export default function DiscoverScreen() {
 
       {popularAccounts && popularAccounts.length > 0 && (
         <View m="$3" mb="$4">
-          <Text fontSize="$6" fontWeight="bold" color={theme.color?.val.secondary.val} mb="$3" ml="$2">
+          <Text
+            fontSize="$6"
+            fontWeight="bold"
+            color={theme.color?.val.secondary.val}
+            mb="$3"
+            ml="$2"
+          >
             Accounts
           </Text>
           <FlatList
@@ -169,8 +136,6 @@ export default function DiscoverScreen() {
           />
         </View>
       )}
-
-    
     </YStack>
   )
 
@@ -215,8 +180,12 @@ export default function DiscoverScreen() {
           title: 'Explore',
           headerBackTitle: 'Back',
           headerRight: () => (
-            <Pressable onPress={() => router.push('/search')} style={{marginRight: 10}}>
-              <Feather name="search" size={24} color={ theme.color?.val.tertiary.val || 'black'} />
+            <Pressable onPress={() => router.push('/search')} style={{ marginRight: 10 }}>
+              <Feather
+                name="search"
+                size={24}
+                color={theme.color?.val.tertiary.val || 'black'}
+              />
             </Pressable>
           ),
         }}
@@ -226,7 +195,6 @@ export default function DiscoverScreen() {
         renderItem={RenderGridPostItem}
         keyExtractor={(item, index) => item.id?.toString() || `post-${index}`}
         numColumns={NUM_COLUMNS}
-        ListHeaderComponent={ListHeader}
         showsVerticalScrollIndicator={false}
       />
     </SafeAreaView>
