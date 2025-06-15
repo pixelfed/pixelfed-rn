@@ -6,7 +6,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { type ErrorBoundaryProps, Stack, useNavigation, useRouter } from 'expo-router'
-import { useCallback, useRef } from 'react'
+import { useCallback, useLayoutEffect, useRef } from 'react'
 import {
   ActivityIndicator,
   FlatList,
@@ -16,7 +16,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 import EmptyFeed from 'src/components/common/EmptyFeed'
 import ErrorFeed from 'src/components/common/ErrorFeed'
-import FeedHeader from 'src/components/common/FeedHeader'
 import FeedPost from 'src/components/post/FeedPost'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import {
@@ -64,6 +63,13 @@ export default function HomeScreen() {
   const flatListRef = useRef(null)
   const queryClient = useQueryClient()
   const theme = useTheme()
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerBackTitle: 'Back',
+      title: 'Public feed',
+    })
+  }, [navigation])
 
   useFocusEffect(
     useCallback(() => {
@@ -238,9 +244,13 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <Stack.Screen options={{ headerShown: false }} />
-      <FeedHeader title="Local" user={user} />
+    <SafeAreaView style={styles.container} edges={['left']}>
+      <Stack.Screen 
+        options={{ 
+          headerShown: true,
+          title: 'Public feed'
+        }} 
+        />
       {renderFeed(data?.pages.flatMap((page) => page.data))}
     </SafeAreaView>
   )
