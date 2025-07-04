@@ -228,8 +228,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     const { path, queryParams } = Linking.parse(url)
     const REDIRECT_URI = Linking.createURL('login')
 
-    if (queryParams?.error) {
-      Alert.alert('Error', 'An error occured when attempting to log in.')
+    if (queryParams?.message || queryParams?.error) {
+      Alert.alert('Error', queryParams.message || queryParams.error)
       return
     }
 
