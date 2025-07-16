@@ -411,10 +411,10 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
           gap: 2,
           position: 'absolute',
           bottom: 0,
-          marginBottom: -30,
+          marginBottom: -10,
           zIndex: 10,
         }}
-        size={8}
+        size={7}
       />
     </YStack>
   )
