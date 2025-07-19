@@ -1,4 +1,4 @@
-name: Expo
+name: Expo Doctor
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  doctor:
+  ExpoDoctor:
     runs-on: ubuntu-latest
     steps:
       - name: 🏗 Setup repo
