@@ -3,6 +3,7 @@ import { Link, useRouter } from 'expo-router'
 import { useCallback, useState } from 'react'
 import {
   Dimensions,
+  type Insets,
   Modal,
   Platform,
   Pressable,
@@ -367,6 +368,8 @@ export default function ProfileHeader({
     [profile]
   )
 
+  const TabsHitSlop: Insets = { left: 25, right: 25, bottom: 12, top: 13 }
+
   return (
     <View flex={1} bg={theme.background?.val.default.val}>
       {modalVisible && (
@@ -633,15 +636,15 @@ export default function ProfileHeader({
           <XStack justifyContent="space-around" px="$5" py="$3" mb="$1">
             <Feather name="grid" size={20} color={theme.color?.val.default.val} />
 
-            <PressableOpacity onPress={() => gotoProfileFeed()}>
+            <PressableOpacity onPress={() => gotoProfileFeed()} hitSlop={TabsHitSlop}>
               <Feather name="list" size={20} color="#999" />
             </PressableOpacity>
 
-            <PressableOpacity onPress={() => gotoSelfLikes()}>
+            <PressableOpacity onPress={() => gotoSelfLikes()} hitSlop={TabsHitSlop}>
               <Feather name="heart" size={20} color="#999" />
             </PressableOpacity>
 
-            <PressableOpacity onPress={() => gotoBookmarks()}>
+            <PressableOpacity onPress={() => gotoBookmarks()} hitSlop={TabsHitSlop}>
               <Feather name="bookmark" size={20} color="#999" />
             </PressableOpacity>
           </XStack>
