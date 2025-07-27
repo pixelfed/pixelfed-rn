@@ -512,7 +512,10 @@ export default function CommentsScreen() {
 
   const HeaderLeft = () => (
     <View ml="$3">
-      <Pressable onPress={handleCustomBackPress}>
+      <Pressable
+        onPress={handleCustomBackPress}
+        hitSlop={{ left: 20, right: 15, top: 7, bottom: 7 }}
+      >
         <Feather name="chevron-left" size={25} color={theme.color?.val.default.val} />
       </Pressable>
     </View>
@@ -706,8 +709,8 @@ export default function CommentsScreen() {
               </XStack>
 
               {/* Visibility Toggle */}
-              <XStack alignItems="center" gap={5}>
-                <Pressable onPress={toggleScope} hitSlop={10}>
+              <Pressable onPress={toggleScope} hitSlop={10}>
+                <XStack alignItems="center" gap={5}>
                   <Text
                     allowFontScaling={false}
                     color={theme.color?.val.secondary.val}
@@ -717,38 +720,40 @@ export default function CommentsScreen() {
                   >
                     {replyScope}
                   </Text>
-                </Pressable>
-                <Feather
-                  name={
-                    replyScope === 'public'
-                      ? 'globe'
-                      : replyScope === 'private'
-                        ? 'lock'
-                        : 'eye-off'
-                  }
-                  color={theme.color?.val.secondary.val}
-                />
-              </XStack>
+                  <Feather
+                    name={
+                      replyScope === 'public'
+                        ? 'globe'
+                        : replyScope === 'private'
+                          ? 'lock'
+                          : 'eye-off'
+                    }
+                    color={theme.color?.val.secondary.val}
+                  />
+                </XStack>
+              </Pressable>
 
               {/* Content Warning Toggle */}
-              <XStack alignItems="center" gap={5}>
-                <Text
-                  allowFontScaling={false}
-                  fontSize={12}
-                  color={theme.color?.val.secondary.val}
-                  fontWeight="bold"
-                >
-                  CW
-                </Text>
-                <Switch
-                  width={40}
-                  height={20}
-                  defaultChecked={hasCW}
-                  onCheckedChange={(checked) => setCW(checked)}
-                >
-                  <Switch.Thumb width={20} height={20} animation="quicker" />
-                </Switch>
-              </XStack>
+              <Pressable onPress={() => setCW(!hasCW)} hitSlop={8}>
+                <XStack alignItems="center" gap={5}>
+                  <Text
+                    allowFontScaling={false}
+                    fontSize={12}
+                    color={theme.color?.val.secondary.val}
+                    fontWeight="bold"
+                  >
+                    CW
+                  </Text>
+                  <Switch
+                    width={40}
+                    height={20}
+                    checked={hasCW}
+                    onCheckedChange={(checked) => setCW(checked)}
+                  >
+                    <Switch.Thumb width={20} height={20} animation="quicker" />
+                  </Switch>
+                </XStack>
+              </Pressable>
 
               {/* Post Button */}
               <Pressable
