@@ -411,7 +411,7 @@ export default function ProfileHeader({
         {isSelf ? <RenderSelfHeader /> : <RenderGuestHeader />}
 
         <XStack w="100%" justifyContent="space-between" alignItems="center" mt="$3">
-          <Pressable onPress={() => setModalVisible(true)}>
+          <Pressable onPress={() => setModalVisible(true)} hitSlop={4}>
             <View style={{ borderRadius: 100, overflow: 'hidden' }}>
               <Avatar
                 circular
@@ -446,23 +446,27 @@ export default function ProfileHeader({
 
             {profile && profile.id ? (
               <Link href={`/profile/following/${profile?.id}`} asChild>
-                <YStack alignItems="center" gap="$1">
-                  <Text
-                    fontWeight="bold"
-                    fontSize="$5"
-                    allowFontScaling={false}
-                    color={theme.color?.val.default.val}
-                  >
-                    {prettyCount(profile?.following_count ? profile.following_count : 0)}
-                  </Text>
-                  <Text
-                    fontSize="$2"
-                    allowFontScaling={false}
-                    color={theme.color?.val.secondary.val}
-                  >
-                    Following
-                  </Text>
-                </YStack>
+                <PressableOpacity hitSlop={9}>
+                  <YStack alignItems="center" gap="$1">
+                    <Text
+                      fontWeight="bold"
+                      fontSize="$5"
+                      allowFontScaling={false}
+                      color={theme.color?.val.default.val}
+                    >
+                      {prettyCount(
+                        profile?.following_count ? profile.following_count : 0
+                      )}
+                    </Text>
+                    <Text
+                      fontSize="$2"
+                      allowFontScaling={false}
+                      color={theme.color?.val.secondary.val}
+                    >
+                      Following
+                    </Text>
+                  </YStack>
+                </PressableOpacity>
               </Link>
             ) : (
               <YStack alignItems="center" gap="$1">
@@ -486,23 +490,27 @@ export default function ProfileHeader({
 
             {profile && profile.id ? (
               <Link href={`/profile/followers/${profile?.id}`} asChild>
-                <YStack alignItems="center" gap="$1">
-                  <Text
-                    fontWeight="bold"
-                    fontSize="$5"
-                    allowFontScaling={false}
-                    color={theme.color?.val.default.val}
-                  >
-                    {prettyCount(profile?.followers_count ? profile.followers_count : 0)}
-                  </Text>
-                  <Text
-                    fontSize="$2"
-                    allowFontScaling={false}
-                    color={theme.color?.val.secondary.val}
-                  >
-                    Followers
-                  </Text>
-                </YStack>
+                <PressableOpacity hitSlop={9}>
+                  <YStack alignItems="center" gap="$1">
+                    <Text
+                      fontWeight="bold"
+                      fontSize="$5"
+                      allowFontScaling={false}
+                      color={theme.color?.val.default.val}
+                    >
+                      {prettyCount(
+                        profile?.followers_count ? profile.followers_count : 0
+                      )}
+                    </Text>
+                    <Text
+                      fontSize="$2"
+                      allowFontScaling={false}
+                      color={theme.color?.val.secondary.val}
+                    >
+                      Followers
+                    </Text>
+                  </YStack>
+                </PressableOpacity>
               </Link>
             ) : (
               <YStack alignItems="center" gap="$1">
