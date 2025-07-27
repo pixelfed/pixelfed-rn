@@ -15,6 +15,7 @@ import {
   StyleSheet,
   TextInput,
 } from 'react-native'
+import { PressableOpacity } from 'react-native-pressable-opacity'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Switch } from 'src/components/form/Switch'
 import CommentItem from 'src/components/post/CommentItem'
@@ -643,9 +644,12 @@ export default function CommentsScreen() {
                   </Text>
                   <Text color={theme.color?.val.default.val}>{replySet.content}</Text>
                 </YStack>
-                <Text color={theme.color?.val.secondary.val} onPress={clearReply}>
-                  Clear
-                </Text>
+                <PressableOpacity
+                  onPress={clearReply}
+                  hitSlop={{ left: 14, right: 14, top: 6, bottom: 6 }}
+                >
+                  <Text color={theme.color?.val.secondary.val}>Clear</Text>
+                </PressableOpacity>
               </XStack>
             </View>
           ) : null}
