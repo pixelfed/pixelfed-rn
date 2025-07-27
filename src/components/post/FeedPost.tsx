@@ -1091,7 +1091,7 @@ const FeedPost = React.memo(
                   likedBy={post?.liked_by}
                   sharesCount={post?.reblogs_count}
                   showAltText={showAltText}
-                  commentsCount={post.replies_count}
+                  commentsCount={post.reply_count}
                   handleLike={handleLikeAction}
                   onOpenComments={() => onOpenComments(post?.id)}
                   onShare={() => onShare(post?.id)}
@@ -1101,7 +1101,7 @@ const FeedPost = React.memo(
                   postId={post.id}
                   username={post.account?.username}
                   caption={post.content}
-                  commentsCount={post.replies_count}
+                  commentsCount={post.reply_count}
                   createdAt={post.created_at}
                   tags={post.tags}
                   visibility={post.visibility}
@@ -1129,7 +1129,7 @@ const FeedPost = React.memo(
             isLikePending={isLikePending}
             likesCount={post?.favourites_count}
             caption={post.content}
-            commentsCount={post.replies_count}
+            commentsCount={post.reply_count}
             createdAt={post.created_at}
             onOpenMenu={() => handlePresentModalPress()}
             onHashtagPress={(tag) => onGotoHashtag(tag)}
