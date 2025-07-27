@@ -405,7 +405,10 @@ export default function Camera() {
           </View>
         ) : null}
 
-        <PressableOpacity onPress={() => mediaMenu(item)}>
+        <PressableOpacity
+          onPress={() => mediaMenu(item)}
+          hitSlop={{ left: 15, right: 15 }}
+        >
           <Text color={theme.color?.val.default.val} my="$3">
             <Feather name="sliders" size={20} />
           </Text>
@@ -440,7 +443,7 @@ export default function Camera() {
 
   const HeaderLeft = () => (
     <View ml="$3">
-      <PressableOpacity onPress={handlePresentModalPress}>
+      <PressableOpacity onPress={handlePresentModalPress} hitSlop={10}>
         <Feather name="settings" size={20} color={theme.color.val.tertiary.val} />
       </PressableOpacity>
     </View>
@@ -451,7 +454,7 @@ export default function Camera() {
       {isPosting == true || isResizing ? (
         <ActivityIndicator />
       ) : canPost ? (
-        <PressableOpacity onPress={() => _handlePost()}>
+        <PressableOpacity onPress={() => _handlePost()} hitSlop={10}>
           <Text fontSize="$6" fontWeight="bold" color={theme.colorHover.val.hover.val}>
             Post
           </Text>
@@ -730,30 +733,35 @@ export default function Camera() {
                 </View>
               ) : null}
 
-              <XStack ml="$2" mt="$1" gap="$5" justifyContent="space-between">
-                <XStack gap="$5">
+              <XStack ml="$2" mt="$1" gap="$2" justifyContent="space-between">
+                <XStack gap="$2">
                   {media &&
                   media.length <
                     serverConfig?.configuration.statuses.max_media_attachments ? (
                     <>
-                      <Button p="$0" chromeless onPress={pickImage}>
+                      <Button p="$0" px="$2" chromeless onPress={pickImage}>
                         <Feather
                           name="image"
                           size={24}
                           color={theme.color?.val.default.val}
                         />
                       </Button>
-                      <Button p="$0" chromeless onPress={openCamera}>
+                      <Button p="$0" px="$2" chromeless onPress={openCamera}>
                         <Feather
                           name="camera"
                           size={24}
                           color={theme.color?.val.default.val}
                         />
                       </Button>
-                      {/* <Button p="$0" chromeless><Feather name="map-pin" size={24} /></Button> */}
+                      {/* <Button p="$0" px="$1" chromeless><Feather name="map-pin" size={24} /></Button> */}
                     </>
                   ) : null}
-                  <Button p="$0" chromeless onPress={() => setSensitive(!isSensitive)}>
+                  <Button
+                    p="$0"
+                    px="$2"
+                    chromeless
+                    onPress={() => setSensitive(!isSensitive)}
+                  >
                     <Feather
                       name={isSensitive ? 'eye-off' : 'eye'}
                       size={24}
@@ -801,7 +809,7 @@ export default function Camera() {
                     >
                       Tap
                     </Text>
-                    <PressableOpacity onPress={pickImage}>
+                    <PressableOpacity onPress={pickImage} hitSlop={6}>
                       <Feather
                         name="image"
                         size={24}
@@ -817,7 +825,7 @@ export default function Camera() {
                       {' '}
                       or{' '}
                     </Text>
-                    <PressableOpacity onPress={openCamera}>
+                    <PressableOpacity onPress={openCamera} hitSlop={6}>
                       <Feather
                         name="camera"
                         size={24}
