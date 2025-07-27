@@ -180,7 +180,11 @@ export default function DiscoverScreen() {
           title: 'Explore',
           headerBackTitle: 'Back',
           headerRight: () => (
-            <Pressable onPress={() => router.push('/search')} style={{ marginRight: 10 }}>
+            <Pressable
+              onPress={() => router.push('/search')}
+              style={{ marginRight: 10 }}
+              hitSlop={10}
+            >
               <Feather
                 name="search"
                 size={24}
