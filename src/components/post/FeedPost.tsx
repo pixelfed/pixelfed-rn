@@ -226,7 +226,7 @@ const PostHeader = React.memo(
               </Pressable>
             </Link>
           </View>
-          <Pressable onPress={() => onOpenMenu()}>
+          <Pressable onPress={() => onOpenMenu()} hitSlop={{ top: 10, bottom: 10 }}>
             <View px="$3">
               <Feather
                 name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
