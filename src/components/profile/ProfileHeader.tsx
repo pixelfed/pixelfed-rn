@@ -180,7 +180,10 @@ export default function ProfileHeader({
         gap="$10"
       >
         <View>
-          <Pressable onPress={() => router.back()}>
+          <Pressable
+            onPress={() => router.back()}
+            hitSlop={{ left: 10, right: 26, top: 20, bottom: 10 }}
+          >
             <XStack alignItems="center" gap="$5">
               <Feather
                 name="chevron-left"
@@ -220,17 +223,17 @@ export default function ProfileHeader({
         <View>
           <XStack alignItems="center" gap="$5">
             {selfId == profile?.id ? (
-              <Button chromeless p="$0" size="$2" onPress={() => onShare()}>
-                <Feather name="share" size={23} color={theme.color?.val.default.val} />
-              </Button>
+              <PressableOpacity hitSlop={18} onPress={() => onShare()}>
+                <Feather name="share" size={24} color={theme.color?.val.default.val} />
+              </PressableOpacity>
             ) : (
-              <Button chromeless p="$0" onPress={() => openMenu()}>
+              <PressableOpacity hitSlop={18} onPress={() => openMenu()}>
                 <Feather
                   name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
                   size={26}
                   color={theme.color?.val.default.val}
                 />
-              </Button>
+              </PressableOpacity>
             )}
           </XStack>
         </View>
@@ -258,11 +261,13 @@ export default function ProfileHeader({
       </Text>
 
       <XStack alignItems="center" gap="$5">
-        <Button chromeless p="$0" size="$2" onPress={() => onShare()}>
+        <PressableOpacity hitSlop={12} onPress={() => onShare()}>
           <Feather name="share" size={23} color={theme.color?.val.default.val} />
-        </Button>
-        <Link href="/settings">
-          <Feather name="menu" size={30} color={theme.color?.val.default.val} />
+        </PressableOpacity>
+        <Link href="/settings" asChild>
+          <PressableOpacity hitSlop={10}>
+            <Feather name="menu" size={30} color={theme.color?.val.default.val} />
+          </PressableOpacity>
         </Link>
       </XStack>
     </XStack>
