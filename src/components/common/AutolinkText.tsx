@@ -1,29 +1,50 @@
 import { useMemo } from 'react'
+import { openBrowserAsync } from 'src/utils'
 import { Text, useTheme } from 'tamagui'
 
+const linkRegex =
+  /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g
 const mentionRegex = /@\w+(?:@\w+\.\w+(?:\.\w+)*)?/g
 const hashtagRegex = /#[\p{L}\p{N}]+(?:[\p{L}\p{N}_-]*[\p{L}\p{N}])?/gu
 
 export interface Part {
-  type: 'text' | 'mention' | 'hashtag'
+  type: 'text' | 'mention' | 'hashtag' | 'link'
   value: string
 }
 
 export interface Match extends Part {
-  type: 'mention' | 'hashtag'
+  type: 'mention' | 'hashtag' | 'link'
   index: number
 }
 
 export function parseText(text: string) {
   const matches: Match[] = []
-  let match
+  let match: RegExpExecArray | null
+  let linkRangeIndices: { start: number; end: number }[] = []
+
+  while ((match = linkRegex.exec(text)) !== null) {
+    matches.push({ type: 'link', value: match[0], index: match.index })
+    linkRangeIndices.push({ start: match.index, end: match.index + match[0].length })
+  }
 
   while ((match = mentionRegex.exec(text)) !== null) {
-    matches.push({ type: 'mention', value: match[0], index: match.index })
+    // make sure it does not parse parts of links
+    // for we check that the previous character needs to be a whitespace or the beginning of the text
+    if (match.index == 0 || [' ', '\n'].includes(text[match.index - 1])) {
+      matches.push({ type: 'mention', value: match[0], index: match.index })
+    }
   }
 
   while ((match = hashtagRegex.exec(text)) !== null) {
-    matches.push({ type: 'hashtag', value: match[0], index: match.index })
+    let matchIndex = (match as RegExpExecArray).index
+    // make sure it does not parse parts of links
+    if (
+      linkRangeIndices.findLastIndex(
+        ({ start, end }) => matchIndex > start && matchIndex < end
+      ) === -1
+    ) {
+      matches.push({ type: 'hashtag', value: match[0], index: match.index })
+    }
   }
 
   matches.sort((a, b) => a.index - b.index)
@@ -91,7 +112,7 @@ export default function AutolinkText(
             return (
               <Text
                 key={index}
-                onPress={() => onMentionPress(`${part.value}`)}
+                onPress={() => onMentionPress(part.value)}
                 fontSize="$5"
                 color={theme.colorHover.val.active.val}
               >
@@ -104,7 +125,20 @@ export default function AutolinkText(
             return (
               <Text
                 key={index}
-                onPress={() => onHashtagPress(`${part.value.slice(1)}`)}
+                onPress={() => onHashtagPress(part.value.slice(1))}
+                fontSize="$5"
+                color={theme.colorHover.val.active.val}
+              >
+                {part.value}
+              </Text>
+            )
+          }
+
+          if (part.type === 'link') {
+            return (
+              <Text
+                key={index}
+                onPress={() => openBrowserAsync(part.value)}
                 fontSize="$5"
                 color={theme.colorHover.val.active.val}
               >
