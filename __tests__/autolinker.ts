@@ -7,7 +7,9 @@ function parse(text: string): Part[] {
 
 describe('Autolinker', () => {
 
-  test("don't parse incomplete mention (mention without homeserver)", () => {
+  test("parse mention (without explicit homeserver)", () => {
+    // TODO: we need to check wether we want to parse this,
+    // because it is problematic, when multiple different homeservers are involved
     expect(parse("@pixelfed"))
       .toStrictEqual([{ type: 'text', value: "@pixelfed" }] satisfies Part[])
     expect(parse("@pixelfed is cool"))
