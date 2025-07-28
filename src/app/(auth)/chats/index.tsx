@@ -59,7 +59,7 @@ export default function Page() {
   const HeaderRight = () => (
     <XStack gap="$3">
       <Link href="/chats/search" asChild>
-        <PressableOpacity>
+        <PressableOpacity hitSlop={10}>
           <Feather name="plus" size={25} color="#0091ff" />
         </PressableOpacity>
       </Link>
