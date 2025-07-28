@@ -26,7 +26,7 @@ import {
   prettyCount,
 } from 'src/utils'
 import { Separator, Text, useTheme, View, XStack, YStack } from 'tamagui'
-import AutolinkText from '../common/AutolinkText'
+import AutolinkText, { onMentionPressMethod } from '../common/AutolinkText'
 import ReadMore from '../common/ReadMore'
 import { Switch } from '../form/Switch'
 
@@ -122,7 +122,7 @@ const CommentItem = ({
                 <ReadMore numberOfLines={3}>
                   <AutolinkText
                     text={captionText}
-                    onMentionPress={gotoUsernameProfile}
+                    onMentionPress={onMentionPressMethod(gotoUsernameProfile, item.account.url)}
                     onHashtagPress={gotoHashtag}
                   />
                 </ReadMore>
@@ -343,7 +343,7 @@ export default function CommentFeed({
   }
 
   const renderItem = useCallback(
-    ({ item }) => (
+    ({ item }) =>
       <CommentItem
         item={item}
         onReply={handleReplyTo}

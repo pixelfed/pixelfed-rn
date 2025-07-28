@@ -73,7 +73,7 @@ export function getTextParts(text: string, matches: Match[]) {
 
 interface AutolinkTextProps {
   text: string
-  onMentionPress: (mention: string) => void
+  onMentionPress: (mention: string, is_local_mention: boolean) => void
   onHashtagPress: (hashtag: string) => void
 }
 
@@ -112,7 +112,9 @@ export default function AutolinkText(
             return (
               <Text
                 key={index}
-                onPress={() => onMentionPress(part.value)}
+                onPress={() =>
+                  onMentionPress(part.value, part.value.lastIndexOf('@') === 0)
+                }
                 fontSize="$5"
                 color={theme.colorHover.val.active.val}
               >
@@ -155,4 +157,18 @@ export default function AutolinkText(
         })}
     </Text>
   )
+}
+
+export function onMentionPressMethod(
+  gotoUsernameProfile: (username: string) => void,
+  authorAccountUrl: string
+) {
+  return (mention: string, is_username_local: boolean) => {
+    let username = mention
+    if (is_username_local) {
+      const authors_homeserver = new URL(authorAccountUrl).hostname
+      username = `${mention}@${authors_homeserver}`
+    }
+    gotoUsernameProfile(username)
+  }
 }
