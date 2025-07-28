@@ -26,5 +26,5 @@ jobs:
       - name: 📦 Install dependencies
         run: npm install
 
-      - name: ⚕️ Run jest unit tests
+      - name: Run jest unit tests
         run: npm run test
