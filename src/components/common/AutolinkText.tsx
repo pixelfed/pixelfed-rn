@@ -4,7 +4,7 @@ import { Text, useTheme } from 'tamagui'
 
 const linkRegex =
   /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g
-const mentionRegex = /@\w+(?:@\w+\.\w+(?:\.\w+)*)?/g
+const mentionRegex = /@[\.\w]+(?:@\w+\.\w+(?:\.\w+)*)?/g
 const hashtagRegex = /#[\p{L}\p{N}]+(?:[\p{L}\p{N}_-]*[\p{L}\p{N}])?/gu
 
 export interface Part {

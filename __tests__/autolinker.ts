@@ -11,9 +11,18 @@ describe('Autolinker', () => {
     // TODO: we need to check wether we want to parse this,
     // because it is problematic, when multiple different homeservers are involved
     expect(parse("@pixelfed"))
-      .toStrictEqual([{ type: 'text', value: "@pixelfed" }] satisfies Part[])
+      .toStrictEqual([{ type: 'mention', value: "@pixelfed" }] satisfies Part[])
     expect(parse("@pixelfed is cool"))
-      .toStrictEqual([{ type: 'text', value: "@pixelfed is cool" }] satisfies Part[])
+      .toStrictEqual([{ type: 'mention', value: "@pixelfed" }, { type: 'text', value: " is cool" }] satisfies Part[])
+  })
+
+  test("parse mention (without explicit homeserver and dot in the username)", () => {
+    // TODO: we need to check wether we want to parse this,
+    // because it is problematic, when multiple different homeservers are involved
+    expect(parse("@moonwatch.band"))
+      .toStrictEqual([{ type: 'mention', value: "@moonwatch.band" }] satisfies Part[])
+    expect(parse("I listen to @moonwatch.band"))
+      .toStrictEqual([{ type: 'text', value: "I listen to " }, { type: 'mention', value: "@moonwatch.band" }] satisfies Part[])
   })
 
   test("parse mention (with homeserver)", () => {
