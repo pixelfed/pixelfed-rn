@@ -98,6 +98,7 @@ When you are not part of the pixelfed apple developer team, then you need to mak
    - change bundle identifier by preprending your own domain in reverse notation
    - disable/remove app group
    - delete push notification capability
+   - also do this for the share extension target "PixelfedShare"
 
 ### iOS: "CommandError: ApplicationVerificationFailed"
 
@@ -133,9 +134,8 @@ FAILURE: Build failed with an exception.
 
 * What went wrong:
 Execution failed for task ':app:processDebugGoogleServices'.
-> File google-services.json is missing. The Google Services Plugin cannot function without it. 
-   Searched Location: 
+> File google-services.json is missing. The Google Services Plugin cannot function without it.
+   Searched Location:
 ```
 
 This means firebase config is missing. you need to create a firebase project and put the google-services.json into the Repository’s root directory. Then run `npx expo prebuild --platform android`
-
