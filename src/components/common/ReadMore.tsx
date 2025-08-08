@@ -1,5 +1,5 @@
 import React, { type ReactNode } from 'react'
-import { type LayoutChangeEvent, StyleSheet, Text, View, type Insets } from 'react-native'
+import { type Insets, type LayoutChangeEvent, StyleSheet, Text, View } from 'react-native'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 
 const styles = StyleSheet.create({
