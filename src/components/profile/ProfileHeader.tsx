@@ -3,6 +3,7 @@ import { Link, useRouter } from 'expo-router'
 import { useCallback, useState } from 'react'
 import {
   Dimensions,
+  type Insets,
   Modal,
   Platform,
   Pressable,
@@ -180,7 +181,10 @@ export default function ProfileHeader({
         gap="$10"
       >
         <View>
-          <Pressable onPress={() => router.back()}>
+          <Pressable
+            onPress={() => router.back()}
+            hitSlop={{ left: 10, right: 26, top: 20, bottom: 10 }}
+          >
             <XStack alignItems="center" gap="$5">
               <Feather
                 name="chevron-left"
@@ -220,17 +224,17 @@ export default function ProfileHeader({
         <View>
           <XStack alignItems="center" gap="$5">
             {selfId == profile?.id ? (
-              <Button chromeless p="$0" size="$2" onPress={() => onShare()}>
-                <Feather name="share" size={23} color={theme.color?.val.default.val} />
-              </Button>
+              <PressableOpacity hitSlop={18} onPress={() => onShare()}>
+                <Feather name="share" size={24} color={theme.color?.val.default.val} />
+              </PressableOpacity>
             ) : (
-              <Button chromeless p="$0" onPress={() => openMenu()}>
+              <PressableOpacity hitSlop={18} onPress={() => openMenu()}>
                 <Feather
                   name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
                   size={26}
                   color={theme.color?.val.default.val}
                 />
-              </Button>
+              </PressableOpacity>
             )}
           </XStack>
         </View>
@@ -258,11 +262,13 @@ export default function ProfileHeader({
       </Text>
 
       <XStack alignItems="center" gap="$5">
-        <Button chromeless p="$0" size="$2" onPress={() => onShare()}>
+        <PressableOpacity hitSlop={12} onPress={() => onShare()}>
           <Feather name="share" size={23} color={theme.color?.val.default.val} />
-        </Button>
-        <Link href="/settings">
-          <Feather name="menu" size={30} color={theme.color?.val.default.val} />
+        </PressableOpacity>
+        <Link href="/settings" asChild>
+          <PressableOpacity hitSlop={10}>
+            <Feather name="menu" size={30} color={theme.color?.val.default.val} />
+          </PressableOpacity>
         </Link>
       </XStack>
     </XStack>
@@ -362,6 +368,8 @@ export default function ProfileHeader({
     [profile]
   )
 
+  const TabsHitSlop: Insets = { left: 25, right: 25, bottom: 12, top: 13 }
+
   return (
     <View flex={1} bg={theme.background?.val.default.val}>
       {modalVisible && (
@@ -406,7 +414,7 @@ export default function ProfileHeader({
         {isSelf ? <RenderSelfHeader /> : <RenderGuestHeader />}
 
         <XStack w="100%" justifyContent="space-between" alignItems="center" mt="$3">
-          <Pressable onPress={() => setModalVisible(true)}>
+          <Pressable onPress={() => setModalVisible(true)} hitSlop={4}>
             <View style={{ borderRadius: 100, overflow: 'hidden' }}>
               <Avatar
                 circular
@@ -441,23 +449,27 @@ export default function ProfileHeader({
 
             {profile && profile.id ? (
               <Link href={`/profile/following/${profile?.id}`} asChild>
-                <YStack alignItems="center" gap="$1">
-                  <Text
-                    fontWeight="bold"
-                    fontSize="$5"
-                    allowFontScaling={false}
-                    color={theme.color?.val.default.val}
-                  >
-                    {prettyCount(profile?.following_count ? profile.following_count : 0)}
-                  </Text>
-                  <Text
-                    fontSize="$2"
-                    allowFontScaling={false}
-                    color={theme.color?.val.secondary.val}
-                  >
-                    Following
-                  </Text>
-                </YStack>
+                <PressableOpacity hitSlop={9}>
+                  <YStack alignItems="center" gap="$1">
+                    <Text
+                      fontWeight="bold"
+                      fontSize="$5"
+                      allowFontScaling={false}
+                      color={theme.color?.val.default.val}
+                    >
+                      {prettyCount(
+                        profile?.following_count ? profile.following_count : 0
+                      )}
+                    </Text>
+                    <Text
+                      fontSize="$2"
+                      allowFontScaling={false}
+                      color={theme.color?.val.secondary.val}
+                    >
+                      Following
+                    </Text>
+                  </YStack>
+                </PressableOpacity>
               </Link>
             ) : (
               <YStack alignItems="center" gap="$1">
@@ -481,23 +493,27 @@ export default function ProfileHeader({
 
             {profile && profile.id ? (
               <Link href={`/profile/followers/${profile?.id}`} asChild>
-                <YStack alignItems="center" gap="$1">
-                  <Text
-                    fontWeight="bold"
-                    fontSize="$5"
-                    allowFontScaling={false}
-                    color={theme.color?.val.default.val}
-                  >
-                    {prettyCount(profile?.followers_count ? profile.followers_count : 0)}
-                  </Text>
-                  <Text
-                    fontSize="$2"
-                    allowFontScaling={false}
-                    color={theme.color?.val.secondary.val}
-                  >
-                    Followers
-                  </Text>
-                </YStack>
+                <PressableOpacity hitSlop={9}>
+                  <YStack alignItems="center" gap="$1">
+                    <Text
+                      fontWeight="bold"
+                      fontSize="$5"
+                      allowFontScaling={false}
+                      color={theme.color?.val.default.val}
+                    >
+                      {prettyCount(
+                        profile?.followers_count ? profile.followers_count : 0
+                      )}
+                    </Text>
+                    <Text
+                      fontSize="$2"
+                      allowFontScaling={false}
+                      color={theme.color?.val.secondary.val}
+                    >
+                      Followers
+                    </Text>
+                  </YStack>
+                </PressableOpacity>
               </Link>
             ) : (
               <YStack alignItems="center" gap="$1">
@@ -620,15 +636,15 @@ export default function ProfileHeader({
           <XStack justifyContent="space-around" px="$5" py="$3" mb="$1">
             <Feather name="grid" size={20} color={theme.color?.val.default.val} />
 
-            <PressableOpacity onPress={() => gotoProfileFeed()}>
+            <PressableOpacity onPress={() => gotoProfileFeed()} hitSlop={TabsHitSlop}>
               <Feather name="list" size={20} color="#999" />
             </PressableOpacity>
 
-            <PressableOpacity onPress={() => gotoSelfLikes()}>
+            <PressableOpacity onPress={() => gotoSelfLikes()} hitSlop={TabsHitSlop}>
               <Feather name="heart" size={20} color="#999" />
             </PressableOpacity>
 
-            <PressableOpacity onPress={() => gotoBookmarks()}>
+            <PressableOpacity onPress={() => gotoBookmarks()} hitSlop={TabsHitSlop}>
               <Feather name="bookmark" size={20} color="#999" />
             </PressableOpacity>
           </XStack>

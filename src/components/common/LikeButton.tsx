@@ -65,7 +65,7 @@ export default function LikeButton(props: LikeButtonProps) {
   }
 
   return (
-    <Pressable onPress={handlePress}>
+    <Pressable onPress={handlePress} hitSlop={4}>
       <Animated.View style={[StyleSheet.absoluteFillObject, outlineStyle]}>
         <MaterialCommunityIcons
           name={'heart-outline'}

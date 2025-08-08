@@ -49,25 +49,27 @@ export default function CommentItem({
         <YStack flexShrink={1}>
           <XStack flexShrink={1}>
             <XStack gap="$3" flexGrow={1}>
-              <Pressable onPress={() => gotoProfile(item.account.id)}>
-                <ImageComponent
-                  source={{
-                    uri: item.account.avatar,
-                    width: level ? 15 : 30,
-                    height: level ? 15 : 30,
-                  }}
-                  style={{
-                    width: level ? 35 : 50,
-                    height: level ? 35 : 50,
-                    borderRadius: 40,
-                  }}
-                  resizeMode={'cover'}
-                />
-              </Pressable>
+              <View>
+                <Pressable onPress={() => gotoProfile(item.account.id)} hitSlop={8}>
+                  <ImageComponent
+                    source={{
+                      uri: item.account.avatar,
+                      width: level ? 15 : 30,
+                      height: level ? 15 : 30,
+                    }}
+                    style={{
+                      width: level ? 35 : 50,
+                      height: level ? 35 : 50,
+                      borderRadius: 40,
+                    }}
+                    resizeMode={'cover'}
+                  />
+                </Pressable>
+              </View>
 
               <YStack flexGrow={1} maxWidth={SCREEN_WIDTH - (150 + level * 20)} gap={4}>
                 <XStack gap="$2">
-                  <Pressable onPress={() => gotoProfile(item?.account.id)}>
+                  <Pressable onPress={() => gotoProfile(item?.account.id)} hitSlop={7}>
                     <Text
                       fontSize="$3"
                       fontWeight="bold"
@@ -102,7 +104,7 @@ export default function CommentItem({
                 </ReadMore>
 
                 <XStack mt="$2" gap="$4">
-                  <Pressable onPress={() => onReply(item, level)}>
+                  <Pressable onPress={() => onReply(item, level)} hitSlop={7}>
                     <Text
                       fontWeight="bold"
                       fontSize="$3"
@@ -112,20 +114,20 @@ export default function CommentItem({
                     </Text>
                   </Pressable>
                   {item.favourites_count > 0 && (
-                    <Pressable onPress={() => onShowLikes(item.id)}>
+                    <Pressable onPress={() => onShowLikes(item.id)} hitSlop={7}>
                       <Text fontSize="$3" color={theme.color?.val.secondary.val}>
                         {likeCountLabel(item?.favourites_count)}
                       </Text>
                     </Pressable>
                   )}
                   {item.account.id !== user?.id ? (
-                    <Pressable onPress={() => onReport(item.id)}>
+                    <Pressable onPress={() => onReport(item.id)} hitSlop={7}>
                       <Text fontSize="$3" color={theme.color?.val.secondary.val}>
                         Report
                       </Text>
                     </Pressable>
                   ) : (
-                    <Pressable onPress={() => onDelete(item.id)}>
+                    <Pressable onPress={() => onDelete(item.id)} hitSlop={7}>
                       <Text fontSize="$3" color={theme.color?.val.secondary.val}>
                         Delete
                       </Text>
@@ -164,24 +166,29 @@ export default function CommentItem({
               </YStack>
             </XStack>
 
-            <Pressable onPress={() => onLike(item)}>
-              <YStack justifyContent="center" alignItems="center" gap="$1">
-                {item.favourited ? (
-                  <Ionicons name="heart" color="red" size={20} />
-                ) : (
-                  <Ionicons
-                    name="heart-outline"
-                    color={theme.color?.val.default.val}
-                    size={20}
-                  />
-                )}
-                {item.favourites_count > 0 && (
-                  <Text fontSize="$3" color={theme.color?.val.tertiary.val}>
-                    {prettyCount(item.favourites_count)}
-                  </Text>
-                )}
-              </YStack>
-            </Pressable>
+            <View>
+              <Pressable
+                onPress={() => onLike(item)}
+                hitSlop={{ left: 20, right: 14, top: 14, bottom: 14 }}
+              >
+                <YStack justifyContent="center" alignItems="center" gap="$1">
+                  {item.favourited ? (
+                    <Ionicons name="heart" color="red" size={20} />
+                  ) : (
+                    <Ionicons
+                      name="heart-outline"
+                      color={theme.color?.val.default.val}
+                      size={20}
+                    />
+                  )}
+                  {item.favourites_count > 0 && (
+                    <Text fontSize="$3" color={theme.color?.val.tertiary.val}>
+                      {prettyCount(item.favourites_count)}
+                    </Text>
+                  )}
+                </YStack>
+              </Pressable>
+            </View>
           </XStack>
         </YStack>
       </View>

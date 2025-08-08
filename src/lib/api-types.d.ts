@@ -193,7 +193,7 @@ export type Status = {
   language: string | null
   uri: string
   url: string | null
-  replies_count: number
+  reply_count: number
   reblogs_count: number
   favourites_count: number
   edited_at: Timestamp | null
