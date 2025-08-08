@@ -1,10 +1,8 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.5.1/schema.json",
-  "organizeImports": {
-    "enabled": true
-  },
+  "$schema": "https://biomejs.dev/schemas/2.1.4/schema.json",
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "files": {
-    "include": ["src/**/*"],
+    "includes": ["**/src/**/*"],
     "maxSize": 2000000
   },
   "linter": {
@@ -13,7 +11,6 @@
       "correctness": {
         "useExhaustiveDependencies": "off",
         "noInnerDeclarations": "off",
-        "noUnnecessaryContinue": "off",
         "noConstructorReturn": "off",
         "noUnusedImports": "error"
       },
@@ -24,14 +21,13 @@
         "noExplicitAny": "off",
         "noArrayIndexKey": "off",
         "noDoubleEquals": "off",
-        "noConsoleLog": "error",
+        "noConsole": "error",
         "noAssignInExpressions": "off",
         "noRedeclare": "off"
       },
       "style": {
         "noParameterAssign": "off",
         "noNonNullAssertion": "off",
-        "noArguments": "off",
         "noUnusedTemplateLiteral": "off",
         "useDefaultParameterLast": "off",
         "useConst": "off",
@@ -52,7 +48,9 @@
         "noBannedTypes": "off",
         "useLiteralKeys": "off",
         "useSimplifiedLogicExpression": "off",
-        "useOptionalChain": "off"
+        "useOptionalChain": "off",
+        "noUselessContinue": "off",
+        "noArguments": "off"
       },
       "a11y": {
         "noSvgWithoutTitle": "off",
