@@ -60,10 +60,7 @@ const RenderItem = ({ item }: RenderItemProps) => {
             </XStack>
             <XStack gap="$1" alignItems="center">
               {item.status ? (
-                <Link
-                  href={`/post/${item.status.id}`}
-                  asChild
-                >
+                <Link href={`/post/${item.status.id}`} asChild>
                   <Text
                     fontSize="$2"
                     color={theme.colorHover.val.active.val}

@@ -60,9 +60,7 @@ export default function AppLayout() {
         options={{
           tabBarShowLabel: false,
           headerShown: true,
-          tabBarIcon: ({ color }) => (
-            <Feather name="camera" size={28} color={color} />
-          ),
+          tabBarIcon: ({ color }) => <Feather name="camera" size={28} color={color} />,
         }}
       />
 

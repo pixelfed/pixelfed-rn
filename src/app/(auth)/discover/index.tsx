@@ -1,7 +1,14 @@
+import { Feather } from '@expo/vector-icons'
 import { useQuery } from '@tanstack/react-query'
 import { Link, Stack, useRouter } from 'expo-router'
-import React, { useMemo } from 'react'
-import { ActivityIndicator, Dimensions, FlatList, SafeAreaView, Pressable } from 'react-native'
+import { useMemo } from 'react'
+import {
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  Pressable,
+  SafeAreaView,
+} from 'react-native'
 import ImageComponent from 'src/components/ImageComponent'
 import UserAvatar from 'src/components/common/UserAvatar'
 import {
@@ -10,7 +17,6 @@ import {
   getTrendingPostsV1,
 } from 'src/lib/api'
 import { Text, View, YStack, useTheme } from 'tamagui'
-import { Feather } from '@expo/vector-icons'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 const NUM_COLUMNS = 3
@@ -37,7 +43,7 @@ export default function DiscoverScreen() {
   } = useQuery({
     queryKey: ['getTrendingPopularPosts'],
     queryFn: getTrendingPopularPosts,
-    enabled: !!hashtags, 
+    enabled: !!hashtags,
   })
 
   const {
@@ -57,20 +63,24 @@ export default function DiscoverScreen() {
   const gridPosts = useMemo(() => {
     const posts1 = popularTodayPosts || []
     const posts2 = trendingFediversePosts || []
-    
-    const combinedPosts = [...posts1, ...posts2];
-    const uniquePosts = new Map();
+
+    const combinedPosts = [...posts1, ...posts2]
+    const uniquePosts = new Map()
 
     for (const post of combinedPosts) {
-      if (post && post.id && post.media_attachments && post.media_attachments.length > 0) {
+      if (
+        post &&
+        post.id &&
+        post.media_attachments &&
+        post.media_attachments.length > 0
+      ) {
         if (!uniquePosts.has(post.id)) {
-          uniquePosts.set(post.id, post);
+          uniquePosts.set(post.id, post)
         }
       }
     }
-    return Array.from(uniquePosts.values());
-
-  }, [popularTodayPosts, trendingFediversePosts]);
+    return Array.from(uniquePosts.values())
+  }, [popularTodayPosts, trendingFediversePosts])
 
   const isLoading = hashtagsPending || popularTodayPostsPending || trendingDataPending
   const fetchError = hashtagsError || popularTodayPostsError || trendingDataError
@@ -96,9 +106,7 @@ export default function DiscoverScreen() {
   const RenderAccountItem = ({ item }: { item: any }) => (
     <Link href={`/profile/${item.id}`} asChild>
       <Pressable>
-        <YStack
-          mr="$3"
-        >
+        <YStack mr="$3">
           <UserAvatar url={item.avatar} size="$5" />
         </YStack>
       </Pressable>
@@ -115,16 +123,8 @@ export default function DiscoverScreen() {
     return (
       <Link href={`/post/${item.id}`} asChild>
         <Pressable>
-          <View
-            width={itemCellWidth}
-            height={itemCellWidth}
-            p="$0.5"
-          >
-            <View
-              flex={1}
-              overflow="hidden"
-              bg={theme.background?.val.tertiary.val}
-            >
+          <View width={itemCellWidth} height={itemCellWidth} p="$0.5">
+            <View flex={1} overflow="hidden" bg={theme.background?.val.tertiary.val}>
               <ImageComponent
                 placeholder={{ blurhash: item.media_attachments[0]?.blurhash || '' }}
                 source={{ uri: item.media_attachments[0].url }}
@@ -142,7 +142,13 @@ export default function DiscoverScreen() {
     <YStack>
       {hashtags && hashtags.length > 0 && (
         <View m="$3" mb="$4">
-          <Text fontSize="$6" fontWeight="bold" color={theme.color?.val.secondary.val} mb="$3" ml="$2">
+          <Text
+            fontSize="$6"
+            fontWeight="bold"
+            color={theme.color?.val.secondary.val}
+            mb="$3"
+            ml="$2"
+          >
             Tags
           </Text>
           <FlatList
@@ -157,7 +163,13 @@ export default function DiscoverScreen() {
 
       {popularAccounts && popularAccounts.length > 0 && (
         <View m="$3" mb="$4">
-          <Text fontSize="$6" fontWeight="bold" color={theme.color?.val.secondary.val} mb="$3" ml="$2">
+          <Text
+            fontSize="$6"
+            fontWeight="bold"
+            color={theme.color?.val.secondary.val}
+            mb="$3"
+            ml="$2"
+          >
             Accounts
           </Text>
           <FlatList
@@ -169,8 +181,6 @@ export default function DiscoverScreen() {
           />
         </View>
       )}
-
-    
     </YStack>
   )
 
@@ -215,8 +225,12 @@ export default function DiscoverScreen() {
           title: 'Explore',
           headerBackTitle: 'Back',
           headerRight: () => (
-            <Pressable onPress={() => router.push('/search')} style={{marginRight: 10}}>
-              <Feather name="search" size={24} color={ theme.color?.val.tertiary.val || 'black'} />
+            <Pressable onPress={() => router.push('/search')} style={{ marginRight: 10 }}>
+              <Feather
+                name="search"
+                size={24}
+                color={theme.color?.val.tertiary.val || 'black'}
+              />
             </Pressable>
           ),
         }}

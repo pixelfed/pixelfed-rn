@@ -245,12 +245,12 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['left']}>
-      <Stack.Screen 
-        options={{ 
+      <Stack.Screen
+        options={{
           headerShown: true,
-          title: 'Public feed'
-        }} 
-        />
+          title: 'Public feed',
+        }}
+      />
       {renderFeed(data?.pages.flatMap((page) => page.data))}
     </SafeAreaView>
   )

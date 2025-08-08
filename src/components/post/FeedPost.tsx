@@ -602,7 +602,12 @@ const PostActions = React.memo(
               ) : null}
               {showAltText && hasAltText ? (
                 <PressableOpacity onPress={() => onShowAlt()}>
-                  <XStack bg={theme.color?.val.default.val} px="$3" py={4} borderRadius={5}>
+                  <XStack
+                    bg={theme.color?.val.default.val}
+                    px="$3"
+                    py={4}
+                    borderRadius={5}
+                  >
                     <Text
                       color={theme.color?.val.inverse.val}
                       fontSize="$5"

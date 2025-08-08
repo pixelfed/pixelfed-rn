@@ -62,7 +62,7 @@ type MediaAsset = {
 
 const MAX_IMAGE_SIZE_MB = 5
 const MAX_IMAGE_WIDTH = 4096
-const MEDIA_EDIT_KEY = "ui.mediaEdit"
+const MEDIA_EDIT_KEY = 'ui.mediaEdit'
 
 export default function Camera() {
   const router = useRouter()
@@ -889,7 +889,10 @@ export default function Camera() {
                 <Switch
                   size="$3"
                   checked={mediaEdit}
-                  onCheckedChange={(checked) => { setMediaEdit(checked); Storage.set(MEDIA_EDIT_KEY, checked)}}
+                  onCheckedChange={(checked) => {
+                    setMediaEdit(checked)
+                    Storage.set(MEDIA_EDIT_KEY, checked)
+                  }}
                 >
                   <Switch.Thumb animation="quicker" />
                 </Switch>

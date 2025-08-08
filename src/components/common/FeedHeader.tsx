@@ -31,16 +31,18 @@ export default function FeedHeader({ title = 'Home', user }) {
         </Text>
       </XStack>
       <XStack gap="$5">
-        { title === 'Pixelfed' ?  <Link href="/feeds/network" asChild>
-          <Pressable>
-            <Feather name="globe" size={26} color={textColor} />
-          </Pressable>
-        </Link> : (
-        <Link href="/" asChild>
-          <Pressable>
-            <Feather name="home" size={26} color={textColor} />
-          </Pressable>
-        </Link>
+        {title === 'Pixelfed' ? (
+          <Link href="/feeds/network" asChild>
+            <Pressable>
+              <Feather name="globe" size={26} color={textColor} />
+            </Pressable>
+          </Link>
+        ) : (
+          <Link href="/" asChild>
+            <Pressable>
+              <Feather name="home" size={26} color={textColor} />
+            </Pressable>
+          </Link>
         )}
         <Link href="/chats" asChild>
           <Pressable>
