@@ -1,12 +1,7 @@
 import { useFocusEffect } from '@react-navigation/native'
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query'
-import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { ErrorBoundaryProps } from 'expo-router'
+import { Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import { useShareIntentContext } from 'expo-share-intent'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -21,16 +16,10 @@ import ErrorFeed from 'src/components/common/ErrorFeed'
 import FeedHeader from 'src/components/common/FeedHeader'
 import FeedPost from 'src/components/post/FeedPost'
 import { useVideo } from 'src/hooks/useVideoProvider'
-import {
-  deleteStatusV1,
-  fetchHomeFeed,
-  getSelfAccount,
-  reblogStatus,
-  unreblogStatus,
-} from 'src/lib/api'
+import { deleteStatusV1, fetchHomeFeed, reblogStatus, unreblogStatus } from 'src/lib/api'
 import type { Status } from 'src/lib/api-types'
 import { useUserCache } from 'src/state/AuthProvider'
-import { Button, Spinner, Text, View, XStack, useTheme } from 'tamagui'
+import { Button, Spinner, Text, useTheme, View, XStack } from 'tamagui'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   const theme = useTheme()
@@ -44,13 +33,13 @@ export function ErrorBoundary(props: ErrorBoundaryProps) {
         backgroundColor: theme.background?.val.default.val,
       }}
     >
-      <Text fontSize="$8" allowFontScaling={false} color="red">
+      <Text fontSize="$8" allowFontScaling={false} color={theme.color?.val.default.val}>
         Something went wrong!
       </Text>
       <Text color={theme.color?.val.default.val}>{props.error?.message}</Text>
       <Button
-        theme="blue"
         size="$4"
+        color={theme.color?.val.default.val}
         bg={theme.colorHover.val.hover.val}
         onPress={props.retry}
       >
@@ -135,7 +124,7 @@ export default function HomeScreen() {
     mutationFn: async (id: string) => {
       return await deleteStatusV1(id)
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, variables) => {
       queryClient.setQueryData(['homeFeed'], (oldData) => {
         if (!oldData) return oldData
 
@@ -152,25 +141,16 @@ export default function HomeScreen() {
   const onShare = (id: string, state) => {
     try {
       shareMutation.mutate({ type: state == true ? 'unreblog' : 'reblog', id: id })
-    } catch (error) {
-      console.error('Error occurred during share:', error)
-    }
+    } catch (_error) {}
   }
 
   const shareMutation = useMutation({
     mutationFn: async (handleShare) => {
-      try {
-        return handleShare.type === 'reblog'
-          ? await reblogStatus(handleShare)
-          : await unreblogStatus(handleShare)
-      } catch (error) {
-        console.error('Error within mutationFn:', error)
-        throw error
-      }
+      return handleShare.type === 'reblog'
+        ? await reblogStatus(handleShare)
+        : await unreblogStatus(handleShare)
     },
-    onError: (error) => {
-      console.error('Error handled by share useMutation:', error)
-    },
+    onError: (_error) => {},
   })
 
   const renderItem = useCallback(
@@ -186,13 +166,6 @@ export default function HomeScreen() {
     ),
     [user, onOpenComments, onDeletePost, onShare]
   )
-
-  const { data: userSelf } = useQuery({
-    queryKey: ['getSelfAccount'],
-    queryFn: getSelfAccount,
-  })
-
-  const userId = userSelf?.id
 
   const {
     data,

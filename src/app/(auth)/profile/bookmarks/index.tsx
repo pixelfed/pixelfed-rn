@@ -33,13 +33,9 @@ export default function BookmarksScreen() {
 
   const shareMutation = useMutation({
     mutationFn: async (handleShare) => {
-      try {
-        return handleShare.type === 'reblog'
-          ? await reblogStatus(handleShare)
-          : await unreblogStatus(handleShare)
-      } catch (error) {
-        throw error
-      }
+      return handleShare.type === 'reblog'
+        ? await reblogStatus(handleShare)
+        : await unreblogStatus(handleShare)
     },
     onError: (_error) => {},
   })

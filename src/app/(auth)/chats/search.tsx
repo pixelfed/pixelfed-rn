@@ -21,11 +21,17 @@ export default function SearchScreen() {
   const { acct } = useUserCache()
   const theme = useTheme()
 
-  const { data = [], isLoading, isError, error, isFetching } = useQuery({
+  const {
+    data = [],
+    isLoading,
+    isError,
+    error,
+    isFetching,
+  } = useQuery({
     queryKey: ['search', query],
     queryFn: async () => {
       const res = await searchQuery(query)
-      return res.filter(r => r._type === 'account' && r.acct !== acct)
+      return res.filter((r) => r._type === 'account' && r.acct !== acct)
     },
     keepPreviousData: true,
   })
@@ -65,10 +71,7 @@ export default function SearchScreen() {
                       {item.username}
                     </Text>
                     {!item.local && (
-                      <Text
-                        fontSize="$6"
-                        color={theme.color?.val.tertiary.val}
-                      >
+                      <Text fontSize="$6" color={theme.color?.val.tertiary.val}>
                         @{getDomain(item.url)}
                       </Text>
                     )}
@@ -100,9 +103,7 @@ export default function SearchScreen() {
   const renderSeparator = useCallback(() => <View h={1} bg="$gray4" />, [])
 
   if (isLoading && !isFetching) {
-    return (
-      <ActivityIndicator color={theme.color?.val.default.val} />
-    )
+    return <ActivityIndicator color={theme.color?.val.default.val} />
   }
 
   if (isError) {
