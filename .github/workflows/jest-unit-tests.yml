@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  doctor:
+  unit_test:
     runs-on: ubuntu-latest
     steps:
       - name: 🏗 Setup repo
