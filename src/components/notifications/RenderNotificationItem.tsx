@@ -61,7 +61,7 @@ const RenderItem = ({ item }: RenderItemProps) => {
             <XStack gap="$1" alignItems="center">
               {item.status ? (
                 <Link
-                  href={`/post/${item.status.in_reply_to_id ? item.status.in_reply_to_id : item.status.id}`}
+                  href={`/post/${item.status.id}`}
                   asChild
                 >
                   <Text
