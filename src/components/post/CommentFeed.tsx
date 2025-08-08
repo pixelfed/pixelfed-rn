@@ -122,7 +122,10 @@ const CommentItem = ({
                 <ReadMore numberOfLines={3}>
                   <AutolinkText
                     text={captionText}
-                    onMentionPress={onMentionPressMethod(gotoUsernameProfile, item.account.url)}
+                    onMentionPress={onMentionPressMethod(
+                      gotoUsernameProfile,
+                      item.account.url
+                    )}
                     onHashtagPress={gotoHashtag}
                   />
                 </ReadMore>
@@ -343,7 +346,7 @@ export default function CommentFeed({
   }
 
   const renderItem = useCallback(
-    ({ item }) =>
+    ({ item }) => (
       <CommentItem
         item={item}
         onReply={handleReplyTo}
