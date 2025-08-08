@@ -36,8 +36,8 @@ const IMAGE_HEIGHT = IMAGE_WIDTH
 const ITEM_HEIGHT = IMAGE_HEIGHT
 
 const RenderItem = memo(({ item }) => {
-  if (!item?.media_attachments?.[0]?.url) return null
   const theme = useTheme()
+  if (!item?.media_attachments?.[0]?.url) return null
   return (
     <Link href={`/post/${item.id}`} asChild>
       <View
