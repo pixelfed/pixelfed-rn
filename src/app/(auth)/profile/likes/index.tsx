@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import FeedPost from 'src/components/post/FeedPost'
 import { getSelfLikes } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
-import { Text, View, useTheme } from 'tamagui'
+import { Text, useTheme, View } from 'tamagui'
 
 export default function LikesScreen() {
   const navigation = useNavigation()

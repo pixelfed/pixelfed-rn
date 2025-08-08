@@ -23,10 +23,10 @@ import {
   ScrollView,
   Separator,
   Text,
+  useTheme,
   View,
   XStack,
   YStack,
-  useTheme,
 } from 'tamagui'
 import { prettyCount } from '../../../utils'
 
@@ -100,7 +100,7 @@ export default function Page() {
     []
   )
 
-  const RenderRelatedItem = useCallback(
+  const _RenderRelatedItem = useCallback(
     ({ item }) =>
       item && item.name ? (
         <View p="$3" borderWidth={1}>
@@ -177,7 +177,7 @@ export default function Page() {
       })
     },
     initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+    getNextPageParam: (lastPage, _allPages, _lastPageParam) => {
       if (lastPage.length === 0) {
         return undefined
       }
@@ -210,7 +210,7 @@ export default function Page() {
 
   const keyExtractor = useCallback((item) => item?.id.toString(), [])
 
-  const getItemLayout = useCallback((data, index) => {
+  const getItemLayout = useCallback((_data, index) => {
     const row = Math.floor(index / 3)
     return {
       length: ITEM_HEIGHT,

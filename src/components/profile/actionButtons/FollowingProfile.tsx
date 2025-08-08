@@ -1,10 +1,13 @@
 import { Alert } from 'react-native'
-import { Button, XStack, useTheme } from 'tamagui'
+import { Button, useTheme, XStack } from 'tamagui'
 
 export default function FollowingProfile({
   onPress,
   onSendMessage,
-}: { onPress: () => void; onSendMessage: () => void }) {
+}: {
+  onPress: () => void
+  onSendMessage: () => void
+}) {
   const theme = useTheme()
   const handleAction = () => {
     Alert.alert('Confirm Unfollow', 'Are you sure you want to unfollow this account?', [

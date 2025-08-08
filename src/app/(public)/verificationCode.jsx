@@ -9,7 +9,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Button, Input, Text, View, XStack, YStack, useTheme } from 'tamagui'
+import { Button, Input, Text, useTheme, View, XStack, YStack } from 'tamagui'
 
 export default function VerificationCodeScreen() {
   const router = useRouter()
@@ -18,7 +18,7 @@ export default function VerificationCodeScreen() {
   const theme = useTheme()
 
   const [email, setEmail] = useState('')
-  const [code, setCode] = useState('')
+  const [_code, _setCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -48,8 +48,7 @@ export default function VerificationCodeScreen() {
       const q = new URLSearchParams(params)
       const finalPath = `/verifyEmail?${q.toString()}`
       router.push(finalPath)
-    } catch (error) {
-      console.error('Error verifying code:', error)
+    } catch (_error) {
       setError('Network error. Please try again.')
     } finally {
       setLoading(false)

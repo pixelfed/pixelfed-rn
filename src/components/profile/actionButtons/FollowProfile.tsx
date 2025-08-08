@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { followAccountById } from 'src/lib/api'
-import { Button, Spinner, XStack, useTheme } from 'tamagui'
+import { Button, Spinner, useTheme, XStack } from 'tamagui'
 
 export default function FollowProfile({
   onPress,
@@ -36,9 +36,7 @@ export default function FollowProfile({
 
     try {
       await followMutation.mutate()
-    } catch (error) {
-      console.error('Error following profile:', error)
-    }
+    } catch (_error) {}
   }
 
   const buttonText = isLocked ? 'Request Follow' : 'Follow'

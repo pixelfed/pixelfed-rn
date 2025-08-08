@@ -26,10 +26,10 @@ import {
 } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
 import { PressableOpacity } from 'react-native-pressable-opacity'
-import ImageComponent from 'src/components/ImageComponent'
 import { PixelfedBottomSheetModal } from 'src/components/common/BottomSheets'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { Switch } from 'src/components/form/Switch'
+import ImageComponent from 'src/components/ImageComponent'
 import {
   getComposeSettings,
   getInstanceV1,
@@ -46,11 +46,11 @@ import {
   Separator,
   Text,
   TextArea,
+  useTheme,
   View,
   XStack,
   YStack,
   ZStack,
-  useTheme,
 } from 'tamagui'
 
 type MediaAsset = {
@@ -115,11 +115,10 @@ export default function Camera() {
       )
 
       const newFileInfo = await FileSystem.getInfoAsync(manipResult.uri, { size: true })
-      const newFileSizeInMB = newFileInfo.size / (1024 * 1024)
+      const _newFileSizeInMB = newFileInfo.size / (1024 * 1024)
 
       return manipResult.uri
-    } catch (error) {
-      console.error('Error resizing image:', error)
+    } catch (_error) {
       return uri
     }
   }
@@ -535,7 +534,7 @@ export default function Camera() {
       .then(async (params) => {
         return await postNewStatus(params)
       })
-      .then((res) => {
+      .then((_res) => {
         resetForm()
         router.replace('/?ref30=1')
         queryClient.invalidateQueries({
@@ -781,9 +780,7 @@ export default function Camera() {
             </YStack>
             <View ml="$3" mt="$3">
               {media && media.length ? (
-                <>
-                  <FlatList data={media} renderItem={RenderMediaPreview} horizontal />
-                </>
+                <FlatList data={media} renderItem={RenderMediaPreview} horizontal />
               ) : (
                 <View
                   p="$3"
@@ -958,17 +955,15 @@ export default function Camera() {
                 Add optional alt text to describe the media for visually impaired
               </Text>
               {media && activeIndex >= 0 && media[activeIndex] ? (
-                <>
-                  <ImageComponent
-                    source={{ uri: media[activeIndex].path }}
-                    style={{
-                      width: '100%',
-                      height: Keyboard.isVisible() ? 140 : 240,
-                      marginBottom: 10,
-                    }}
-                    resizeMode={'contain'}
-                  />
-                </>
+                <ImageComponent
+                  source={{ uri: media[activeIndex].path }}
+                  style={{
+                    width: '100%',
+                    height: Keyboard.isVisible() ? 140 : 240,
+                    marginBottom: 10,
+                  }}
+                  resizeMode={'contain'}
+                />
               ) : null}
               <BottomSheetTextInput
                 style={styles.input}

@@ -2,7 +2,7 @@ import Feather from '@expo/vector-icons/Feather'
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
 import { ToastProvider, ToastViewport } from '@tamagui/toast'
-import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-query'
+import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useFonts } from 'expo-font'
 import * as Notifications from 'expo-notifications'
 import { Stack, useRouter } from 'expo-router'
@@ -11,8 +11,8 @@ import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useState } from 'react'
 import {
-  type AppStateStatus,
   Appearance,
+  type AppStateStatus,
   LogBox,
   Platform,
   useColorScheme,

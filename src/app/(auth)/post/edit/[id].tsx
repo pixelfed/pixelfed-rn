@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
-import React, { useCallback, useLayoutEffect, useState, useMemo } from 'react'
+import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router'
+import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react'
 import {
   ActivityIndicator,
   Dimensions,
@@ -10,12 +10,12 @@ import {
 } from 'react-native'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import ImageComponent from 'src/components/ImageComponent'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { Switch } from 'src/components/form/Switch'
+import ImageComponent from 'src/components/ImageComponent'
 import { editPostMedia, getInstanceV1, getStatusById, putEditPost } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
-import { ScrollView, Text, TextArea, View, XStack, YStack, useTheme } from 'tamagui'
+import { ScrollView, Text, TextArea, useTheme, View, XStack, YStack } from 'tamagui'
 
 const SCREEN_HEIGHT = Dimensions.get('screen').height
 
@@ -125,7 +125,7 @@ export default function Page() {
     // TODO: error handling
     // TODO: invalidate react query cache of this post so it is updated in the UI
     await Promise.all(mediaChanges.map(updateMedia))
-      .then(async (res) => {
+      .then(async (_res) => {
         return await putEditPost(data?.id, {
           status: caption,
           sensitive: isSensitive,
@@ -318,7 +318,7 @@ export default function Page() {
   )
 }
 
-const styles = StyleSheet.create({
+const _styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     flexWrap: 'wrap',

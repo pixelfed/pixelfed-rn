@@ -4,7 +4,7 @@ import {
   GroupButtonContent,
   type GroupButtonContentProps,
 } from 'src/components/common/GroupButtonContent'
-import { Button, Group, ScrollView, Separator, YStack, useTheme } from 'tamagui'
+import { Button, Group, ScrollView, Separator, useTheme, YStack } from 'tamagui'
 
 export default function Page() {
   type GroupButtonProps = Pick<

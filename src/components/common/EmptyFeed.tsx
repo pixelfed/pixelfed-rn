@@ -1,8 +1,8 @@
 import { StyleSheet } from 'react-native'
-import { Text, YStack, useTheme } from 'tamagui'
+import { Text, useTheme, YStack } from 'tamagui'
 import GhostIcon from '../icons/GhostIcon'
 
-const almostBlack = 'rgb(64, 64, 64)'
+const _almostBlack = 'rgb(64, 64, 64)'
 
 export default function EmptyFeed() {
   const theme = useTheme()

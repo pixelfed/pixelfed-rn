@@ -1,6 +1,5 @@
-import { ActivityIndicator, Dimensions, Pressable, StyleSheet } from 'react-native'
-
 import { Ionicons } from '@expo/vector-icons'
+import { ActivityIndicator, Dimensions, Pressable, StyleSheet } from 'react-native'
 import ImageComponent from 'src/components/ImageComponent'
 import {
   _timeAgo,
@@ -8,7 +7,7 @@ import {
   likeCountLabel,
   prettyCount,
 } from 'src/utils'
-import { Text, View, XStack, YStack, useTheme } from 'tamagui'
+import { Text, useTheme, View, XStack, YStack } from 'tamagui'
 import AutolinkText from '../common/AutolinkText'
 import ReadMore from '../common/ReadMore'
 

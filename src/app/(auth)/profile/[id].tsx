@@ -1,5 +1,6 @@
 import ProfileHeader from '@components/profile/ProfileHeader'
 import { Feather } from '@expo/vector-icons'
+import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet'
 import {
   BottomSheetBackdrop,
   type BottomSheetModal,
@@ -13,7 +14,7 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
-import { Link, Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
+import { Link, router, Stack, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import {
   ActivityIndicator,
@@ -25,6 +26,7 @@ import {
 } from 'react-native'
 import { Blurhash } from 'react-native-blurhash'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { PixelfedBottomSheetModal } from 'src/components/common/BottomSheets'
 import ImageComponent from 'src/components/ImageComponent'
 import {
   blockProfileById,
@@ -40,10 +42,7 @@ import {
   unmuteProfileById,
 } from 'src/lib/api'
 import { Storage } from 'src/state/cache'
-import { Button, Separator, Text, View, YStack, ZStack, useTheme } from 'tamagui'
-
-import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet'
-import { PixelfedBottomSheetModal } from 'src/components/common/BottomSheets'
+import { Button, Separator, Text, useTheme, View, YStack, ZStack } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
@@ -70,7 +69,7 @@ export default function ProfileScreen() {
     }
     const forceSensitive = Storage.getBoolean('ui.forceSensitive') === true
     const med = item.media_attachments[0]
-    const murl = med.url
+    const _murl = med.url
     const isSensitive = item.sensitive
     const hasPreview = med.preview_url && !med.preview_url.endsWith('no-preview.png')
 
@@ -459,7 +458,7 @@ export default function ProfileScreen() {
 
     if (action === 'share') {
       try {
-        const result = await Share.share({
+        const _result = await Share.share({
           message: user.url,
         })
       } catch (error: any) {
@@ -504,7 +503,7 @@ export default function ProfileScreen() {
 
   const handleOnShare = async () => {
     try {
-      const result = await Share.share({
+      const _result = await Share.share({
         message: user.url,
       })
     } catch (error: any) {
@@ -595,7 +594,7 @@ export default function ProfileScreen() {
     },
     maxPages: 80,
     initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+    getNextPageParam: (lastPage, _allPages, _lastPageParam) => {
       if (lastPage.length === 0) {
         return undefined
       }

@@ -10,10 +10,10 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import { ActivityIndicator, Alert, FlatList, StyleSheet } from 'react-native'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import ImageComponent from 'src/components/ImageComponent'
 import { PixelfedBottomSheetModal } from 'src/components/common/BottomSheets'
 import ReadMore from 'src/components/common/ReadMore'
 import UserAvatar from 'src/components/common/UserAvatar'
+import ImageComponent from 'src/components/ImageComponent'
 import { getAutospamReports, postAutospamHandle } from 'src/lib/api'
 import { _timeAgo, enforceLen, htmlToTextWithLineBreaks } from 'src/utils'
 import { Button, Group, Separator, Text, View, XStack, YStack } from 'tamagui'
@@ -96,7 +96,7 @@ export default function Screen() {
   )
 
   const RenderItem = ({ item }) => {
-    const msg = `#${item.id} - ${item.type}`
+    const _msg = `#${item.id} - ${item.type}`
     return (
       <PressableOpacity onPress={() => handlePresentModalPress(item)}>
         <XStack

@@ -9,14 +9,14 @@ import {
   Pressable,
   SafeAreaView,
 } from 'react-native'
-import ImageComponent from 'src/components/ImageComponent'
 import UserAvatar from 'src/components/common/UserAvatar'
+import ImageComponent from 'src/components/ImageComponent'
 import {
   getTrendingHashtags,
   getTrendingPopularPosts,
   getTrendingPostsV1,
 } from 'src/lib/api'
-import { Text, View, YStack, useTheme } from 'tamagui'
+import { Text, useTheme, View, YStack } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 const NUM_COLUMNS = 3

@@ -1,4 +1,8 @@
+import { Feather, Ionicons } from '@expo/vector-icons'
+import { BottomSheetFlatList, BottomSheetTextInput } from '@gorhom/bottom-sheet'
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useCallback, useRef, useState } from 'react'
+import type { TextInput } from 'react-native'
 import {
   ActivityIndicator,
   Alert,
@@ -7,10 +11,6 @@ import {
   Pressable,
   StyleSheet,
 } from 'react-native'
-
-import { Feather, Ionicons } from '@expo/vector-icons'
-import { BottomSheetFlatList, BottomSheetTextInput } from '@gorhom/bottom-sheet'
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import ImageComponent from 'src/components/ImageComponent'
 import {
   deleteStatus,
@@ -25,12 +25,10 @@ import {
   likeCountLabel,
   prettyCount,
 } from 'src/utils'
-import { Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
+import { Separator, Text, useTheme, View, XStack, YStack } from 'tamagui'
 import AutolinkText from '../common/AutolinkText'
 import ReadMore from '../common/ReadMore'
 import { Switch } from '../form/Switch'
-
-import type { TextInput } from 'react-native'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
@@ -338,8 +336,7 @@ export default function CommentFeed({
         ...prev,
         [parentId]: childrenData.data,
       }))
-    } catch (error) {
-      console.error('Error fetching child comments:', error)
+    } catch (_error) {
     } finally {
       setLoadingChildId(null)
     }

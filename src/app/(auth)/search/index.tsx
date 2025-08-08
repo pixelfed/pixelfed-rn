@@ -8,7 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { searchQuery } from 'src/lib/api'
 import { getDomain, prettyCount } from 'src/utils'
-import { Input, Text, View, XStack, YStack, useTheme } from 'tamagui'
+import { Input, Text, useTheme, View, XStack, YStack } from 'tamagui'
 import { formatTimestampMonthYear } from '../../../utils'
 
 const Tab = createMaterialTopTabNavigator()

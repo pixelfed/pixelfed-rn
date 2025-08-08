@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
+import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useLayoutEffect } from 'react'
 //@ts-check
 import { ActivityIndicator } from 'react-native'
@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import FeedPost from 'src/components/post/FeedPost'
 import { deleteStatusV1, getStatusById, reblogStatus, unreblogStatus } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
-import { ScrollView, Text, View, useTheme } from 'tamagui'
+import { ScrollView, Text, useTheme, View } from 'tamagui'
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -17,7 +17,7 @@ export default function Page() {
     navigation.setOptions({ title: 'Post', headerBackTitle: 'Back' })
   }, [navigation])
   const user = useUserCache()
-  const queryClient = useQueryClient()
+  const _queryClient = useQueryClient()
 
   const onOpenComments = (id: string) => {
     router.push(`/post/comments/${id}`)
@@ -42,7 +42,7 @@ export default function Page() {
     mutationFn: async (id: string) => {
       return await deleteStatusV1(id)
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, _variables) => {
       router.replace('/')
     },
   })

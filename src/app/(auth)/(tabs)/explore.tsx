@@ -11,7 +11,7 @@ import {
 } from 'react-native'
 import ImageComponent from 'src/components/ImageComponent'
 import { getTrendingPopularPosts, getTrendingPostsV1 } from 'src/lib/api'
-import { Text, View, YStack, useTheme } from 'tamagui'
+import { Text, useTheme, View, YStack } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 const NUM_COLUMNS = 3
@@ -93,7 +93,7 @@ export default function DiscoverScreen() {
     )
   }
 
-  const ListHeader = () => (
+  const _ListHeader = () => (
     <YStack>
       {hashtags && hashtags.length > 0 && (
         <View m="$3" mb="$4">

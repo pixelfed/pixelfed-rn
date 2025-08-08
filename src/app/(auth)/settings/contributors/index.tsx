@@ -1,4 +1,4 @@
-import { Stack, router } from 'expo-router'
+import { router, Stack } from 'expo-router'
 import React, { useCallback, useEffect, useState } from 'react'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -10,9 +10,9 @@ import {
   ScrollView,
   Separator,
   Text,
+  useTheme,
   YGroup,
   YStack,
-  useTheme,
 } from 'tamagui'
 
 import newContributorsData from '../../../../../contributors.json'
@@ -41,7 +41,7 @@ export default function Screen() {
       const lowerCasequery = query.toLowerCase()
 
       for (const key in contributors) {
-        if (Object.hasOwnProperty.call(contributors, key)) {
+        if (Object.hasOwn(contributors, key)) {
           const originalNamesArray = contributors[key]
           const matchingNames = []
 

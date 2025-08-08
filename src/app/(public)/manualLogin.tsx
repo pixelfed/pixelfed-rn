@@ -7,7 +7,7 @@ import { Button, Form, Input, Label, Text, YStack } from 'tamagui'
 export default function Login() {
   const params = useLocalSearchParams()
   const [server, setServer] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [_loading, _setLoading] = useState(true)
   const router = useRouter()
 
   const { login, isLoading } = useAuth()

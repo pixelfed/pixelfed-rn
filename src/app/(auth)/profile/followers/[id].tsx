@@ -6,7 +6,7 @@ import { ActivityIndicator, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { getAccountById, getAccountFollowers } from 'src/lib/api'
-import { Text, View, XStack, YStack, useTheme } from 'tamagui'
+import { Text, useTheme, View, XStack, YStack } from 'tamagui'
 
 export default function FollowersScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -112,7 +112,7 @@ export default function FollowersScreen() {
       <FlatList
         data={feed?.pages.flatMap((page) => page.data)}
         renderItem={RenderItem}
-        keyExtractor={(item, index) => item.id.toString()}
+        keyExtractor={(item, _index) => item.id.toString()}
         ItemSeparatorComponent={ItemSeparator}
         showsVerticalScrollIndicator={false}
         onEndReached={() => {

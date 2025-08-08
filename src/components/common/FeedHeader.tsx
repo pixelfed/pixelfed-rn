@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons'
 import { Link } from 'expo-router'
 import { Platform, Pressable } from 'react-native'
-import { Text, XStack, useTheme } from 'tamagui'
+import { Text, useTheme, XStack } from 'tamagui'
 
 export default function FeedHeader({ title = 'Home', user }) {
   const theme = useTheme()

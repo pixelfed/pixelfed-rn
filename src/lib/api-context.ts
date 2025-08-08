@@ -27,8 +27,6 @@ export class ApiContext {
   }
 
   private handleUnauthorized() {
-    console.warn('Received 403/401 response - token likely expired or invalid')
-
     // Clear credentials cache since we got unauthorized
     Storage.delete('app.credentials_verified_at')
 
@@ -36,7 +34,6 @@ export class ApiContext {
     if (globalLogoutFunction) {
       globalLogoutFunction()
     } else {
-      console.error('Global logout function not set - cannot auto-logout on 403')
     }
   }
 
@@ -50,7 +47,7 @@ export class ApiContext {
     if (options?.searchParams) {
       let { searchParams } = options
       for (const key in searchParams) {
-        if (Object.prototype.hasOwnProperty.call(searchParams, key)) {
+        if (Object.hasOwn(searchParams, key)) {
           url.searchParams.append(key, String(searchParams[key]))
         }
       }
@@ -75,11 +72,6 @@ export class ApiContext {
       let errorResponse
       try {
         errorResponse = await response.json()
-        console.warn('API Request Failed', {
-          status: response.status,
-          url: url.toString(),
-          errorResponse,
-        })
         if (
           !errorResponse.error_code &&
           (typeof errorResponse.error === 'undefined' || errorResponse.error.length === 0)
@@ -88,8 +80,7 @@ export class ApiContext {
             `Request failed with status ${response.status}, but error field is empty`
           )
         }
-      } catch (error) {
-        console.error('API Request Failed - Failed to decode error:', error)
+      } catch (_error) {
         throw new Error(
           `API Request Failed with status ${response.status} without error message`
         )

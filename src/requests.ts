@@ -179,7 +179,7 @@ export async function loginPreflightCheck(server: string) {
       )
       return false
     }
-  } catch (e) {
+  } catch (_e) {
     Alert.alert('Error', 'This server is not compatible or is unavailable.')
     return false
   }

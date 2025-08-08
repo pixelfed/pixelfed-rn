@@ -3,16 +3,16 @@ import { Link, useRouter } from 'expo-router'
 import { ActivityIndicator, Pressable } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Storage } from 'src/state/cache'
-import { Button, Image, Text, View, XStack, YStack, useTheme } from 'tamagui'
+import { Button, Image, Text, useTheme, View, XStack, YStack } from 'tamagui'
 
 export default function Login() {
   const { isLoading } = useAuth()
   const router = useRouter()
   const theme = useTheme()
 
-  const handleDeepLink = (domain: string, url: string) => {
+  const _handleDeepLink = (domain: string, url: string) => {
     const parsedUrl = new URL(url)
-    const path = parsedUrl.pathname.substring(2)
+    const _path = parsedUrl.pathname.substring(2)
     const searchParams = new URLSearchParams(parsedUrl.search)
     const params = {
       domain: domain,

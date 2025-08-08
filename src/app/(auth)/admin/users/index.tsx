@@ -8,7 +8,7 @@ import { getAdminUsers } from 'src/lib/api'
 import { _timeAgo, enforceLen, prettyCount } from 'src/utils'
 import { Separator, Text, View, XStack, YStack } from 'tamagui'
 
-const keyExtractor = (_, index) => `user-${_.id}`
+const keyExtractor = (_, _index) => `user-${_.id}`
 
 export default function Screen() {
   const RenderItem = ({ item }) => (

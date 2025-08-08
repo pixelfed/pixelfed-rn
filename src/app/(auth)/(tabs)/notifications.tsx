@@ -6,7 +6,7 @@ import { ActivityIndicator, Dimensions, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import RenderNotificationItem from 'src/components/notifications/RenderNotificationItem'
 import { fetchNotifications } from 'src/lib/api'
-import { Separator, Tabs, Text, View, useTheme } from 'tamagui'
+import { Separator, Tabs, Text, useTheme, View } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 

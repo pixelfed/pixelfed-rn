@@ -129,7 +129,7 @@ export function useLikeMutation({
       return previousState
     },
 
-    onError: (err, variables, context) => {
+    onError: (_err, _variables, context) => {
       if (!context) return
 
       Object.entries(context).forEach(([key, value]) => {
@@ -181,9 +181,7 @@ export function useLikeMutation({
         id,
         profileId: statusProfileId !== undefined ? statusProfileId : profileId,
       })
-    } catch (error) {
-      console.error('Error in handleLike:', error)
-    }
+    } catch (_error) {}
   }
 
   return { handleLike, isLikePending: isPending }

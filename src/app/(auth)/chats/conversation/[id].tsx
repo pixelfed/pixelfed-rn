@@ -1,3 +1,4 @@
+import { Feather } from '@expo/vector-icons'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, Stack, useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import { useCallback, useEffect, useState } from 'react'
@@ -8,6 +9,7 @@ import {
   Pressable,
   useWindowDimensions,
 } from 'react-native'
+import type { BubbleProps, IMessage } from 'react-native-gifted-chat'
 import {
   Bubble,
   Composer,
@@ -17,13 +19,9 @@ import {
 } from 'react-native-gifted-chat'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { deleteChatMessage, fetchChatThread, sendChatMessage } from 'src/lib/api'
-import { enforceLen } from 'src/utils'
-import { Text, View, YStack, useTheme } from 'tamagui'
-
-import { Feather } from '@expo/vector-icons'
 import { useUserCache } from 'src/state/AuthProvider'
-
-import type { BubbleProps, IMessage } from 'react-native-gifted-chat'
+import { enforceLen } from 'src/utils'
+import { Text, useTheme, View, YStack } from 'tamagui'
 
 function renderBubble<TMessage extends IMessage>(props: BubbleProps<TMessage>) {
   const theme = useTheme()
@@ -50,7 +48,7 @@ export default function Page() {
   const [recipientUsername, setUsername] = useState('')
   const [messages, setMessages] = useState([])
   const [isReloading, setReloading] = useState(false)
-  const [isTyping, setTyping] = useState(false)
+  const [isTyping, _setTyping] = useState(false)
   const selfUser = useUserCache()
   const { width } = useWindowDimensions()
   const theme = useTheme()
@@ -127,7 +125,7 @@ export default function Page() {
     },
   })
 
-  const onLongPress = (ctx: unknown, message: IMessage) => {
+  const onLongPress = (_ctx: unknown, message: IMessage) => {
     const isSelf = message.user['_id'] == selfUser.id
     let opts: AlertButton[] = []
 

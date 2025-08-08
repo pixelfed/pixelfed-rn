@@ -1,11 +1,10 @@
-import { Stack } from 'expo-router'
-import { router } from 'expo-router'
+import { router, Stack } from 'expo-router'
 import { useState } from 'react'
 import { ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useProfileMutation } from 'src/hooks/mutations/useProfileMutation'
 import { useQuerySelfProfile } from 'src/state/AuthProvider'
-import { Button, Input, ScrollView, Text, View, XStack, useTheme } from 'tamagui'
+import { Button, Input, ScrollView, Text, useTheme, View, XStack } from 'tamagui'
 
 export default function Page() {
   const { user } = useQuerySelfProfile()

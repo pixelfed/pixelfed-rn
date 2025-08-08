@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons'
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
+import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {
   ActivityIndicator,
@@ -26,9 +26,9 @@ import {
   unlikeStatus,
 } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
-import { Text, View, XStack, YStack, useTheme } from 'tamagui'
+import { Text, useTheme, View, XStack, YStack } from 'tamagui'
 
-const SCREEN_WIDTH = Dimensions.get('screen').width
+const _SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function CommentsScreen() {
   // Hooks and Params
@@ -58,7 +58,7 @@ export default function CommentsScreen() {
   const [commentActionPending, setCommentActionPending] = useState(false)
   const [childComments, setChildComments] = useState({})
   const [keyboardVisible, setKeyboardVisible] = useState(false)
-  const [keyboardHeight, setKeyboardHeight] = useState(0)
+  const [_keyboardHeight, setKeyboardHeight] = useState(0)
 
   useEffect(() => {
     if (
@@ -83,7 +83,7 @@ export default function CommentsScreen() {
       setChildComments((prevChildComments) => {
         if (prevChildComments && typeof prevChildComments === 'object') {
           for (const key in prevChildComments) {
-            if (Object.prototype.hasOwnProperty.call(prevChildComments, key)) {
+            if (Object.hasOwn(prevChildComments, key)) {
               const value = prevChildComments[key]
               if (Array.isArray(value)) {
                 prevChildComments[key] = prevChildComments[key].map((item) => {
@@ -293,8 +293,7 @@ export default function CommentsScreen() {
         ...prev,
         [parentId]: childrenData.data,
       }))
-    } catch (error) {
-      console.error('Error fetching child comments:', error)
+    } catch (_error) {
     } finally {
       setLoadingChildId(null)
     }
@@ -471,7 +470,7 @@ export default function CommentsScreen() {
       setChildComments((prevChildComments) => {
         if (prevChildComments && typeof prevChildComments === 'object') {
           for (const key in prevChildComments) {
-            if (Object.prototype.hasOwnProperty.call(prevChildComments, key)) {
+            if (Object.hasOwn(prevChildComments, key)) {
               const value = prevChildComments[key]
               if (Array.isArray(value)) {
                 prevChildComments[key] = value.filter(

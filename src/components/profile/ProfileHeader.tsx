@@ -20,17 +20,19 @@ import {
   Separator,
   Spinner,
   Text,
+  useTheme,
   View,
   XStack,
   YStack,
-  useTheme,
 } from 'tamagui'
 import BlockingProfile from './actionButtons/BlockingProfile'
 import EditProfile from './actionButtons/EditProfile'
+import FollowingProfile from './actionButtons/FollowingProfile'
 import FollowProfile from './actionButtons/FollowProfile'
 import FollowRequested from './actionButtons/FollowRequested'
-import FollowingProfile from './actionButtons/FollowingProfile'
+
 const SCREEN_WIDTH = Dimensions.get('screen').width
+
 import type { Relationship } from 'src/lib/api-types'
 import { useUserCache } from 'src/state/AuthProvider'
 import ZoomableImage from '../common/ZoomableImage'

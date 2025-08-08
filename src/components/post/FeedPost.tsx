@@ -26,15 +26,15 @@ import { PressableOpacity } from 'react-native-pressable-opacity'
 import Animated, {
   runOnJS,
   type SharedValue,
-  useAnimatedStyle,
   useAnimatedGestureHandler,
+  useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated'
 import Carousel, { Pagination } from 'react-native-reanimated-carousel'
-import ImageComponent from 'src/components/ImageComponent'
 import AutolinkText from 'src/components/common/AutolinkText'
 import LikeButton from 'src/components/common/LikeButton'
+import ImageComponent from 'src/components/ImageComponent'
 import { useBookmarkMutation } from 'src/hooks/mutations/useBookmarkMutation'
 import { useLikeMutation } from 'src/hooks/mutations/useLikeMutation'
 import type {
@@ -60,12 +60,12 @@ import {
   Circle,
   Separator,
   Text,
+  useTheme,
+  useThemeName,
   View,
   XStack,
   YStack,
   ZStack,
-  useTheme,
-  useThemeName,
 } from 'tamagui'
 import { PixelfedBottomSheetModal } from '../common/BottomSheets'
 import ReadMore from '../common/ReadMore'
@@ -1052,7 +1052,7 @@ const FeedPost = React.memo(
         await Share.share({
           message: post.url || post.uri,
         })
-      } catch (error) {}
+      } catch (_error) {}
     }
     return (
       <View flex={1} style={{ width }}>
@@ -1118,28 +1118,26 @@ const FeedPost = React.memo(
             ) : null}
           </>
         ) : !hideCaptions || isPermalink ? (
-          <>
-            <TextPost
-              post={post}
-              avatar={post.account?.avatar}
-              username={post.account?.acct}
-              displayName={post.account?.display_name}
-              userId={post.account?.id}
-              disableReadMore={disableReadMore}
-              hasLiked={post.favourited}
-              isLikePending={isLikePending}
-              likesCount={post?.favourites_count}
-              caption={post.content}
-              commentsCount={post.replies_count}
-              createdAt={post.created_at}
-              onOpenMenu={() => handlePresentModalPress()}
-              onHashtagPress={(tag) => onGotoHashtag(tag)}
-              onMentionPress={(tag) => onGotoMention(tag)}
-              onUsernamePress={() => goToProfile()}
-              onOpenComments={() => onOpenComments(post?.id)}
-              handleLike={handleLikeAction}
-            />
-          </>
+          <TextPost
+            post={post}
+            avatar={post.account?.avatar}
+            username={post.account?.acct}
+            displayName={post.account?.display_name}
+            userId={post.account?.id}
+            disableReadMore={disableReadMore}
+            hasLiked={post.favourited}
+            isLikePending={isLikePending}
+            likesCount={post?.favourites_count}
+            caption={post.content}
+            commentsCount={post.replies_count}
+            createdAt={post.created_at}
+            onOpenMenu={() => handlePresentModalPress()}
+            onHashtagPress={(tag) => onGotoHashtag(tag)}
+            onMentionPress={(tag) => onGotoMention(tag)}
+            onUsernamePress={() => goToProfile()}
+            onOpenComments={() => onOpenComments(post?.id)}
+            handleLike={handleLikeAction}
+          />
         ) : null}
         <PixelfedBottomSheetModal
           ref={bottomSheetModalRef}

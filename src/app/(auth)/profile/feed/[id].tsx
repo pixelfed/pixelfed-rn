@@ -7,7 +7,7 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
-import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
+import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useCallback, useMemo, useRef } from 'react'
 import { ActivityIndicator, Dimensions, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -21,17 +21,17 @@ import {
 } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
 import { enforceLen } from 'src/utils'
-import { Button, Text, View, YStack, useTheme } from 'tamagui'
+import { Button, Text, useTheme, View, YStack } from 'tamagui'
 
-const SCREEN_WIDTH = Dimensions.get('screen').width
+const _SCREEN_WIDTH = Dimensions.get('screen').width
 
 export default function ProfileScreen() {
-  const navigation = useNavigation()
+  const _navigation = useNavigation()
   const { id, byUsername } = useLocalSearchParams<{ id: string; byUsername?: string }>()
-  const queryClient = useQueryClient()
-  const bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
+  const _queryClient = useQueryClient()
+  const _bottomSheetModalRef = useRef<BottomSheetModal | null>(null)
   // const toast = useToastController();
-  const toastController = useToastController()
+  const _toastController = useToastController()
   const selfUser = useUserCache()
   const theme = useTheme()
 
@@ -162,7 +162,7 @@ export default function ProfileScreen() {
     },
     maxPages: 80,
     initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+    getNextPageParam: (lastPage, _allPages, _lastPageParam) => {
       if (lastPage.length === 0) {
         return undefined
       }

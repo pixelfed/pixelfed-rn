@@ -366,7 +366,7 @@ export async function getHashtagRelated(id: string) {
 }
 
 export async function getConversations({ pageParam = false }) {
-  const instance = Storage.getString('app.instance')
+  const _instance = Storage.getString('app.instance')
   let url
   if (!pageParam) {
     const instance = Storage.getString('app.instance')

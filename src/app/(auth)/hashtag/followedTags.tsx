@@ -4,7 +4,7 @@ import { Link, Stack } from 'expo-router'
 import { ActivityIndicator, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { getFollowedTags } from 'src/lib/api'
-import { Text, View, YStack, useTheme } from 'tamagui'
+import { Text, useTheme, View, YStack } from 'tamagui'
 
 export default function Screen() {
   const theme = useTheme()

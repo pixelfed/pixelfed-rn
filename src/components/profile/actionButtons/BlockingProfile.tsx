@@ -1,4 +1,4 @@
-import { Button, XStack, useTheme } from 'tamagui'
+import { Button, useTheme, XStack } from 'tamagui'
 
 export default function BlockingProfile({ onPress }: { onPress: () => void }) {
   const theme = useTheme()

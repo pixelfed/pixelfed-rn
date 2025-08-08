@@ -27,7 +27,7 @@ import {
 } from 'src/lib/api'
 import type { Status } from 'src/lib/api-types'
 import { useUserCache } from 'src/state/AuthProvider'
-import { Button, Text, View, useTheme } from 'tamagui'
+import { Button, Text, useTheme, View } from 'tamagui'
 
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   const theme = useTheme()
@@ -113,7 +113,7 @@ export default function HomeScreen() {
     mutationFn: async (id: string) => {
       return await deleteStatusV1(id)
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, variables) => {
       queryClient.setQueryData(['fetchNetworkFeed'], (oldData) => {
         if (!oldData) return oldData
 
@@ -130,9 +130,7 @@ export default function HomeScreen() {
   const onShare = (id: string, state) => {
     try {
       shareMutation.mutate({ type: state == true ? 'unreblog' : 'reblog', id: id })
-    } catch (error) {
-      console.error('Error occurred during share:', error)
-    }
+    } catch (_error) {}
   }
 
   const shareMutation = useMutation({
@@ -142,13 +140,10 @@ export default function HomeScreen() {
           ? await reblogStatus(handleShare)
           : await unreblogStatus(handleShare)
       } catch (error) {
-        console.error('Error within mutationFn:', error)
         throw error
       }
     },
-    onError: (error) => {
-      console.error('Error handled by share useMutation:', error)
-    },
+    onError: (_error) => {},
   })
 
   const renderItem = useCallback(

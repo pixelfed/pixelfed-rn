@@ -34,7 +34,7 @@ const postRequest = async (
   params = {},
   asForm = false,
   rawRes = false,
-  idempotency = false,
+  _idempotency = false,
   appHeader = false
 ) => {
   let headers: Record<string, string> = {}
@@ -80,7 +80,7 @@ const VerificationStep = ({ onSubmit, isLoading, email, domain, updateCode }) =>
           setError('Invalid code, please try again later')
         }
       })
-      .catch((err) => {
+      .catch((_err) => {
         setError('An error occured, please try again later')
       })
   }
@@ -173,11 +173,11 @@ const DetailsStep = ({ onSubmit, isLoading, domain, code, email, setLoading }) =
             router.back()
           }
         })
-        .catch((err) => {
+        .catch((_err) => {
           Alert.alert('Error', 'Invalid code, please try again later')
           router.back()
         })
-    } catch (error) {
+    } catch (_error) {
       setError('An error occured.')
     }
   }
@@ -312,7 +312,7 @@ const WelcomeStep = ({ onSubmit, isLoading, domain }) => {
     setError('')
     try {
       onSubmit(avatarPayload, bio.length > 0 ? bio : false)
-    } catch (error) {
+    } catch (_error) {
       setError('Failed to update profile. Please try again.')
     }
   }
@@ -406,7 +406,7 @@ const SignUp = ({ navigation }) => {
   const [code, setCode] = useState()
   const [currentStep, setCurrentStep] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
-  const [email, setEmail] = useState('')
+  const [_email, _setEmail] = useState('')
   const { handleRegistration } = useAuth()
   const router = useRouter()
   const [authToken, setAuthToken] = useState(null)
@@ -424,13 +424,12 @@ const SignUp = ({ navigation }) => {
     }).start(() => {})
   }
 
-  const handleVerificationSubmit = async (code) => {
+  const handleVerificationSubmit = async (_code) => {
     setIsLoading(true)
     try {
       setCurrentStep(1)
       slideToNext()
-    } catch (error) {
-      console.error(error)
+    } catch (_error) {
     } finally {
       setIsLoading(false)
     }
@@ -443,8 +442,7 @@ const SignUp = ({ navigation }) => {
       setRegisteredDomain(details.domain)
       setCurrentStep(2)
       slideToNext()
-    } catch (error) {
-      console.error(error)
+    } catch (_error) {
     } finally {
       setIsLoading(false)
     }
@@ -467,8 +465,7 @@ const SignUp = ({ navigation }) => {
       await handleRegistration(registeredDomain, authToken)
 
       router.replace('/(auth)/(tabs)/')
-    } catch (error) {
-      console.error(error)
+    } catch (_error) {
     } finally {
       setIsLoading(false)
     }

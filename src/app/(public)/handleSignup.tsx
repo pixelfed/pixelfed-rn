@@ -3,7 +3,7 @@ import { useAuth } from '@state/AuthProvider'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   ActivityIndicator,
   Alert,
@@ -17,14 +17,14 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { getRegisterServers } from 'src/lib/api'
 import type { OpenServer } from 'src/lib/api-types'
 import { prettyCount } from 'src/utils'
-import { Button, Image, ScrollView, Text, View, XStack, YStack, useTheme } from 'tamagui'
+import { Button, Image, ScrollView, Text, useTheme, View, XStack, YStack } from 'tamagui'
 
 export default function SignupScreen() {
   const [server, setServer] = useState('pixelfed.social')
   const [loading, setLoading] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
-  const [showServerInfo, setShowServerInfo] = useState(false)
-  const [hasAttemptedSignup, setHasAttemptedSignup] = useState(false)
+  const [_showServerInfo, _setShowServerInfo] = useState(false)
+  const [_hasAttemptedSignup, setHasAttemptedSignup] = useState(false)
   const [signupEmail, setSignupEmail] = useState('')
   const infoHeight = useRef(new Animated.Value(0)).current
   const scrollViewRef = useRef(null)
@@ -47,8 +47,7 @@ export default function SignupScreen() {
       try {
         const res = await getRegisterServers()
         return res
-      } catch (error) {
-        console.error('Error fetching servers:', error)
+      } catch (_error) {
         return [
           {
             domain: 'pixelfed.social',
@@ -131,8 +130,7 @@ export default function SignupScreen() {
         handleDeepLink(server, result.url)
       } else {
       }
-    } catch (error) {
-      console.error('Error in signup process:', error)
+    } catch (_error) {
       Alert.alert('Signup Error', 'An error occurred during the signup process')
     } finally {
       setLoading(false)
@@ -141,7 +139,7 @@ export default function SignupScreen() {
 
   const handleDeepLink = (domain: string, url: string) => {
     const parsedUrl = new URL(url)
-    const path = parsedUrl.pathname.substring(2)
+    const _path = parsedUrl.pathname.substring(2)
     const searchParams = new URLSearchParams(parsedUrl.search)
     const params = {
       domain: domain,
@@ -171,8 +169,7 @@ export default function SignupScreen() {
         } else {
         }
       })
-    } catch (error) {
-      console.error('Error resending verification:', error)
+    } catch (_error) {
       Alert.alert('Error', 'Failed to resend verification email')
     } finally {
       setLoading(false)

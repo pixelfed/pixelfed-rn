@@ -15,7 +15,7 @@ const keyExtractor = (_, index) => `instance-${_.id}-${index}`
 export default function Page() {
   const router = useRouter()
   const { is_admin } = useUserCache()
-  const [sort, setSort] = useState('desc')
+  const [sort, _setSort] = useState('desc')
   const [sortBy, setSortBy] = useState('id')
   const queryClient = useQueryClient()
 

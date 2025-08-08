@@ -11,7 +11,7 @@ import {
   pushStateDisable,
   pushStateUpdate,
 } from 'src/lib/api'
-import { ScrollView, Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
+import { ScrollView, Separator, Text, useTheme, View, XStack, YStack } from 'tamagui'
 
 function handleRegistrationError(errorMessage: string) {
   alert(errorMessage)

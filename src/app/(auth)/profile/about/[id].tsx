@@ -6,7 +6,7 @@ import { ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { getAccountById, getAccountRelationship } from 'src/lib/api'
 import { formatTimestamp, formatTimestampMonthYear, getDomain } from 'src/utils'
-import { Button, ScrollView, Text, View, XStack, YStack, useTheme } from 'tamagui'
+import { Button, ScrollView, Text, useTheme, View, XStack, YStack } from 'tamagui'
 
 export default function ProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()

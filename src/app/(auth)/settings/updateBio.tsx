@@ -1,13 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
-import { Stack } from 'expo-router'
-import { router } from 'expo-router'
+import { router, Stack } from 'expo-router'
 import { useState } from 'react'
 import { ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useProfileMutation } from 'src/hooks/mutations/useProfileMutation'
 import { getConfig } from 'src/lib/api'
 import { useQuerySelfProfile } from 'src/state/AuthProvider'
-import { Button, ScrollView, Text, TextArea, View, XStack, useTheme } from 'tamagui'
+import { Button, ScrollView, Text, TextArea, useTheme, View, XStack } from 'tamagui'
 
 export default function Page() {
   const { data: config } = useQuery({

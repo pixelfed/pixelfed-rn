@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons'
 import { Stack, useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Button, Separator, Text, YStack, useTheme } from 'tamagui'
+import { Button, Separator, Text, useTheme, YStack } from 'tamagui'
 
 export default function Page() {
   const router = useRouter()

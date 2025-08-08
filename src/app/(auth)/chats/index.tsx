@@ -9,7 +9,7 @@ import UserAvatar from 'src/components/common/UserAvatar'
 import { getConversations } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
 import { _timeAgo, enforceLen } from 'src/utils'
-import { Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
+import { Separator, Text, useTheme, View, XStack, YStack } from 'tamagui'
 
 export default function Page() {
   const selfUser = useUserCache()

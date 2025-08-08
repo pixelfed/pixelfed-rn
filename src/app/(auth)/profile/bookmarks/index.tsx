@@ -9,7 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import FeedPost from 'src/components/post/FeedPost'
 import { getSelfBookmarks, reblogStatus, unreblogStatus } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
-import { Text, View, useTheme } from 'tamagui'
+import { Text, useTheme, View } from 'tamagui'
 
 export default function BookmarksScreen() {
   const navigation = useNavigation()
@@ -28,9 +28,7 @@ export default function BookmarksScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
     try {
       shareMutation.mutate({ type: state == true ? 'unreblog' : 'reblog', id: id })
-    } catch (error) {
-      console.error('Error occurred during share:', error)
-    }
+    } catch (_error) {}
   }
 
   const shareMutation = useMutation({
@@ -40,13 +38,10 @@ export default function BookmarksScreen() {
           ? await reblogStatus(handleShare)
           : await unreblogStatus(handleShare)
       } catch (error) {
-        console.error('Error within mutationFn:', error)
         throw error
       }
     },
-    onError: (error) => {
-      console.error('Error handled by share useMutation:', error)
-    },
+    onError: (_error) => {},
   })
 
   const renderItem = useCallback(

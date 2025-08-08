@@ -1,8 +1,7 @@
-import { BottomSheetModal, useBottomSheetModal } from '@gorhom/bottom-sheet'
 import type { BottomSheetModalProps } from '@gorhom/bottom-sheet'
+import { BottomSheetModal, useBottomSheetModal } from '@gorhom/bottom-sheet'
 import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types'
-import React, { useCallback, useState } from 'react'
-import { useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { BackHandler } from 'react-native'
 
 export const PixelfedBottomSheetModal = React.forwardRef<

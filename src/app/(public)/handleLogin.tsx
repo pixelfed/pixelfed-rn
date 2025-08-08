@@ -3,7 +3,7 @@ import { useAuth } from '@state/AuthProvider'
 import { useQuery } from '@tanstack/react-query'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   ActivityIndicator,
   Alert,
@@ -14,7 +14,7 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { getOpenServers } from 'src/lib/api'
-import { Button, Input, Text, View, XStack, YStack, useTheme } from 'tamagui'
+import { Button, Input, Text, useTheme, View, XStack, YStack } from 'tamagui'
 
 export default function LoginScreen() {
   const params = useLocalSearchParams<{ server: string }>()
@@ -47,8 +47,7 @@ export default function LoginScreen() {
       try {
         const res = await getOpenServers()
         return res
-      } catch (error) {
-        console.error('Error fetching servers:', error)
+      } catch (_error) {
         return []
       }
     },
@@ -67,7 +66,7 @@ export default function LoginScreen() {
   const validateDomain = (domain) => {
     // Regular expression to validate domain format
     // This checks for a valid domain structure with at least one dot and valid characters
-    const domainRegex = /^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/
+    const domainRegex = /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/
     return domainRegex.test(domain)
   }
 
@@ -116,7 +115,7 @@ export default function LoginScreen() {
     setLoading(true)
     try {
       login(server, 'read write follow push')
-    } catch (error) {
+    } catch (_error) {
       Alert.alert('Login Failed', 'An error occurred during authentication')
     } finally {
       setLoading(false)

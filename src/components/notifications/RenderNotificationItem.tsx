@@ -1,10 +1,9 @@
 import { Link } from 'expo-router'
 import { Pressable } from 'react-native'
-import ImageComponent from 'src/components/ImageComponent'
 import UserAvatar from 'src/components/common/UserAvatar'
-import { _timeAgo } from 'src/utils'
-import { enforceLen } from 'src/utils'
-import { Text, View, XStack, YStack, useTheme } from 'tamagui'
+import ImageComponent from 'src/components/ImageComponent'
+import { _timeAgo, enforceLen } from 'src/utils'
+import { Text, useTheme, View, XStack, YStack } from 'tamagui'
 
 interface RenderItemProps {
   item: Object

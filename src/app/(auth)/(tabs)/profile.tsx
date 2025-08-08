@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import ImageComponent from 'src/components/ImageComponent'
 import { getAccountStatusesById } from 'src/lib/api'
 import { useQuerySelfProfile } from 'src/state/AuthProvider'
-import { Text, View, YStack, useTheme } from 'tamagui'
+import { Text, useTheme, View, YStack } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 
@@ -19,7 +19,7 @@ export default function ProfileScreen() {
 
   const onShare = async () => {
     try {
-      const result = await Share.share({
+      const _result = await Share.share({
         message: user.url,
       })
     } catch (error: any) {
@@ -96,7 +96,7 @@ export default function ProfileScreen() {
       })
     },
     initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+    getNextPageParam: (lastPage, _allPages, _lastPageParam) => {
       if (lastPage.length === 0) {
         return undefined
       }
@@ -155,7 +155,7 @@ export default function ProfileScreen() {
 
       <FlatList
         data={feed?.pages.flat()}
-        keyExtractor={(item, index) => item?.id.toString()}
+        keyExtractor={(item, _index) => item?.id.toString()}
         ListHeaderComponent={
           <ProfileHeader profile={user} isSelf={true} onShare={() => onShare()} />
         }

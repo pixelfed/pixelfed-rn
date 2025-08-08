@@ -1,12 +1,6 @@
 import { Feather } from '@expo/vector-icons'
 import { Text, View, XStack, YStack } from 'tamagui'
-export const ErrorAlert = ({
-  message,
-  title,
-}: {
-  message: string
-  title: string
-}) => {
+export const ErrorAlert = ({ message, title }: { message: string; title: string }) => {
   return (
     <View>
       <XStack my="$3" justifyContent="flex-start" alignItems="center" gap="$3">

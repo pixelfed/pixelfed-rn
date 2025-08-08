@@ -13,10 +13,10 @@ import {
   Separator,
   Sheet,
   Text,
-  XStack,
-  YStack,
   useTheme,
   useThemeName,
+  XStack,
+  YStack,
 } from 'tamagui'
 
 export default function Screen() {
@@ -24,10 +24,10 @@ export default function Screen() {
   const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
   const tamaguiTheme = useTheme()
   const tamaguiThemeName = useThemeName()
-  const colorScheme = useColorScheme()
-  const navigation = useNavigation()
+  const _colorScheme = useColorScheme()
+  const _navigation = useNavigation()
   const theme = useTheme()
-  const router = useRouter()
+  const _router = useRouter()
   // Available themes
   const themes = [
     { name: 'Auto (System)', value: 'system' },

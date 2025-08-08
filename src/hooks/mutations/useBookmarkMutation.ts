@@ -79,7 +79,7 @@ export function useBookmarkMutation({ onSuccess }: { onSuccess?: onSuccessType }
       return previousState
     },
 
-    onError: (err, { id }, context) => {
+    onError: (_err, { id }, context) => {
       if (!context) return
 
       Object.entries(context).forEach(([key, value]) => {
@@ -92,7 +92,7 @@ export function useBookmarkMutation({ onSuccess }: { onSuccess?: onSuccessType }
   const handleBookmark = async (id: string, isBookmarked: boolean) => {
     try {
       await mutate({ id, type: isBookmarked })
-    } catch (err) {}
+    } catch (_err) {}
   }
 
   return { handleBookmark, isBookmarkPending: isPending }

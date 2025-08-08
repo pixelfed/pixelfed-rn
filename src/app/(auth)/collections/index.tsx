@@ -39,7 +39,7 @@ export default function Screen() {
       ) : (
         <YStack borderWidth={1} borderColor="$gray4" borderRadius={20}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {item.items.map((post, idx) => {
+            {item.items.map((post, _idx) => {
               return (
                 <Link key={post.id} href={`/post/${post.id}`} asChild>
                   <View>
@@ -88,13 +88,13 @@ export default function Screen() {
     queryKey: ['getSelfCollections'],
     queryFn: getSelfCollections,
     initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+    getNextPageParam: (lastPage, _allPages, lastPageParam) => {
       if (lastPage.length === 0) {
         return undefined
       }
       return lastPageParam + 1
     },
-    getPreviousPageParam: (firstPage, allPages, firstPageParam) => {
+    getPreviousPageParam: (_firstPage, _allPages, firstPageParam) => {
       if (firstPageParam <= 1) {
         return undefined
       }

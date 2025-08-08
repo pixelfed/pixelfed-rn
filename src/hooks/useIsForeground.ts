@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import type { AppStateStatus } from 'react-native'
 import { AppState } from 'react-native'
 

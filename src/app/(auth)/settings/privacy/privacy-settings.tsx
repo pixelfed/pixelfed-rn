@@ -1,13 +1,12 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Stack, router } from 'expo-router'
+import { router, Stack } from 'expo-router'
 import { ActivityIndicator, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Switch } from 'src/components/form/Switch'
+import { useProfileMutation } from 'src/hooks/mutations/useProfileMutation'
 import { getSelfAccount } from 'src/lib/api'
 import { Storage } from 'src/state/cache'
-import { ScrollView, Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
-
-import { useProfileMutation } from 'src/hooks/mutations/useProfileMutation'
+import { ScrollView, Separator, Text, useTheme, View, XStack, YStack } from 'tamagui'
 
 interface RenderSwitchProps {
   title: string

@@ -21,7 +21,7 @@
         "noExplicitAny": "off",
         "noArrayIndexKey": "off",
         "noDoubleEquals": "off",
-        "noConsole": "error",
+        "noConsole": "warn",
         "noAssignInExpressions": "off",
         "noRedeclare": "off"
       },

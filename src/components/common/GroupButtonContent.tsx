@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons'
-import { Text, XStack, useTheme } from 'tamagui'
+import { Text, useTheme, XStack } from 'tamagui'
 
 export interface GroupButtonContentProps {
   icon: React.ComponentProps<typeof Feather>['name']

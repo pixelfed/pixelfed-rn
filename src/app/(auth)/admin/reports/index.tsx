@@ -10,9 +10,9 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import { ActivityIndicator, Alert, FlatList, StyleSheet } from 'react-native'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import ImageComponent from 'src/components/ImageComponent'
 import { PixelfedBottomSheetModal } from 'src/components/common/BottomSheets'
 import ReadMore from 'src/components/common/ReadMore'
+import ImageComponent from 'src/components/ImageComponent'
 import { getModReports, postReportHandle, postUserHandle } from 'src/lib/api'
 import { _timeAgo, enforceLen, htmlToTextWithLineBreaks } from 'src/utils'
 import { Button, Group, Separator, Text, View, XStack, YStack } from 'tamagui'
@@ -131,7 +131,7 @@ export default function Screen() {
   const RenderItem = ({ item }) => {
     const objectType = item.object_type == 'App\\Status' ? 'post' : 'profile'
     if (objectType === 'post') {
-      const reportedBy = item?.reported_by_account?.username
+      const _reportedBy = item?.reported_by_account?.username
       const msg = `#${item.id} - ${item.type} post report`
       return (
         <PressableOpacity onPress={() => handlePresentModalPress(item)}>
@@ -148,7 +148,7 @@ export default function Screen() {
     }
 
     if (objectType === 'profile') {
-      const reportedBy = item?.reported_by_account?.username
+      const _reportedBy = item?.reported_by_account?.username
       const msg = `#${item.id} - ${item.type} post report`
       return (
         <PressableOpacity onPress={() => handlePresentModalPress(item)}>

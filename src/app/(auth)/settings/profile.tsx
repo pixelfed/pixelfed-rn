@@ -19,11 +19,11 @@ import {
   ScrollView,
   Separator,
   Text,
+  useTheme,
   View,
   XStack,
   YStack,
   ZStack,
-  useTheme,
 } from 'tamagui'
 
 type LinkFieldProps = {
@@ -81,7 +81,7 @@ export default function ProfilePage() {
   }
 
   const _deleteProfilePhoto = async () => {
-    await deleteAvatar().then((res) => {
+    await deleteAvatar().then((_res) => {
       queryClient.invalidateQueries({ queryKey: ['profileById'] })
     })
   }
@@ -106,7 +106,7 @@ export default function ProfilePage() {
       }
       await updateAvatar({
         avatar: payload,
-      }).then((res) => {
+      }).then((_res) => {
         queryClient.invalidateQueries({ queryKey: ['profileById'] })
       })
     }

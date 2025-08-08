@@ -1,16 +1,14 @@
+import { useQuery } from '@tanstack/react-query'
 import * as Linking from 'expo-linking'
 import { router, useSegments } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
-import { createContext, useCallback, useEffect } from 'react'
-import { useContext, useState } from 'react'
-import { Alert, Platform } from 'react-native'
-import { get, loginPreflightCheck, postForm, verifyCredentials } from 'src/requests'
-import { Storage } from './cache'
-
-import { useQuery } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { Alert, Platform } from 'react-native'
 import { getAccountById } from 'src/lib/api'
 import type { Account, LoginUserResponse } from 'src/lib/api-types'
+import { get, loginPreflightCheck, postForm, verifyCredentials } from 'src/requests'
+import { Storage } from './cache'
 
 type User = {
   server: string
@@ -83,32 +81,23 @@ function useProtectedRoute(user: User | null, setUser: any, setIsLoading: any) {
               invalidateCredentialsCache()
               setIsLoading(false)
             }
-          } catch (error) {
+          } catch (_error) {
             // Network error or server issues - use cached credentials if available
             const lastVerified = Storage.getNumber('app.credentials_verified_at')
             if (lastVerified) {
-              console.warn(
-                'Could not verify credentials with server, using cached state:',
-                error
-              )
               setUser({
                 server: server,
                 token: token,
               })
             } else {
-              console.error(
-                'No cached credentials and server verification failed:',
-                error
-              )
             }
             setIsLoading(false)
           }
         } else {
           setIsLoading(false)
         }
-      } catch (error) {
+      } catch (_error) {
         setIsLoading(false)
-        console.error('Failed to fetch token from MMKV:', error)
       }
     }
 
@@ -133,7 +122,7 @@ export const AuthContext = createContext<AuthProvider>({
   user: null,
   login: () => Promise.resolve(false),
   logout: () => {},
-  setUser: (newValue: User | null) => {},
+  setUser: (_newValue: User | null) => {},
   userCache: null,
   loadUserCacheFromStorage: () => {},
   handleRegistration: () => {},

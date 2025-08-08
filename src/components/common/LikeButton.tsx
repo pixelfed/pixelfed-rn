@@ -3,12 +3,12 @@ import * as Haptics from 'expo-haptics'
 import { useEffect } from 'react'
 import { Pressable, StyleSheet } from 'react-native'
 import Animated, {
-  useSharedValue,
-  withSpring,
-  useAnimatedStyle,
   Extrapolate,
   interpolate,
   useAnimatedReaction,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
 } from 'react-native-reanimated'
 import { useTheme } from 'tamagui'
 

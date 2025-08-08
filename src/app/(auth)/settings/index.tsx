@@ -16,9 +16,9 @@ import {
   ScrollView,
   Separator,
   Text,
+  useTheme,
   XStack,
   YStack,
-  useTheme,
 } from 'tamagui'
 
 export default function Page() {

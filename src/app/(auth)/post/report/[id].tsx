@@ -3,12 +3,11 @@ import { useMutation } from '@tanstack/react-query'
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import { ActivityIndicator, Alert, Pressable } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { report } from 'src/lib/api'
-import { reportTypes } from 'src/lib/reportTypes'
-import { ScrollView, Text, XStack, YStack, useTheme } from 'tamagui'
-
 import type { NewReport } from 'src/lib/api'
+import { report } from 'src/lib/api'
 import type { ReportType } from 'src/lib/reportTypes'
+import { reportTypes } from 'src/lib/reportTypes'
+import { ScrollView, Text, useTheme, XStack, YStack } from 'tamagui'
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -42,7 +41,7 @@ export default function Page() {
     mutationFn: (newReport: NewReport) => {
       return report(newReport)
     },
-    onSuccess: (data, variables, context) => {
+    onSuccess: (_data, _variables, _context) => {
       router.replace('/post/report/sent')
     },
     onError: (err) => {

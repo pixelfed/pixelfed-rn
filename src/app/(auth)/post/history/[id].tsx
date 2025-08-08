@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import ReadMore from 'src/components/common/ReadMore'
 import { getStatusHistory } from 'src/lib/api'
 import { _timeAgo, htmlToTextWithLineBreaks } from 'src/utils'
-import { Separator, Text, View, XStack, YStack, useTheme } from 'tamagui'
+import { Separator, Text, useTheme, View, XStack, YStack } from 'tamagui'
 
 export default function Page() {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -60,7 +60,10 @@ export default function Page() {
   const HighlightedDiff = ({
     oldContent,
     newContent,
-  }: { oldContent: string; newContent: string }) => {
+  }: {
+    oldContent: string
+    newContent: string
+  }) => {
     const diff = getDiff(oldContent, newContent)
 
     return (

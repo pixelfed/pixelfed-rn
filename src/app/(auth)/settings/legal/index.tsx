@@ -5,7 +5,7 @@ import {
   type GroupButtonContentProps,
 } from 'src/components/common/GroupButtonContent'
 import { Storage } from 'src/state/cache'
-import { Button, Group, ScrollView, Separator, YStack, useTheme } from 'tamagui'
+import { Button, Group, ScrollView, Separator, useTheme, YStack } from 'tamagui'
 import { openBrowserAsync } from '../../../../utils'
 
 export default function Screen() {

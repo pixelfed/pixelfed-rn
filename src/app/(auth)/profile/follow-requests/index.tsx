@@ -143,7 +143,7 @@ export default function FollowersScreen() {
       <FlatList
         data={feed}
         renderItem={RenderItem}
-        keyExtractor={(item, index) => item.id.toString()}
+        keyExtractor={(item, _index) => item.id.toString()}
         ItemSeparatorComponent={ItemSeparator}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={RenderEmpty}

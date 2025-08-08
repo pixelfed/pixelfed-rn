@@ -35,7 +35,6 @@ export function useProfileMutation(args: ProfileMutationArgs) {
         message: 'Please try again later',
         native: false,
       })
-      console.error('Error handled by like useMutation:', error)
     },
     onSuccess: () => {
       setSubmitting(false)
