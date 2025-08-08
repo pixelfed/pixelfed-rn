@@ -22,6 +22,13 @@ export default function ProfileScreen() {
     queryFn: () => getAccountById(id),
   })
 
+  const userId = user?.id
+  const { data: relationship } = useQuery({
+    queryKey: ['getAccountRelationship', userId],
+    queryFn: () => getAccountRelationship(userId!),
+    enabled: !!userId,
+  })
+
   if (userError) {
     return (
       <View
@@ -33,7 +40,7 @@ export default function ProfileScreen() {
       >
         <YStack alignItems="center" gap="$2">
           <Text fontSize="$8" color={theme.color.val.default.val}>
-            Oops, an error occured!
+            Oops, an error occurred!
           </Text>
           <Text fontSize="$5" color={theme.color.val.secondary.val}>
             Please try again later
@@ -50,13 +57,6 @@ export default function ProfileScreen() {
       </View>
     )
   }
-  const userId = user?.id
-
-  const { data: relationship } = useQuery({
-    queryKey: ['getAccountRelationship', userId],
-    queryFn: getAccountRelationship,
-    enabled: !!userId,
-  })
 
   if (isFetchingUser) {
     return (
