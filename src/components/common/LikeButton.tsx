@@ -65,7 +65,12 @@ export default function LikeButton(props: LikeButtonProps) {
   }
 
   return (
-    <Pressable onPress={handlePress}>
+    <Pressable 
+      accessible={true}
+      accessibilityLabel="Like post"
+      accessibilityRole="button"
+      accessibilityState={{ checked: hasLiked }} // will this automatically update when hasLiked changes?
+      onPress={handlePress}>
       <Animated.View style={[StyleSheet.absoluteFillObject, outlineStyle]}>
         <MaterialCommunityIcons
           name={'heart-outline'}

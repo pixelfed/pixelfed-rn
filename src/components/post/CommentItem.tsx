@@ -49,7 +49,12 @@ export default function CommentItem({
         <YStack flexShrink={1}>
           <XStack flexShrink={1}>
             <XStack gap="$3" flexGrow={1}>
-              <Pressable onPress={() => gotoProfile(item.account.id)}>
+              <Pressable 
+                accessible={true}
+                accessibilityLabel="Avatar" 
+                accessibilityRole="image"
+                accessibilityHint="Tap to go to profile"
+                onPress={() => gotoProfile(item.account.id)}>
                 <ImageComponent
                   source={{
                     uri: item.account.avatar,
@@ -164,7 +169,11 @@ export default function CommentItem({
               </YStack>
             </XStack>
 
-            <Pressable onPress={() => onLike(item)}>
+            <Pressable 
+              accessible={true}
+              accessibilityLabel="Like comment" 
+              accessibilityRole="button"
+              onPress={() => onLike(item)}>
               <YStack justifyContent="center" alignItems="center" gap="$1">
                 {item.favourited ? (
                   <Ionicons name="heart" color="red" size={20} />

@@ -32,24 +32,44 @@ export default function FeedHeader({ title = 'Home', user }) {
       </XStack>
       <XStack gap="$5">
         {title === 'Pixelfed' ? (
-          <Link href="/feeds/network" asChild>
+          <Link
+            accessible={true}
+            accessibilityLabel="Open local feed" // UI calls it Public Feed, but it's actually Local. Other changes required?
+            accessibilityRole="button"
+            href="/feeds/network" 
+            asChild>
             <Pressable>
               <Feather name="globe" size={26} color={textColor} />
             </Pressable>
           </Link>
         ) : (
-          <Link href="/" asChild>
+          <Link 
+            accessible={true}
+            accessibilityLabel="Home"
+            accessibilityRole="button"
+            href="/" 
+            asChild>
             <Pressable>
               <Feather name="home" size={26} color={textColor} />
             </Pressable>
           </Link>
         )}
-        <Link href="/chats" asChild>
+        <Link 
+          accessible={true}
+          accessibilityLabel="Direct messages"
+          accessibilityRole="button"
+          href="/chats"
+          asChild>
           <Pressable>
             <Feather name="mail" size={26} color={textColor} />
           </Pressable>
         </Link>
-        <Link href="/search" asChild>
+        <Link 
+          accessible={true}
+          accessibilityLabel="Search"
+          accessibilityRole="button"
+          href="/search" 
+          asChild>
           <Pressable>
             <Feather name="search" size={26} color={textColor} />
           </Pressable>

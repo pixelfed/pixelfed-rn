@@ -39,7 +39,13 @@ const RenderItem = ({ item }: RenderItemProps) => {
       <XStack justifyContent="space-between" alignItems="center">
         <XStack gap="$3" alignItems="center">
           {item && item.account && item.account?.id && (
-            <Link href={`/profile/${item.account.id}`} asChild>
+            <Link 
+              accessible={true}
+              accessibilityLabel="Avatar" // is this a good word?
+              accessibilityRole="button"
+              accessibilityHint="Tap to open profile page"
+              href={`/profile/${item.account.id}`} 
+              asChild>
               <Pressable>
                 <UserAvatar url={item.account.avatar} />
               </Pressable>
@@ -49,6 +55,9 @@ const RenderItem = ({ item }: RenderItemProps) => {
           <YStack gap={5}>
             <XStack gap="$1" alignItems="center">
               <Text
+                accessible={true}
+                accessibilityLabel={item.account?.acct}
+                accessibilityRole="text"
                 fontSize="$2"
                 fontWeight={'bold'}
                 allowFontScaling={false}
@@ -59,7 +68,12 @@ const RenderItem = ({ item }: RenderItemProps) => {
             </XStack>
             <XStack gap="$1" alignItems="center">
               {item.status ? (
-                <Link href={`/post/${item.status.id}`} asChild>
+                <Link 
+                  accessible={true}
+                  accessibilityRole="link"
+                  accessibilityHint="Tap to open post"
+                  href={`/post/${item.status.id}`} 
+                  asChild>
                   <Text
                     fontSize="$2"
                     color={theme.colorHover.val.active.val}
@@ -95,6 +109,9 @@ const RenderItem = ({ item }: RenderItemProps) => {
         item.status.media_attachments?.length &&
         item.status.media_attachments[0].type === 'image' ? (
           <Link
+            accessible={true}
+            accessibilityLabel="Image from post"
+            accessibilityRole="imagebutton"
             href={`/post/${item.status.in_reply_to_id ? item.status.in_reply_to_id : item.status.id}`}
           >
             <ImageComponent

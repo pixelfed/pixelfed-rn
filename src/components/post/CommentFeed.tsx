@@ -79,7 +79,11 @@ const CommentItem = ({
         <YStack flexShrink={1}>
           <XStack flexShrink={1}>
             <XStack gap="$3" flexGrow={1}>
-              <Pressable onPress={() => gotoProfile(item.account.id)}>
+              <Pressable 
+                accessible={true}
+                accessibilityLabel="Avatar" 
+                accessibilityRole="image"
+                onPress={() => gotoProfile(item.account.id)}>
                 <ImageComponent
                   source={{
                     uri: item.account.avatar,
@@ -128,7 +132,11 @@ const CommentItem = ({
                 </ReadMore>
 
                 <XStack mt="$2" gap="$4">
-                  <Pressable onPress={() => onReply(item)}>
+                  <Pressable 
+                    accessible={true}
+                    accessibilityLabel="Reply" 
+                    accessibilityRole="button"
+                    onPress={() => onReply(item)}>
                     <Text fontWeight="bold" fontSize="$3" color="$gray9">
                       Reply
                     </Text>
@@ -178,7 +186,11 @@ const CommentItem = ({
               </YStack>
             </XStack>
 
-            <Pressable onPress={() => onLike(item)}>
+            <Pressable 
+              accessible={true}
+              accessibilityLabel="Like comment" 
+              accessibilityRole="button"
+              onPress={() => onLike(item)}>
               <YStack justifyContent="center" alignItems="center" gap="$1">
                 {item.favourited ? (
                   <Ionicons name="heart" color="red" size={20} />
@@ -543,7 +555,11 @@ export default function CommentFeed({
             </Text>
           </XStack>
           <XStack alignItems="center" gap={5}>
-            <Pressable onPress={() => toggleScope()}>
+            <Pressable 
+              accessible={true}
+              accessibilityLabel="Toggle posting level" // what words to use here? 
+              accessibilityRole="button"
+              onPress={() => toggleScope()}>
               <Text
                 allowFontScaling={false}
                 color="$gray10"
@@ -569,7 +585,7 @@ export default function CommentFeed({
             <Text allowFontScaling={false} fontSize={12} color="#ccc" fontWeight="bold">
               CW
             </Text>
-            <Switch
+            <Switch // todo: make accessible on screen reader
               width={40}
               height={20}
               defaultChecked={hasCW}

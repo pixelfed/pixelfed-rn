@@ -189,7 +189,12 @@ const PostHeader = React.memo(
           py="$2"
         >
           <View flexGrow={1}>
-            <Link href={`/profile/${userId}`} asChild>
+            <Link 
+              accessible={true}
+              accessibilityRole="link"
+              accessibilityHint="Tap to go to profile"
+              href={`/profile/${userId}`} 
+              asChild>
               <Pressable>
                 <XStack gap="$3" alignItems="center" flexGrow={1}>
                   <ImageComponent
@@ -226,7 +231,11 @@ const PostHeader = React.memo(
               </Pressable>
             </Link>
           </View>
-          <Pressable onPress={() => onOpenMenu()}>
+          <Pressable 
+            accessible={true}
+            accessibilityLabel="Options" 
+            accessibilityRole="button"
+            onPress={() => onOpenMenu()}>
             <View px="$3">
               <Feather
                 name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
@@ -373,7 +382,7 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
     )
   }
 
-  return (
+  return ( // todo: make image carousel accessible by screen readers
     <YStack zIndex={1}>
       <Carousel
         onConfigurePanGesture={(gestureChain) =>
@@ -521,7 +530,12 @@ const PostActions = React.memo(
                   <ActivityIndicator color={theme.color?.val.default.val} />
                 ) : null}
                 {!isLikePending && likesCount ? (
-                  <Link href={`/post/likes/${post.id}`}>
+                  <Link 
+                  accessible={true}
+                  accessibilityLabel=`${prettyCount(likesCount)} likes`
+                  accessibilityRole="link"
+                  accessibilityHint="Tap to show who liked this post" // is it good to have this? probably need at least something to indicate what clicking it does.
+                  href={`/post/likes/${post.id}`}>
                     <Text
                       fontWeight={'bold'}
                       allowFontScaling={false}
@@ -533,7 +547,11 @@ const PostActions = React.memo(
                 ) : null}
               </XStack>
               <XStack justifyContent="center" alignItems="center" gap="$2">
-                <Pressable onPress={() => onOpenComments()}>
+                <Pressable 
+                  accessible={true}
+                  accessibilityLabel="Comments" 
+                  accessibilityRole="button"
+                  onPress={() => onOpenComments()}>
                   <Feather
                     name="message-circle"
                     size={30}
@@ -542,6 +560,9 @@ const PostActions = React.memo(
                 </Pressable>
                 {commentsCount ? (
                   <Text
+                    accessible={true}
+                    accessibilityLabel=`${prettyCount(commentsCount)} comments`
+                    accessibilityRole="text"
                     fontWeight={'bold'}
                     allowFontScaling={false}
                     fontSize="$2"
@@ -556,6 +577,9 @@ const PostActions = React.memo(
               {post.visibility === 'public' ? (
                 <XStack justifyContent="center" alignItems="center" gap="$2">
                   <PressableOpacity
+                    accessible={true}
+                    accessibilityLabel="Repost"
+                    accessibilityRole="button"
                     onPress={() => handleOnShare()}
                     style={{ marginRight: 5 }}
                   >
@@ -566,7 +590,12 @@ const PostActions = React.memo(
                     />
                   </PressableOpacity>
                   {sharesCount ? (
-                    <Link href={`/post/shares/${post.id}`}>
+                    <Link
+                      accessible={true}
+                      accessibilityLabel=`Reposted ${prettyCount(shareCountCache)} times`
+                      accessibilityRole="link"
+                      accessibilityHint="Tap to show who reposted this" // same concern as above
+                      href={`/post/shares/${post.id}`}>
                       <Text
                         fontWeight={'bold'}
                         allowFontScaling={false}
@@ -601,7 +630,11 @@ const PostActions = React.memo(
                 </PressableOpacity>
               ) : null}
               {showAltText && hasAltText ? (
-                <PressableOpacity onPress={() => onShowAlt()}>
+                <PressableOpacity 
+                  accessible={true}
+                  accessibilityLabel="Show alt text"
+                  accessibilityRole="button"
+                  onPress={() => onShowAlt()}>
                   <XStack
                     bg={theme.color?.val.default.val}
                     px="$3"
@@ -790,7 +823,7 @@ const TextPost = React.memo(
     const captionText = htmlToTextWithLineBreaks(caption)
     const theme = useTheme()
 
-    return (
+    return ( // todo: add labels for buttons on these text posts.
       <SectionTopBorder>
         <XStack alignItems="flex-start" gap="$3" paddingVertical="$3">
           <Link href={`/profile/${userId}`} asChild>
