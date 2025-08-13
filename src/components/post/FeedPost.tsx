@@ -32,7 +32,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated'
 import Carousel, { Pagination } from 'react-native-reanimated-carousel'
-import AutolinkText from 'src/components/common/AutolinkText'
+import AutolinkText, { onMentionPressMethod } from 'src/components/common/AutolinkText'
 import LikeButton from 'src/components/common/LikeButton'
 import ImageComponent from 'src/components/ImageComponent'
 import { useBookmarkMutation } from 'src/hooks/mutations/useBookmarkMutation'
@@ -235,7 +235,9 @@ const PostHeader = React.memo(
             accessible={true}
             accessibilityLabel="Options" 
             accessibilityRole="button"
-            onPress={() => onOpenMenu()}>
+            onPress={() => onOpenMenu()}
+            hitSlop={{ top: 10, bottom: 10 }}
+          >
             <View px="$3">
               <Feather
                 name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
@@ -340,7 +342,7 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
   const theme = useTheme()
   const themeName = useThemeName()
   const dotColor = themeName == 'dark' ? 'rgba(255, 255, 255, 0.20)' : 'rgba(0,0,0,0.11)'
-  const mediaList = post.media_attachments.slice(0, 10)
+  const mediaList = post.media_attachments.slice(0, 25)
 
   if (post.sensitive && !showSensitive) {
     return (
@@ -531,47 +533,53 @@ const PostActions = React.memo(
                 ) : null}
                 {!isLikePending && likesCount ? (
                   <Link 
-                  accessible={true}
-                  accessibilityLabel=`${prettyCount(likesCount)} likes`
-                  accessibilityRole="link"
-                  accessibilityHint="Tap to show who liked this post" // is it good to have this? probably need at least something to indicate what clicking it does.
-                  href={`/post/likes/${post.id}`}>
-                    <Text
-                      fontWeight={'bold'}
-                      allowFontScaling={false}
-                      color={theme.color?.val.secondary.val}
-                    >
-                      {prettyCount(likesCount)}
-                    </Text>
+                    accessible={true}
+                    accessibilityLabel=`${prettyCount(likesCount)} likes`
+                    accessibilityRole="link"
+                    accessibilityHint="Tap to show who liked this post" // is it good to have this? probably need at least something to indicate what clicking it does.
+                    href={`/post/likes/${post.id}`}
+                    asChild
+                  >
+                    <Pressable hitSlop={{ left: 5, right: 20, top: 12, bottom: 12 }}>
+                      <Text
+                        fontWeight={'bold'}
+                        allowFontScaling={false}
+                        color={theme.color?.val.secondary.val}
+                      >
+                        {prettyCount(likesCount)}
+                      </Text>
+                    </Pressable>
                   </Link>
                 ) : null}
               </XStack>
-              <XStack justifyContent="center" alignItems="center" gap="$2">
-                <Pressable 
-                  accessible={true}
-                  accessibilityLabel="Comments" 
-                  accessibilityRole="button"
-                  onPress={() => onOpenComments()}>
+              <Pressable 
+                accessible={true}
+                accessibilityLabel="Comments" 
+                accessibilityRole="button"
+                onPress={() => onOpenComments()}
+                hitSlop={{ top: 4, bottom: 4, left: 4, right: commentsCount ? 4 : 25 }}
+              >
+                  <XStack justifyContent="center" alignItems="center" gap="$2">
                   <Feather
                     name="message-circle"
                     size={30}
                     color={theme.color?.val.default.val}
                   />
-                </Pressable>
-                {commentsCount ? (
-                  <Text
-                    accessible={true}
-                    accessibilityLabel=`${prettyCount(commentsCount)} comments`
-                    accessibilityRole="text"
-                    fontWeight={'bold'}
-                    allowFontScaling={false}
-                    fontSize="$2"
-                    color={theme.color?.val.secondary.val}
-                  >
-                    {prettyCount(commentsCount)}
-                  </Text>
-                ) : null}
-              </XStack>
+                  {commentsCount ? (
+                    <Text
+                      accessible={true}
+                      accessibilityLabel=`${prettyCount(commentsCount)} comments`
+                      accessibilityRole="text"
+                      fontWeight={'bold'}
+                      allowFontScaling={false}
+                      fontSize="$2"
+                      color={theme.color?.val.secondary.val}
+                    >
+                      {prettyCount(commentsCount)}
+                    </Text>
+                  ) : null}
+                </XStack>
+              </Pressable>
             </XStack>
             <XStack gap="$4">
               {post.visibility === 'public' ? (
@@ -582,6 +590,7 @@ const PostActions = React.memo(
                     accessibilityRole="button"
                     onPress={() => handleOnShare()}
                     style={{ marginRight: 5 }}
+                    hitSlop={6}
                   >
                     <Feather
                       name="refresh-cw"
@@ -595,14 +604,18 @@ const PostActions = React.memo(
                       accessibilityLabel=`Reposted ${prettyCount(shareCountCache)} times`
                       accessibilityRole="link"
                       accessibilityHint="Tap to show who reposted this" // same concern as above
-                      href={`/post/shares/${post.id}`}>
-                      <Text
-                        fontWeight={'bold'}
-                        allowFontScaling={false}
-                        color={theme.color?.val.secondary.val}
-                      >
-                        {prettyCount(shareCountCache)}
-                      </Text>
+                      href={`/post/shares/${post.id}`}
+                      asChild
+                    >
+                      <Pressable hitSlop={{ left: 5, right: 20, top: 12, bottom: 12 }}>
+                        <Text
+                          fontWeight={'bold'}
+                          allowFontScaling={false}
+                          color={theme.color?.val.secondary.val}
+                        >
+                          {prettyCount(shareCountCache)}
+                        </Text>
+                      </Pressable>
                     </Link>
                   ) : null}
                 </XStack>
@@ -611,7 +624,7 @@ const PostActions = React.memo(
                 <ActivityIndicator color={theme.color?.val.default.val} />
               ) : null}
               {!isBookmarkPending && !isLikeFeed ? (
-                <PressableOpacity onPress={() => handleBookmarkAction()}>
+                <PressableOpacity onPress={() => handleBookmarkAction()} hitSlop={4}>
                   <XStack gap="$4">
                     {hasBookmarked ? (
                       <Ionicons
@@ -669,7 +682,7 @@ interface PostCaptionProps {
   visibility: Visibility
   onOpenComments: () => void
   onHashtagPress: (tag: string) => void
-  onMentionPress: (tag: string) => void
+  onMentionPress: (username: string, isLocalUsername: boolean) => void
   onUsernamePress: () => void
   disableReadMore: boolean
   editedAt: Timestamp | null
@@ -798,12 +811,18 @@ interface FeedPostProps {
   handleLikeProfileId?: boolean
 }
 
+interface TextPostProps {
+  post: Status
+  onMentionPress: (username: string, isLocalUsername: boolean) => void
+  username: string
+  // TODO
+}
+
 const TextPost = React.memo(
   ({
     post,
     avatar,
     username,
-    displayName,
     handleLike,
     userId,
     onOpenMenu,
@@ -818,7 +837,7 @@ const TextPost = React.memo(
     onOpenComments,
     hasLiked,
     isLikePending,
-  }) => {
+  }: TextPostProps) => {
     const timeAgo = formatTimestamp(createdAt)
     const captionText = htmlToTextWithLineBreaks(caption)
     const theme = useTheme()
@@ -947,13 +966,13 @@ const TextPost = React.memo(
                       <Feather
                         name="message-circle"
                         size={20}
-                        color={theme.color.val.default.val}
+                        color={theme.color?.val.default.val}
                       />
                     </Pressable>
                     <Text
                       fontSize={13}
                       fontWeight="bold"
-                      color={theme.color.val.secondary.val}
+                      color={theme.color?.val.secondary.val}
                     >
                       {prettyCount(commentsCount)}
                     </Text>
@@ -1124,7 +1143,7 @@ const FeedPost = React.memo(
                   likedBy={post?.liked_by}
                   sharesCount={post?.reblogs_count}
                   showAltText={showAltText}
-                  commentsCount={post.replies_count}
+                  commentsCount={post.reply_count}
                   handleLike={handleLikeAction}
                   onOpenComments={() => onOpenComments(post?.id)}
                   onShare={() => onShare(post?.id)}
@@ -1134,14 +1153,14 @@ const FeedPost = React.memo(
                   postId={post.id}
                   username={post.account?.username}
                   caption={post.content}
-                  commentsCount={post.replies_count}
+                  commentsCount={post.reply_count}
                   createdAt={post.created_at}
                   tags={post.tags}
                   visibility={post.visibility}
                   disableReadMore={disableReadMore}
                   onOpenComments={() => onOpenComments(post.id)}
                   onHashtagPress={(tag) => onGotoHashtag(tag)}
-                  onMentionPress={(tag) => onGotoMention(tag)}
+                  onMentionPress={onMentionPressMethod(onGotoMention, post.account.url)}
                   onUsernamePress={() => goToProfile()}
                   editedAt={post.edited_at}
                   isLikeFeed={isLikeFeed}
@@ -1162,11 +1181,11 @@ const FeedPost = React.memo(
             isLikePending={isLikePending}
             likesCount={post?.favourites_count}
             caption={post.content}
-            commentsCount={post.replies_count}
+            commentsCount={post.reply_count}
             createdAt={post.created_at}
             onOpenMenu={() => handlePresentModalPress()}
             onHashtagPress={(tag) => onGotoHashtag(tag)}
-            onMentionPress={(tag) => onGotoMention(tag)}
+            onMentionPress={onMentionPressMethod(onGotoMention, post.account.url)}
             onUsernamePress={() => goToProfile()}
             onOpenComments={() => onOpenComments(post?.id)}
             handleLike={handleLikeAction}

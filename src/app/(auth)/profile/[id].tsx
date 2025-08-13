@@ -533,7 +533,11 @@ export default function ProfileScreen() {
         headerTitle: user?.username,
         headerRight: () => (
           <Button chromeless p="$0" onPress={() => onOpenMenu()}>
-            <Feather name={'more-vertical'} size={26} />
+            <Feather
+              name={'more-vertical'}
+              size={26}
+              color={theme.color?.val.default.val}
+            />
           </Button>
         ),
       })

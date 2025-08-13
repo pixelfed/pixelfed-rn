@@ -90,10 +90,13 @@
     "@babel/core": "^7.20.0",
     "@biomejs/biome": "^2.1.4",
     "@react-native-community/cli": "latest",
+    "@types/jest": "^30.0.0",
     "@types/react": "~18.3.12",
     "babel-plugin-module-resolver": "^5.0.0",
     "cross-env": "^7.0.3",
-    "expo-build-properties": "~0.13.3"
+    "expo-build-properties": "~0.13.3",
+    "jest": "~29.7.0",
+    "jest-expo": "~52.0.6"
   },
   "private": true,
   "expo": {

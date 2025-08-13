@@ -3,6 +3,7 @@ import { Link, useRouter } from 'expo-router'
 import { useCallback, useState } from 'react'
 import {
   Dimensions,
+  type Insets,
   Modal,
   Platform,
   Pressable,
@@ -10,7 +11,7 @@ import {
   useWindowDimensions,
 } from 'react-native'
 import { PressableOpacity } from 'react-native-pressable-opacity'
-import AutolinkText from 'src/components/common/AutolinkText'
+import AutolinkText, { onMentionPressMethod } from 'src/components/common/AutolinkText'
 import ReadMore from 'src/components/common/ReadMore'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { enforceLen, openBrowserAsync, prettyCount } from 'src/utils'
@@ -180,7 +181,10 @@ export default function ProfileHeader({
         gap="$10"
       >
         <View>
-          <Pressable onPress={() => router.back()}>
+          <Pressable
+            onPress={() => router.back()}
+            hitSlop={{ left: 10, right: 26, top: 20, bottom: 10 }}
+          >
             <XStack alignItems="center" gap="$5">
               <Feather
                 name="chevron-left"
@@ -220,27 +224,31 @@ export default function ProfileHeader({
         <View>
           <XStack alignItems="center" gap="$5">
             {selfId == profile?.id ? (
-              <Button 
+              <PressableOpacity 
                 accessible={true}
                 accessibilityLabel="Share"
                 accessibilityHint="Share link to this profile"
                 accessibilityRole="button"
-                chromeless p="$0" size="$2" onPress={() => onShare()}>
-                <Feather name="share" size={23} color={theme.color?.val.default.val} />
-              </Button>
+                hitSlop={18} 
+                onPress={() => onShare()}
+              >
+                <Feather name="share" size={24} color={theme.color?.val.default.val} />
+              </PressableOpacity>
             ) : (
-              <Button 
+              <PressableOpacity 
                 accessible={true}
                 accessibilityLabel="Options"
                 accessibilityHint="Open options menu"
                 accessibilityRole="button"
-                chromeless p="$0" onPress={() => openMenu()}>
+                hitSlop={18} 
+                onPress={() => openMenu()}
+              >
                 <Feather
                   name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
                   size={26}
                   color={theme.color?.val.default.val}
                 />
-              </Button>
+              </PressableOpacity>
             )}
           </XStack>
         </View>
@@ -268,21 +276,25 @@ export default function ProfileHeader({
       </Text>
 
       <XStack alignItems="center" gap="$5">
-        <Button 
+        <PressableOpacity 
           accessible={true}
           accessibilityLabel="Share"
           accessibilityHint="Share link to this profile"
           accessibilityRole="button"
-          chromeless p="$0" size="$2" onPress={() => onShare()}>
+          hitSlop={12} 
+          onPress={() => onShare()}
+        >
           <Feather name="share" size={23} color={theme.color?.val.default.val} />
-        </Button>
-        <Link 
+        </PressableOpacity>
+        <PressableOpacity 
           accessible={true}
           accessibilityLabel="Settings"
           accessibilityRole="button"
-          href="/settings">
+          hitSlop={10}
+          onPress={() => router.push('/settings')}
+        >
           <Feather name="menu" size={30} color={theme.color?.val.default.val} />
-        </Link>
+        </PressableOpacity>
       </XStack>
     </XStack>
   )
@@ -326,7 +338,7 @@ export default function ProfileHeader({
             Followed by{' '}
           </Text>
           {top3.map((t, index) => (
-            <Link key={index} href={`/profile/${t.id}`} asChild>
+            <Link key={index} href={`/profile/${t.id}`}>
               <XStack>
                 <Text
                   fontWeight="bold"
@@ -351,7 +363,7 @@ export default function ProfileHeader({
               accessible={true}
               accessibilityLabel="Open profile"
               accessibilityRole="link"
-              href={`/profile/followers/${profile?.id}`} asChild>
+              href={`/profile/followers/${profile?.id}`}>
               <Text
                 fontSize="$3"
                 allowFontScaling={false}
@@ -378,12 +390,14 @@ export default function ProfileHeader({
             .replaceAll('\n\n', '\n')
             .replaceAll(/(<([^>]+)>)/gi, '')}
           onHashtagPress={onHashtagPress}
-          onMentionPress={onMentionPress}
+          onMentionPress={onMentionPressMethod(onMentionPress, profile.url)}
         />
       </ReadMore>
     ),
     [profile]
   )
+
+  const TabsHitSlop: Insets = { left: 25, right: 25, bottom: 12, top: 13 }
 
   return (
     <View flex={1} bg={theme.background?.val.default.val}>
@@ -429,7 +443,7 @@ export default function ProfileHeader({
         {isSelf ? <RenderSelfHeader /> : <RenderGuestHeader />}
 
         <XStack w="100%" justifyContent="space-between" alignItems="center" mt="$3">
-          <Pressable onPress={() => setModalVisible(true)}>
+          <Pressable onPress={() => setModalVisible(true)} hitSlop={4}>
             <View style={{ borderRadius: 100, overflow: 'hidden' }}>
               <Avatar
                 circular
@@ -463,12 +477,13 @@ export default function ProfileHeader({
             </YStack>
 
             {profile && profile.id ? (
-              <Link 
+              <PressableOpacity 
                 accessible={true}
                 accessibilityHint="Opens following list"
                 accessibilityRole="button"
-                href={`/profile/following/${profile?.id}`} 
-                asChild>
+                hitSlop={9}
+                onPress={() => router.push(`/profile/following/${profile?.id}`)}
+              >
                 <YStack alignItems="center" gap="$1">
                   <Text
                     fontWeight="bold"
@@ -486,7 +501,7 @@ export default function ProfileHeader({
                     Following
                   </Text>
                 </YStack>
-              </Link>
+              </PressableOpacity>
             ) : (
               <YStack alignItems="center" gap="$1">
                 <Text
@@ -508,12 +523,13 @@ export default function ProfileHeader({
             )}
 
             {profile && profile.id ? (
-              <Link 
+              <PressableOpacity 
                 accessible={true}
                 accessibilityHint="Opens followers list"
                 accessibilityRole="button"
-                href={`/profile/followers/${profile?.id}`} 
-                asChild>
+                hitSlop={9}
+                onPress={() => router.push(`/profile/followers/${profile?.id}`)}
+              >
                 <YStack alignItems="center" gap="$1">
                   <Text
                     fontWeight="bold"
@@ -531,7 +547,7 @@ export default function ProfileHeader({
                     Followers
                   </Text>
                 </YStack>
-              </Link>
+              </PressableOpacity>
             ) : (
               <YStack alignItems="center" gap="$1">
                 <Text
@@ -668,7 +684,9 @@ export default function ProfileHeader({
               accessible={true}
               accessibilityLabel="Go to profile feed"
               accessibilityRole="button"
-              onPress={() => gotoProfileFeed()}>
+              onPress={() => gotoProfileFeed()}
+              hitSlop={TabsHitSlop}
+            >
               <Feather name="list" size={20} color="#999" />
             </PressableOpacity>
 
@@ -676,7 +694,9 @@ export default function ProfileHeader({
               accessible={true}
               accessibilityLabel="Go to my liked posts"
               accessibilityRole="button"
-              onPress={() => gotoSelfLikes()}>
+              onPress={() => gotoSelfLikes()}
+              hitSlop={TabsHitSlop}
+            >
               <Feather name="heart" size={20} color="#999" />
             </PressableOpacity>
 
@@ -684,7 +704,9 @@ export default function ProfileHeader({
               accessible={true}
               accessibilityLabel="Go to my bookmarked posts"
               accessibilityRole="button"
-              onPress={() => gotoBookmarks()}>
+              onPress={() => gotoBookmarks()}
+              hitSlop={TabsHitSlop}
+            >
               <Feather name="bookmark" size={20} color="#999" />
             </PressableOpacity>
           </XStack>

@@ -38,7 +38,7 @@ export default function FeedHeader({ title = 'Home', user }) {
             accessibilityRole="button"
             href="/feeds/network" 
             asChild>
-            <Pressable>
+            <Pressable hitSlop={12}>
               <Feather name="globe" size={26} color={textColor} />
             </Pressable>
           </Link>
@@ -49,7 +49,7 @@ export default function FeedHeader({ title = 'Home', user }) {
             accessibilityRole="button"
             href="/" 
             asChild>
-            <Pressable>
+            <Pressable hitSlop={12}>
               <Feather name="home" size={26} color={textColor} />
             </Pressable>
           </Link>
@@ -60,7 +60,7 @@ export default function FeedHeader({ title = 'Home', user }) {
           accessibilityRole="button"
           href="/chats"
           asChild>
-          <Pressable>
+          <Pressable hitSlop={12}>
             <Feather name="mail" size={26} color={textColor} />
           </Pressable>
         </Link>
@@ -70,7 +70,7 @@ export default function FeedHeader({ title = 'Home', user }) {
           accessibilityRole="button"
           href="/search" 
           asChild>
-          <Pressable>
+          <Pressable hitSlop={12}>
             <Feather name="search" size={26} color={textColor} />
           </Pressable>
         </Link>
