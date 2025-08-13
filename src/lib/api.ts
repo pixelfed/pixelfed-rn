@@ -136,6 +136,13 @@ async function fetchPaginatedData(url: string) {
       'Content-Type': 'application/json',
     }),
   })
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => '')
+    throw new Error(
+      `HTTP ${response.status} ${response.statusText} - ${errorText || 'No response body'}`
+    )
+  }
   const data = await response.json()
 
   const linkHeader = response.headers.get('Link')

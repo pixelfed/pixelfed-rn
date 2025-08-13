@@ -154,16 +154,18 @@ export default function HomeScreen() {
   })
 
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<Status>) => (
-      <FeedPost
-        key={`homep-${item.id}`}
-        post={item}
-        user={user}
-        onOpenComments={() => onOpenComments(item.id)}
-        onDeletePost={() => onDeletePost(item.id)}
-        onShare={() => onShare(item.id, item.reblogged)}
-      />
-    ),
+    ({ item }: ListRenderItemInfo<Status>) =>
+      item &&
+      item.id && (
+        <FeedPost
+          key={`homep-${item.id}`}
+          post={item}
+          user={user}
+          onOpenComments={() => onOpenComments(item.id)}
+          onDeletePost={() => onDeletePost(item.id)}
+          onShare={() => onShare(item.id, item.reblogged)}
+        />
+      ),
     [user, onOpenComments, onDeletePost, onShare]
   )
 
@@ -189,19 +191,25 @@ export default function HomeScreen() {
     getNextPageParam: (lastPage) => lastPage.nextPage,
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
   })
+
   if (isFetching && !isFetchingNextPage && !isFetchingPreviousPage && !isRefetching) {
     return (
       <View flexGrow={1} mt="$5" py="$5" justifyContent="center" alignItems="center">
-        <ActivityIndicator color={'#000'} />
+        <ActivityIndicator color={theme.color?.val.default.val} />
       </View>
     )
   }
 
-  if (isError && error) {
+  if (error || isError) {
     return (
-      <View flexGrow={1}>
-        <Text>Error</Text>
-      </View>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.background.val }]}
+        edges={['top']}
+      >
+        <Stack.Screen options={{ headerShown: false }} />
+        <FeedHeader title="Pixelfed" user={user} />
+        <ErrorFeed />
+      </SafeAreaView>
     )
   }
 
@@ -220,7 +228,7 @@ export default function HomeScreen() {
         refreshing={isRefetching}
         onRefresh={refetch}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={status === 'success' ? <EmptyFeed /> : <ErrorFeed />}
+        ListEmptyComponent={status === 'success' ? <EmptyFeed /> : null}
         onViewableItemsChanged={onViewRef}
         viewabilityConfig={viewConfigRef.current}
         onEndReached={() => {
@@ -231,6 +239,9 @@ export default function HomeScreen() {
       />
     )
   }
+
+  const pages = data?.pages ?? []
+  const feedData = pages.flatMap((page) => page?.data ?? [])
 
   return (
     <SafeAreaView
@@ -253,7 +264,7 @@ export default function HomeScreen() {
           </XStack>
         </View>
       ) : null}
-      {renderFeed(data?.pages.flatMap((page) => page.data))}
+      {renderFeed(feedData)}
     </SafeAreaView>
   )
 }
