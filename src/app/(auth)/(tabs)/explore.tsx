@@ -55,7 +55,9 @@ export default function DiscoverScreen() {
         post &&
         post.id &&
         post.media_attachments &&
-        post.media_attachments.length > 0
+        post.media_attachments.length > 0 &&
+        post.sensitive === false &&
+        post.content_text.toLowerCase().includes('#nsfw') === false
       ) {
         if (!uniquePosts.has(post.id)) {
           uniquePosts.set(post.id, post)
