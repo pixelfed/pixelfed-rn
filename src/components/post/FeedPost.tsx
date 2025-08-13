@@ -331,7 +331,7 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
   const theme = useTheme()
   const themeName = useThemeName()
   const dotColor = themeName == 'dark' ? 'rgba(255, 255, 255, 0.20)' : 'rgba(0,0,0,0.11)'
-  const mediaList = post.media_attachments.slice(0, 10)
+  const mediaList = post.media_attachments.slice(0, 25)
 
   if (post.sensitive && !showSensitive) {
     return (
