@@ -1,43 +1,79 @@
 import { Feather } from '@expo/vector-icons'
 import { useQuery } from '@tanstack/react-query'
 import { Stack } from 'expo-router'
-import { ActivityIndicator, FlatList } from 'react-native'
+import { ActivityIndicator, Alert, FlatList, Pressable } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import ImageComponent from 'src/components/ImageComponent'
-import { getBlocks } from 'src/lib/api'
+import { getBlocks, unblockProfileById } from 'src/lib/api'
 import { Separator, Text, useTheme, View, XStack, YStack } from 'tamagui'
 
 export default function Page() {
   const theme = useTheme()
 
+  const {
+    isPending,
+    isError,
+    data,
+    error,
+    refetch: refetchBlocks,
+  } = useQuery({
+    queryKey: ['blockedAccounts'],
+    queryFn: getBlocks,
+  })
+
+  const confirmUnblock = (item: any) => {
+    Alert.alert('Unblock User', `Do you really want to unblock ${item.acct}?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Unblock',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await unblockProfileById(item.id)
+            await refetchBlocks({ throwOnError: true })
+          } catch (error) {
+            console.log('unblocking failed', { user_id: item.id, error })
+            Alert.alert(`Failed to unblock: ${error?.message}`)
+          }
+        },
+      },
+    ])
+  }
+
   const RenderItem = ({ item }) => (
-    <XStack
-      px="$5"
-      py="$3"
-      bg={theme.background.val.secondary.val}
-      alignItems="center"
-      gap="$3"
-      flexWrap="wrap"
-    >
-      <ImageComponent
-        source={{ uri: item?.avatar }}
-        style={{
-          width: 40,
-          height: 40,
-          borderRadius: 40,
-          borderWidth: 1,
-          borderColor: '#ccc',
-        }}
-      />
-      <Text
-        fontWeight={'bold'}
-        flexShrink={1}
-        maxWidth={'80%'}
-        color={theme.color.val.default.val}
-      >
-        {item.acct}
-      </Text>
-    </XStack>
+    <Pressable onPress={() => confirmUnblock(item)}>
+      {({ hovered, pressed }) => (
+        <XStack
+          bg={hovered || pressed ? theme.background?.val.secondary.val : undefined}
+          px="$5"
+          alignItems="center"
+          justifyContent="flex-start"
+          gap="$3"
+          py="$2.5"
+          size="$6"
+          flexWrap="wrap"
+        >
+          <ImageComponent
+            source={{ uri: item?.avatar }}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 40,
+              borderWidth: 1,
+              borderColor: '#ccc',
+            }}
+          />
+          <Text
+            fontWeight={'bold'}
+            flexShrink={1}
+            maxWidth={'80%'}
+            color={theme.color.val.default.val}
+          >
+            {item.acct}
+          </Text>
+        </XStack>
+      )}
+    </Pressable>
   )
 
   const RenderSeparator = () => (
@@ -62,11 +98,6 @@ export default function Page() {
       </YStack>
     </View>
   )
-
-  const { isPending, isError, data, error } = useQuery({
-    queryKey: ['blockedAccounts'],
-    queryFn: getBlocks,
-  })
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={['bottom']}>
