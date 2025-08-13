@@ -33,24 +33,24 @@ export default function FeedHeader({ title = 'Home', user }) {
       <XStack gap="$5">
         {title === 'Pixelfed' ? (
           <Link href="/feeds/network" asChild>
-            <Pressable>
+            <Pressable hitSlop={12}>
               <Feather name="globe" size={26} color={textColor} />
             </Pressable>
           </Link>
         ) : (
           <Link href="/" asChild>
-            <Pressable>
+            <Pressable hitSlop={12}>
               <Feather name="home" size={26} color={textColor} />
             </Pressable>
           </Link>
         )}
         <Link href="/chats" asChild>
-          <Pressable>
+          <Pressable hitSlop={12}>
             <Feather name="mail" size={26} color={textColor} />
           </Pressable>
         </Link>
         <Link href="/search" asChild>
-          <Pressable>
+          <Pressable hitSlop={12}>
             <Feather name="search" size={26} color={textColor} />
           </Pressable>
         </Link>

@@ -226,7 +226,7 @@ const PostHeader = React.memo(
               </Pressable>
             </Link>
           </View>
-          <Pressable onPress={() => onOpenMenu()}>
+          <Pressable onPress={() => onOpenMenu()} hitSlop={{ top: 10, bottom: 10 }}>
             <View px="$3">
               <Feather
                 name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
@@ -521,36 +521,41 @@ const PostActions = React.memo(
                   <ActivityIndicator color={theme.color?.val.default.val} />
                 ) : null}
                 {!isLikePending && likesCount ? (
-                  <Link href={`/post/likes/${post.id}`}>
-                    <Text
-                      fontWeight={'bold'}
-                      allowFontScaling={false}
-                      color={theme.color?.val.secondary.val}
-                    >
-                      {prettyCount(likesCount)}
-                    </Text>
+                  <Link href={`/post/likes/${post.id}`} asChild>
+                    <Pressable hitSlop={{ left: 5, right: 20, top: 12, bottom: 12 }}>
+                      <Text
+                        fontWeight={'bold'}
+                        allowFontScaling={false}
+                        color={theme.color?.val.secondary.val}
+                      >
+                        {prettyCount(likesCount)}
+                      </Text>
+                    </Pressable>
                   </Link>
                 ) : null}
               </XStack>
-              <XStack justifyContent="center" alignItems="center" gap="$2">
-                <Pressable onPress={() => onOpenComments()}>
+              <Pressable
+                onPress={() => onOpenComments()}
+                hitSlop={{ top: 4, bottom: 4, left: 4, right: commentsCount ? 4 : 25 }}
+              >
+                <XStack justifyContent="center" alignItems="center" gap="$2">
                   <Feather
                     name="message-circle"
                     size={30}
                     color={theme.color?.val.default.val}
                   />
-                </Pressable>
-                {commentsCount ? (
-                  <Text
-                    fontWeight={'bold'}
-                    allowFontScaling={false}
-                    fontSize="$2"
-                    color={theme.color?.val.secondary.val}
-                  >
-                    {prettyCount(commentsCount)}
-                  </Text>
-                ) : null}
-              </XStack>
+                  {commentsCount ? (
+                    <Text
+                      fontWeight={'bold'}
+                      allowFontScaling={false}
+                      fontSize="$2"
+                      color={theme.color?.val.secondary.val}
+                    >
+                      {prettyCount(commentsCount)}
+                    </Text>
+                  ) : null}
+                </XStack>
+              </Pressable>
             </XStack>
             <XStack gap="$4">
               {post.visibility === 'public' ? (
@@ -558,6 +563,7 @@ const PostActions = React.memo(
                   <PressableOpacity
                     onPress={() => handleOnShare()}
                     style={{ marginRight: 5 }}
+                    hitSlop={6}
                   >
                     <Feather
                       name="refresh-cw"
@@ -566,14 +572,16 @@ const PostActions = React.memo(
                     />
                   </PressableOpacity>
                   {sharesCount ? (
-                    <Link href={`/post/shares/${post.id}`}>
-                      <Text
-                        fontWeight={'bold'}
-                        allowFontScaling={false}
-                        color={theme.color?.val.secondary.val}
-                      >
-                        {prettyCount(shareCountCache)}
-                      </Text>
+                    <Link href={`/post/shares/${post.id}`} asChild>
+                      <Pressable hitSlop={{ left: 5, right: 20, top: 12, bottom: 12 }}>
+                        <Text
+                          fontWeight={'bold'}
+                          allowFontScaling={false}
+                          color={theme.color?.val.secondary.val}
+                        >
+                          {prettyCount(shareCountCache)}
+                        </Text>
+                      </Pressable>
                     </Link>
                   ) : null}
                 </XStack>
@@ -582,7 +590,7 @@ const PostActions = React.memo(
                 <ActivityIndicator color={theme.color?.val.default.val} />
               ) : null}
               {!isBookmarkPending && !isLikeFeed ? (
-                <PressableOpacity onPress={() => handleBookmarkAction()}>
+                <PressableOpacity onPress={() => handleBookmarkAction()} hitSlop={4}>
                   <XStack gap="$4">
                     {hasBookmarked ? (
                       <Ionicons
@@ -914,13 +922,13 @@ const TextPost = React.memo(
                       <Feather
                         name="message-circle"
                         size={20}
-                        color={theme.color.val.default.val}
+                        color={theme.color?.val.default.val}
                       />
                     </Pressable>
                     <Text
                       fontSize={13}
                       fontWeight="bold"
-                      color={theme.color.val.secondary.val}
+                      color={theme.color?.val.secondary.val}
                     >
                       {prettyCount(commentsCount)}
                     </Text>
@@ -1091,7 +1099,7 @@ const FeedPost = React.memo(
                   likedBy={post?.liked_by}
                   sharesCount={post?.reblogs_count}
                   showAltText={showAltText}
-                  commentsCount={post.replies_count}
+                  commentsCount={post.reply_count}
                   handleLike={handleLikeAction}
                   onOpenComments={() => onOpenComments(post?.id)}
                   onShare={() => onShare(post?.id)}
@@ -1101,7 +1109,7 @@ const FeedPost = React.memo(
                   postId={post.id}
                   username={post.account?.username}
                   caption={post.content}
-                  commentsCount={post.replies_count}
+                  commentsCount={post.reply_count}
                   createdAt={post.created_at}
                   tags={post.tags}
                   visibility={post.visibility}
@@ -1129,7 +1137,7 @@ const FeedPost = React.memo(
             isLikePending={isLikePending}
             likesCount={post?.favourites_count}
             caption={post.content}
-            commentsCount={post.replies_count}
+            commentsCount={post.reply_count}
             createdAt={post.created_at}
             onOpenMenu={() => handlePresentModalPress()}
             onHashtagPress={(tag) => onGotoHashtag(tag)}

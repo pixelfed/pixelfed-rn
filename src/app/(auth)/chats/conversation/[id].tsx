@@ -272,7 +272,10 @@ export default function Page() {
             isReloading ? (
               <ActivityIndicator color={theme.color?.val.default.val} />
             ) : (
-              <Pressable onPress={() => reloadChat()}>
+              <Pressable
+                onPress={() => reloadChat()}
+                hitSlop={{ left: 10, right: 16, top: 10, bottom: 9 }}
+              >
                 <Feather
                   name="refresh-cw"
                   size={25}

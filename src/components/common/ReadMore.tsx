@@ -1,5 +1,6 @@
 import React, { type ReactNode } from 'react'
-import { type LayoutChangeEvent, StyleSheet, Text, View } from 'react-native'
+import { type Insets, type LayoutChangeEvent, StyleSheet, Text, View } from 'react-native'
+import { PressableOpacity } from 'react-native-pressable-opacity'
 
 const styles = StyleSheet.create({
   fullTextWrapper: {
@@ -10,11 +11,15 @@ const styles = StyleSheet.create({
   },
   viewMoreText: {
     color: 'gray',
+    fontWeight: 'bold',
+    paddingVertical: 3,
   },
   transparent: {
     opacity: 0,
   },
 })
+
+const moreButtonHitSlop: Insets = { left: 15, right: 15, top: 6, bottom: 7 }
 
 interface ReadMoreProps {
   numberOfLines: number
@@ -75,15 +80,19 @@ class ReadMore extends React.Component<ReadMoreProps> {
   }
 
   renderViewMore = () => (
-    <Text style={styles.viewMoreText} onPress={this.onPressMore}>
-      View More
-    </Text>
+    <View style={{ flexDirection: 'row' }}>
+      <PressableOpacity onPress={this.onPressMore} hitSlop={moreButtonHitSlop}>
+        <Text style={styles.viewMoreText}>View More</Text>
+      </PressableOpacity>
+    </View>
   )
 
   renderViewLess = () => (
-    <Text style={styles.viewMoreText} onPress={this.onPressLess}>
-      View Less
-    </Text>
+    <View style={{ flexDirection: 'row' }}>
+      <PressableOpacity onPress={this.onPressLess} hitSlop={moreButtonHitSlop}>
+        <Text style={styles.viewMoreText}>View Less</Text>
+      </PressableOpacity>
+    </View>
   )
 
   renderFooter = () => {
