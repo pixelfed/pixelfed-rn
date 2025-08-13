@@ -1,0 +1,30 @@
+name: Jest (unit tests)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  unit_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v3
+        with:
+          lfs: true
+
+      - name: 🏗 Enable corepack
+        run: corepack enable
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: Run jest unit tests
+        run: npx jest

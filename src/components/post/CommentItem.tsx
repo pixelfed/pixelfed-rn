@@ -8,7 +8,7 @@ import {
   prettyCount,
 } from 'src/utils'
 import { Text, useTheme, View, XStack, YStack } from 'tamagui'
-import AutolinkText from '../common/AutolinkText'
+import AutolinkText, { onMentionPressMethod } from '../common/AutolinkText'
 import ReadMore from '../common/ReadMore'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
@@ -98,7 +98,10 @@ export default function CommentItem({
                 <ReadMore numberOfLines={3}>
                   <AutolinkText
                     text={captionText}
-                    onMentionPress={gotoUsernameProfile}
+                    onMentionPress={onMentionPressMethod(
+                      gotoUsernameProfile,
+                      item.account.url
+                    )}
                     onHashtagPress={gotoHashtag}
                   />
                 </ReadMore>

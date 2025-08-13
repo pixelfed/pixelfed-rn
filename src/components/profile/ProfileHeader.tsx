@@ -11,7 +11,7 @@ import {
   useWindowDimensions,
 } from 'react-native'
 import { PressableOpacity } from 'react-native-pressable-opacity'
-import AutolinkText from 'src/components/common/AutolinkText'
+import AutolinkText, { onMentionPressMethod } from 'src/components/common/AutolinkText'
 import ReadMore from 'src/components/common/ReadMore'
 import UserAvatar from 'src/components/common/UserAvatar'
 import { enforceLen, openBrowserAsync, prettyCount } from 'src/utils'
@@ -361,7 +361,7 @@ export default function ProfileHeader({
             .replaceAll('\n\n', '\n')
             .replaceAll(/(<([^>]+)>)/gi, '')}
           onHashtagPress={onHashtagPress}
-          onMentionPress={onMentionPress}
+          onMentionPress={onMentionPressMethod(onMentionPress, profile.url)}
         />
       </ReadMore>
     ),
