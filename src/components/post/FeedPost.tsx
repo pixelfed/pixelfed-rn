@@ -194,7 +194,8 @@ const PostHeader = React.memo(
               accessibilityRole="link"
               accessibilityHint="Tap to go to profile"
               href={`/profile/${userId}`} 
-              asChild>
+              asChild
+            >
               <Pressable>
                 <XStack gap="$3" alignItems="center" flexGrow={1}>
                   <ImageComponent
@@ -559,7 +560,7 @@ const PostActions = React.memo(
                 onPress={() => onOpenComments()}
                 hitSlop={{ top: 4, bottom: 4, left: 4, right: commentsCount ? 4 : 25 }}
               >
-                  <XStack justifyContent="center" alignItems="center" gap="$2">
+                <XStack justifyContent="center" alignItems="center" gap="$2">
                   <Feather
                     name="message-circle"
                     size={30}
@@ -624,7 +625,13 @@ const PostActions = React.memo(
                 <ActivityIndicator color={theme.color?.val.default.val} />
               ) : null}
               {!isBookmarkPending && !isLikeFeed ? (
-                <PressableOpacity onPress={() => handleBookmarkAction()} hitSlop={4}>
+                <PressableOpacity 
+                  accessible={true}
+                  accessibilityLabel="Bookmark post" 
+                  accessibilityRole="button"
+                  onPress={() => handleBookmarkAction()} 
+                  hitSlop={4}
+                >
                   <XStack gap="$4">
                     {hasBookmarked ? (
                       <Ionicons
@@ -647,7 +654,8 @@ const PostActions = React.memo(
                   accessible={true}
                   accessibilityLabel="Show alt text"
                   accessibilityRole="button"
-                  onPress={() => onShowAlt()}>
+                  onPress={() => onShowAlt()}
+                >
                   <XStack
                     bg={theme.color?.val.default.val}
                     px="$3"
@@ -842,7 +850,7 @@ const TextPost = React.memo(
     const captionText = htmlToTextWithLineBreaks(caption)
     const theme = useTheme()
 
-    return ( // todo: add labels for buttons on these text posts.
+    return (
       <SectionTopBorder>
         <XStack alignItems="flex-start" gap="$3" paddingVertical="$3">
           <Link href={`/profile/${userId}`} asChild>
@@ -904,7 +912,12 @@ const TextPost = React.memo(
                 </Text>
               </XStack>
 
-              <Pressable onPress={() => onOpenMenu()}>
+              <Pressable 
+                accessible={true}
+                accessibilityLabel="Options" 
+                accessibilityRole="button"
+                onPress={() => onOpenMenu()}
+              >
                 <View px="$3">
                   <Feather
                     name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
@@ -948,7 +961,13 @@ const TextPost = React.memo(
                       <ActivityIndicator color={theme.color.val.default.val} />
                     ) : null}
                     {!isLikePending && likesCount ? (
-                      <Link href={`/post/likes/${post.id}`}>
+                      <Link 
+                        accessible={true}
+                        accessibilityLabel=`${prettyCount(likesCount)} likes`
+                        accessibilityRole="link"
+                        accessibilityHint="Tap to show who liked this post"
+                        href={`/post/likes/${post.id}`}
+                      >
                         <Text
                           fontWeight={'bold'}
                           allowFontScaling={false}
@@ -962,7 +981,12 @@ const TextPost = React.memo(
                   </XStack>
 
                   <XStack gap="$2" alignItems="center">
-                    <Pressable onPress={() => onOpenComments()}>
+                    <Pressable 
+                      accessible={true}
+                      accessibilityLabel="Comments" 
+                      accessibilityRole="button"
+                      onPress={() => onOpenComments()}
+                    >
                       <Feather
                         name="message-circle"
                         size={20}
@@ -970,6 +994,9 @@ const TextPost = React.memo(
                       />
                     </Pressable>
                     <Text
+                      accessible={true}
+                      accessibilityLabel=`${prettyCount(commentsCount)} comments`
+                      accessibilityRole="text"
                       fontSize={13}
                       fontWeight="bold"
                       color={theme.color?.val.secondary.val}

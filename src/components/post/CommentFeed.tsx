@@ -83,7 +83,8 @@ const CommentItem = ({
                 accessible={true}
                 accessibilityLabel="Avatar" 
                 accessibilityRole="image"
-                onPress={() => gotoProfile(item.account.id)}>
+                onPress={() => gotoProfile(item.account.id)}
+              >
                 <ImageComponent
                   source={{
                     uri: item.account.avatar,
@@ -139,7 +140,8 @@ const CommentItem = ({
                     accessible={true}
                     accessibilityLabel="Reply" 
                     accessibilityRole="button"
-                    onPress={() => onReply(item)}>
+                    onPress={() => onReply(item)}
+                  >
                     <Text fontWeight="bold" fontSize="$3" color="$gray9">
                       Reply
                     </Text>
@@ -193,7 +195,8 @@ const CommentItem = ({
               accessible={true}
               accessibilityLabel="Like comment" 
               accessibilityRole="button"
-              onPress={() => onLike(item)}>
+              onPress={() => onLike(item)}
+            >
               <YStack justifyContent="center" alignItems="center" gap="$1">
                 {item.favourited ? (
                   <Ionicons name="heart" color="red" size={20} />
@@ -562,7 +565,8 @@ export default function CommentFeed({
               accessible={true}
               accessibilityLabel="Toggle posting level" // what words to use here? 
               accessibilityRole="button"
-              onPress={() => toggleScope()}>
+              onPress={() => toggleScope()}
+            >
               <Text
                 allowFontScaling={false}
                 color="$gray10"

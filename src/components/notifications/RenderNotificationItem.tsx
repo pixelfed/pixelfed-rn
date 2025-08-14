@@ -45,7 +45,8 @@ const RenderItem = ({ item }: RenderItemProps) => {
               accessibilityRole="button"
               accessibilityHint="Tap to open profile page"
               href={`/profile/${item.account.id}`} 
-              asChild>
+              asChild
+            >
               <Pressable>
                 <UserAvatar url={item.account.avatar} />
               </Pressable>
@@ -73,7 +74,8 @@ const RenderItem = ({ item }: RenderItemProps) => {
                   accessibilityRole="link"
                   accessibilityHint="Tap to open post"
                   href={`/post/${item.status.id}`} 
-                  asChild>
+                  asChild
+                >
                   <Text
                     fontSize="$2"
                     color={theme.colorHover.val.active.val}

@@ -363,7 +363,8 @@ export default function ProfileHeader({
               accessible={true}
               accessibilityLabel="Open profile"
               accessibilityRole="link"
-              href={`/profile/followers/${profile?.id}`}>
+              href={`/profile/followers/${profile?.id}`}
+            >
               <Text
                 fontSize="$3"
                 allowFontScaling={false}
@@ -641,7 +642,8 @@ export default function ProfileHeader({
               accessible={true}
               accessibilityLabel="User's website"
               accessibilityRole="link"
-              onPress={() => _openWebsite()}>
+              onPress={() => _openWebsite()}
+            >
               <XStack alignItems="center" gap="$1">
                 <Text
                   fontSize="$5"
@@ -675,10 +677,11 @@ export default function ProfileHeader({
               accessible={true}
               accessibilityLabel="Photo grid view"
               accessibilityRole="tab"
-              accessibilityState="{{ selected:true }}"
+              accessibilityState={{ selected: true }}
               name="grid" 
               size={20} 
-              color={theme.color?.val.default.val} />
+              color={theme.color?.val.default.val} 
+            />
 
             <PressableOpacity 
               accessible={true}
@@ -722,7 +725,8 @@ export default function ProfileHeader({
                 accessible={true}
                 accessibilityLabel="Go to profile feed"
                 accessibilityRole="button"
-                onPress={() => gotoProfileFeed()}>
+                onPress={() => gotoProfileFeed()}
+              >
                 <Feather name="list" size={20} color="#999" />
               </PressableOpacity>
             </XStack>

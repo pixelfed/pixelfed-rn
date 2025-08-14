@@ -56,7 +56,8 @@ export default function CommentItem({
                   accessibilityRole="image"
                   accessibilityHint="Tap to go to profile"
                   onPress={() => gotoProfile(item.account.id)}
-                  hitSlop={8}>
+                  hitSlop={8}
+                >
                   <ImageComponent
                     source={{
                       uri: item.account.avatar,

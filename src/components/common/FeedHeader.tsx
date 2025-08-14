@@ -37,7 +37,8 @@ export default function FeedHeader({ title = 'Home', user }) {
             accessibilityLabel="Open local feed" // UI calls it Public Feed, but it's actually Local. Other changes required?
             accessibilityRole="button"
             href="/feeds/network" 
-            asChild>
+            asChild
+          >
             <Pressable hitSlop={12}>
               <Feather name="globe" size={26} color={textColor} />
             </Pressable>
@@ -48,7 +49,8 @@ export default function FeedHeader({ title = 'Home', user }) {
             accessibilityLabel="Home"
             accessibilityRole="button"
             href="/" 
-            asChild>
+            asChild
+          >
             <Pressable hitSlop={12}>
               <Feather name="home" size={26} color={textColor} />
             </Pressable>
@@ -59,7 +61,8 @@ export default function FeedHeader({ title = 'Home', user }) {
           accessibilityLabel="Direct messages"
           accessibilityRole="button"
           href="/chats"
-          asChild>
+          asChild
+        >
           <Pressable hitSlop={12}>
             <Feather name="mail" size={26} color={textColor} />
           </Pressable>
@@ -69,7 +72,8 @@ export default function FeedHeader({ title = 'Home', user }) {
           accessibilityLabel="Search"
           accessibilityRole="button"
           href="/search" 
-          asChild>
+          asChild
+        >
           <Pressable hitSlop={12}>
             <Feather name="search" size={26} color={textColor} />
           </Pressable>
