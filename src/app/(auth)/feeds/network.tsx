@@ -41,13 +41,13 @@ export function ErrorBoundary(props: ErrorBoundaryProps) {
         backgroundColor: theme.background?.val.default.val,
       }}
     >
-      <Text fontSize="$8" allowFontScaling={false} color="red">
+      <Text fontSize="$8" allowFontScaling={false} color={theme.color?.val.default.val}>
         Something went wrong!
       </Text>
       <Text color={theme.color?.val.default.val}>{props.error?.message}</Text>
       <Button
-        theme="blue"
         size="$4"
+        color={theme.color?.val.default.val}
         bg={theme.colorHover.val.hover.val}
         onPress={props.retry}
       >
@@ -57,7 +57,7 @@ export function ErrorBoundary(props: ErrorBoundaryProps) {
   )
 }
 
-export default function HomeScreen() {
+export default function NetworkScreen() {
   const router = useRouter()
   const navigation = useNavigation()
   const flatListRef = useRef(null)
@@ -147,6 +147,7 @@ export default function HomeScreen() {
       item &&
       item.id && (
         <FeedPost
+          key={`localp-${item.id}`}
           post={item}
           user={user}
           onOpenComments={() => onOpenComments(item.id)}
@@ -195,11 +196,15 @@ export default function HomeScreen() {
     )
   }
 
-  if (isError && error) {
+  if (error || isError) {
     return (
-      <View flexGrow={1}>
-        <Text>Error</Text>
-      </View>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.background.val }]}
+        edges={['top']}
+      >
+        <Stack.Screen options={{ headerShown: false }} />
+        <ErrorFeed />
+      </SafeAreaView>
     )
   }
 
@@ -218,7 +223,7 @@ export default function HomeScreen() {
         refreshing={isRefetching}
         onRefresh={refetch}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={status === 'success' ? <EmptyFeed /> : <ErrorFeed />}
+        ListEmptyComponent={status === 'success' ? <EmptyFeed /> : null}
         onViewableItemsChanged={onViewRef}
         viewabilityConfig={viewConfigRef.current}
         onEndReached={() => {
@@ -234,6 +239,9 @@ export default function HomeScreen() {
     )
   }
 
+  const pages = data?.pages ?? []
+  const feedData = pages.flatMap((page) => page?.data ?? [])
+
   return (
     <SafeAreaView style={styles.container} edges={['left']}>
       <Stack.Screen
@@ -242,7 +250,7 @@ export default function HomeScreen() {
           title: 'Public feed',
         }}
       />
-      {renderFeed(data?.pages.flatMap((page) => page.data))}
+      {renderFeed(feedData)}
     </SafeAreaView>
   )
 }
