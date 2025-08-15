@@ -54,7 +54,6 @@ export default function CommentItem({
                   accessible={true}
                   accessibilityLabel="Avatar" 
                   accessibilityRole="image"
-                  accessibilityHint="Tap to go to profile"
                   onPress={() => gotoProfile(item.account.id)}
                   hitSlop={8}
                 >
@@ -124,7 +123,13 @@ export default function CommentItem({
                     </Text>
                   </Pressable>
                   {item.favourites_count > 0 && (
-                    <Pressable onPress={() => onShowLikes(item.id)} hitSlop={7}>
+                    <Pressable 
+                      accessible={true}
+                      accessibilityLabel={`${prettyCount(item?.favourites_count)} likes`}
+                      accessibilityRole="link"
+                      onPress={() => onShowLikes(item.id)} 
+                      hitSlop={7}
+                    >
                       <Text fontSize="$3" color={theme.color?.val.secondary.val}>
                         {likeCountLabel(item?.favourites_count)}
                       </Text>
@@ -153,7 +158,11 @@ export default function CommentItem({
                         <ActivityIndicator />
                       </XStack>
                     ) : (
-                      <Pressable onPress={() => onLoadChildren(item.id, level + 1)}>
+                      <Pressable 
+                        accessible={true}
+                        accessibilityRole="button"
+                        onPress={() => onLoadChildren(item.id, level + 1)}
+                      >
                         <XStack gap="$2" alignItems="center">
                           <View
                             w={20}
@@ -195,7 +204,11 @@ export default function CommentItem({
                     />
                   )}
                   {item.favourites_count > 0 && (
-                    <Text fontSize="$3" color={theme.color?.val.tertiary.val}>
+                    <Text 
+                      aria-label={`${prettyCount(item.favourites_count)} likes`}
+                      fontSize="$3" 
+                      color={theme.color?.val.tertiary.val}
+                    >
                       {prettyCount(item.favourites_count)}
                     </Text>
                   )}
