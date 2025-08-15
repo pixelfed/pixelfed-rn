@@ -93,6 +93,7 @@ export default function NotificationsScreen() {
       >
         <Tabs.List flex={1}>
           <Tabs.Tab
+            aria-label="All" 
             value="all"
             px="$0"
             flexGrow={1}
@@ -113,6 +114,7 @@ export default function NotificationsScreen() {
           </Tabs.Tab>
           <Separator vertical borderColor={theme.borderColor?.val.default.val} />
           <Tabs.Tab
+            aria-label="Mentions" 
             value="mentions"
             px="$0"
             flexGrow={1}
@@ -130,6 +132,7 @@ export default function NotificationsScreen() {
           </Tabs.Tab>
           <Separator vertical borderColor={theme.borderColor?.val.default.val} />
           <Tabs.Tab
+            aria-label="Likes" 
             value="likes"
             px="$0"
             flexGrow={1}
@@ -147,6 +150,7 @@ export default function NotificationsScreen() {
           </Tabs.Tab>
           <Separator vertical borderColor={theme.borderColor?.val.default.val} />
           <Tabs.Tab
+            aria-label="Follows" 
             value="follows"
             px="$0"
             flexGrow={1}
@@ -164,6 +168,7 @@ export default function NotificationsScreen() {
           </Tabs.Tab>
           <Separator vertical borderColor={theme.borderColor?.val.default.val} />
           <Tabs.Tab
+            aria-label="Reblogs" 
             value="reblogs"
             px="$0"
             flexGrow={1}

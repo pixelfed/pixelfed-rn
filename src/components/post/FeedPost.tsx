@@ -535,7 +535,7 @@ const PostActions = React.memo(
                 {!isLikePending && likesCount ? (
                   <Link 
                     accessible={true}
-                    accessibilityLabel=`${prettyCount(likesCount)} likes`
+                    accessibilityLabel="prettyCount(likesCount) likes"
                     accessibilityRole="link"
                     accessibilityHint="Tap to show who liked this post" // is it good to have this? probably need at least something to indicate what clicking it does.
                     href={`/post/likes/${post.id}`}
@@ -569,7 +569,7 @@ const PostActions = React.memo(
                   {commentsCount ? (
                     <Text
                       accessible={true}
-                      accessibilityLabel=`${prettyCount(commentsCount)} comments`
+                      accessibilityLabel="prettyCount(commentsCount) comments"
                       accessibilityRole="text"
                       fontWeight={'bold'}
                       allowFontScaling={false}
@@ -602,7 +602,7 @@ const PostActions = React.memo(
                   {sharesCount ? (
                     <Link
                       accessible={true}
-                      accessibilityLabel=`Reposted ${prettyCount(shareCountCache)} times`
+                      accessibilityLabel="Reposted ${prettyCount(shareCountCache)} times"
                       accessibilityRole="link"
                       accessibilityHint="Tap to show who reposted this" // same concern as above
                       href={`/post/shares/${post.id}`}
@@ -963,7 +963,7 @@ const TextPost = React.memo(
                     {!isLikePending && likesCount ? (
                       <Link 
                         accessible={true}
-                        accessibilityLabel=`${prettyCount(likesCount)} likes`
+                        accessibilityLabel="prettyCount(likesCount) likes"
                         accessibilityRole="link"
                         accessibilityHint="Tap to show who liked this post"
                         href={`/post/likes/${post.id}`}
@@ -995,7 +995,7 @@ const TextPost = React.memo(
                     </Pressable>
                     <Text
                       accessible={true}
-                      accessibilityLabel=`${prettyCount(commentsCount)} comments`
+                      accessibilityLabel="prettyCount(commentsCount) comments"
                       accessibilityRole="text"
                       fontSize={13}
                       fontWeight="bold"

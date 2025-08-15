@@ -58,7 +58,13 @@ export default function Page() {
 
   const HeaderRight = () => (
     <XStack gap="$3">
-      <Link href="/chats/search" asChild>
+      <Link 
+        accessible={true}
+        accessibilityLabel="New chat" 
+        accessibilityRole="button"
+        href="/chats/search"
+        asChild
+      >
         <PressableOpacity hitSlop={10}>
           <Feather name="plus" size={25} color="#0091ff" />
         </PressableOpacity>
@@ -97,7 +103,12 @@ export default function Page() {
     }
     return (
       <View p="$3" bg={theme.background?.val.default.val}>
-        <Link href={`/chats/conversation/${item.accounts[0].id}`}>
+        <Link 
+          accessible={true}
+          accessibilityLabel={item.accounts[0].acct} // todo: read all content properly 
+          accessibilityRole="button"
+          href={`/chats/conversation/${item.accounts[0].id}`}
+        >
           <XStack alignItems="center" gap="$3">
             <UserAvatar url={item.accounts[0].avatar} size="$3" />
 

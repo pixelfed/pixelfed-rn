@@ -307,6 +307,8 @@ export default function DiscoverScreen() {
           headerBackTitle: 'Back',
           headerRight: () => (
             <Pressable
+              accessible={true} 
+              accessibilityLabel="Search" 
               onPress={handleSearchPress}
               style={{ marginRight: 10 }}
               hitSlop={10}
