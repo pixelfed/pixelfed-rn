@@ -372,6 +372,12 @@ export async function getHashtagRelated(id: string) {
   return await fetchPaginatedData(url)
 }
 
+export async function getMutualFollowers() {
+  const instance = Storage.getString('app.instance')
+  const url = `https://${instance}/api/v1.1/direct/compose/mutuals`
+  return await fetchData(url)
+}
+
 export async function getConversations({ pageParam = false }) {
   const _instance = Storage.getString('app.instance')
   let url

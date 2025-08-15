@@ -2,11 +2,10 @@ import Feather from '@expo/vector-icons/Feather'
 import { useQuery } from '@tanstack/react-query'
 import { Link, Stack } from 'expo-router'
 import { useCallback, useState } from 'react'
-import { ActivityIndicator, FlatList, Keyboard, Pressable } from 'react-native'
+import { ActivityIndicator, FlatList, Keyboard } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import ReadMore from 'src/components/common/ReadMore'
 import UserAvatar from 'src/components/common/UserAvatar'
-import { searchQuery } from 'src/lib/api'
+import { getMutualFollowers, searchQuery } from 'src/lib/api'
 import { useUserCache } from 'src/state/AuthProvider'
 import {
   formatTimestampMonthYear,
@@ -20,6 +19,25 @@ export default function SearchScreen() {
   const [query, setQuery] = useState('')
   const { acct } = useUserCache()
   const theme = useTheme()
+
+  const {
+    data: mutuals = [],
+    isError: isMutualError,
+    isLoading: isMutualsLoading,
+  } = useQuery({
+    queryKey: ['directComposeMutuals'],
+    queryFn: async () => {
+      try {
+        const res = await getMutualFollowers()
+        return res?.data || []
+      } catch (error) {
+        console.warn('Mutual followers endpoint not supported:', error)
+        return []
+      }
+    },
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+  })
 
   const {
     data = [],
@@ -36,6 +54,8 @@ export default function SearchScreen() {
     keepPreviousData: true,
   })
 
+  const dataSource = isLoading || (query?.length > 0 && data.length) ? data : mutuals
+
   const renderEmptyResults = useCallback(() => {
     if (!query || isFetching) return null
     return (
@@ -51,49 +71,42 @@ export default function SearchScreen() {
   const renderItem = useCallback(
     ({ item }) => (
       <View p="$3" bg={theme.background?.val.secondary.val}>
-        <Link href={`/chats/conversation/${item.id}`} asChild>
-          <Pressable>
-            <XStack alignItems="center" gap="$3">
-              <UserAvatar url={item.avatar} width={40} height={40} />
-              <YStack flexGrow={1} gap={4}>
-                <XStack
-                  alignItems="center"
-                  flexWrap="wrap"
-                  whiteSpace="break-all"
-                  overflow="hidden"
+        <Link href={`/chats/conversation/${item.id}`}>
+          <XStack alignItems="center" gap="$3">
+            <UserAvatar url={item.avatar} width={40} height={40} />
+            <YStack flexGrow={1} gap={4}>
+              <XStack w="100%" alignItems="center" flexWrap="wrap" overflow="hidden">
+                <Text
+                  fontSize="$6"
+                  fontWeight="bold"
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  color={theme.color?.val.default.val}
                 >
-                  <ReadMore numberOfLines={2} renderRevealedFooter={() => <></>}>
-                    <Text
-                      fontSize="$6"
-                      fontWeight="bold"
-                      color={theme.color?.val.default.val}
-                    >
-                      {item.username}
-                    </Text>
-                    {!item.local && (
-                      <Text fontSize="$6" color={theme.color?.val.tertiary.val}>
-                        @{getDomain(item.url)}
-                      </Text>
-                    )}
-                  </ReadMore>
-                </XStack>
-                <XStack gap="$2" alignItems="center">
-                  <Text color={theme.color?.val.tertiary.val} fontSize="$2">
-                    {prettyCount(item.followers_count)} Followers
+                  {item.username}
+                </Text>
+                {!item.local && (
+                  <Text fontSize="$6" color={theme.color?.val.tertiary.val}>
+                    @{getDomain(item.url)}
                   </Text>
-                  <Text color={theme.color?.val.tertiary.val}>·</Text>
-                  <Text color={theme.color?.val.tertiary.val} fontSize="$2">
-                    {postCountLabel(item.statuses_count)}
-                  </Text>
-                  <Text color={theme.color?.val.tertiary.val}>·</Text>
-                  <Text color={theme.color?.val.tertiary.val} fontSize="$2">
-                    {item.local ? 'Joined' : 'First seen'}{' '}
-                    {formatTimestampMonthYear(item.created_at)}
-                  </Text>
-                </XStack>
-              </YStack>
-            </XStack>
-          </Pressable>
+                )}
+              </XStack>
+              <XStack gap="$2" alignItems="center">
+                <Text color={theme.color?.val.tertiary.val} fontSize="$2">
+                  {prettyCount(item.followers_count)} Followers
+                </Text>
+                <Text color={theme.color?.val.tertiary.val}>·</Text>
+                <Text color={theme.color?.val.tertiary.val} fontSize="$2">
+                  {postCountLabel(item.statuses_count)}
+                </Text>
+                <Text color={theme.color?.val.tertiary.val}>·</Text>
+                <Text color={theme.color?.val.tertiary.val} fontSize="$2">
+                  {item.local ? 'Joined' : 'First seen'}{' '}
+                  {formatTimestampMonthYear(item.created_at)}
+                </Text>
+              </XStack>
+            </YStack>
+          </XStack>
         </Link>
       </View>
     ),
@@ -132,7 +145,8 @@ export default function SearchScreen() {
         />
 
         <FlatList
-          data={data}
+          data={dataSource}
+          keyExtractor={(item) => String(item.id ?? item.acct)}
           renderItem={renderItem}
           ItemSeparatorComponent={renderSeparator}
           onScrollBeginDrag={() => Keyboard.dismiss()}
