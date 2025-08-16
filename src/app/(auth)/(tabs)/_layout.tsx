@@ -22,7 +22,7 @@ export default function AppLayout() {
   if (!user) {
     return <Redirect href="/login" />
   }
-  return (
+  return ( // todo: do these properly indicate which one is the current active tab on screen readers?
     <Tabs
       initialRouteName={TabName.Index}
       backBehavior="history"
@@ -39,6 +39,9 @@ export default function AppLayout() {
     >
       <Tabs.Screen
         name={TabName.Index}
+        accessible={true}
+        accessibilityLabel="Home Feed" 
+        accessibilityRole="tab"
         options={{
           tabBarShowLabel: false,
           headerShown: false,
@@ -48,6 +51,9 @@ export default function AppLayout() {
 
       <Tabs.Screen
         name={TabName.Explore}
+        accessible={true}
+        accessibilityLabel="Explore" 
+        accessibilityRole="tab"
         options={{
           tabBarShowLabel: false,
           headerShown: true,
@@ -57,6 +63,9 @@ export default function AppLayout() {
 
       <Tabs.Screen
         name={TabName.Camera}
+        accessible={true}
+        accessibilityLabel="New Post" 
+        accessibilityRole="tab"
         options={{
           tabBarShowLabel: false,
           headerShown: true,
@@ -66,6 +75,9 @@ export default function AppLayout() {
 
       <Tabs.Screen
         name={TabName.Notifications}
+        accessible={true}
+        accessibilityLabel="Notifications" 
+        accessibilityRole="tab"
         options={{
           tabBarShowLabel: false,
           headerShown: true,
@@ -75,6 +87,9 @@ export default function AppLayout() {
 
       <Tabs.Screen
         name={TabName.Profile}
+        accessible={true}
+        accessibilityLabel="Profile" 
+        accessibilityRole="tab"
         options={{
           tabBarShowLabel: false,
           headerShown: false,

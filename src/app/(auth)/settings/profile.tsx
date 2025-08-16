@@ -31,6 +31,7 @@ type LinkFieldProps = {
   value: string | undefined
   placeholder: string
   path: string
+  accessibilityHint: string | undefined
 }
 
 export default function ProfilePage() {
@@ -112,13 +113,13 @@ export default function ProfilePage() {
     }
   }
 
-  const LinkField = ({ label, value, placeholder, path }: LinkFieldProps) => (
+  const LinkField = ({ label, value, placeholder, path, accessibilityHint }: LinkFieldProps) => (
     <XStack px="$3" py="$3" alignItems="flex-start" justifyContent="center">
       <Text w="25%" fontSize="$5" color={theme.color.val.tertiary.val} paddingTop="$3">
         {label}
       </Text>
 
-      <Link href={path} asChild>
+      <Link accessibilityHint={accessibilityHint || ""} href={path} asChild>
         <View
           flex={1}
           borderColor={theme.borderColor?.val.default.val}
@@ -197,12 +198,14 @@ export default function ProfilePage() {
               value={user?.display_name}
               path="/settings/updateName"
               placeholder="Real name"
+              accessibilityHint="Edit profile name"
             />
             <LinkField
               label="Bio"
               value={user?.note_text}
               path="settings/updateBio"
               placeholder="Profile description"
+              accessibilityHint="Edit profile description"
             />
 
             <LinkField
@@ -210,6 +213,7 @@ export default function ProfilePage() {
               value={user?.website}
               path="settings/updateWebsite"
               placeholder="https://"
+              accessibilityHint="Edit profile website"
             />
           </YStack>
         </ScrollView>
