@@ -725,6 +725,7 @@ export default function Camera() {
                   multiline={true}
                   placeholder="Share your moment..."
                   placeholderTextColor={theme.color?.val.tertiary.val}
+                  aria-label="Edit post caption"
                 />
               </YStack>
 
@@ -740,6 +741,7 @@ export default function Camera() {
                     color={theme.color?.val.secondary.val}
                     fontWeight={'500'}
                     fontFamily={'system'}
+                    aria-live="polite" // accessibilityLiveRegion
                   >
                     {warningMessage()}
                   </Text>
@@ -789,7 +791,7 @@ export default function Camera() {
                     chromeless
                     accessible={true}
                     accessibilityLabel="Toggle set post as sensitive"
-                    accessibilityState={{ checked=isSensitive }}
+                    accessibilityState={{ checked: isSensitive }}
                     onPress={() => setSensitive(!isSensitive)}
                   >
                     <Feather
@@ -799,7 +801,13 @@ export default function Camera() {
                     />
                   </Button>
                 </XStack>
-                <Button p="$0" chromeless accessibilityHint="Toggle posting scope" onPress={toggleScope}>
+                <Button 
+                  p="$0" 
+                  chromeless 
+                  accessibilityHint="Toggle posting scope" 
+                  accessibilityLiveRegion="polite" // possibly put it on the child Text element if the above Hint also gets re-read.
+                  onPress={toggleScope}
+                >
                   <Text
                     color={theme.color?.val.secondary.val}
                     fontSize="$3"

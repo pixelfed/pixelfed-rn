@@ -212,7 +212,14 @@ export default function DiscoverScreen() {
         }
 
         return (
-          <Link href={`/post/${encodeURIComponent(item.id)}`} asChild>
+          <Link 
+            accessible={true}
+            accessibilityLabel={`Picture by ${item.acct}`} // todo: test this - is this the correct field? 
+            accessibilityRole="image"
+            accessibilityHint="Tap to view post"
+            href={`/post/${encodeURIComponent(item.id)}`} 
+            asChild
+          >
             <Pressable>
               <View width={itemCellWidth} height={itemCellWidth * 1.5} p="$0.5">
                 <View
@@ -309,6 +316,7 @@ export default function DiscoverScreen() {
             <Pressable
               accessible={true} 
               accessibilityLabel="Search" 
+              accessibilityRole="button"
               onPress={handleSearchPress}
               style={{ marginRight: 10 }}
               hitSlop={10}

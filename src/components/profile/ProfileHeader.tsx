@@ -719,7 +719,15 @@ export default function ProfileHeader({
           <Separator borderColor={theme.borderColor?.val.default.val} />
           {ShowMenuBar() && (
             <XStack justifyContent="space-around" px="$5" py="$3" mb="$1">
-              <Feather name="grid" size={20} color={theme.color?.val.default.val} />
+              <Feather 
+                accessible={true}
+                accessibilityLabel="Photo grid view"
+                accessibilityRole="tab"
+                accessibilityState={{ selected: true }}
+                name="grid" 
+                size={20} 
+                color={theme.color?.val.default.val} 
+              />
 
               <PressableOpacity 
                 accessible={true}
