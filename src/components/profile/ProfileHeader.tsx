@@ -338,7 +338,13 @@ export default function ProfileHeader({
             Followed by{' '}
           </Text>
           {top3.map((t, index) => (
-            <Link key={index} href={`/profile/${t.id}`}>
+            <Link 
+              accessible={true}
+              accessibilityLabel="Open profile"
+              accessibilityRole="link"
+              key={index} 
+              href={`/profile/${t.id}`}
+            >
               <XStack>
                 <Text
                   fontWeight="bold"
@@ -460,21 +466,23 @@ export default function ProfileHeader({
 
           <XStack gap={SCREEN_WIDTH > 400 ? '$7' : '$5'} mx="$5" alignItems="flex-start">
             <YStack alignItems="center" gap="$1">
-              <Text
-                fontWeight="bold"
-                fontSize="$5"
-                allowFontScaling={false}
-                color={theme.color?.val.default.val}
-              >
-                {prettyCount(profile?.statuses_count ? profile.statuses_count : 0)}
-              </Text>
-              <Text
-                fontSize="$2"
-                allowFontScaling={false}
-                color={theme.color?.val.secondary.val}
-              >
-                Posts
-              </Text>
+              <View>
+                <Text
+                  fontWeight="bold"
+                  fontSize="$5"
+                  allowFontScaling={false}
+                  color={theme.color?.val.default.val}
+                >
+                  {prettyCount(profile?.statuses_count ? profile.statuses_count : 0)}
+                </Text>
+                <Text
+                  fontSize="$2"
+                  allowFontScaling={false}
+                  color={theme.color?.val.secondary.val}
+                >
+                  Posts
+                </Text>
+              </View>
             </YStack>
 
             {profile && profile.id ? (
