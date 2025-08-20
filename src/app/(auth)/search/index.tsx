@@ -1,8 +1,9 @@
 import Feather from '@expo/vector-icons/Feather'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
+import { TabActions, useNavigation } from '@react-navigation/native'
 import { useQuery } from '@tanstack/react-query'
 import { Link, Stack, useLocalSearchParams } from 'expo-router'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, FlatList, Keyboard, Pressable } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import UserAvatar from 'src/components/common/UserAvatar'
@@ -263,6 +264,8 @@ const PostResultsTab = ({ posts, isFetching, query }) => {
 export default function SearchScreen() {
   const { initialQuery } = useLocalSearchParams<{ initialQuery?: string }>()
   const [query, setQuery] = useState(initialQuery || '')
+  const [shouldSwitchToHashtags, setShouldSwitchToHashtags] = useState(false)
+  const debounceTimeoutRef = useRef(null)
   const theme = useTheme()
 
   const { data, isLoading, isError, error, isFetching } = useQuery({
@@ -275,10 +278,37 @@ export default function SearchScreen() {
   const hashtags = data?.filter((item) => item._type === 'hashtag') || []
   const posts = data?.filter((item) => item._type === 'status') || []
 
+  useEffect(() => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current)
+    }
+
+    debounceTimeoutRef.current = setTimeout(() => {
+      const isHashtagQuery = query.trim().startsWith('#') && query.trim().length > 1
+      if (isHashtagQuery && !shouldSwitchToHashtags) {
+        setShouldSwitchToHashtags(true)
+      } else if (!isHashtagQuery && shouldSwitchToHashtags) {
+        setShouldSwitchToHashtags(false)
+      }
+    }, 500)
+
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current)
+      }
+    }
+  }, [query, shouldSwitchToHashtags])
+
+  const getInitialRoute = () => {
+    const isHashtagQuery =
+      initialQuery?.trim().startsWith('#') && initialQuery?.trim().length > 1
+    return isHashtagQuery ? 'Hashtags' : 'Accounts'
+  }
+
   if (isLoading && !isFetching) {
     return (
       <View mt="$4">
-        <ActivityIndicator color={theme.color?.val.defaut.val} />
+        <ActivityIndicator color={theme.color?.val.default.val} />
       </View>
     )
   }
@@ -314,6 +344,8 @@ export default function SearchScreen() {
 
         <View flex={1}>
           <Tab.Navigator
+            key={shouldSwitchToHashtags ? 'hashtags-focused' : 'normal'}
+            initialRouteName={shouldSwitchToHashtags ? 'Hashtags' : getInitialRoute()}
             screenOptions={{
               tabBarLabelStyle: { fontSize: 12, fontWeight: 'bold' },
               tabBarIndicatorStyle: {
