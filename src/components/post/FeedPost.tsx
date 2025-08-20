@@ -588,6 +588,7 @@ const PostActions = React.memo(
                     accessible={true}
                     accessibilityLabel="Repost"
                     accessibilityRole="button"
+                    accessibilityState={{ checked: hasSharedCache }}
                     onPress={() => handleOnShare()}
                     style={{ marginRight: 5 }}
                     hitSlop={6}
@@ -627,6 +628,7 @@ const PostActions = React.memo(
                   accessible={true}
                   accessibilityLabel="Bookmark post" 
                   accessibilityRole="button"
+                  accessibilityState={{ checked: hasBookmarked }}
                   onPress={() => handleBookmarkAction()} 
                   hitSlop={4}
                 >

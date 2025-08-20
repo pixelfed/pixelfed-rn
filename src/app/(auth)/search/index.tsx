@@ -135,6 +135,7 @@ const HashtagResultsTab = ({ hashtags, isFetching, query }) => {
                 fontWeight="bold"
                 flexWrap="wrap"
                 color={theme.color?.val.default.val}
+                aria-label={`hashtag ${item.name}`}
               >
                 {item.name}
               </Text>

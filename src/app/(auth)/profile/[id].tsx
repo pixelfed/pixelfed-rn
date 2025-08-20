@@ -25,6 +25,7 @@ import {
   Share,
 } from 'react-native'
 import { Blurhash } from 'react-native-blurhash'
+import { PressableOpacity } from 'react-native-pressable-opacity'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { PixelfedBottomSheetModal } from 'src/components/common/BottomSheets'
 import ImageComponent from 'src/components/ImageComponent'
@@ -42,6 +43,7 @@ import {
   unmuteProfileById,
 } from 'src/lib/api'
 import { Storage } from 'src/state/cache'
+import { formatTimestamp } from 'src/utils'
 import { Button, Separator, Text, useTheme, View, YStack, ZStack } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
@@ -81,7 +83,7 @@ export default function ProfileScreen() {
         return (
           <Link 
             accessible={true}
-            accessibilityLabel={"Post marked as sensitive"} 
+            accessibilityLabel="Post marked as sensitive"
             accessibilityRole="image"
             key={item?.id} 
             href={`/post/${item.id}`} 
@@ -111,7 +113,7 @@ export default function ProfileScreen() {
       return (
         <Link 
           accessible={true}
-          accessibilityLabel={"Post, loading preview"} 
+          accessibilityLabel="Post, loading preview"
           accessibilityRole="image"
           key={item?.id} 
           href={`/post/${item.id}`} 
@@ -185,11 +187,11 @@ export default function ProfileScreen() {
       )
     }
     return item && item.media_attachments && item.media_attachments[0].url ? (
-      <Link 
+      <Link
         accessible={true}
-        accessibilityLabel={item.date ? `Post on ${item.date}` : "Post"} 
+        accessibilityLabel={item.created_at ? `Post on ${formatTimestamp(item.created_at)}` : "Post"} 
         accessibilityRole="image"
-        key={item?.id} 
+        key={item?.id}
         href={`/post/${item.id}`} 
         asChild
       >

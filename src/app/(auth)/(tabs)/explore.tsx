@@ -214,7 +214,7 @@ export default function DiscoverScreen() {
         return (
           <Link 
             accessible={true}
-            accessibilityLabel={`Picture by ${item.acct}`} // todo: test this - is this the correct field? 
+            accessibilityLabel={item.account.acct ? `Picture by ${item.account.acct}` : "Picture"} 
             accessibilityRole="image"
             accessibilityHint="Tap to view post"
             href={`/post/${encodeURIComponent(item.id)}`} 

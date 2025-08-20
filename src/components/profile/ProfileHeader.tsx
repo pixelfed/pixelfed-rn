@@ -465,8 +465,8 @@ export default function ProfileHeader({
           </Pressable>
 
           <XStack gap={SCREEN_WIDTH > 400 ? '$7' : '$5'} mx="$5" alignItems="flex-start">
-            <YStack alignItems="center" gap="$1">
-              <View>
+            <View tabIndex={0}>
+              <YStack alignItems="center" gap="$1">
                 <Text
                   fontWeight="bold"
                   fontSize="$5"
@@ -482,8 +482,8 @@ export default function ProfileHeader({
                 >
                   Posts
                 </Text>
-              </View>
-            </YStack>
+              </YStack>
+            </View>
 
             {profile && profile.id ? (
               <PressableOpacity 
@@ -648,7 +648,7 @@ export default function ProfileHeader({
           {profile?.website && profile?.website.trim().length ? (
             <PressableOpacity 
               accessible={true}
-              accessibilityLabel="User's website"
+              accessibilityLabel={`User's website ${profile?.website?.replaceAll('https://', '')}`}
               accessibilityRole="link"
               onPress={() => _openWebsite()}
             >
