@@ -387,7 +387,7 @@ const PostAlbumMedia = React.memo(({ media, post, progress }: PostAlbumMediaProp
     )
   }
 
-  return ( // todo: make image carousel accessible by screen readers
+  return (
     <YStack zIndex={1}>
       <Carousel
         onConfigurePanGesture={(gestureChain) =>
@@ -1131,6 +1131,9 @@ const FeedPost = React.memo(
         })
       } catch (_error) {}
     }
+    const getMediaIdx = () => {
+      return Math.floor(progress?.value ?? 0)
+    }
     return (
       <View flex={1} style={{ width }}>
         {post.media_attachments?.length > 0 ? (
@@ -1143,7 +1146,37 @@ const FeedPost = React.memo(
               onOpenMenu={() => handlePresentModalPress()}
             />
 
-            <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
+            <View 
+              tabIndex={0} 
+              aria-label={`${
+                post.media_attachments?.length > 1 
+                  ? `Picture ${getMediaIdx()+1} of ${post.media_attachments?.length} in post ` 
+                  : "Picture "}
+                ${post.media_attachments[getMediaIdx()].description
+                  ? `of ${post.media_attachments[getMediaIdx()].description} ` 
+                  : "not tagged with any alt text. "}
+                  ${
+                post.media_attachments?.length > 1
+                ? "Swipe to go to next picture" 
+                : ""
+              }`
+              }
+              role="img"
+              aria-hint={
+                post.media_attachments?.length > 1
+                ? "Swipe to go to next picture" 
+                : ""
+              }
+              accessibilityActions={[
+                {name: 'activate', label: 'Like post'},
+              ]}
+              onAccessibilityAction={event => {
+                if (event.nativeEvent.actionName === 'activate') {
+                  handleDoubleTap();
+                }
+              }}
+            >
+              <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
               {post.media_attachments.length > 1 ? (
                 <PostAlbumMedia
                   media={post.media_attachments}
@@ -1154,6 +1187,7 @@ const FeedPost = React.memo(
                 <PostMedia media={post.media_attachments} post={post} />
               )}
             </GestureDetector>
+            </View>
             {!hideCaptions || isPermalink ? (
               <>
                 <PostActions
