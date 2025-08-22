@@ -61,7 +61,7 @@ export default function Page() {
       <Link 
         accessible={true}
         accessibilityLabel="New chat" 
-        accessibilityRole="button"
+        role="button"
         href="/chats/search"
         asChild
       >
@@ -102,13 +102,15 @@ export default function Page() {
       content = isSelf ? 'You sent multiple photos' : 'Sent multiple photos'
     }
     return (
-      <View p="$3" bg={theme.background?.val.default.val}>
-        <Link 
-          accessible={true}
-          accessibilityLabel={item.accounts[0].acct} // todo: read all content properly 
-          accessibilityRole="button"
-          href={`/chats/conversation/${item.accounts[0].id}`}
-        >
+      <View
+        tabIndex={0}
+        aria-label={`${item.accounts[0].acct}. ${cotype === 'text' ? cotext : content}. ${_timeAgo(item.last_status.created_at)} ago`}
+        role="button"
+        p="$3" 
+        bg={theme.background?.val.default.val}
+      >
+        <Link   
+        href={`/chats/conversation/${item.accounts[0].id}`}>
           <XStack alignItems="center" gap="$3">
             <UserAvatar url={item.accounts[0].avatar} size="$3" />
 

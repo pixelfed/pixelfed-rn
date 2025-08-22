@@ -736,12 +736,12 @@ export default function Camera() {
                   borderWidth={1}
                   borderRadius={10}
                   borderColor={theme.borderColor?.val.default.val}
+                  aria-live="polite"
                 >
                   <Text
                     color={theme.color?.val.secondary.val}
                     fontWeight={'500'}
                     fontFamily={'system'}
-                    aria-live="polite" // accessibilityLiveRegion
                   >
                     {warningMessage()}
                   </Text>
@@ -805,7 +805,6 @@ export default function Camera() {
                   p="$0" 
                   chromeless 
                   accessibilityHint="Toggle posting scope" 
-                  accessibilityLiveRegion="polite" // possibly put it on the child Text element if the above Hint also gets re-read.
                   onPress={toggleScope}
                 >
                   <Text
