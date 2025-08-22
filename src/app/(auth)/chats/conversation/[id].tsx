@@ -273,6 +273,9 @@ export default function Page() {
               <ActivityIndicator color={theme.color?.val.default.val} />
             ) : (
               <Pressable
+                accessible={true}
+                accessibilityLabel="Reload chat" 
+                accessibilityRole="button"
                 onPress={() => reloadChat()}
                 hitSlop={{ left: 10, right: 16, top: 10, bottom: 9 }}
               >

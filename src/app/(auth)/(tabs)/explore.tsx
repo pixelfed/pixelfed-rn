@@ -212,7 +212,14 @@ export default function DiscoverScreen() {
         }
 
         return (
-          <Link href={`/post/${encodeURIComponent(item.id)}`} asChild>
+          <Link 
+            accessible={true}
+            accessibilityLabel={item.account.acct ? `Picture by ${item.account.acct}` : "Picture"} 
+            accessibilityRole="image"
+            accessibilityHint="Tap to view post"
+            href={`/post/${encodeURIComponent(item.id)}`} 
+            asChild
+          >
             <Pressable>
               <View width={itemCellWidth} height={itemCellWidth * 1.5} p="$0.5">
                 <View
@@ -307,6 +314,9 @@ export default function DiscoverScreen() {
           headerBackTitle: 'Back',
           headerRight: () => (
             <Pressable
+              accessible={true} 
+              accessibilityLabel="Search" 
+              accessibilityRole="button"
               onPress={handleSearchPress}
               style={{ marginRight: 10 }}
               hitSlop={10}

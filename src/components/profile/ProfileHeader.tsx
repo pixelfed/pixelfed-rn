@@ -224,11 +224,25 @@ export default function ProfileHeader({
         <View>
           <XStack alignItems="center" gap="$5">
             {selfId == profile?.id ? (
-              <PressableOpacity hitSlop={18} onPress={() => onShare()}>
+              <PressableOpacity 
+                accessible={true}
+                accessibilityLabel="Share"
+                accessibilityHint="Share link to this profile"
+                accessibilityRole="button"
+                hitSlop={18} 
+                onPress={() => onShare()}
+              >
                 <Feather name="share" size={24} color={theme.color?.val.default.val} />
               </PressableOpacity>
             ) : (
-              <PressableOpacity hitSlop={18} onPress={() => openMenu()}>
+              <PressableOpacity 
+                accessible={true}
+                accessibilityLabel="Options"
+                accessibilityHint="Open options menu"
+                accessibilityRole="button"
+                hitSlop={18} 
+                onPress={() => openMenu()}
+              >
                 <Feather
                   name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
                   size={26}
@@ -262,10 +276,23 @@ export default function ProfileHeader({
       </Text>
 
       <XStack alignItems="center" gap="$5">
-        <PressableOpacity hitSlop={12} onPress={() => onShare()}>
+        <PressableOpacity 
+          accessible={true}
+          accessibilityLabel="Share"
+          accessibilityHint="Share link to this profile"
+          accessibilityRole="button"
+          hitSlop={12} 
+          onPress={() => onShare()}
+        >
           <Feather name="share" size={23} color={theme.color?.val.default.val} />
         </PressableOpacity>
-        <PressableOpacity hitSlop={10} onPress={() => router.push('/settings')}>
+        <PressableOpacity 
+          accessible={true}
+          accessibilityLabel="Settings"
+          accessibilityRole="button"
+          hitSlop={10}
+          onPress={() => router.push('/settings')}
+        >
           <Feather name="menu" size={30} color={theme.color?.val.default.val} />
         </PressableOpacity>
       </XStack>
@@ -311,7 +338,13 @@ export default function ProfileHeader({
             Followed by{' '}
           </Text>
           {top3.map((t, index) => (
-            <Link key={index} href={`/profile/${t.id}`}>
+            <Link 
+              accessible={true}
+              accessibilityLabel="Open profile"
+              accessibilityRole="link"
+              key={index} 
+              href={`/profile/${t.id}`}
+            >
               <XStack>
                 <Text
                   fontWeight="bold"
@@ -332,7 +365,12 @@ export default function ProfileHeader({
             </Link>
           ))}
           {top3.length === 3 && mutuals.length > 3 ? (
-            <Link href={`/profile/followers/${profile?.id}`}>
+            <Link 
+              accessible={true}
+              accessibilityLabel="Open profile"
+              accessibilityRole="link"
+              href={`/profile/followers/${profile?.id}`}
+            >
               <Text
                 fontSize="$3"
                 allowFontScaling={false}
@@ -427,26 +465,31 @@ export default function ProfileHeader({
           </Pressable>
 
           <XStack gap={SCREEN_WIDTH > 400 ? '$7' : '$5'} mx="$5" alignItems="flex-start">
-            <YStack alignItems="center" gap="$1">
-              <Text
-                fontWeight="bold"
-                fontSize="$5"
-                allowFontScaling={false}
-                color={theme.color?.val.default.val}
-              >
-                {prettyCount(profile?.statuses_count ? profile.statuses_count : 0)}
-              </Text>
-              <Text
-                fontSize="$2"
-                allowFontScaling={false}
-                color={theme.color?.val.secondary.val}
-              >
-                Posts
-              </Text>
-            </YStack>
+            <View tabIndex={0}>
+              <YStack alignItems="center" gap="$1">
+                <Text
+                  fontWeight="bold"
+                  fontSize="$5"
+                  allowFontScaling={false}
+                  color={theme.color?.val.default.val}
+                >
+                  {prettyCount(profile?.statuses_count ? profile.statuses_count : 0)}
+                </Text>
+                <Text
+                  fontSize="$2"
+                  allowFontScaling={false}
+                  color={theme.color?.val.secondary.val}
+                >
+                  Posts
+                </Text>
+              </YStack>
+            </View>
 
             {profile && profile.id ? (
-              <PressableOpacity
+              <PressableOpacity 
+                accessible={true}
+                accessibilityHint="Opens following list"
+                accessibilityRole="button"
                 hitSlop={9}
                 onPress={() => router.push(`/profile/following/${profile?.id}`)}
               >
@@ -489,7 +532,10 @@ export default function ProfileHeader({
             )}
 
             {profile && profile.id ? (
-              <PressableOpacity
+              <PressableOpacity 
+                accessible={true}
+                accessibilityHint="Opens followers list"
+                accessibilityRole="button"
                 hitSlop={9}
                 onPress={() => router.push(`/profile/followers/${profile?.id}`)}
               >
@@ -600,7 +646,12 @@ export default function ProfileHeader({
           {profile?.note && profile?.note.length && <RenderBio />}
 
           {profile?.website && profile?.website.trim().length ? (
-            <PressableOpacity onPress={() => _openWebsite()}>
+            <PressableOpacity 
+              accessible={true}
+              accessibilityLabel={`User's website ${profile?.website?.replaceAll('https://', '')}`}
+              accessibilityRole="link"
+              onPress={() => _openWebsite()}
+            >
               <XStack alignItems="center" gap="$1">
                 <Text
                   fontSize="$5"
@@ -630,17 +681,43 @@ export default function ProfileHeader({
         <>
           <Separator borderColor={theme.borderColor?.val.default.val} />
           <XStack justifyContent="space-around" px="$5" py="$3" mb="$1">
-            <Feather name="grid" size={20} color={theme.color?.val.default.val} />
+            <Feather 
+              accessible={true}
+              accessibilityLabel="Photo grid view"
+              accessibilityRole="tab"
+              accessibilityState={{ selected: true }}
+              name="grid" 
+              size={20} 
+              color={theme.color?.val.default.val} 
+            />
 
-            <PressableOpacity onPress={() => gotoProfileFeed()} hitSlop={TabsHitSlop}>
+            <PressableOpacity 
+              accessible={true}
+              accessibilityLabel="Go to profile feed"
+              accessibilityRole="button"
+              onPress={() => gotoProfileFeed()}
+              hitSlop={TabsHitSlop}
+            >
               <Feather name="list" size={20} color="#999" />
             </PressableOpacity>
 
-            <PressableOpacity onPress={() => gotoSelfLikes()} hitSlop={TabsHitSlop}>
+            <PressableOpacity 
+              accessible={true}
+              accessibilityLabel="Go to my liked posts"
+              accessibilityRole="button"
+              onPress={() => gotoSelfLikes()}
+              hitSlop={TabsHitSlop}
+            >
               <Feather name="heart" size={20} color="#999" />
             </PressableOpacity>
 
-            <PressableOpacity onPress={() => gotoBookmarks()} hitSlop={TabsHitSlop}>
+            <PressableOpacity 
+              accessible={true}
+              accessibilityLabel="Go to my bookmarked posts"
+              accessibilityRole="button"
+              onPress={() => gotoBookmarks()}
+              hitSlop={TabsHitSlop}
+            >
               <Feather name="bookmark" size={20} color="#999" />
             </PressableOpacity>
           </XStack>
@@ -650,9 +727,22 @@ export default function ProfileHeader({
           <Separator borderColor={theme.borderColor?.val.default.val} />
           {ShowMenuBar() && (
             <XStack justifyContent="space-around" px="$5" py="$3" mb="$1">
-              <Feather name="grid" size={20} color={theme.color?.val.default.val} />
+              <Feather 
+                accessible={true}
+                accessibilityLabel="Photo grid view"
+                accessibilityRole="tab"
+                accessibilityState={{ selected: true }}
+                name="grid" 
+                size={20} 
+                color={theme.color?.val.default.val} 
+              />
 
-              <PressableOpacity onPress={() => gotoProfileFeed()}>
+              <PressableOpacity 
+                accessible={true}
+                accessibilityLabel="Go to profile feed"
+                accessibilityRole="button"
+                onPress={() => gotoProfileFeed()}
+              >
                 <Feather name="list" size={20} color="#999" />
               </PressableOpacity>
             </XStack>

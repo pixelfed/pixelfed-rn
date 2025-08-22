@@ -28,7 +28,7 @@ import {
   XStack,
   YStack,
 } from 'tamagui'
-import { prettyCount } from '../../../utils'
+import { formatTimestamp, prettyCount } from '../../../utils'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
 const IMAGE_WIDTH = SCREEN_WIDTH / 3 - 2
@@ -39,7 +39,14 @@ const RenderItem = memo(({ item }) => {
   const theme = useTheme()
   if (!item?.media_attachments?.[0]?.url) return null
   return (
-    <Link href={`/post/${item.id}`} asChild>
+    <Link 
+      accessible={true}
+      accessibilityLabel={item.account.acct ? `Picture by ${item.account.acct}, on ${formatTimestamp(item.created_at)}` : "Picture"} 
+      accessibilityRole="image"
+      accessibilityHint="Tap to view post"
+      href={`/post/${item.id}`} 
+      asChild
+    >
       <View
         flexShrink={1}
         style={{ borderWidth: 1, borderColor: theme.borderColor?.val.default.val }}
@@ -275,6 +282,7 @@ export default function Page() {
                         color={theme.color?.val.default.val}
                         alignSelf="stretch"
                         onPress={onUnfollow}
+                        accessibilityLabel="Unfollow hashtag"
                       >
                         Unfollow
                       </Button>
@@ -287,6 +295,7 @@ export default function Page() {
                         fontWeight="bold"
                         alignSelf="stretch"
                         onPress={onFollow}
+                        accessibilityLabel="Follow hashtag"
                       >
                         Follow
                       </Button>
@@ -361,6 +370,7 @@ export default function Page() {
       />
       {/* <Header hashtag={hashtag} feed={feed} /> */}
       <FlashList
+        accessible={true}
         data={flattenedData}
         extraData={hashtag}
         keyExtractor={keyExtractor}

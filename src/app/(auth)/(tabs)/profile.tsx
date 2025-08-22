@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import ImageComponent from 'src/components/ImageComponent'
 import { getAccountStatusesById } from 'src/lib/api'
 import { useQuerySelfProfile } from 'src/state/AuthProvider'
+import { formatTimestamp } from 'src/utils'
 import { Text, useTheme, View, YStack } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
@@ -112,7 +113,13 @@ export default function ProfileScreen() {
 
   const RenderItem = ({ item }) =>
     item && item.media_attachments[0].url ? (
-      <Link key={item?.id} href={`/post/${item.id}`}>
+      <Link 
+        accessible={true}
+        accessibilityLabel={item.created_at ? `Post on ${formatTimestamp(item.created_at)}` : "Post"} 
+        accessibilityRole="image"
+        key={item?.id} 
+        href={`/post/${item.id}`}
+      >
         <View
           flexShrink={1}
           style={{ borderWidth: 1, borderColor: theme.borderColor?.val.default.val }}

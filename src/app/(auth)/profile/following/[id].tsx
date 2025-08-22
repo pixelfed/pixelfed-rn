@@ -19,7 +19,12 @@ export default function FollowingScreen() {
 
   const RenderItem = ({ item }) => {
     return (
-      <View p="$3">
+      <View
+        aria-label={`${item.display_name}, @${item.acct}`}
+        accessibilityHint="Open profile page"
+        role="link"
+        p="$3"
+      >
         <Link href={`/profile/${item.id}`}>
           <XStack gap="$3" alignItems="center">
             <UserAvatar url={item.avatar} width={40} height={40} />

@@ -195,7 +195,11 @@ export default function LoginScreen() {
         >
           <YStack px="$4" pt="$4" pb="$6" space="$4" flexGrow={1} minHeight="100%">
             <XStack justifyContent="space-between" alignItems="center">
-              <Pressable onPress={navigateBack}>
+              <Pressable 
+                accessible={true}
+                accessibilityLabel="Navigate back" 
+                accessibilityRole="button"
+                onPress={navigateBack}>
                 <Feather
                   name="arrow-left"
                   size={24}
@@ -207,7 +211,12 @@ export default function LoginScreen() {
                   Log in
                 </Text>
               </YStack>
-              <Pressable onPress={showHelpInfo}>
+              <Pressable 
+                accessible={true}
+                accessibilityLabel="Help" 
+                accessibilityRole="button"
+                onPress={showHelpInfo}
+              >
                 <Feather
                   name={'help-circle'}
                   size={24}
@@ -218,6 +227,9 @@ export default function LoginScreen() {
 
             <YStack mt="$6" space="$4">
               <Pressable
+                accessible={true}
+                accessibilityRole="menuitem"
+                accessibilityState={{ selected: selectedOption === 0 ? true : false }}
                 onPress={() => handleOptionSelect(0)}
                 style={{
                   flexDirection: 'row',
@@ -269,6 +281,9 @@ export default function LoginScreen() {
                 }}
               >
                 <Pressable
+                  accessible={true}
+                  accessibilityRole="menuitem"
+                  accessibilityState={{ selected: selectedOption === 1 ? true : false }}
                   onPress={() => handleOptionSelect(1)}
                   style={{
                     flexDirection: 'row',
@@ -307,6 +322,7 @@ export default function LoginScreen() {
                 {selectedOption === 1 && (
                   <View style={{ padding: 16, paddingTop: 0 }}>
                     <Input
+                      accessible={true}
                       ref={inputRef}
                       style={{
                         borderWidth: 1,
@@ -330,6 +346,9 @@ export default function LoginScreen() {
                       <View style={{ marginTop: 8 }}>
                         {filteredServers.map((suggestion) => (
                           <Pressable
+                            accessible={true}
+                            accessibilityLabel={suggestion}
+                            accessibilityRole="button" 
                             key={suggestion}
                             onPress={() => handleSuggestionSelect(suggestion)}
                             style={{ paddingVertical: 12 }}

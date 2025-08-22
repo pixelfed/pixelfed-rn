@@ -443,7 +443,13 @@ export default function Camera() {
 
   const HeaderLeft = () => (
     <View ml="$3">
-      <PressableOpacity onPress={handlePresentModalPress} hitSlop={10}>
+      <PressableOpacity 
+        accessible={true}
+        accessibilityLabel="Post options" 
+        accessibilityRole="button"
+        onPress={handlePresentModalPress} 
+        hitSlop={10}
+      >
         <Feather name="settings" size={20} color={theme.color.val.tertiary.val} />
       </PressableOpacity>
     </View>
@@ -454,13 +460,20 @@ export default function Camera() {
       {isPosting == true || isResizing ? (
         <ActivityIndicator />
       ) : canPost ? (
-        <PressableOpacity onPress={() => _handlePost()} hitSlop={10}>
+        <PressableOpacity 
+          accessible={true}
+          accessibilityRole="button"
+          onPress={() => _handlePost()} 
+          hitSlop={10}
+        >
           <Text fontSize="$6" fontWeight="bold" color={theme.colorHover.val.hover.val}>
             Post
           </Text>
         </PressableOpacity>
       ) : (
         <Text
+          role="button"
+          aria-disabled={true}
           fontSize="$6"
           fontWeight="bold"
           color={theme.colorHover.val.active.val}
@@ -712,6 +725,7 @@ export default function Camera() {
                   multiline={true}
                   placeholder="Share your moment..."
                   placeholderTextColor={theme.color?.val.tertiary.val}
+                  aria-label="Edit post caption"
                 />
               </YStack>
 
@@ -722,6 +736,7 @@ export default function Camera() {
                   borderWidth={1}
                   borderRadius={10}
                   borderColor={theme.borderColor?.val.default.val}
+                  aria-live="polite"
                 >
                   <Text
                     color={theme.color?.val.secondary.val}
@@ -739,14 +754,28 @@ export default function Camera() {
                   media.length <
                     serverConfig?.configuration.statuses.max_media_attachments ? (
                     <>
-                      <Button p="$0" px="$2" chromeless onPress={pickImage}>
+                      <Button 
+                        p="$0" 
+                        px="$2" 
+                        chromeless 
+                        accessible={true} 
+                        accessibilityLabel="Pick image from gallery" 
+                        onPress={pickImage}
+                      >
                         <Feather
                           name="image"
                           size={24}
                           color={theme.color?.val.default.val}
                         />
                       </Button>
-                      <Button p="$0" px="$2" chromeless onPress={openCamera}>
+                      <Button 
+                        p="$0" 
+                        px="$2" 
+                        chromeless 
+                        accessible={true} 
+                        accessibilityLabel="Open camera"
+                        onPress={openCamera}
+                      >
                         <Feather
                           name="camera"
                           size={24}
@@ -760,6 +789,9 @@ export default function Camera() {
                     p="$0"
                     px="$2"
                     chromeless
+                    accessible={true}
+                    accessibilityLabel="Toggle set post as sensitive"
+                    accessibilityState={{ checked: isSensitive }}
                     onPress={() => setSensitive(!isSensitive)}
                   >
                     <Feather
@@ -769,7 +801,12 @@ export default function Camera() {
                     />
                   </Button>
                 </XStack>
-                <Button p="$0" chromeless onPress={toggleScope}>
+                <Button 
+                  p="$0" 
+                  chromeless 
+                  accessibilityHint="Toggle posting scope" 
+                  onPress={toggleScope}
+                >
                   <Text
                     color={theme.color?.val.secondary.val}
                     fontSize="$3"
@@ -809,7 +846,12 @@ export default function Camera() {
                     >
                       Tap
                     </Text>
-                    <PressableOpacity onPress={pickImage} hitSlop={6}>
+                    <PressableOpacity 
+                      accessible={true} 
+                      accessibilityLabel="Pick image from gallery" 
+                      onPress={pickImage} 
+                      hitSlop={6}
+                    >
                       <Feather
                         name="image"
                         size={24}
@@ -825,7 +867,12 @@ export default function Camera() {
                       {' '}
                       or{' '}
                     </Text>
-                    <PressableOpacity onPress={openCamera} hitSlop={6}>
+                    <PressableOpacity 
+                      accessible={true} 
+                      accessibilityLabel="Open camera" 
+                      onPress={openCamera} 
+                      hitSlop={6}
+                    >
                       <Feather
                         name="camera"
                         size={24}
