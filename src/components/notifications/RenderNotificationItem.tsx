@@ -41,9 +41,8 @@ const RenderItem = ({ item }: RenderItemProps) => {
           {item && item.account && item.account?.id && (
             <Link 
               accessible={true}
-              accessibilityLabel="Avatar" // is this a good word?
-              accessibilityRole="button"
-              accessibilityHint="Tap to open profile page"
+              accessibilityLabel="Profile image"
+              accessibilityHint="Tap to open profile"
               href={`/profile/${item.account.id}`} 
               asChild
             >
@@ -56,9 +55,7 @@ const RenderItem = ({ item }: RenderItemProps) => {
           <YStack gap={5}>
             <XStack gap="$1" alignItems="center">
               <Text
-                accessible={true}
-                accessibilityLabel={item.account?.acct}
-                accessibilityRole="text"
+                aria-label={item.account?.acct}
                 fontSize="$2"
                 fontWeight={'bold'}
                 allowFontScaling={false}
