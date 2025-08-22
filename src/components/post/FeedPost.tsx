@@ -853,7 +853,7 @@ const TextPost = React.memo(
     return (
       <SectionTopBorder>
         <XStack alignItems="flex-start" gap="$3" paddingVertical="$3">
-          <Link href={`/profile/${userId}`} asChild>
+          <Link accessibilityLabel="Profile image" href={`/profile/${userId}`} asChild>
             <Pressable>
               <Circle
                 size={40}
@@ -876,14 +876,16 @@ const TextPost = React.memo(
           </Link>
           <YStack flex={1}>
             {post.in_reply_to_id ? (
-              <XStack>
-                <Text color={theme.color.val.secondary.val}>In reply to this </Text>
-                <Link href={`/post/${post.in_reply_to_id}`}>
-                  <Text color={theme.colorHover.val.active.val} fontWeight="bold">
-                    post
-                  </Text>
-                </Link>
-              </XStack>
+              <View tabIndex={0}>
+                <XStack>
+                  <Text color={theme.color.val.secondary.val}>In reply to this </Text>
+                  <Link href={`/post/${post.in_reply_to_id}`}>
+                    <Text color={theme.colorHover.val.active.val} fontWeight="bold">
+                      post
+                    </Text>
+                  </Link>
+                </XStack>
+              </View>
             ) : null}
             <XStack
               alignItems="center"
