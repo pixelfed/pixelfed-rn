@@ -145,7 +145,7 @@ export default function ProfileScreen() {
       return (
         <Link 
           accessible={true}
-          accessibilityLabel={item.date ? `Video post on ${item.date}` : "Video post"} 
+          accessibilityLabel={item.date ? `Video post on ${formatTimestamp(item.created_at)}` : "Video post"} 
           accessibilityRole="image"
           key={item?.id} 
           href={`/post/${item.id}`} 
