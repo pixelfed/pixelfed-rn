@@ -22,7 +22,7 @@ export default function AppLayout() {
   if (!user) {
     return <Redirect href="/login" />
   }
-  return ( // todo: do these properly indicate which one is the current active tab on screen readers?
+  return (
     <Tabs
       initialRouteName={TabName.Index}
       backBehavior="history"
@@ -39,10 +39,8 @@ export default function AppLayout() {
     >
       <Tabs.Screen
         name={TabName.Index}
-        accessible={true}
-        accessibilityLabel="Home Feed" 
-        accessibilityRole="tab"
         options={{
+          tabBarAccessibilityLabel: "Home Feed",
           tabBarShowLabel: false,
           headerShown: false,
           tabBarIcon: ({ color }) => <Feather name="home" size={26} color={color} />,
@@ -51,10 +49,8 @@ export default function AppLayout() {
 
       <Tabs.Screen
         name={TabName.Explore}
-        accessible={true}
-        accessibilityLabel="Explore" 
-        accessibilityRole="tab"
         options={{
+          tabBarAccessibilityLabel: "Explore",
           tabBarShowLabel: false,
           headerShown: true,
           tabBarIcon: ({ color }) => <Feather name="compass" size={23} color={color} />,
@@ -63,10 +59,8 @@ export default function AppLayout() {
 
       <Tabs.Screen
         name={TabName.Camera}
-        accessible={true}
-        accessibilityLabel="New Post" 
-        accessibilityRole="tab"
         options={{
+          tabBarAccessibilityLabel: "New Post",
           tabBarShowLabel: false,
           headerShown: true,
           tabBarIcon: ({ color }) => <Feather name="camera" size={28} color={color} />,
@@ -75,10 +69,8 @@ export default function AppLayout() {
 
       <Tabs.Screen
         name={TabName.Notifications}
-        accessible={true}
-        accessibilityLabel="Notifications" 
-        accessibilityRole="tab"
         options={{
+          tabBarAccessibilityLabel: "Notifications",
           tabBarShowLabel: false,
           headerShown: true,
           tabBarIcon: ({ color }) => <Feather name="bell" size={26} color={color} />,
@@ -87,10 +79,8 @@ export default function AppLayout() {
 
       <Tabs.Screen
         name={TabName.Profile}
-        accessible={true}
-        accessibilityLabel="Profile" 
-        accessibilityRole="tab"
         options={{
+          tabBarAccessibilityLabel: "Profile",
           tabBarShowLabel: false,
           headerShown: false,
           tabBarIcon: ({ color }) => <Feather name="user" size={26} color={color} />,
