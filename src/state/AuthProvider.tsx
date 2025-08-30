@@ -6,6 +6,7 @@ import { useContext, useState } from 'react'
 import { Alert, Platform } from 'react-native'
 import { get, loginPreflightCheck, postForm, verifyCredentials } from 'src/requests'
 import { Storage } from './cache'
+import { setGlobalLogoutFunction } from 'src/lib/api-context'
 
 import { useQuery } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
@@ -284,6 +285,11 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     setUserCache(null)
     setIsLoading(false)
   }
+
+  // Register global logout function for ApiContext 401/403 handling
+  useEffect(() => {
+    setGlobalLogoutFunction(logout)
+  }, [logout])
 
   useProtectedRoute(user, setUser, setIsLoading)
 
