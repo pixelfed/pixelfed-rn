@@ -14,18 +14,21 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import EmptyFeed from 'src/components/common/EmptyFeed'
 import ErrorFeed from 'src/components/common/ErrorFeed'
 import FeedHeader from 'src/components/common/FeedHeader'
+import StoryCarousel from 'src/components/common/Stories'
 import FeedPost from 'src/components/post/FeedPost'
 import { useVideo } from 'src/hooks/useVideoProvider'
 import {
   deleteStatusV1,
   favouriteStatus,
   fetchHomeFeed,
+  postStoryViewed,
   reblogStatus,
   unfavouriteStatus,
   unreblogStatus,
 } from 'src/lib/api'
 import type { Status } from 'src/lib/api-types'
 import { useUserCache } from 'src/state/AuthProvider'
+import { Storage } from 'src/state/cache'
 import { Button, Spinner, Text, useTheme, View, XStack } from 'tamagui'
 
 const VIEW_CONFIG = { viewAreaCoveragePercentThreshold: 50 }
@@ -101,6 +104,53 @@ export default function HomeScreen() {
   const theme = useTheme()
   const user = useUserCache()
   const { playVideo, currentVideoId } = useVideo()
+  const hideStories = Storage.getBoolean('ui.hideStories') == true
+
+  const {
+    isPending: mutateIsPending,
+    isError: mutateIsError,
+    error: mutateError,
+    isSuccess: mutateIsSuccess,
+    mutate,
+  } = useMutation({
+    mutationFn: (storyView) => postStoryViewed(storyView),
+  })
+
+  const onStoryViewed = useCallback(
+    (userId: string, storyId: string) => {
+      mutate({ id: storyId })
+    },
+    [mutate]
+  )
+
+  const EnhancedListHeader = useMemo(() => {
+    return (
+      <View>
+        {/* Stories section */}
+        {!hideStories && (
+          <View>
+            <StoryCarousel onStoryViewed={onStoryViewed} />
+          </View>
+        )}
+
+        {/* Upload progress section */}
+        {isPosting && (
+          <View p="$5">
+            <XStack gap="$3">
+              <Spinner color={theme.color?.val.default.val} />
+              <Text
+                fontSize="$5"
+                allowFontScaling={false}
+                color={theme.color?.val.default.val}
+              >
+                Uploading new post, please wait...
+              </Text>
+            </XStack>
+          </View>
+        )}
+      </View>
+    )
+  }, [hideStories, onStoryViewed, isPosting, theme])
 
   useEffect(() => {
     if (hasShareIntent) {
@@ -361,26 +411,12 @@ export default function HomeScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <FeedHeader title="Pixelfed" user={user} />
 
-      {isPosting && (
-        <View p="$5">
-          <XStack gap="$3">
-            <Spinner color={theme.color?.val.default.val} />
-            <Text
-              fontSize="$5"
-              allowFontScaling={false}
-              color={theme.color?.val.default.val}
-            >
-              Uploading new post, please wait...
-            </Text>
-          </XStack>
-        </View>
-      )}
-
       <FlatList
         ref={flatListRef}
         data={feedData}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
+        ListHeaderComponent={EnhancedListHeader}
         {...FLAT_LIST_OPTIMIZATION}
         refreshing={isRefetching}
         onRefresh={refetch}
