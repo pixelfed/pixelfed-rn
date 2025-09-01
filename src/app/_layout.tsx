@@ -20,6 +20,7 @@ import {
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import GlobalToast from 'src/components/notifications/GlobalToast'
 import { useAppState } from 'src/hooks/useAppState'
+import { AlertProvider } from 'src/hooks/useCustomAlertProvider'
 import { useOnlineManager } from 'src/hooks/useOnlineManager'
 import { VideoProvider } from 'src/hooks/useVideoProvider'
 import { Storage } from 'src/state/cache'
@@ -244,43 +245,45 @@ function RootLayoutNav() {
             <Theme name={currentTheme}>
               <ThemeProvider value={navigationTheme}>
                 <ToastProvider native={false}>
-                  <VideoProvider>
-                    <BottomSheetModalProvider>
-                      <StatusBar
-                        style={statusBarStyle}
-                        backgroundColor={statusBarBackgroundColorMap[currentTheme]}
-                        animated
-                      />
-                      <ToastViewport padding="$6" bottom={0} left={0} right={0} />
-                      <GlobalToast />
-                      <Stack>
-                        <Stack.Screen
-                          name="(auth)/(tabs)"
-                          options={{ headerShown: false }}
+                  <AlertProvider>
+                    <VideoProvider>
+                      <BottomSheetModalProvider>
+                        <StatusBar
+                          style={statusBarStyle}
+                          backgroundColor={statusBarBackgroundColorMap[currentTheme]}
+                          animated
                         />
-                        <Stack.Screen
-                          name="(public)/login"
-                          options={{ headerShown: false }}
-                        />
-                        <Stack.Screen
-                          name="(public)/handleLogin"
-                          options={{ headerShown: false }}
-                        />
-                        <Stack.Screen
-                          name="(public)/handleSignup"
-                          options={{ headerShown: false }}
-                        />
-                        <Stack.Screen
-                          name="(public)/verifyEmail"
-                          options={{ headerShown: false }}
-                        />
-                        <Stack.Screen
-                          name="(public)/verificationCode"
-                          options={{ headerShown: false }}
-                        />
-                      </Stack>
-                    </BottomSheetModalProvider>
-                  </VideoProvider>
+                        <ToastViewport padding="$6" bottom={0} left={0} right={0} />
+                        <GlobalToast />
+                        <Stack>
+                          <Stack.Screen
+                            name="(auth)/(tabs)"
+                            options={{ headerShown: false }}
+                          />
+                          <Stack.Screen
+                            name="(public)/login"
+                            options={{ headerShown: false }}
+                          />
+                          <Stack.Screen
+                            name="(public)/handleLogin"
+                            options={{ headerShown: false }}
+                          />
+                          <Stack.Screen
+                            name="(public)/handleSignup"
+                            options={{ headerShown: false }}
+                          />
+                          <Stack.Screen
+                            name="(public)/verifyEmail"
+                            options={{ headerShown: false }}
+                          />
+                          <Stack.Screen
+                            name="(public)/verificationCode"
+                            options={{ headerShown: false }}
+                          />
+                        </Stack>
+                      </BottomSheetModalProvider>
+                    </VideoProvider>
+                  </AlertProvider>
                 </ToastProvider>
               </ThemeProvider>
             </Theme>
