@@ -206,174 +206,6 @@ const OnboardingScreen: React.FC<{
   </YStack>
 )
 
-const ViewerItem: React.FC<{
-  viewer: Viewer
-  theme: any
-}> = ({ viewer, theme }) => {
-  const viewedAgo = React.useMemo(() => {
-    return _timeAgo(viewer.viewed_at)
-  }, [viewer.viewed_at])
-
-  return (
-    <XStack
-      padding={12}
-      alignItems="center"
-      space={12}
-      backgroundColor={theme.background?.val?.default?.val}
-    >
-      <Avatar circular size="$4">
-        <Avatar.Image source={{ uri: viewer.avatar }} />
-        <Avatar.Fallback
-          backgroundColor={theme.background?.val?.tertiary?.val}
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Text color={theme.color?.val?.default?.val}>
-            {viewer.username?.charAt(0)?.toUpperCase() || '?'}
-          </Text>
-        </Avatar.Fallback>
-      </Avatar>
-
-      <YStack flex={1} gap={5}>
-        <Text color={theme.color?.val?.default?.val} fontSize={14} fontWeight="600">
-          {viewer.name || viewer.username}
-        </Text>
-        {viewer.display_name && (
-          <Text color={theme.color?.val?.secondary?.val} fontSize={16}>
-            @{viewer.acct}
-          </Text>
-        )}
-        <Text color={theme.color?.val?.tertiary?.val} fontSize={12}>
-          Viewed {viewedAgo} ago
-        </Text>
-      </YStack>
-    </XStack>
-  )
-}
-
-const StoryViewersScreen: React.FC<{
-  storyId: string
-  onBack: () => void
-  theme: any
-}> = ({ storyId, onBack, theme }) => {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, error } =
-    useInfiniteQuery({
-      queryKey: ['storyViewers', storyId],
-      queryFn: ({ pageParam = null }) => getStoryViewers(storyId, pageParam),
-      getNextPageParam: (lastPage) => {
-        if (lastPage.current_page < lastPage.last_page) {
-          return lastPage.current_page + 1
-        }
-        return undefined
-      },
-      enabled: !!storyId,
-    })
-
-  const viewers = data?.pages?.flatMap((page) => page.data) || []
-
-  const renderViewer = ({ item }: { item: Viewer }) => (
-    <ViewerItem viewer={item} theme={theme} />
-  )
-
-  const renderFooter = () => {
-    if (isFetchingNextPage) {
-      return (
-        <YStack padding={20} alignItems="center">
-          <Text color={theme.color?.val?.secondary?.val}>Loading more viewers...</Text>
-        </YStack>
-      )
-    }
-    return null
-  }
-
-  const handleLoadMore = () => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage()
-    }
-  }
-
-  if (isLoading) {
-    return (
-      <YStack flex={1} alignItems="center" justifyContent="center">
-        <Text color={theme.color?.val?.secondary?.val}>Loading viewers...</Text>
-      </YStack>
-    )
-  }
-
-  if (error) {
-    return (
-      <YStack flex={1} alignItems="center" justifyContent="center" space={16}>
-        <Feather name="alert-circle" size={48} color={theme.color?.val?.secondary?.val} />
-        <Text color={theme.color?.val?.secondary?.val} textAlign="center">
-          Failed to load story viewers
-        </Text>
-        <Button
-          size="$3"
-          onPress={onBack}
-          backgroundColor={theme.background?.val?.tertiary?.val}
-        >
-          <Text color={theme.color?.val?.default?.val}>Go Back</Text>
-        </Button>
-      </YStack>
-    )
-  }
-
-  return (
-    <YStack flex={1} paddingHorizontal={20}>
-      <XStack alignItems="center" justifyContent="space-between" paddingTop={20}>
-        <Button
-          size="$3"
-          circular
-          backgroundColor="transparent"
-          borderColor="transparent"
-          onPress={onBack}
-        >
-          <Feather name="arrow-left" size={20} color={theme.color?.val?.tertiary?.val} />
-        </Button>
-
-        <Text color={theme.color?.val?.default?.val} fontSize={18} fontWeight="bold">
-          Story Viewers
-        </Text>
-
-        <Stack width={40} />
-      </XStack>
-
-      <Separator borderColor={theme.borderColor?.val?.default?.val} my="$3" />
-
-      {viewers.length === 0 ? (
-        <YStack flex={1} alignItems="center" justifyContent="center" space={16}>
-          <Feather name="eye-off" size={48} color={theme.color?.val?.secondary?.val} />
-          <Text color={theme.color?.val?.secondary?.val} textAlign="center">
-            No viewers yet
-          </Text>
-          <Text color={theme.color?.val?.tertiary?.val} textAlign="center" fontSize={14}>
-            When people view your story, they'll appear here
-          </Text>
-        </YStack>
-      ) : (
-        <YStack flex={1}>
-          <Text color={theme.color?.val?.secondary?.val} fontSize={14} paddingBottom={12}>
-            {viewers.length} viewer{viewers.length !== 1 ? 's' : ''}
-          </Text>
-
-          <FlatList
-            data={viewers}
-            keyExtractor={(item) => item.id}
-            renderItem={renderViewer}
-            onEndReached={handleLoadMore}
-            onEndReachedThreshold={0.3}
-            ListFooterComponent={renderFooter}
-            showsVerticalScrollIndicator={false}
-            ItemSeparatorComponent={() => (
-              <Separator borderColor={theme.borderColor?.val?.default?.val} />
-            )}
-          />
-        </YStack>
-      )}
-    </YStack>
-  )
-}
-
 const StackedStoriesPreview: React.FC<{
   stories: Story[]
   onTap: () => void
@@ -594,8 +426,8 @@ export const SelfAvatarModal: React.FC<SelfAvatarModalProps> = ({
   }
 
   const handleViewStoryViewers = (storyId: string) => {
-    setSelectedStoryId(storyId)
-    setShowStoryViewers(true)
+    onClose()
+    router.push(`story/viewers/${storyId}`)
   }
 
   const handleBackFromViewers = () => {
@@ -622,12 +454,6 @@ export const SelfAvatarModal: React.FC<SelfAvatarModalProps> = ({
             onDisable={handleDisableStories}
             theme={theme}
             username={username}
-          />
-        ) : showStoryViewers && selectedStoryId ? (
-          <StoryViewersScreen
-            storyId={selectedStoryId}
-            onBack={handleBackFromViewers}
-            theme={theme}
           />
         ) : showStoryList ? (
           <YStack flex={1} paddingHorizontal={20}>
