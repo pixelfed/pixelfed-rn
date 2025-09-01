@@ -187,7 +187,7 @@ export default function HomeScreen() {
     hasNextPage,
     isFetchingNextPage,
     isRefetching,
-    refetch,
+    refetch: handleRefetch,
     isFetching,
     status,
     isError,
@@ -200,6 +200,11 @@ export default function HomeScreen() {
     getNextPageParam: (lastPage) => lastPage.nextPage,
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
   })
+
+  const refetch = () => {
+    queryClient.invalidateQueries({ queryKey: ['getStoryCarousel'] })
+    handleRefetch()
+  }
 
   const deletePostMutation = useMutation({
     mutationFn: deleteStatusV1,
