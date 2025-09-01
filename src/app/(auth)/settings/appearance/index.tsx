@@ -22,6 +22,7 @@ import {
 export default function Screen() {
   const forceSensitive = Storage.getBoolean('ui.forceSensitive') == true
   const hideCaptions = Storage.getBoolean('ui.hideCaptions') == true
+  const hideStories = Storage.getBoolean('ui.hideStories') == true
   const tamaguiTheme = useTheme()
   const tamaguiThemeName = useThemeName()
   const _colorScheme = useColorScheme()
@@ -165,11 +166,11 @@ export default function Screen() {
               fontWeight={'bold'}
               color={tamaguiTheme.color?.val.default.val}
             >
-              Force Show Sensitive/NSFW Media
+              Force Show Sensitive Media
             </Text>
             <Text fontSize="$3" color={tamaguiTheme.color?.val.tertiary.val}>
-              Removes sensitive content warnings and displays media across accounts, feeds
-              and hashtags.
+              Removes sensitive/NSFW content warnings and displays media across accounts,
+              feeds and hashtags.
             </Text>
           </YStack>
           <Switch
@@ -205,6 +206,33 @@ export default function Screen() {
             size="$3"
             defaultChecked={hideCaptions}
             onCheckedChange={(checked) => Storage.set('ui.hideCaptions', checked)}
+          >
+            <Switch.Thumb animation="quicker" />
+          </Switch>
+        </XStack>
+        <Separator borderColor={tamaguiTheme.borderColor?.val.default.val} />
+        <XStack
+          py="$3"
+          px="$4"
+          bg={tamaguiTheme.background?.val.secondary.val}
+          justifyContent="space-between"
+        >
+          <YStack maxWidth="60%" gap="$2">
+            <Text
+              fontSize="$5"
+              fontWeight={'bold'}
+              color={tamaguiTheme.color?.val.default.val}
+            >
+              Hide Stories
+            </Text>
+            <Text fontSize="$3" color={tamaguiTheme.color?.val.tertiary.val}>
+              Hides the story carousel
+            </Text>
+          </YStack>
+          <Switch
+            size="$3"
+            defaultChecked={hideStories}
+            onCheckedChange={(checked) => Storage.set('ui.hideStories', checked)}
           >
             <Switch.Thumb animation="quicker" />
           </Switch>
