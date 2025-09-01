@@ -94,6 +94,7 @@ export default function ProfilePage() {
       exif: false,
       selectionLimit: 1,
       quality: 0.5,
+      legacy: true,
     })
 
     if (!result.canceled) {
