@@ -214,7 +214,7 @@ const PostHeader = React.memo(
                         fontWeight="bold"
                         fontSize="$5"
                         color={theme.color.val.default.val}
-                        aria-label={username} // don't cut it short for screen readers
+                        aria-label={username}
                       >
                         {enforceLen(username, 20, true)}
                       </Text>
@@ -224,7 +224,7 @@ const PostHeader = React.memo(
                         fontWeight="300"
                         fontSize="$3"
                         color={theme.color.val.secondary.val}
-                        aria-label={displayName} // don't cut it short for screen readers
+                        aria-label={displayName}
                       >
                         {enforceLen(displayName, 25, true)}
                       </Text>

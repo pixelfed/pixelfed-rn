@@ -35,7 +35,7 @@ export default function FeedHeader({ title = 'Home', user }) {
           <Link
             accessible={true}
             accessibilityLabel="Open local feed" // UI calls it Public Feed, but it's actually Local. Other changes required?
-            accessibilityRole="button"
+            role="button"
             href="/feeds/network" 
             asChild
           >
@@ -47,7 +47,7 @@ export default function FeedHeader({ title = 'Home', user }) {
           <Link 
             accessible={true}
             accessibilityLabel="Home"
-            accessibilityRole="button"
+            role="button"
             href="/" 
             asChild
           >
@@ -59,7 +59,7 @@ export default function FeedHeader({ title = 'Home', user }) {
         <Link 
           accessible={true}
           accessibilityLabel="Direct messages"
-          accessibilityRole="button"
+          role="button"
           href="/chats"
           asChild
         >
@@ -70,7 +70,7 @@ export default function FeedHeader({ title = 'Home', user }) {
         <Link 
           accessible={true}
           accessibilityLabel="Search"
-          accessibilityRole="button"
+          role="button"
           href="/search" 
           asChild
         >
