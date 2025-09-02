@@ -25,6 +25,9 @@ export default function FollowingProfile({
   return (
     <XStack w="100%" my="$3" gap="$2">
       <Button
+        accessible={true}
+        accessibilityLabel="Unfollow"
+        accessibilityRole="button"
         theme="light"
         size="$3"
         bg="transparent"
@@ -40,6 +43,9 @@ export default function FollowingProfile({
       </Button>
 
       <Button
+        accessible={true}
+        accessibilityLabel="Send message"
+        accessibilityRole="button"
         theme="light"
         bg="transparent"
         size="$3"

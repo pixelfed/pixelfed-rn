@@ -40,6 +40,7 @@ export default function AppLayout() {
       <Tabs.Screen
         name={TabName.Index}
         options={{
+          tabBarAccessibilityLabel: "Home Feed",
           tabBarShowLabel: false,
           headerShown: false,
           tabBarIcon: ({ color }) => <Feather name="home" size={26} color={color} />,
@@ -49,6 +50,7 @@ export default function AppLayout() {
       <Tabs.Screen
         name={TabName.Explore}
         options={{
+          tabBarAccessibilityLabel: "Explore",
           tabBarShowLabel: false,
           headerShown: true,
           tabBarIcon: ({ color }) => <Feather name="compass" size={23} color={color} />,
@@ -58,6 +60,7 @@ export default function AppLayout() {
       <Tabs.Screen
         name={TabName.Camera}
         options={{
+          tabBarAccessibilityLabel: "New Post",
           tabBarShowLabel: false,
           headerShown: true,
           tabBarIcon: ({ color }) => <Feather name="camera" size={28} color={color} />,
@@ -67,6 +70,7 @@ export default function AppLayout() {
       <Tabs.Screen
         name={TabName.Notifications}
         options={{
+          tabBarAccessibilityLabel: "Notifications",
           tabBarShowLabel: false,
           headerShown: true,
           tabBarIcon: ({ color }) => <Feather name="bell" size={26} color={color} />,
@@ -76,6 +80,7 @@ export default function AppLayout() {
       <Tabs.Screen
         name={TabName.Profile}
         options={{
+          tabBarAccessibilityLabel: "Profile",
           tabBarShowLabel: false,
           headerShown: false,
           tabBarIcon: ({ color }) => <Feather name="user" size={26} color={color} />,

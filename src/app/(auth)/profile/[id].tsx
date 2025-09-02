@@ -25,6 +25,7 @@ import {
   Share,
 } from 'react-native'
 import { Blurhash } from 'react-native-blurhash'
+import { PressableOpacity } from 'react-native-pressable-opacity'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { PixelfedBottomSheetModal } from 'src/components/common/BottomSheets'
 import ImageComponent from 'src/components/ImageComponent'
@@ -42,6 +43,7 @@ import {
   unmuteProfileById,
 } from 'src/lib/api'
 import { Storage } from 'src/state/cache'
+import { formatTimestamp } from 'src/utils'
 import { Button, Separator, Text, useTheme, View, YStack, ZStack } from 'tamagui'
 
 const SCREEN_WIDTH = Dimensions.get('screen').width
@@ -79,7 +81,14 @@ export default function ProfileScreen() {
 
       if (!bh || bh === 'U4Rfzst8?bt7ogayj[j[~pfQ9Goe%Mj[WBay') {
         return (
-          <Link key={item?.id} href={`/post/${item.id}`} asChild>
+          <Link 
+            accessible={true}
+            accessibilityLabel="Post marked as sensitive"
+            accessibilityRole="image"
+            key={item?.id} 
+            href={`/post/${item.id}`} 
+            asChild
+          >
             <View
               flexShrink={1}
               style={{ borderWidth: 1, borderColor: theme.borderColor?.val.inverse.val }}
@@ -102,7 +111,14 @@ export default function ProfileScreen() {
         )
       }
       return (
-        <Link key={item?.id} href={`/post/${item.id}`} asChild>
+        <Link 
+          accessible={true}
+          accessibilityLabel="Post, loading preview"
+          accessibilityRole="image"
+          key={item?.id} 
+          href={`/post/${item.id}`} 
+          asChild
+        >
           <View
             flexShrink={1}
             style={{ borderWidth: 1, borderColor: theme.borderColor?.val.inverse.val }}
@@ -127,7 +143,14 @@ export default function ProfileScreen() {
 
     if (med?.type === 'video') {
       return (
-        <Link key={item?.id} href={`/post/${item.id}`} asChild>
+        <Link 
+          accessible={true}
+          accessibilityLabel={item.date ? `Video post on ${formatTimestamp(item.created_at)}` : "Video post"} 
+          accessibilityRole="image"
+          key={item?.id} 
+          href={`/post/${item.id}`} 
+          asChild
+        >
           <View
             flexShrink={1}
             style={{ borderWidth: 1, borderColor: theme.borderColor?.val.inverse.val }}
@@ -164,7 +187,14 @@ export default function ProfileScreen() {
       )
     }
     return item && item.media_attachments && item.media_attachments[0].url ? (
-      <Link key={item?.id} href={`/post/${item.id}`} asChild>
+      <Link
+        accessible={true}
+        accessibilityLabel={item.created_at ? `Post on ${formatTimestamp(item.created_at)}` : "Post"} 
+        accessibilityRole="image"
+        key={item?.id}
+        href={`/post/${item.id}`} 
+        asChild
+      >
         <View
           flexShrink={1}
           style={{

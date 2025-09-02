@@ -50,7 +50,13 @@ export default function CommentItem({
           <XStack flexShrink={1}>
             <XStack gap="$3" flexGrow={1}>
               <View>
-                <Pressable onPress={() => gotoProfile(item.account.id)} hitSlop={8}>
+                <Pressable 
+                  accessible={true}
+                  accessibilityLabel="Avatar" 
+                  accessibilityRole="image"
+                  onPress={() => gotoProfile(item.account.id)}
+                  hitSlop={8}
+                >
                   <ImageComponent
                     source={{
                       uri: item.account.avatar,
@@ -117,7 +123,13 @@ export default function CommentItem({
                     </Text>
                   </Pressable>
                   {item.favourites_count > 0 && (
-                    <Pressable onPress={() => onShowLikes(item.id)} hitSlop={7}>
+                    <Pressable 
+                      accessible={true}
+                      accessibilityLabel={`${prettyCount(item?.favourites_count)} likes`}
+                      accessibilityRole="link"
+                      onPress={() => onShowLikes(item.id)} 
+                      hitSlop={7}
+                    >
                       <Text fontSize="$3" color={theme.color?.val.secondary.val}>
                         {likeCountLabel(item?.favourites_count)}
                       </Text>
@@ -146,7 +158,11 @@ export default function CommentItem({
                         <ActivityIndicator />
                       </XStack>
                     ) : (
-                      <Pressable onPress={() => onLoadChildren(item.id, level + 1)}>
+                      <Pressable 
+                        accessible={true}
+                        accessibilityRole="button"
+                        onPress={() => onLoadChildren(item.id, level + 1)}
+                      >
                         <XStack gap="$2" alignItems="center">
                           <View
                             w={20}
@@ -170,7 +186,10 @@ export default function CommentItem({
             </XStack>
 
             <View>
-              <Pressable
+              <Pressable 
+                accessible={true}
+                accessibilityLabel="Like comment" 
+                accessibilityRole="button"
                 onPress={() => onLike(item)}
                 hitSlop={{ left: 20, right: 14, top: 14, bottom: 14 }}
               >
@@ -185,7 +204,11 @@ export default function CommentItem({
                     />
                   )}
                   {item.favourites_count > 0 && (
-                    <Text fontSize="$3" color={theme.color?.val.tertiary.val}>
+                    <Text 
+                      aria-label={`${prettyCount(item.favourites_count)} likes`}
+                      fontSize="$3" 
+                      color={theme.color?.val.tertiary.val}
+                    >
                       {prettyCount(item.favourites_count)}
                     </Text>
                   )}

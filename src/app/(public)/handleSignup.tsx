@@ -233,7 +233,12 @@ export default function SignupScreen() {
         >
           <YStack px="$4" pt="$4" pb="$6" space="$4" flexGrow={1} minHeight="100%">
             <XStack justifyContent="space-between" alignItems="center">
-              <Pressable onPress={navigateBack}>
+              <Pressable 
+                accessible={true}
+                accessibilityLabel="Navigate back" 
+                accessibilityRole="button"
+                onPress={navigateBack}
+              >
                 <Feather
                   name="arrow-left"
                   size={24}
@@ -243,7 +248,12 @@ export default function SignupScreen() {
               <Text fontSize={28} fontWeight="500" color={theme.color?.val.default.val}>
                 Sign Up
               </Text>
-              <Pressable onPress={toggleInfo}>
+              <Pressable
+                accessible={true}
+                accessibilityLabel={showInfo ? "Hide help screen" : "Show help screen"} 
+                accessibilityRole="button" 
+                onPress={toggleInfo}
+              >
                 <Feather
                   name={showInfo ? 'x' : 'help-circle'}
                   size={24}
@@ -267,6 +277,8 @@ export default function SignupScreen() {
               }}
             >
               <View
+                tabIndex={0}
+                aria-live="polite"
                 borderRadius="$4"
                 p="$4"
                 bg={theme.background?.val.secondary.val}
@@ -336,6 +348,8 @@ export default function SignupScreen() {
                         <Pressable
                           key={item.domain}
                           onPress={() => handleServerSelect(item.domain)}
+                          accessibilityRole="menuitem"
+                          accessibilityState={{ selected: server === item.domain }}
                           style={({ pressed }) => [
                             {
                               opacity: pressed ? 0.7 : 1,
@@ -383,6 +397,7 @@ export default function SignupScreen() {
 
             {server && (
               <Button
+                accessibilityState = {{ disabled: loading }}
                 backgroundColor={theme.colorHover?.val.hover.val}
                 color="white"
                 size="$5"
@@ -403,7 +418,10 @@ export default function SignupScreen() {
 
             <YStack space="$2" mt="$2" gap="$3">
               <XStack justifyContent="center" space="$2">
-                <Pressable onPress={handleResendVerification}>
+                <Pressable 
+                  accessible={true}
+                  accessibilityRole="button"
+                  onPress={handleResendVerification}>
                   <Text
                     color={theme.colorHover?.val.active.val}
                     fontWeight="bold"
@@ -415,7 +433,11 @@ export default function SignupScreen() {
               </XStack>
 
               <XStack justifyContent="center" space="$2">
-                <Pressable onPress={navigateToVerificationCode}>
+                <Pressable 
+                  accessible={true}
+                  accessibilityRole="button"
+                  onPress={navigateToVerificationCode}
+                >
                   <Text
                     color={theme.colorHover?.val.active.val}
                     fontWeight="bold"

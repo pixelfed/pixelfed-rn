@@ -91,7 +91,13 @@ export default function Login() {
 
         <YStack space="$4" mb="$5">
           <XStack space="$3" mb="$5">
-            <Link href="handleLogin" asChild>
+            <Link 
+              accessible={true}
+              accessibilityLabel="Login" 
+              accessibilityRole="button"
+              href="handleLogin" 
+              asChild
+            >
               <Button
                 size="$5"
                 theme="blue"
@@ -105,7 +111,13 @@ export default function Login() {
               </Button>
             </Link>
 
-            <Link href="handleSignup" asChild>
+            <Link 
+              accessible={true}
+              accessibilityLabel="Sign Up" 
+              accessibilityRole="button"
+              href="handleSignup" 
+              asChild
+            >
               <Button
                 size="$5"
                 theme="gray"

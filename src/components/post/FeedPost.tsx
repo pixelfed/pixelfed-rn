@@ -189,7 +189,13 @@ const PostHeader = React.memo(
           py="$2"
         >
           <View flexGrow={1}>
-            <Link href={`/profile/${userId}`} asChild>
+            <Link 
+              accessible={true}
+              accessibilityRole="link"
+              accessibilityHint="Tap to go to profile"
+              href={`/profile/${userId}`} 
+              asChild
+            >
               <Pressable>
                 <XStack gap="$3" alignItems="center" flexGrow={1}>
                   <ImageComponent
@@ -208,6 +214,7 @@ const PostHeader = React.memo(
                         fontWeight="bold"
                         fontSize="$5"
                         color={theme.color.val.default.val}
+                        aria-label={username}
                       >
                         {enforceLen(username, 20, true)}
                       </Text>
@@ -217,6 +224,7 @@ const PostHeader = React.memo(
                         fontWeight="300"
                         fontSize="$3"
                         color={theme.color.val.secondary.val}
+                        aria-label={displayName}
                       >
                         {enforceLen(displayName, 25, true)}
                       </Text>
@@ -226,7 +234,13 @@ const PostHeader = React.memo(
               </Pressable>
             </Link>
           </View>
-          <Pressable onPress={() => onOpenMenu()} hitSlop={{ top: 10, bottom: 10 }}>
+          <Pressable 
+            accessible={true}
+            accessibilityLabel="Options" 
+            accessibilityRole="button"
+            onPress={() => onOpenMenu()}
+            hitSlop={{ top: 10, bottom: 10 }}
+          >
             <View px="$3">
               <Feather
                 name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
@@ -521,7 +535,13 @@ const PostActions = React.memo(
                   <ActivityIndicator color={theme.color?.val.default.val} />
                 ) : null}
                 {!isLikePending && likesCount ? (
-                  <Link href={`/post/likes/${post.id}`} asChild>
+                  <Link 
+                    accessible={true}
+                    accessibilityLabel={`${prettyCount(likesCount)} likes`}
+                    accessibilityRole="link"
+                    href={`/post/likes/${post.id}`}
+                    asChild
+                  >
                     <Pressable hitSlop={{ left: 5, right: 20, top: 12, bottom: 12 }}>
                       <Text
                         fontWeight={'bold'}
@@ -534,7 +554,10 @@ const PostActions = React.memo(
                   </Link>
                 ) : null}
               </XStack>
-              <Pressable
+              <Pressable 
+                accessible={true}
+                accessibilityLabel="Comments" 
+                accessibilityRole="button"
                 onPress={() => onOpenComments()}
                 hitSlop={{ top: 4, bottom: 4, left: 4, right: commentsCount ? 4 : 25 }}
               >
@@ -546,6 +569,7 @@ const PostActions = React.memo(
                   />
                   {commentsCount ? (
                     <Text
+                      aria-label={`${prettyCount(commentsCount)} comments`}
                       fontWeight={'bold'}
                       allowFontScaling={false}
                       fontSize="$2"
@@ -561,6 +585,10 @@ const PostActions = React.memo(
               {post.visibility === 'public' ? (
                 <XStack justifyContent="center" alignItems="center" gap="$2">
                   <PressableOpacity
+                    accessible={true}
+                    accessibilityLabel="Repost"
+                    accessibilityRole="button"
+                    accessibilityState={{ checked: hasSharedCache }}
                     onPress={() => handleOnShare()}
                     style={{ marginRight: 5 }}
                     hitSlop={6}
@@ -572,7 +600,13 @@ const PostActions = React.memo(
                     />
                   </PressableOpacity>
                   {sharesCount ? (
-                    <Link href={`/post/shares/${post.id}`} asChild>
+                    <Link
+                      accessible={true}
+                      accessibilityLabel={`Reposted ${prettyCount(shareCountCache)} times`}
+                      accessibilityRole="link"
+                      href={`/post/shares/${post.id}`}
+                      asChild
+                    >
                       <Pressable hitSlop={{ left: 5, right: 20, top: 12, bottom: 12 }}>
                         <Text
                           fontWeight={'bold'}
@@ -590,7 +624,14 @@ const PostActions = React.memo(
                 <ActivityIndicator color={theme.color?.val.default.val} />
               ) : null}
               {!isBookmarkPending && !isLikeFeed ? (
-                <PressableOpacity onPress={() => handleBookmarkAction()} hitSlop={4}>
+                <PressableOpacity 
+                  accessible={true}
+                  accessibilityLabel="Bookmark post" 
+                  accessibilityRole="button"
+                  accessibilityState={{ checked: hasBookmarked }}
+                  onPress={() => handleBookmarkAction()} 
+                  hitSlop={4}
+                >
                   <XStack gap="$4">
                     {hasBookmarked ? (
                       <Ionicons
@@ -609,7 +650,12 @@ const PostActions = React.memo(
                 </PressableOpacity>
               ) : null}
               {showAltText && hasAltText ? (
-                <PressableOpacity onPress={() => onShowAlt()}>
+                <PressableOpacity 
+                  accessible={true}
+                  accessibilityLabel="Show alt text"
+                  accessibilityRole="button"
+                  onPress={() => onShowAlt()}
+                >
                   <XStack
                     bg={theme.color?.val.default.val}
                     px="$3"
@@ -807,7 +853,7 @@ const TextPost = React.memo(
     return (
       <SectionTopBorder>
         <XStack alignItems="flex-start" gap="$3" paddingVertical="$3">
-          <Link href={`/profile/${userId}`} asChild>
+          <Link accessibilityLabel="Profile image" href={`/profile/${userId}`} asChild>
             <Pressable>
               <Circle
                 size={40}
@@ -830,14 +876,16 @@ const TextPost = React.memo(
           </Link>
           <YStack flex={1}>
             {post.in_reply_to_id ? (
-              <XStack>
-                <Text color={theme.color.val.secondary.val}>In reply to this </Text>
-                <Link href={`/post/${post.in_reply_to_id}`}>
-                  <Text color={theme.colorHover.val.active.val} fontWeight="bold">
-                    post
-                  </Text>
-                </Link>
-              </XStack>
+              <View tabIndex={0}>
+                <XStack>
+                  <Text color={theme.color.val.secondary.val}>In reply to this </Text>
+                  <Link href={`/post/${post.in_reply_to_id}`}>
+                    <Text color={theme.colorHover.val.active.val} fontWeight="bold">
+                      post
+                    </Text>
+                  </Link>
+                </XStack>
+              </View>
             ) : null}
             <XStack
               alignItems="center"
@@ -866,7 +914,12 @@ const TextPost = React.memo(
                 </Text>
               </XStack>
 
-              <Pressable onPress={() => onOpenMenu()}>
+              <Pressable 
+                accessible={true}
+                accessibilityLabel="Options" 
+                accessibilityRole="button"
+                onPress={() => onOpenMenu()}
+              >
                 <View px="$3">
                   <Feather
                     name={Platform.OS === 'ios' ? 'more-horizontal' : 'more-vertical'}
@@ -910,7 +963,13 @@ const TextPost = React.memo(
                       <ActivityIndicator color={theme.color.val.default.val} />
                     ) : null}
                     {!isLikePending && likesCount ? (
-                      <Link href={`/post/likes/${post.id}`}>
+                      <Link 
+                        accessible={true}
+                        accessibilityLabel={`${prettyCount(likesCount)} likes`}
+                        accessibilityRole="link"
+                        accessibilityHint="Tap to show who liked this post"
+                        href={`/post/likes/${post.id}`}
+                      >
                         <Text
                           fontWeight={'bold'}
                           allowFontScaling={false}
@@ -924,7 +983,12 @@ const TextPost = React.memo(
                   </XStack>
 
                   <XStack gap="$2" alignItems="center">
-                    <Pressable onPress={() => onOpenComments()}>
+                    <Pressable 
+                      accessible={true}
+                      accessibilityLabel="Comments" 
+                      accessibilityRole="button"
+                      onPress={() => onOpenComments()}
+                    >
                       <Feather
                         name="message-circle"
                         size={20}
@@ -932,6 +996,7 @@ const TextPost = React.memo(
                       />
                     </Pressable>
                     <Text
+                      aria-label={`${prettyCount(commentsCount)} comments`}
                       fontSize={13}
                       fontWeight="bold"
                       color={theme.color?.val.secondary.val}
@@ -1068,6 +1133,9 @@ const FeedPost = React.memo(
         })
       } catch (_error) {}
     }
+    const getMediaIdx = () => {
+      return Math.floor(progress?.value ?? 0)
+    }
     return (
       <View flex={1} style={{ width }}>
         {post.media_attachments?.length > 0 ? (
@@ -1080,7 +1148,37 @@ const FeedPost = React.memo(
               onOpenMenu={() => handlePresentModalPress()}
             />
 
-            <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
+            <View 
+              tabIndex={0} 
+              aria-label={`${
+                post.media_attachments?.length > 1 
+                  ? `Picture ${getMediaIdx()+1} of ${post.media_attachments?.length} in post ` 
+                  : "Picture "}
+                ${post.media_attachments[getMediaIdx()].description
+                  ? `of ${post.media_attachments[getMediaIdx()].description} ` 
+                  : "not tagged with any alt text. "}
+                  ${
+                post.media_attachments?.length > 1
+                ? "Swipe to go to next picture" 
+                : ""
+              }`
+              }
+              role="img"
+              aria-hint={
+                post.media_attachments?.length > 1
+                ? "Swipe to go to next picture" 
+                : ""
+              }
+              accessibilityActions={[
+                {name: 'activate', label: 'Like post'},
+              ]}
+              onAccessibilityAction={event => {
+                if (event.nativeEvent.actionName === 'activate') {
+                  handleDoubleTap();
+                }
+              }}
+            >
+              <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
               {post.media_attachments.length > 1 ? (
                 <PostAlbumMedia
                   media={post.media_attachments}
@@ -1091,6 +1189,7 @@ const FeedPost = React.memo(
                 <PostMedia media={post.media_attachments} post={post} />
               )}
             </GestureDetector>
+            </View>
             {!hideCaptions || isPermalink ? (
               <>
                 <PostActions
