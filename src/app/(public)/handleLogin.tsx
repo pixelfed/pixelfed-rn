@@ -367,14 +367,17 @@ export default function LoginScreen() {
 
                     {/* Valid domain but not in suggestions */}
                     {isValidDomain && searchValue && filteredServers.length === 0 && (
+                      <Pressable onPress={handleLogin}>
+
                       <View style={{ marginTop: 8 }}>
-                        <Text color="white" fontSize="$6" style={{ paddingVertical: 12 }}>
+                        <Text color={theme.color?.val.default.val} fontSize="$6" style={{ paddingVertical: 12 }}>
                           Continue with{' '}
-                          <Text color="#3F8FF7" fontWeight="bold">
+                          <Text color={theme.colorHover?.val.active.val} fontWeight="bold">
                             {searchValue}
                           </Text>
                         </Text>
                       </View>
+                      </Pressable>
                     )}
                   </View>
                 )}

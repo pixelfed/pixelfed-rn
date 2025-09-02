@@ -30,13 +30,15 @@ export async function selfPost<
   ResponseType = Object,
   RawRes extends Boolean = false,
   ActualResponse = RawRes extends false ? Promise<ResponseType> : Response,
+  RawForm extends Boolean = false,
 >(
   path: string,
   params: ParamsType = {} as ParamsType,
   asForm: AsForm = false as AsForm,
   rawRes: RawRes = false as RawRes,
   idempotency = false,
-  appHeader = false
+  appHeader = false,
+  rawForm: RawForm = false as RawForm
 ) {
   let headers: Record<string, string> = {}
   const instance = Storage.getString('app.instance')
@@ -58,7 +60,9 @@ export async function selfPost<
   const resp = await fetch(url, {
     method: 'POST',
     body: asForm
-      ? objectToForm(params as { [key: string | number]: any })
+      ? rawForm
+        ? params
+        : objectToForm(params as { [key: string | number]: any })
       : JSON.stringify(params),
     headers,
   })
@@ -225,6 +229,26 @@ export async function searchQuery(query: string) {
   return mapd
 }
 
+export async function searchHashtagQuery(query: string) {
+  if (!query || query.trim() === '') return []
+  const instance = Storage.getString('app.instance')
+  const token = Storage.getString('app.token')
+
+  const url = `https://${instance}/api/v2/search?q=${encodeURIComponent(
+    query
+  )}&_pe=1&resolve=1`
+  const response = await fetch(url, {
+    method: 'get',
+    headers: new Headers({
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }),
+  })
+  const data = await response.json()
+  return data.hashtags
+}
+
 export async function fetchNotifications({ queryKey, pageParam = false }) {
   let url
   const filterMap = {
@@ -314,7 +338,7 @@ export async function unfollowAccountById(
 export type NewReport = {
   object_id: string
   report_type: string
-  object_type: 'user' | 'post'
+  object_type: 'user' | 'post' | 'story'
 }
 
 export async function report(report: NewReport) {
@@ -370,6 +394,12 @@ export async function getHashtagRelated(id: string) {
   const instance = Storage.getString('app.instance')
   let url = `https://${instance}/api/v1/tags/${id}/related`
   return await fetchPaginatedData(url)
+}
+
+export async function getMutualFollowers() {
+  const instance = Storage.getString('app.instance')
+  const url = `https://${instance}/api/v1.1/direct/compose/mutuals`
+  return await fetchData(url)
 }
 
 export async function getConversations({ pageParam = false }) {
@@ -882,7 +912,29 @@ export async function putEditPost(id: string, params) {
 }
 
 export async function getStoryCarousel() {
-  return await selfGet(`api/v1.1/stories/carousel`)
+  return await selfGet(`api/v1.2/stories/carousel`)
+}
+
+export async function getStoryMentionAutocomplete(query) {
+  return await selfGet(`api/v1.2/stories/mention-autocomplete?q=${query}`)
+}
+
+export async function postStoryViewed(params) {
+  return await selfPost(`api/v1.1/stories/seen`, params)
+}
+
+export async function getStoryViewers(storyId, cursor) {
+  let url
+  const instance = Storage.getString('app.instance')
+  url =
+    cursor != null
+      ? cursor
+      : `https://${instance}/api/v1.2/stories/viewers?sid=${storyId}`
+  return await fetchCursorPagination(url)
+}
+
+export async function postStorySelfExpire(id) {
+  return await selfPost(`api/v1.1/stories/self-expire/${id}`)
 }
 
 export async function pushNotificationSupported() {
@@ -903,4 +955,9 @@ export async function pushStateCompare(params) {
 
 export async function pushStateUpdate(params) {
   return await selfPost(`api/v1.1/push/update`, params, false, false, false, true)
+}
+
+export async function uploadNewStory(params) {
+  const path = `api/v1.2/stories/publish`
+  return await selfPost(path, params, true, false, true, true, true)
 }

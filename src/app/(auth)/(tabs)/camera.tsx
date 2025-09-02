@@ -213,6 +213,7 @@ export default function Camera() {
       quality: 1,
       orderedSelection: true,
       exif: false,
+      legacy: true,
     })
 
     if (!result.canceled) {
