@@ -31,7 +31,7 @@ export default function AppLayout() {
       backBehavior="history"
       screenOptions={{
         tabBarStyle: {
-          height: (Platform.OS === 'ios' ? 70 : 60) + insets.bottom,
+          height: (Platform.OS === 'ios' ? 40 : 60) + insets.bottom,
           paddingBottom: insets.bottom + 8,
           paddingTop: 8,
         },
@@ -54,7 +54,7 @@ export default function AppLayout() {
         options={{
           tabBarShowLabel: false,
           headerShown: true,
-          tabBarIcon: ({ color }) => <Feather name="compass" size={23} color={color} />,
+          tabBarIcon: ({ color }) => <Feather name="compass" size={26} color={color} />,
         }}
       />
 
