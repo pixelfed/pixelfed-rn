@@ -539,7 +539,7 @@ export const SelfAvatarModal: React.FC<SelfAvatarModalProps> = ({
               )}
             </YStack>
 
-            <YStack paddingBottom={Platform.OS === 'android' ? 20 : 40} space={12}>
+            <YStack paddingBottom={Platform.OS === 'android' ? 60 : 40} space={12}>
               {!hasMaxStories && (
                 <Button
                   size="$4"
