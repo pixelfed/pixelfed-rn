@@ -8,7 +8,7 @@ import {
 import { Image } from 'expo-image'
 import { useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
-import { Dimensions, FlatList, Pressable } from 'react-native'
+import { Dimensions, FlatList, Platform, Pressable } from 'react-native'
 import { useCustomAlert } from 'src/hooks/useCustomAlertProvider'
 import { getStoryViewers, postStorySelfExpire } from 'src/lib/api'
 import { Storage } from 'src/state/cache'
@@ -539,7 +539,7 @@ export const SelfAvatarModal: React.FC<SelfAvatarModalProps> = ({
               )}
             </YStack>
 
-            <YStack paddingBottom={40} space={12}>
+            <YStack paddingBottom={Platform.OS === 'android' ? 20 : 40} space={12}>
               {!hasMaxStories && (
                 <Button
                   size="$4"
