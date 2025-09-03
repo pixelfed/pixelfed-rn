@@ -458,14 +458,16 @@ const PostActions = React.memo(
     const hasAltText =
       post?.media_attachments?.length > 0 &&
       (post?.media_attachments[0]?.description?.trim().length || 0) > 0
-    const onShowAlt = () => {
-      const idx = Math.floor(progress?.value ?? 0)
+
+    const onShowAlt = useCallback(() => {
+      const currentIndex = Math.floor(progress?.value ?? 0)
       Alert.alert(
         'Alt Text',
-        post?.media_attachments[idx].description ??
+        post?.media_attachments[currentIndex]?.description ??
           'Media was not tagged with any alt text.'
       )
-    }
+    }, [progress, post?.media_attachments])
+
     const theme = useTheme()
     const [shareCountCache, setShareCount] = useState(sharesCount)
     const [hasSharedCache, setShared] = useState(hasShared)
@@ -473,9 +475,9 @@ const PostActions = React.memo(
     const { handleBookmark, isBookmarkPending } = useBookmarkMutation()
     const handleBookmarkAction = useCallback(() => {
       handleBookmark(post.id, !hasBookmarked)
-    }, [post.id, post.bookmarked, handleBookmark])
+    }, [post.id, hasBookmarked, handleBookmark])
 
-    const handleOnShare = () => {
+    const handleOnShare = useCallback(() => {
       const labelText = hasSharedCache ? 'Unshare' : 'Share'
       Alert.alert(
         `Confirm ${labelText}`,
@@ -508,7 +510,7 @@ const PostActions = React.memo(
           },
         ]
       )
-    }
+    }, [hasSharedCache, shareCountCache, onShare])
 
     return (
       <BorderlessSection>
@@ -561,7 +563,7 @@ const PostActions = React.memo(
               {post.visibility === 'public' ? (
                 <XStack justifyContent="center" alignItems="center" gap="$2">
                   <PressableOpacity
-                    onPress={() => handleOnShare()}
+                    onPress={handleOnShare}
                     style={{ marginRight: 5 }}
                     hitSlop={6}
                   >
@@ -590,7 +592,7 @@ const PostActions = React.memo(
                 <ActivityIndicator color={theme.color?.val.default.val} />
               ) : null}
               {!isBookmarkPending && !isLikeFeed ? (
-                <PressableOpacity onPress={() => handleBookmarkAction()} hitSlop={4}>
+                <PressableOpacity onPress={handleBookmarkAction} hitSlop={4}>
                   <XStack gap="$4">
                     {hasBookmarked ? (
                       <Ionicons
@@ -609,7 +611,7 @@ const PostActions = React.memo(
                 </PressableOpacity>
               ) : null}
               {showAltText && hasAltText ? (
-                <PressableOpacity onPress={() => onShowAlt()}>
+                <PressableOpacity onPress={onShowAlt}>
                   <XStack
                     bg={theme.color?.val.default.val}
                     px="$3"
