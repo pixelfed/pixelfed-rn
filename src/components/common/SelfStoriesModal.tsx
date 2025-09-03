@@ -8,7 +8,7 @@ import {
 import { Image } from 'expo-image'
 import { useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
-import { Dimensions, FlatList, Platform, Pressable } from 'react-native'
+import { Alert, Dimensions, FlatList, Platform, Pressable } from 'react-native'
 import { useCustomAlert } from 'src/hooks/useCustomAlertProvider'
 import { getStoryViewers, postStorySelfExpire } from 'src/lib/api'
 import { Storage } from 'src/state/cache'
@@ -409,6 +409,28 @@ export const SelfAvatarModal: React.FC<SelfAvatarModalProps> = ({
   }
 
   const handleDeleteStory = async (storyId: string) => {
+    if(Platform.OS === 'android') {
+      Alert.alert(
+        'Delete Story',
+        'Are you sure you want to delete this story? This action cannot be undone.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Delete',
+            style: "destructive",
+            onPress: () => {
+              setShowStoryList(false)
+              deleteStoryMutation.mutate(storyId)
+              onClose()
+            }
+          }
+        ]
+      )
+      return;
+    }
     await alert.show(
       'Delete Story',
       'Are you sure you want to delete this story? This action cannot be undone.',
@@ -417,7 +439,6 @@ export const SelfAvatarModal: React.FC<SelfAvatarModalProps> = ({
         setShowStoryList(false)
         deleteStoryMutation.mutate(storyId)
         onClose()
-        console.log('story delete')
       },
       {
         useNativeModal: true,
