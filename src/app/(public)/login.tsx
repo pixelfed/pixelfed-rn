@@ -67,7 +67,7 @@ export default function Login() {
         justifyContent: 'center',
         alignItems: 'center',
       }}
-      edges={['top']}
+      edges={['top', 'bottom']}
     >
       <YStack flexGrow={1} w="100%" px="$5">
         <View flexGrow={1} justifyContent="center" alignItems="center">
