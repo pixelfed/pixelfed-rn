@@ -1,13 +1,14 @@
-import { Button, XStack } from 'tamagui'
+import { Button, useTheme, XStack } from 'tamagui'
 
 export default function FollowProfile({ onPress }: { onPress: () => void }) {
+  const theme = useTheme()
   return (
     <XStack w="100%" my="$3" gap="$2">
       <Button
         variant="outlined"
-        borderColor="black"
+        borderColor={theme.borderColor?.val.default.val}
         size="$4"
-        color="black"
+        color={theme.color?.val.default.val}
         fontWeight="bold"
         fontSize="$6"
         flexGrow={1}
