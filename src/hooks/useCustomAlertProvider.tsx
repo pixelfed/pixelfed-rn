@@ -116,7 +116,6 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
                 <Text
                   fontSize="$5"
                   color={theme.color?.val?.default.val}
-                  lineHeight="$1.4"
                 >
                   {config.text}
                 </Text>
