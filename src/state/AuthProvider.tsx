@@ -270,8 +270,10 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true)
     Storage.clearAll()
     setUser(null)
-    setUserCache(null)
-    setIsLoading(false)
+    setTimeout(() => {
+      setUserCache(null)
+      setIsLoading(false)
+    }, 200)
   }
 
   useProtectedRoute(user, setUser, setIsLoading)
@@ -295,8 +297,13 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   )
 }
 
+export function usePreUserCache() {
+  const { userCache } = useAuth()
+  return userCache
+}
+
 export function useUserCache() {
-  const { userCache } = useContext(AuthContext)
+  const userCache = usePreUserCache()
   if (!userCache) {
     throw new Error('Error: user info not available')
   }
