@@ -2,7 +2,7 @@
   "expo": {
     "name": "Pixelfed",
     "slug": "pixelfed",
-    "version": "1.7.0",
+    "version": "1.8.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "pixelfed",
@@ -24,6 +24,7 @@
         "resizeMode": "contain",
         "backgroundColor": "#000000"
       },
+      "newArchEnabled": true,
       "userInterfaceStyle": "automatic",
       "supportsTablet": true,
       "bundleIdentifier": "com.pixelfed",
@@ -38,6 +39,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#000000"
       },
+      "newArchEnabled": true,
       "icon": "./assets/icon.png",
       "package": "com.pixelfed",
       "permissions": [
@@ -45,6 +47,7 @@
         "android.permission.CAMERA",
         "android.permission.ACCESS_COARSE_LOCATION"
       ],
+      "softwareKeyboardLayoutMode": "pan",
       "userInterfaceStyle": "automatic",
       "googleServicesFile": "./google-services.json"
     },
@@ -96,10 +99,12 @@
         "expo-build-properties",
         {
           "android": {
+            "newArchEnabled": true,
             "enableProguardInReleaseBuilds": true,
             "enableShrinkResourcesInReleaseBuilds": true
           },
           "ios": {
+            "newArchEnabled": true,
             "useFrameworks": "static"
           }
         }
