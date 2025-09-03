@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons'
 import { useAuth } from '@state/AuthProvider'
 import { Redirect, Tabs } from 'expo-router'
 import { Platform } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 // enum here to prevent typos in id when used in multiple places (typescript checkable)
 enum TabName {
@@ -16,20 +17,22 @@ enum TabName {
 
 export default function AppLayout() {
   const { user } = useAuth()
+  const insets = useSafeAreaInsets()
 
   // Only require authentication within the (app) group's layout as users
   // need to be able to access the (auth) group and sign in again.
   if (!user) {
     return <Redirect href="/login" />
   }
+
   return (
     <Tabs
       initialRouteName={TabName.Index}
       backBehavior="history"
       screenOptions={{
         tabBarStyle: {
-          height: Platform.OS === 'ios' ? 70 : 60,
-          paddingBottom: 8,
+          height: (Platform.OS === 'ios' ? 70 : 60) + insets.bottom,
+          paddingBottom: insets.bottom + 8,
           paddingTop: 8,
         },
         tabBarIconStyle: {
