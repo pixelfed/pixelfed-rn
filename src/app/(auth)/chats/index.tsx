@@ -1,6 +1,6 @@
 import Feather from '@expo/vector-icons/Feather'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { Link, Stack, useNavigation } from 'expo-router'
+import { Link, Stack, useNavigation, useRouter } from 'expo-router'
 import { useCallback, useLayoutEffect } from 'react'
 import { ActivityIndicator, FlatList } from 'react-native'
 import { PressableOpacity } from 'react-native-pressable-opacity'
@@ -15,6 +15,7 @@ export default function Page() {
   const selfUser = useUserCache()
   const navigation = useNavigation()
   const theme = useTheme()
+  const router = useRouter()
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Direct Messages', headerBackTitle: 'Back' })
   }, [navigation])
@@ -58,11 +59,9 @@ export default function Page() {
 
   const HeaderRight = () => (
     <XStack gap="$3">
-      <Link href="/chats/search" asChild>
-        <PressableOpacity hitSlop={10}>
+        <PressableOpacity hitSlop={10} onPress={() => router.push('/chats/search')}>
           <Feather name="plus" size={25} color="#0091ff" />
         </PressableOpacity>
-      </Link>
       {/* <Feather name="settings" size={25} color="#0091ff" /> */}
     </XStack>
   )
