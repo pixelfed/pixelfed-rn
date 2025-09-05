@@ -1,6 +1,6 @@
 import Feather from '@expo/vector-icons/Feather'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { Link, Stack, useNavigation } from 'expo-router'
+import { Link, router, Stack, useNavigation } from 'expo-router'
 import { useCallback, useLayoutEffect } from 'react'
 import { ActivityIndicator, FlatList } from 'react-native'
 import { PressableOpacity } from 'react-native-pressable-opacity'
@@ -102,15 +102,13 @@ export default function Page() {
       content = isSelf ? 'You sent multiple photos' : 'Sent multiple photos'
     }
     return (
-      <View
-        tabIndex={0}
-        aria-label={`${item.accounts[0].acct}. ${cotype === 'text' ? cotext : content}. ${_timeAgo(item.last_status.created_at)} ago`}
-        role="button"
-        p="$3" 
-        bg={theme.background?.val.default.val}
-      >
-        <Link   
-        href={`/chats/conversation/${item.accounts[0].id}`}>
+      <View p="$3" bg={theme.background?.val.default.val}>
+        <PressableOpacity   
+          tabIndex={0}
+          aria-label={`${item.accounts[0].acct}, ${_timeAgo(item.last_status.created_at)} ago. ${cotype === 'text' ? cotext : content}`}
+          role="button"
+          onPress={() => router.push(`/chats/conversation/${item.accounts[0].id}`)}
+        >
           <XStack alignItems="center" gap="$3">
             <UserAvatar url={item.accounts[0].avatar} size="$3" />
 
@@ -141,7 +139,7 @@ export default function Page() {
               </XStack>
             </YStack>
           </XStack>
-        </Link>
+        </PressableOpacity>
       </View>
     )
   }
