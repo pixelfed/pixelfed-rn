@@ -1149,26 +1149,15 @@ const FeedPost = React.memo(
             />
 
             <View 
-              tabIndex={0} 
               aria-label={`${
                 post.media_attachments?.length > 1 
-                  ? `Picture ${getMediaIdx()+1} of ${post.media_attachments?.length} in post ` 
-                  : "Picture "}
-                ${post.media_attachments[getMediaIdx()].description
-                  ? `of ${post.media_attachments[getMediaIdx()].description} ` 
-                  : "not tagged with any alt text. "}
-                  ${
-                post.media_attachments?.length > 1
-                ? "Swipe to go to next picture" 
-                : ""
-              }`
-              }
+                  ? `Picture ${getMediaIdx()+1} of ${post.media_attachments?.length} in post, ` 
+                  : "Picture, "} ${
+                post.media_attachments[getMediaIdx()].description
+                  ? `of ${post.media_attachments[getMediaIdx()].description}` 
+                  : "not tagged with any alt text"} 
+              `}
               role="img"
-              aria-hint={
-                post.media_attachments?.length > 1
-                ? "Swipe to go to next picture" 
-                : ""
-              }
               accessibilityActions={[
                 {name: 'activate', label: 'Like post'},
               ]}
