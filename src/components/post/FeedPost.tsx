@@ -774,7 +774,11 @@ const PostCaption = React.memo(
                 </Text>
               </XStack>
             ) : null}
-            <Link href={`/post/${postId}`} asChild>
+            <Link 
+              accessibilityHint="Tap to open post in it's page"
+              href={`/post/${postId}`}
+              asChild
+            >
               <XStack alignItems="center" gap="$2">
                 <Feather name="clock" color={theme.color?.val.tertiary.val} />
                 <Text color={theme.color?.val.secondary.val} fontSize="$3">
@@ -783,7 +787,11 @@ const PostCaption = React.memo(
               </XStack>
             </Link>
             {editedAt ? (
-              <Link href={`/post/history/${postId}`} asChild>
+              <Link
+                accessibilityHint="Tap to open edit history"
+                href={`/post/history/${postId}`}
+                asChild
+              >
                 <XStack alignItems="center" gap="$2">
                   <Feather name="edit" color={theme.color?.val.secondary.val} />
                   <Text color={theme.color?.val.secondary.val} fontSize="$3">
