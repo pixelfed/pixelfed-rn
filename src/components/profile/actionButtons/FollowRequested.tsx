@@ -6,7 +6,7 @@ export default function FollowProfile({ onPress }: { onPress: () => void }) {
     <XStack w="100%" my="$3" gap="$2">
       <Button
         variant="outlined"
-        borderColor={theme.borderColor?.val.default.val}
+        borderColor={theme.color?.val.default.val}
         size="$4"
         color={theme.color?.val.default.val}
         fontWeight="bold"
