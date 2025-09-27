@@ -774,21 +774,21 @@ export default function Camera() {
                     />
                   </Button>
                 </XStack>
-                  <Button p="$0" chromeless onPress={toggleScope} disabled={userSelf && userSelf?.locked ? true : false}>
-                    <Text
-                      color={theme.color?.val.secondary.val}
-                      fontSize="$3"
-                      allowFontScaling={false}
-                    >
-                      {scopeLabel[scope]}
-                    </Text>
-                    <Feather
-                      name={scopeIcon[scope]}
-                      size={24}
-                      allowFontScaling={false}
-                      color={theme.color?.val.tertiary.val}
-                    />
-                  </Button>
+                <Button p="$0" chromeless onPress={toggleScope} disabled={userSelf && userSelf?.locked ? true : false}>
+                  <Text
+                    color={theme.color?.val.secondary.val}
+                    fontSize="$3"
+                    allowFontScaling={false}
+                  >
+                    {scopeLabel[scope]}
+                  </Text>
+                  <Feather
+                    name={scopeIcon[scope]}
+                    size={24}
+                    allowFontScaling={false}
+                    color={theme.color?.val.tertiary.val}
+                  />
+                </Button>
               </XStack>
             </YStack>
             <View ml="$3" mt="$3">
