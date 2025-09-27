@@ -312,6 +312,24 @@ export default function Camera() {
     }
   }
 
+  const renderScopeLabel = () => (
+    <>
+      <Text
+        color={theme.color?.val.secondary.val}
+        fontSize="$3"
+        allowFontScaling={false}
+      >
+        {scopeLabel[scope]}
+      </Text>
+      <Feather
+        name={scopeIcon[scope]}
+        size={24}
+        allowFontScaling={false}
+        color={theme.color?.val.tertiary.val}
+      />
+    </>
+  )
+
   const saveAltText = () => {
     setMedia(
       media.map((m, idx) => {
@@ -769,21 +787,13 @@ export default function Camera() {
                     />
                   </Button>
                 </XStack>
-                <Button p="$0" chromeless onPress={toggleScope}>
-                  <Text
-                    color={theme.color?.val.secondary.val}
-                    fontSize="$3"
-                    allowFontScaling={false}
-                  >
-                    {scopeLabel[scope]}
-                  </Text>
-                  <Feather
-                    name={scopeIcon[scope]}
-                    size={24}
-                    allowFontScaling={false}
-                    color={theme.color?.val.tertiary.val}
-                  />
-                </Button>
+                { userSelf && userSelf?.locked ? (
+                  renderScopeLabel
+                ) : (
+                  <Button p="$0" chromeless onPress={toggleScope}>
+                    {renderScopeLabel}
+                  </Button> 
+                )}
               </XStack>
             </YStack>
             <View ml="$3" mt="$3">
