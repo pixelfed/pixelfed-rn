@@ -1,6 +1,6 @@
 import Feather from '@expo/vector-icons/Feather'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { Link, router, Stack, useNavigation } from 'expo-router'
+import { Link, Stack, useNavigation, useRouter } from 'expo-router'
 import { useCallback, useLayoutEffect } from 'react'
 import { ActivityIndicator, FlatList } from 'react-native'
 import { PressableOpacity } from 'react-native-pressable-opacity'
@@ -15,6 +15,7 @@ export default function Page() {
   const selfUser = useUserCache()
   const navigation = useNavigation()
   const theme = useTheme()
+  const router = useRouter()
   useLayoutEffect(() => {
     navigation.setOptions({ title: 'Direct Messages', headerBackTitle: 'Back' })
   }, [navigation])
@@ -104,9 +105,9 @@ export default function Page() {
     return (
       <View p="$3" bg={theme.background?.val.default.val}>
         <PressableOpacity   
-          tabIndex={0}
-          aria-label={`${item.accounts[0].acct}, ${_timeAgo(item.last_status.created_at)} ago. ${cotype === 'text' ? cotext : content}`}
-          role="button"
+          accessible={true}
+          accessibilityLabel={`${item.accounts[0].acct}, ${_timeAgo(item.last_status.created_at)} ago. ${cotype === 'text' ? cotext : content}`}
+          accessibilityRole="button"
           onPress={() => router.push(`/chats/conversation/${item.accounts[0].id}`)}
         >
           <XStack alignItems="center" gap="$3">
