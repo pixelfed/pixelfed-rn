@@ -100,11 +100,11 @@ export default function Page() {
         ItemSeparatorComponent={ItemSeparator}
         showsVerticalScrollIndicator={false}
         onEndReached={() => {
-          if (hasPreviousPage && !isFetchingPreviousPage) fetchPreviousPage()
+          if (hasNextPage && !isFetchingNextPage) fetchNextPage()
         }}
         onEndReachedThreshold={0.5}
         ListFooterComponent={() =>
-          isFetchingPreviousPage ? (
+          isFetchingNextPage ? (
             <ActivityIndicator color={theme.color?.val.default.val} />
           ) : null
         }
