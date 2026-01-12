@@ -343,7 +343,7 @@ export type NewReport = {
 
 export async function report(report: NewReport) {
   const api = ContextFromStorage()
-  return await api.jsonRequest('POST', 'api/v1.1/report', {}, report)
+  return await api.jsonRequest('POST', 'api/v1.1/report', report, {})
 }
 
 export async function getAccountByUsername(username: string): Promise<Account> {
