@@ -44,29 +44,23 @@ export default function Page() {
   const ItemSeparator = () => <View h={1} bg={theme.background?.val.tertiary.val}></View>
 
   const {
+    status,
     fetchStatus,
     data: feed,
     fetchNextPage,
-    fetchPreviousPage,
     hasNextPage,
-    hasPreviousPage,
     isFetchingNextPage,
-    isFetchingPreviousPage,
     isFetching,
     isError,
     error,
   } = useInfiniteQuery({
-    queryKey: ['getStatusLikes', statusId],
+    queryKey: ['getAccountFollowers', profileId],
     queryFn: async ({ pageParam }) => {
-      return await getStatusLikes(statusId, pageParam)
+      return await getAccountFollowers(profileId, pageParam)
     },
     getNextPageParam: (lastPage) => lastPage.nextPage,
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
-    select: (data) => ({
-      pages: [...data.pages].reverse(),
-      pageParams: [...data.pageParams].reverse(),
-    }),
-    enabled: !!status,
+    enabled: !!profile,
   })
 
   if (isFetching && !isFetchingPreviousPage) {
