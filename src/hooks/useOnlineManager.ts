@@ -11,7 +11,7 @@ export function useOnlineManager() {
         onlineManager.setOnline(
           state.isConnected != null &&
             state.isConnected &&
-            Boolean(state.isInternetReachable)
+            state.isInternetReachable !== false
         )
       })
     }
