@@ -116,13 +116,13 @@ export default function FollowersScreen() {
         ItemSeparatorComponent={ItemSeparator}
         showsVerticalScrollIndicator={false}
         onEndReached={() => {
-          if (hasPreviousPage && !isFetchingPreviousPage) fetchPreviousPage()
+          if (hasNextPage && !isFetchingNextPage) fetchNextPage()
         }}
         onEndReachedThreshold={0.5}
         ListEmptyComponent={RenderEmpty}
         contentContainerStyle={{ flexGrow: 1 }}
         ListFooterComponent={() =>
-          isFetchingPreviousPage ? <ActivityIndicator /> : null
+          isFetchingNextPage ? <ActivityIndicator /> : null
         }
       />
     </SafeAreaView>
