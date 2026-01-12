@@ -193,6 +193,10 @@ export async function verifyCredentials(domain: string, token: string) {
     token
   )
 
+  if (!resp.ok) {
+    throw new Error(`Credential verification failed with status ${resp.status}`)
+  }
+
   return resp.json()
 }
 
