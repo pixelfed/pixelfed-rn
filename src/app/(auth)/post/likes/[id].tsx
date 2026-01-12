@@ -54,9 +54,9 @@ export default function Page() {
     isError,
     error,
   } = useInfiniteQuery({
-    queryKey: ['getAccountFollowers', profileId],
+    queryKey: ['getStatusLikes', statusId],
     queryFn: async ({ pageParam }) => {
-      return await getAccountFollowers(profileId, pageParam)
+      return await getStatusLikes(statusId, pageParam)
     },
     getNextPageParam: (lastPage) => lastPage.nextPage,
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
