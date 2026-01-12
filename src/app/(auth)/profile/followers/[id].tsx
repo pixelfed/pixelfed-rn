@@ -63,11 +63,8 @@ export default function FollowersScreen() {
     fetchStatus,
     data: feed,
     fetchNextPage,
-    fetchPreviousPage,
     hasNextPage,
-    hasPreviousPage,
     isFetchingNextPage,
-    isFetchingPreviousPage,
     isFetching,
     isError,
     error,
@@ -78,10 +75,6 @@ export default function FollowersScreen() {
     },
     getNextPageParam: (lastPage) => lastPage.nextPage,
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
-    select: (data) => ({
-      pages: [...data.pages].reverse(),
-      pageParams: [...data.pageParams].reverse(),
-    }),
     enabled: !!profile,
   })
 
