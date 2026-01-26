@@ -222,6 +222,11 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       return
     }
 
+    if (!queryParams?.code) {
+      Alert.alert('Error', 'Authentication failed: missing authorization code')
+      return
+    }
+
     const instance = Storage.getString('app.instance')
     if (!instance) {
       throw new Error('instance missing')
