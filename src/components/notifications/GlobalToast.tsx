@@ -3,6 +3,7 @@ import { YStack } from 'tamagui'
 
 const GlobalToast = () => {
   const currentToast = useToastState()
+  const toast = useToastController()
 
   if (!currentToast || currentToast.isHandledNatively) return null
   return (
@@ -16,6 +17,11 @@ const GlobalToast = () => {
       scale={1}
       animation="100ms"
       viewportName={currentToast.viewportName}
+      onOpenChange={(open) => {
+        if (!open) {
+          toast.hide()  // Clear the global toast state when toast closes
+        }
+      }}
     >
       <YStack>
         <Toast.Title textAlign="center">{currentToast.title}</Toast.Title>
