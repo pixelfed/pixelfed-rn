@@ -81,19 +81,14 @@ function useProtectedRoute(user: User | null, setUser: any, setIsLoading: any) {
               invalidateCredentialsCache()
               setIsLoading(false)
             }
-          } catch (_error) {
-            // Network error or server issues - use cached credentials if available
-            const lastVerified = Storage.getNumber('app.credentials_verified_at')
-            if (lastVerified) {
-              setUser({
-                server: server,
-                token: token,
-              })
-            } else {
-            }
-            setIsLoading(false)
+        } catch (_error) {
+          // Network error or server issues - use cached credentials if available
+          if (isCredentialsCacheValid()) {
+            setUser({
+              server: server,
+              token: token,
+            })
           }
-        } else {
           setIsLoading(false)
         }
       } catch (_error) {
