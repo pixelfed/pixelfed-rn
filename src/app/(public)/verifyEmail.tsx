@@ -457,7 +457,7 @@ const SignUp = ({ navigation }) => {
         updatePromises.push(updateAvatar({ avatar: avatar }))
       }
       if (bio && bio.length) {
-        updatePromises.push(profileMutation.mutate({ note: bio }))
+        updatePromises.push(profileMutation.mutateAsync({ note: bio }))
       }
       if (updatePromises.length) {
         await Promise.all(updatePromises)
