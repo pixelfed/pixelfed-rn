@@ -40,7 +40,7 @@ export default function NotificationsScreen() {
   }, [activeTab, refetch])
 
   const handleTabChange = (value) => {
-    queryClient.invalidateQueries(['notifications', value])
+    queryClient.invalidateQueries({ queryKey: ['notifications', value] })
     setActiveTab(value)
   }
 
