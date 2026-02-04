@@ -290,6 +290,7 @@ export default function Camera() {
   }
 
   const warningMessage = () => {
+    const isPrivateAccount = userSelf && userSelf?.locked
     if (!isSensitive && scope == 'public') {
       return
     }
@@ -300,14 +301,18 @@ export default function Camera() {
       if (scope == 'unlisted') {
         return 'You marked this post as sensitive and unlisted, it will be hidden from public timelines and behind a warning before media is displayed.'
       }
-      if (scope == 'private') {
+      if (isPrivateAccount && scope == 'private') {
+        return 'You marked this post as sensitive and private, it will only be shared to your followers and be hidden behind a warning before media is displayed. Creating public posts is disabled for private accounts.'
+      } else if (scope == 'private') {
         return 'You marked this post as sensitive and private, it will only be shared to your followers and be hidden behind a warning before media is displayed.'
       }
     } else {
       if (scope == 'unlisted') {
         return 'You marked this post as unlisted, it will be hidden from public timelines.'
       }
-      if (scope == 'private') {
+      if (isPrivateAccount && scope == 'private') {
+        return 'This post is marked as private, it will only be shared to your followers. Creating public posts is disabled for private accounts.'
+      } else if (scope == 'private') {
         return 'You marked this post as private, it will only be shared to your followers.'
       }
     }
@@ -770,7 +775,7 @@ export default function Camera() {
                     />
                   </Button>
                 </XStack>
-                <Button p="$0" chromeless onPress={toggleScope}>
+                <Button p="$0" chromeless onPress={toggleScope} disabled={userSelf && userSelf?.locked ? true : false}>
                   <Text
                     color={theme.color?.val.secondary.val}
                     fontSize="$3"
