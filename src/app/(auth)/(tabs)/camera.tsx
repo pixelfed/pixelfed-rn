@@ -102,6 +102,12 @@ export default function Camera() {
   const resizeImageIfNeeded = async (uri: string): Promise<string> => {
     try {
       const fileInfo = await FileSystem.getInfoAsync(uri, { size: true })
+
+      if (!fileInfo.exists) {
+        console.warn('File does not exist, skipping resize:', uri)
+        return uri
+      }
+
       const fileSizeInMB = fileInfo.size / (1024 * 1024)
 
       if (fileSizeInMB <= MAX_IMAGE_SIZE_MB) {
@@ -115,6 +121,12 @@ export default function Camera() {
       )
 
       const newFileInfo = await FileSystem.getInfoAsync(manipResult.uri, { size: true })
+
+      if (!newFileInfo.exists) {
+        console.warn('Resized file does not exist:', manipResult.uri)
+        return uri
+      }
+
       const _newFileSizeInMB = newFileInfo.size / (1024 * 1024)
 
       return manipResult.uri
