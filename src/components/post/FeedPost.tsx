@@ -702,7 +702,7 @@ const PostCaption = React.memo(
           {commentsCount ? (
             <Pressable onPress={() => onOpenComments()}>
               <Text color={theme.color?.val.secondary.val} fontSize="$3">
-                View all {commentsCount} comments
+                {commentsCount > 1 ? `View all ${commentsCount} comments` : "View 1 comment"}
               </Text>
             </Pressable>
           ) : null}
