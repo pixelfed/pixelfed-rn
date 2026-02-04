@@ -412,7 +412,7 @@ const SignUp = ({ navigation }) => {
   const router = useRouter()
   const [authToken, setAuthToken] = useState(null)
   const [registeredDomain, setRegisteredDomain] = useState(null)
-  const { profileMutation } = useProfileMutation()
+  const { profileMutation } = useProfileMutation({})
   const theme = useTheme()
 
   const slideAnim = React.useRef(new Animated.Value(0)).current
@@ -457,7 +457,7 @@ const SignUp = ({ navigation }) => {
         updatePromises.push(updateAvatar({ avatar: avatar }))
       }
       if (bio && bio.length) {
-        updatePromises.push(profileMutation.mutate({ note: bio }))
+        updatePromises.push(profileMutation.mutateAsync({ note: bio }))
       }
       if (updatePromises.length) {
         await Promise.all(updatePromises)
