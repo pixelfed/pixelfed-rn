@@ -64,11 +64,8 @@ export default function FollowingScreen() {
     fetchStatus,
     data: feed,
     fetchNextPage,
-    fetchPreviousPage,
     hasNextPage,
-    hasPreviousPage,
     isFetchingNextPage,
-    isFetchingPreviousPage,
     isFetching,
     isError,
     error,
@@ -79,10 +76,6 @@ export default function FollowingScreen() {
     },
     getNextPageParam: (lastPage) => lastPage.nextPage,
     getPreviousPageParam: (lastPage) => lastPage.prevPage,
-    select: (data) => ({
-      pages: [...data.pages].reverse(),
-      pageParams: [...data.pageParams].reverse(),
-    }),
     enabled: !!profile,
   })
 
@@ -117,13 +110,13 @@ export default function FollowingScreen() {
         ItemSeparatorComponent={ItemSeparator}
         showsVerticalScrollIndicator={false}
         onEndReached={() => {
-          if (hasPreviousPage && !isFetchingPreviousPage) fetchPreviousPage()
+          if (hasNextPage && !isFetchingNextPage) fetchNextPage()
         }}
         onEndReachedThreshold={0.5}
         ListEmptyComponent={RenderEmpty}
         contentContainerStyle={{ flexGrow: 1 }}
         ListFooterComponent={() =>
-          isFetchingPreviousPage ? <ActivityIndicator /> : null
+          isFetchingNextPage ? <ActivityIndicator /> : null
         }
       />
     </SafeAreaView>
