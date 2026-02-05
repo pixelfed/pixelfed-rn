@@ -458,7 +458,7 @@ export default function CommentFeed({
     initialPageParam: null,
     refetchOnWindowFocus: false,
     queryFn: async ({ pageParam }) => {
-      const data = await getStatusRepliesById(id, 0)
+      const data = await getStatusRepliesById(id, pageParam || 0)
       return data
     },
     getNextPageParam: (lastPage) => lastPage.nextPage,
