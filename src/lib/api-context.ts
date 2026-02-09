@@ -62,8 +62,8 @@ export class ApiContext {
 
     let response = await fetch(url, fetch_options)
 
-    // Handle unauthorized responses (401 or 403)
-    if (response.status === 401 || response.status === 403) {
+    // Handle unauthorized responses (401 only)
+    if (response.status === 401) {
       this.handleUnauthorized()
       throw new Error('Authentication failed - user has been logged out')
     }
