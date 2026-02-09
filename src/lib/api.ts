@@ -47,7 +47,9 @@ export async function selfPost<
 
   headers['Authorization'] = `Bearer ${token}`
   headers['Accept'] = 'application/json'
-  headers['Content-Type'] = asForm ? 'multipart/form-data' : 'application/json'
+  if (!asForm) {
+    headers['Content-Type'] = 'application/json'
+  }
 
   if (idempotency) {
     headers['Idempotency-Key'] = randomKey(40)
