@@ -122,7 +122,7 @@ export default function Page() {
                   ·
                 </Text>
                 <Text fontSize="$2" allowFontScaling={false} color="#aaa">
-                  {_timeAgo(item.last_status.created_at)} ago
+                  {item.last_status?.created_at ? _timeAgo(item.last_status.created_at) + ' ago' : ''}
                 </Text>
               </XStack>
             </YStack>
