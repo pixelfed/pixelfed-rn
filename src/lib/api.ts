@@ -461,7 +461,14 @@ export async function getRegisterServers() {
       }),
     }
   )
-  return (await response.json()) as OpenServersResponse
+  if (!response.ok) {
+    throw new Error(`Unable to load registration servers (${response.status})`)
+  }
+  const servers = await response.json()
+  if (!Array.isArray(servers)) {
+    throw new Error('Invalid registration server list')
+  }
+  return servers as OpenServersResponse
 }
 
 export async function getStatusLikes(id: string, cursor) {

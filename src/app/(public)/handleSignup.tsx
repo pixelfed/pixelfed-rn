@@ -1,5 +1,4 @@
 import Feather from '@expo/vector-icons/Feather'
-import { useAuth } from '@state/AuthProvider'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
@@ -15,20 +14,30 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { getRegisterServers } from 'src/lib/api'
-import type { OpenServer } from 'src/lib/api-types'
 import { prettyCount } from 'src/utils'
-import { Button, Image, ScrollView, Text, useTheme, View, XStack, YStack } from 'tamagui'
+import {
+  Button,
+  Image,
+  Input,
+  ScrollView,
+  Text,
+  useTheme,
+  View,
+  XStack,
+  YStack,
+} from 'tamagui'
 
 export default function SignupScreen() {
   const [server, setServer] = useState('pixelfed.social')
+  const [customServer, setCustomServer] = useState('')
+  const [isCustomServer, setIsCustomServer] = useState(false)
   const [loading, setLoading] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
   const [_showServerInfo, _setShowServerInfo] = useState(false)
   const [_hasAttemptedSignup, setHasAttemptedSignup] = useState(false)
   const [signupEmail, setSignupEmail] = useState('')
   const infoHeight = useRef(new Animated.Value(0)).current
-  const scrollViewRef = useRef(null)
-  const { login } = useAuth()
+  const scrollViewRef = useRef<RNScrollView>(null)
   const router = useRouter()
   const theme = useTheme()
 
@@ -41,64 +50,39 @@ export default function SignupScreen() {
     }).start()
   }, [showInfo])
 
-  const { data: serversData, isLoading: loadingServers } = useQuery({
+  const {
+    data: serversData,
+    isLoading: loadingServers,
+    isError: serverListError,
+  } = useQuery({
     queryKey: ['getRegisterServers'],
-    queryFn: async () => {
-      try {
-        const res = await getRegisterServers()
-        return res
-      } catch (_error) {
-        return [
-          {
-            domain: 'pixelfed.social',
-            header_thumbnail: 'https://pixelfed.org/storage/servers/header.png',
-            version: '0.12.4',
-            short_description:
-              'The original Pixelfed instance, operated by the main developer @dansup',
-            rules: [],
-            user_count: 420069,
-            last_seen_at: getNowTimestamp(),
-          },
-        ]
-      }
-    },
+    queryFn: getRegisterServers,
+    retry: false,
   })
 
-  const getNowTimestamp = () => {
-    const now = new Date()
-    const year = now.getUTCFullYear()
-    const month = String(now.getUTCMonth() + 1).padStart(2, '0')
-    const day = String(now.getUTCDate()).padStart(2, '0')
-    const hours = String(now.getUTCHours()).padStart(2, '0')
-    const minutes = String(now.getUTCMinutes()).padStart(2, '0')
-    const seconds = String(now.getUTCSeconds()).padStart(2, '0')
-    const milliseconds = String(now.getUTCMilliseconds()).padStart(3, '0') + '000'
-
-    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`
-  }
-
   const filteredServers = React.useMemo(() => {
-    if (!serversData)
-      return [
-        {
-          domain: 'pixelfed.social',
-          header_thumbnail: 'https://pixelfed.org/storage/servers/header.png',
-          version: '0.12.4',
-          short_description:
-            'The original Pixelfed instance, operated by the main developer @dansup',
-          rules: [],
-          user_count: 420069,
-          last_seen_at: getNowTimestamp(),
-        },
-      ]
+    if (!serversData) return [{ domain: 'pixelfed.social', user_count: undefined }]
 
     return [...serversData]
       .filter((s) => Object.hasOwn(s, 'user_count'))
-      .sort((a, b) => (b as OpenServer).user_count - (a as OpenServer).user_count)
-      .slice(0, 10)
+      .sort((a, b) => b.user_count - a.user_count)
   }, [serversData])
 
-  const handleServerSelect = (serverDomain) => {
+  const handleCustomServerChange = (text: string) => {
+    setCustomServer(text)
+    setIsCustomServer(true)
+    const domain = text
+      .trim()
+      .toLowerCase()
+      .replace(/^https?:\/\//, '')
+      .replace(/\/$/, '')
+    const valid = /^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/.test(domain)
+    setServer(valid ? domain : '')
+  }
+
+  const handleServerSelect = (serverDomain: string) => {
+    setIsCustomServer(false)
+    setCustomServer('')
     setServer(serverDomain)
     setTimeout(() => {
       scrollViewRef.current?.scrollToEnd({ animated: true })
@@ -113,6 +97,11 @@ export default function SignupScreen() {
 
     setLoading(true)
     try {
+      if (isCustomServer) {
+        await WebBrowser.openBrowserAsync(`https://${server}/register`)
+        return
+      }
+
       setHasAttemptedSignup(true)
 
       const result = await WebBrowser.openAuthSessionAsync(
@@ -189,7 +178,7 @@ export default function SignupScreen() {
   }
 
   const navigateToLogin = () => {
-    router.push('/handleLogin')
+    router.push({ pathname: '/handleLogin', params: { server } })
   }
 
   const navigateBack = () => {
@@ -198,22 +187,6 @@ export default function SignupScreen() {
 
   const toggleInfo = () => {
     setShowInfo(!showInfo)
-  }
-
-  if (loadingServers) {
-    return (
-      <SafeAreaView
-        style={{
-          backgroundColor: theme.background?.val.default.val,
-          flexGrow: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-        edges={['top']}
-      >
-        <ActivityIndicator color="white" size="large" />
-      </SafeAreaView>
-    )
   }
 
   return (
@@ -330,17 +303,22 @@ export default function SignupScreen() {
                 p="$3"
               >
                 <YStack space="$3" maxHeight={200}>
-                  <ScrollView>
+                  <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
                     {filteredServers.length > 0 ? (
                       filteredServers.map((item) => (
                         <Pressable
                           key={item.domain}
+                          disabled={loading}
+                          accessibilityRole="radio"
+                          accessibilityState={{
+                            checked: !isCustomServer && server === item.domain,
+                          }}
                           onPress={() => handleServerSelect(item.domain)}
                           style={({ pressed }) => [
                             {
                               opacity: pressed ? 0.7 : 1,
                               backgroundColor:
-                                server === item.domain
+                                !isCustomServer && server === item.domain
                                   ? theme.background?.val.tertiary.val
                                   : 'transparent',
                               borderRadius: 8,
@@ -352,18 +330,24 @@ export default function SignupScreen() {
                           <XStack justifyContent="space-between" alignItems="center">
                             <Text
                               color={
-                                server === item.domain
+                                !isCustomServer && server === item.domain
                                   ? theme.color?.val.default.val
                                   : theme.color?.val.tertiary.val
                               }
                               fontSize="$5"
-                              fontWeight={server === item.domain ? 'bold' : 'normal'}
+                              fontWeight={
+                                !isCustomServer && server === item.domain
+                                  ? 'bold'
+                                  : 'normal'
+                              }
                             >
                               {item.domain}
                             </Text>
-                            <Text fontSize="$3" color={theme.color?.val.tertiary.val}>
-                              {prettyCount(item.user_count)} users
-                            </Text>
+                            {item.user_count !== undefined && (
+                              <Text fontSize="$3" color={theme.color?.val.tertiary.val}>
+                                {prettyCount(item.user_count)} users
+                              </Text>
+                            )}
                           </XStack>
                         </Pressable>
                       ))
@@ -379,6 +363,38 @@ export default function SignupScreen() {
                   </ScrollView>
                 </YStack>
               </View>
+              {loadingServers && <ActivityIndicator />}
+              {serverListError && (
+                <Text color={theme.color?.val.secondary.val}>
+                  Couldn't load the server list. You can enter your server below.
+                </Text>
+              )}
+              <Text color={theme.color?.val.default.val}>Or enter another server</Text>
+              <Input
+                accessibilityLabel="Server domain"
+                color={theme.color?.val.default.val}
+                backgroundColor={theme.background?.val.default.val}
+                borderColor={theme.borderColor?.val.default.val}
+                placeholderTextColor={theme.color?.val.secondary.val}
+                placeholder="photos.example.org"
+                value={customServer}
+                onChangeText={handleCustomServerChange}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="url"
+                editable={!loading}
+              />
+              {isCustomServer && !server && customServer.length > 0 && (
+                <Text color={theme.color?.val.secondary.val}>
+                  Enter a valid server domain, such as photos.example.org.
+                </Text>
+              )}
+              {isCustomServer && (
+                <Text color={theme.color?.val.secondary.val}>
+                  Complete registration on your server's website, then return here and tap
+                  Log In. Each server decides whether registration is open.
+                </Text>
+              )}
             </YStack>
 
             {server && (
@@ -401,31 +417,33 @@ export default function SignupScreen() {
 
             {/* Verification Options */}
 
-            <YStack space="$2" mt="$2" gap="$3">
-              <XStack justifyContent="center" space="$2">
-                <Pressable onPress={handleResendVerification}>
-                  <Text
-                    color={theme.colorHover?.val.active.val}
-                    fontWeight="bold"
-                    fontSize="$6"
-                  >
-                    Resend email verification
-                  </Text>
-                </Pressable>
-              </XStack>
+            {!isCustomServer && (
+              <YStack space="$2" mt="$2" gap="$3">
+                <XStack justifyContent="center" space="$2">
+                  <Pressable onPress={handleResendVerification}>
+                    <Text
+                      color={theme.colorHover?.val.active.val}
+                      fontWeight="bold"
+                      fontSize="$6"
+                    >
+                      Resend email verification
+                    </Text>
+                  </Pressable>
+                </XStack>
 
-              <XStack justifyContent="center" space="$2">
-                <Pressable onPress={navigateToVerificationCode}>
-                  <Text
-                    color={theme.colorHover?.val.active.val}
-                    fontWeight="bold"
-                    fontSize="$6"
-                  >
-                    I have a verification code
-                  </Text>
-                </Pressable>
-              </XStack>
-            </YStack>
+                <XStack justifyContent="center" space="$2">
+                  <Pressable onPress={navigateToVerificationCode}>
+                    <Text
+                      color={theme.colorHover?.val.active.val}
+                      fontWeight="bold"
+                      fontSize="$6"
+                    >
+                      I have a verification code
+                    </Text>
+                  </Pressable>
+                </XStack>
+              </YStack>
+            )}
 
             <View flexGrow={1} />
 
